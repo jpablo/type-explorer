@@ -5,14 +5,6 @@ val circeVersion = "0.14.1"
 ThisBuild / organization := "net.jpablo"
 
 
-lazy val root =
-  project
-    .in(file("."))
-    .settings(
-      name := "type-explorer",
-      version := "0.1.0",
-    )
-
 lazy val core =
   project
     .in(file("core"))
@@ -38,6 +30,33 @@ lazy val core =
       ),
       testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework")
     )
+
+lazy val ui =
+  project
+    .in(file("ui"))
+    .enablePlugins(ScalaJSPlugin)
+    .settings(
+      scalaVersion := scala3Version,
+      scalaJSUseMainModuleInitializer := true,
+      libraryDependencies ++= Seq(
+        "dev.zio" %%% "zio"               % zioVersion,
+        "dev.zio" %%% "zio-prelude"       % "1.0.0-RC6",
+        "dev.zio" %%% "zio-test"          % zioVersion % "test",
+        "dev.zio" %%% "zio-test-sbt"      % zioVersion % "test",
+        "dev.zio" %%% "zio-test-magnolia" % zioVersion % "test",
+      )
+    )
+
+
+lazy val root =
+  project
+    .in(file("."))
+    .aggregate(core, ui)
+    .settings(
+      name := "type-explorer",
+      version := "0.1.0",
+    )
+
 
 
 scalacOptions ++= Seq(
