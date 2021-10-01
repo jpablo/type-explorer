@@ -44,6 +44,8 @@ lazy val ui =
         "dev.zio" %%% "zio-test"          % zioVersion % "test",
         "dev.zio" %%% "zio-test-sbt"      % zioVersion % "test",
         "dev.zio" %%% "zio-test-magnolia" % zioVersion % "test",
+
+        ("org.scala-js" %%% "scalajs-dom" % "1.2.0").cross(CrossVersion.for3Use2_13)
       )
     )
 
