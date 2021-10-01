@@ -1,5 +1,5 @@
 val scala3Version = "3.0.2"
-val zioVersion = "1.0.11"
+val zioVersion = "1.0.12"
 val circeVersion = "0.14.1"
 
 ThisBuild / organization := "net.jpablo"
@@ -45,7 +45,9 @@ lazy val ui =
         "dev.zio" %%% "zio-test-sbt"      % zioVersion % "test",
         "dev.zio" %%% "zio-test-magnolia" % zioVersion % "test",
 
-        ("org.scala-js" %%% "scalajs-dom" % "1.2.0").cross(CrossVersion.for3Use2_13)
+        ("org.scala-js" %%% "scalajs-dom" % "1.2.0").cross(CrossVersion.for3Use2_13),
+        "com.raquo" %%% "laminar" % "0.13.1",
+        "io.frontroute" %%% "frontroute" % "0.14.0"
       )
     )
 
