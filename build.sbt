@@ -1,6 +1,7 @@
 val scala3Version = "3.1.0"
 val zioVersion = "2.0.0-M6-2"
 val circeVersion = "0.14.1"
+val zioPreludeVersion = "1.0.0-RC7"
 
 ThisBuild / organization := "net.jpablo"
 
@@ -42,7 +43,7 @@ lazy val ui =
       scalaJSUseMainModuleInitializer := true,
       libraryDependencies ++= Seq(
         "dev.zio" %%% "zio"               % zioVersion,
-        "dev.zio" %%% "zio-prelude"       % "1.0.0-RC6",
+        "dev.zio" %%% "zio-prelude"       % zioPreludeVersion,
         "dev.zio" %%% "zio-test"          % zioVersion % "test",
         "dev.zio" %%% "zio-test-sbt"      % zioVersion % "test",
         "dev.zio" %%% "zio-test-magnolia" % zioVersion % "test",
