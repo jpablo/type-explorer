@@ -1,5 +1,5 @@
-val scala3Version = "3.0.2"
-val zioVersion = "1.0.12"
+val scala3Version = "3.1.0"
+val zioVersion = "2.0.0-M6-2"
 val circeVersion = "0.14.1"
 
 ThisBuild / organization := "net.jpablo"
@@ -16,17 +16,17 @@ lazy val core =
 
       libraryDependencies ++= Seq(
         "dev.zio" %% "zio"               % zioVersion,
-        "dev.zio" %% "zio-prelude"       % "1.0.0-RC6",
+        "dev.zio" %% "zio-prelude"       % "1.0.0-RC8",
         "dev.zio" %% "zio-test"          % zioVersion % "test",
         "dev.zio" %% "zio-test-sbt"      % zioVersion % "test",
         "dev.zio" %% "zio-test-magnolia" % zioVersion % "test",
 
-        "com.softwaremill.quicklens" %% "quicklens" % "1.7.5",
-        "org.typelevel" %% "cats-core" % "2.6.1",
+//        "com.softwaremill.quicklens" %% "quicklens" % "1.7.5",
+//        "org.typelevel" %% "cats-core" % "2.6.1",
 
-        "io.circe" %% "circe-core" % circeVersion,
-        "io.circe" %% "circe-generic" % circeVersion,
-        "io.circe" %% "circe-parser" % circeVersion,
+//        "io.circe" %% "circe-core" % circeVersion,
+//        "io.circe" %% "circe-generic" % circeVersion,
+//        "io.circe" %% "circe-parser" % circeVersion,
 
         ("org.scalameta" %% "scalameta" % "4.4.30").cross(CrossVersion.for3Use2_13),
       ),
