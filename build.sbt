@@ -22,6 +22,7 @@ lazy val core =
         "dev.zio" %% "zio-test-sbt"      % zioVersion % "test",
         "dev.zio" %% "zio-test-magnolia" % zioVersion % "test",
 
+        ("com.thesamet.scalapb" %% "scalapb-json4s" % "0.12.0").cross(CrossVersion.for3Use2_13),
 //        "com.softwaremill.quicklens" %% "quicklens" % "1.7.5",
 //        "org.typelevel" %% "cats-core" % "2.6.1",
 
@@ -48,10 +49,13 @@ lazy val ui =
         "dev.zio" %%% "zio-test-sbt"      % zioVersion % "test",
         "dev.zio" %%% "zio-test-magnolia" % zioVersion % "test",
 
-        ("org.scala-js" %%% "scalajs-dom" % "1.2.0").cross(CrossVersion.for3Use2_13),
-        "com.raquo" %%% "laminar" % "0.13.1",
-        "io.frontroute" %%% "frontroute" % "0.14.0"
-      )
+        ("com.thesamet.scalapb" %% "scalapb-json4s" % "0.12.0").cross(CrossVersion.for3Use2_13),
+        ("org.scalameta" %%% "scalameta" % "4.4.30").cross(CrossVersion.for3Use2_13),
+        "org.scala-js" %%% "scalajs-dom" % "2.0.0",
+        "com.raquo" %%% "laminar" % "0.14.2",
+//        "io.frontroute" %%% "frontroute" % "0.14.0"
+      ),
+      testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework")
     )
 
 
