@@ -1,0 +1,75 @@
+@startuml
+
+allow_mixing
+
+abstract Sink<-A> {
+    toObserver: Observer
+}
+abstract Observer
+abstract WritableObservable
+
+Observable <|-- WritableObservable
+
+class WriteBus
+
+abstract Named
+
+abstract BaseObservable {
+    foreach(onNext: A => Unit): Subscription
+    addObserver(observer: Observer): Subscription
+}
+
+abstract Source {
+    toObservable: Observable
+}
+
+abstract Observable
+
+abstract Signal
+
+Observable <|-- Signal
+BaseObservable <|-- Signal
+Signal --|> Source$.SignalSource
+
+abstract EventStream
+abstract WritableEventStream
+
+EventStream <|-- WritableEventStream
+WritableObservable <|-- WritableEventStream
+
+Observable <|-- EventStream
+BaseObservable <|-- EventStream
+
+EventStream --|> Source$.EventSource
+
+package Source$ {
+    abstract EventSource
+    abstract SignalSource
+}
+
+Source$.SignalSource --|> Source
+
+Source$.EventSource --|> Source
+
+
+Observer <|-- WriteBus
+
+Sink <|-- Observer
+
+Named <|-- Observer
+
+'Source[A] -> Observable: toObservable
+
+BaseObservable <|-- Observable
+
+Named <|-- BaseObservable
+Source <|-- BaseObservable
+
+
+class EventBus
+
+EventBus --|> Source$.EventSource
+Sink <|-- EventBus
+Named <|-- EventBus
+
+@enduml
