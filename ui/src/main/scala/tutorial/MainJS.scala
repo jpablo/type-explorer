@@ -4,7 +4,9 @@ import org.scalajs.dom
 import org.scalajs.dom.document
 
 object MainJS {
-  def main(args: Array[String]): Unit = {}
+  def main(args: Array[String]): Unit = {
+    println("hello world")
+  }
 //    appendPar(document.body, "hello world")
 
   def appendPar(targetNode: dom.Node, text: String): Unit =

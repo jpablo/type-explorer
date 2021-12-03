@@ -1,0 +1,24 @@
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    height: 100vh;
+    width: 100vw;
+}
+
+.container-fluid {
+    /*height: 100%;*/
+    /*width: 100%;*/
+    background: blanchedalmond;
+}
+
+.row {
+    height: 100%;
+    background: #dddddd;
+}
+
+.col {
+    border: 1px solid black;
+}

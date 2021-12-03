@@ -43,6 +43,7 @@ object SymbolRegistry {
         else if o3 != 0 then o3
         else o4
 
+
   def callGraph(document: TextDocument) =
     var symbols = document.symbols.groupBy(_.symbol)
     var stack = List.empty[String]
