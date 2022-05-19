@@ -43,7 +43,7 @@ object CallGraphTest extends DefaultRunnableSpec {
       // so that each reference can be located
 //      SymbolRegistry.callGraph(symbols)
 
-      semanticdb.Locator(path) { (_, payload: TextDocuments) =>
+      semanticdb.Locator(paths) { (_, payload: TextDocuments) =>
         for doc <- payload.documents do
           SymbolRegistry.callGraph(doc)
       }
