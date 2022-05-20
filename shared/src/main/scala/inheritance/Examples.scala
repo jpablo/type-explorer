@@ -58,3 +58,8 @@ object Examples {
     )
 
 }
+
+
+@main
+def inheritanceExample() =
+  println(Examples.laminar)

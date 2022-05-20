@@ -34,6 +34,8 @@ lazy val core =
         "dev.zio" %% "zio-test-sbt"      % zioVersion % "test",
         "dev.zio" %% "zio-test-magnolia" % zioVersion % "test",
 
+        "guru.nidi" % "graphviz-java" % "0.18.1",
+
         ("com.thesamet.scalapb" %% "scalapb-json4s" % "0.12.0").cross(CrossVersion.for3Use2_13),
 //        "com.softwaremill.quicklens" %% "quicklens" % "1.7.5",
 //        "org.typelevel" %% "cats-core" % "2.6.1",
@@ -42,7 +44,7 @@ lazy val core =
 //        "io.circe" %% "circe-generic" % circeVersion,
 //        "io.circe" %% "circe-parser" % circeVersion,
 
-        ("org.scalameta" %% "scalameta" % "4.4.30").cross(CrossVersion.for3Use2_13),
+        ("org.scalameta" %% "scalameta" % "4.5.6").cross(CrossVersion.for3Use2_13),
       ),
       testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework")
     )
