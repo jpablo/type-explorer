@@ -1,6 +1,9 @@
-val scala3Version = "3.1.0"
+import org.scalajs.linker.interface.ModuleSplitStyle
+
+val scala3Version = "3.1.2"
 val zioVersion = "2.0.0-M6-2"
 val circeVersion = "0.14.1"
+val zioPreludeVersion = "1.0.0-RC7"
 
 ThisBuild / organization := "net.jpablo"
 
@@ -34,6 +37,10 @@ lazy val core =
       testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework")
     )
 
+val publicDev = taskKey[String]("output directory for `npm run dev`")
+val publicProd = taskKey[String]("output directory for `npm run build`")
+
+
 lazy val ui =
   project
     .in(file("ui"))
@@ -41,9 +48,19 @@ lazy val ui =
     .settings(
       scalaVersion := scala3Version,
       scalaJSUseMainModuleInitializer := true,
+      scalaJSLinkerConfig ~= {
+        _.withModuleKind(ModuleKind.ESModule)
+          .withModuleSplitStyle(ModuleSplitStyle.SmallModulesFor(List("testvite")))
+      },
+
+      externalNpm := {
+        //scala.sys.process.Process(List("npm", "install", "--silent", "--no-audit", "--no-fund"), baseDirectory.value).!
+        baseDirectory.value
+      },
+
       libraryDependencies ++= Seq(
         "dev.zio" %%% "zio"               % zioVersion,
-//        "dev.zio" %%% "zio-prelude"       % "1.0.0-RC6",
+        "dev.zio" %%% "zio-prelude"       % zioPreludeVersion,
         "dev.zio" %%% "zio-test"          % zioVersion % "test",
         "dev.zio" %%% "zio-test-sbt"      % zioVersion % "test",
         "dev.zio" %%% "zio-test-magnolia" % zioVersion % "test",
@@ -54,8 +71,17 @@ lazy val ui =
         "com.raquo" %%% "laminar" % "0.14.2",
 //        "io.frontroute" %%% "frontroute" % "0.14.0"
       ),
-      testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework")
+      testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework"),
+
+      publicDev := linkerOutputDirectory((Compile / fastLinkJS).value).getAbsolutePath(),
+      publicProd := linkerOutputDirectory((Compile / fullLinkJS).value).getAbsolutePath(),
+
     )
+
+def linkerOutputDirectory(v: Attributed[org.scalajs.linker.interface.Report]): File =
+  v.get(scalaJSLinkerOutputDirectory.key).getOrElse {
+    throw new MessageOnlyException("Linking report was not attributed with output directory. Please report this as a Scala.js bug.")
+  }
 
 
 lazy val root =

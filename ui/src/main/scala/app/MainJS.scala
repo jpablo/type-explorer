@@ -6,6 +6,6 @@ import com.raquo.laminar.api.L._
 
 object MainJS {
   def main(args: Array[String]): Unit =
-    render(dom.document.querySelector("#show-file"), app.Layout.container)
+    render(dom.document.querySelector("#app"), app.Layout.container)
 
 }
