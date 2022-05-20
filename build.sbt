@@ -8,9 +8,19 @@ val zioPreludeVersion = "1.0.0-RC7"
 ThisBuild / organization := "net.jpablo"
 
 
+lazy val shared =
+  project
+    .in(file("shared"))
+    .settings(
+      name := "type-explorer-shared",
+      version := "0.1.0",
+      scalaVersion := scala3Version
+    )
+
 lazy val core =
   project
     .in(file("core"))
+    .dependsOn(shared)
     .settings(
       name := "type-explorer-core",
       version := "0.1.0",
@@ -44,6 +54,7 @@ val publicProd = taskKey[String]("output directory for `npm run build`")
 lazy val ui =
   project
     .in(file("ui"))
+    .dependsOn(shared)
     .enablePlugins(ScalaJSPlugin)
     .settings(
       scalaVersion := scala3Version,
