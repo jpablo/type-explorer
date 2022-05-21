@@ -2,20 +2,20 @@ package inheritance
 
 object InheritanceExamples {
 
-  val source             = Type("Source")
-  val named              = Type("Named")
+  val baseObservable     = Type("BaseObservable", methods = List(Method("map"), Method("mapTo"), Method("flatMap")))
+  val observable         = Type("Observable")
+  val observer           = Type("Observer")
+  val source             = Type("Source", methods = List(Method("toObservable", Some(observable))))
+  val named              = Type("Named", methods = List(Method("toObserver", Some(observer))))
   val sink               = Type("Sink")
-  val baseObservable     = Type("BaseObservable")
   val eventSource        = Type("EventSource")
   val signalSource       = Type("SignalSource")
-  val observer           = Type("Observer")
-  val observable         = Type("Observable")
   val eventBus           = Type("EventBus")
   val `var`              = Type("Var")
   val writeBus           = Type("WriteBus")
   val writableObservable = Type("WritableObservable")
-  val eventStream        = Type("EventStream")
-  val signal             = Type("Signal")
+  val eventStream        = Type("EventStream", methods = List(Method("filter"), Method("delay")))
+  val signal             = Type("Signal", methods = List(Method("now"), Method("compose")))
   val writableSignal     = Type("WritableSignal")
   val strictSignal       = Type("StrictSignal")
   val `val`              = Type("Val")
@@ -52,8 +52,8 @@ object InheritanceExamples {
 
   val laminar =
     InheritanceDiagram(
-      pairs = pairs
-//      types = (pairs.map(_._1) ++ pairs.map(_._2)).distinct,
+      pairs = pairs,
+      types = (pairs.map(_._1) ++ pairs.map(_._2)).distinct,
 //      parents = pairs.groupMap(_._1)(_._2),
 //      children = pairs.groupMap(_._2)(_._1)
     )

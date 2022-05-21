@@ -2,7 +2,7 @@ package inheritance
 
 case class Package(name: String)
 
-case class Method(name: String)
+case class Method(name: String, output: Option[Type] = None)
 
 case class Type(
   name     : String,
