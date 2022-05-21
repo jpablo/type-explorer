@@ -1,6 +1,6 @@
 package inheritance
 
-object Examples {
+object InheritanceExamples {
 
   val source             = Type("Source")
   val named              = Type("Named")
@@ -52,9 +52,10 @@ object Examples {
 
   val laminar =
     InheritanceDiagram(
-      types = (pairs.map(_._1) ++ pairs.map(_._2)).distinct,
-      parents = pairs.groupMap(_._1)(_._2),
-      children = pairs.groupMap(_._2)(_._1)
+      pairs = pairs
+//      types = (pairs.map(_._1) ++ pairs.map(_._2)).distinct,
+//      parents = pairs.groupMap(_._1)(_._2),
+//      children = pairs.groupMap(_._2)(_._1)
     )
 
 }
@@ -62,4 +63,4 @@ object Examples {
 
 @main
 def inheritanceExample() =
-  println(Examples.laminar)
+  println(InheritanceExamples.laminar)
