@@ -6,6 +6,12 @@ val circeVersion = "0.14.1"
 val zioPreludeVersion = "1.0.0-RC7"
 
 ThisBuild / organization := "net.jpablo"
+ThisBuild / scalacOptions ++=
+  Seq(
+    "-Ykind-projector:underscores",
+    "-language:implicitConversions",
+    "-source:future"
+  )
 
 
 lazy val shared =
@@ -34,6 +40,7 @@ lazy val core =
         "dev.zio" %% "zio-test-sbt"      % zioVersion % "test",
         "dev.zio" %% "zio-test-magnolia" % zioVersion % "test",
 
+
         "guru.nidi" % "graphviz-java" % "0.18.1",
 
         ("com.thesamet.scalapb" %% "scalapb-json4s" % "0.12.0").cross(CrossVersion.for3Use2_13),
@@ -44,7 +51,8 @@ lazy val core =
 //        "io.circe" %% "circe-generic" % circeVersion,
 //        "io.circe" %% "circe-parser" % circeVersion,
 
-        ("org.scalameta" %% "scalameta" % "4.5.6").cross(CrossVersion.for3Use2_13),
+        ("com.lihaoyi" %% "scalatags" % "0.11.1")cross(CrossVersion.for3Use2_13),
+        ("org.scalameta" %% "scalameta" % "4.5.7").cross(CrossVersion.for3Use2_13),
       ),
       testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework")
     )
@@ -105,10 +113,3 @@ lazy val root =
       name := "type-explorer",
       version := "0.1.0",
     )
-
-
-
-scalacOptions ++= Seq(
-  "-Ykind-projector:underscores",
-  "-language:implicitConversions"
-)
