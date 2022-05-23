@@ -1,10 +1,10 @@
-package backends.graphvizJava
+package backends.graphviz
 
-import inheritance.{InheritanceDiagram, InheritanceExamples, Type}
-import backends.graphvizJava.GraphvizJavaInheritance.fromInheritanceDiagram
+import inheritance.{InheritanceDiagram, InheritanceExamples}
+import backends.graphviz.GraphvizInheritance.toGraph
 import guru.nidi.graphviz.attribute.Label
+import models.Type
 import scalatags.Text
-//import guru.nidi.graphviz.attribute.Attributes.attr
 import guru.nidi.graphviz.attribute.Rank.RankDir
 import guru.nidi.graphviz.model.{Graph, Link, LinkSource, LinkTarget, Node, PortNode}
 import guru.nidi.graphviz.model.Factory.*
@@ -16,9 +16,9 @@ import guru.nidi.graphviz.engine.Graphviz
 import java.io.File
 
 
-object GraphvizJavaInheritance:
+object GraphvizInheritance:
 
-  def fromInheritanceDiagram(name: String, diagram: InheritanceDiagram) =
+  def toGraph(name: String, diagram: InheritanceDiagram): Graph =
     val nodes: Map[Type, Node] =
       diagram.types
         .map(tpe => tpe -> toNode(tpe))
@@ -62,10 +62,10 @@ object GraphvizJavaInheritance:
 
   type PortId = String
 
-end GraphvizJavaInheritance
+end GraphvizInheritance
 
 
 @main
-def graphVizJavaExample =
-  val g = fromInheritanceDiagram("laminar",  InheritanceExamples.laminar)
+def graphVizJavaExample: File =
+  val g = toGraph("laminar",  InheritanceExamples.laminar)
   Graphviz.fromGraph(g).height(500).render(Format.SVG_STANDALONE).toFile(new File("examples/laminar.svg"))

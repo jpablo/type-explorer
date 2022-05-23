@@ -1,0 +1,37 @@
+@startuml
+Source <|-- BaseObservable
+Named <|-- BaseObservable
+Source <|-- EventSource
+Source <|-- SignalSource
+Named <|-- Observer
+Sink <|-- Observer
+BaseObservable <|-- Observable
+EventSource <|-- EventBus
+Named <|-- EventBus
+Sink <|-- EventBus
+SignalSource <|-- Var
+Named <|-- Var
+Sink <|-- Var
+Observer <|-- WriteBus
+Observable <|-- WritableObservable
+Observable <|-- EventStream
+BaseObservable <|-- EventStream
+EventSource <|-- EventStream
+Observable <|-- Signal
+BaseObservable <|-- Signal
+SignalSource <|-- Signal
+WritableObservable <|-- WritableSignal
+Signal <|-- WritableSignal
+Signal <|-- StrictSignal
+WritableSignal <|-- Val
+StrictSignal <|-- Val
+BaseObservable : map
+BaseObservable : mapTo
+BaseObservable : flatMap
+EventStream : filter
+EventStream : delay
+Signal : now
+Signal : compose
+Source : toObservable : Observable
+Named : toObserver : Observer
+    @enduml

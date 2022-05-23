@@ -1,0 +1,12 @@
+@startuml
+
+:getUserTasks;
+
+if (projectId?) then
+    :getUserTaskUnitsByProjectId;
+    :expireTasksByUserId;
+else
+    :getUserTaskUnits;
+endif
+:assigned_tasks;
+@enduml

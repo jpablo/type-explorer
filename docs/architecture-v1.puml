@@ -1,0 +1,40 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+skinparam responseMessageBelowArrow true
+
+participant UI
+
+group initial request
+
+UI -> Backend: initial request
+
+activate Backend
+
+Backend -> "Source/Jar": load Semantic DB
+Backend <-- "Source/Jar": Semantic DB
+Backend -> PlantUML: puml diagram
+PlantUML -> Graphviz
+Backend <-- PlantUML: SVG
+UI <-- Backend: SVG
+
+deactivate Backend
+end
+
+...
+group interaction request
+
+autonumber 1
+
+UI -> Backend: user event
+
+activate Backend
+
+Backend -> PlantUML: puml diagram
+Backend <-- PlantUML: SVG
+UI <- Backend: SVG
+deactivate Backend
+end
+
+@enduml

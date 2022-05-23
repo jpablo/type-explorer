@@ -1,5 +1,7 @@
 package inheritance
 
+import models.*
+
 object InheritanceExamples {
 
   val baseObservable     = Type("BaseObservable", methods = List(Method("map"), Method("mapTo"), Method("flatMap")))
@@ -53,9 +55,7 @@ object InheritanceExamples {
   val laminar =
     InheritanceDiagram(
       pairs = pairs,
-      types = (pairs.map(_._1) ++ pairs.map(_._2)).distinct,
-//      parents = pairs.groupMap(_._1)(_._2),
-//      children = pairs.groupMap(_._2)(_._1)
+      types = (pairs.map(_._1) ++ pairs.map(_._2)).distinct
     )
 
 }
