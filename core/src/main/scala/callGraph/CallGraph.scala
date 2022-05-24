@@ -1,5 +1,0 @@
-package callGraph
-
-object CallGraph {
-
-}

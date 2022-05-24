@@ -1,8 +1,8 @@
 package callGraph
 
-import models.Method
+import models.*
 
 case class CallGraph(
   pairs: List[(Method, Method)],
-  methods: List[Method] = List.empty
+  namesSpaces: List[Type] = List.empty
 )

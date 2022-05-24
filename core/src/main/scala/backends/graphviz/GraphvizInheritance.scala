@@ -66,6 +66,6 @@ end GraphvizInheritance
 
 
 @main
-def graphVizJavaExample: File =
+def graphVizInheritanceExample: File =
   val g = toGraph("laminar",  InheritanceExamples.laminar)
   Graphviz.fromGraph(g).height(500).render(Format.SVG_STANDALONE).toFile(new File("examples/laminar.svg"))
