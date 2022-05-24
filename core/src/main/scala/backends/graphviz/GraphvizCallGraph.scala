@@ -26,7 +26,7 @@ object GraphvizCallGraph:
     val combinedNodes: Map[Method, Node] =
       nodes.foldLeft(Map.empty)(_ ++ _)
 
-    val arrows =
+    val links =
       for (source, target) <- diagram.pairs yield
         combinedNodes(source) link to(combinedNodes(target))
 
@@ -34,7 +34,7 @@ object GraphvizCallGraph:
       .directed
       .nodeAttr.`with`(Style.FILLED, Shape.RECT, Color.rgb("#b7c9e3").fill())
       .`with`(subGraphs*)
-      .`with`(arrows*)
+      .`with`(links*)
 
   def toSubgraph(ns: Type): (Graph, Map[Method, Node]) =
     val methods =
@@ -44,8 +44,7 @@ object GraphvizCallGraph:
     val g =
       graph(ns.name)
         .cluster
-        .graphAttr
-        .`with`(Label.of(ns.name))
+        .graphAttr.`with`(Label.of(ns.name))
         .`with`(methods.values.toSeq*)
     (g, methods)
 
