@@ -32,7 +32,7 @@ object GraphvizCallGraph:
 
     graph(name)
       .directed
-      .nodeAttr.`with`(Style.FILLED, Shape.RECT, Color.rgb("#b7c9e3").fill())
+      .nodeAttr.`with`(Style.FILLED, Shape.RECT, Color.rgb("#b7c9e3").fill)
       .`with`(subGraphs*)
       .`with`(links*)
 
