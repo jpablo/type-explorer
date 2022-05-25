@@ -1,5 +1,7 @@
 # Scala.js with sbt, Vite, Laminar and Chart.js
 
+https://github.com/sjrd/scalajs-sbt-vite-laminar-chartjs-example
+
 This is an example of putting together:
 
 * [Scala.js](https://www.scala-js.org/)

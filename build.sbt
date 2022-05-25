@@ -14,7 +14,15 @@ ThisBuild / scalacOptions ++=
     "-source:future"
   )
 
-
+/**
+  * The configuration
+  *   {{{ .crossType(CrossType.Pure).in(file("shared")) }}}
+  *
+  *   enable three subprojects:
+  *   - shared/.js (js stuff)
+  *   - shared/.jvm (jvm stuff)
+  *   - shared/src (for shared code)
+  */
 lazy val shared =
   crossProject(JSPlatform, JVMPlatform)
     .crossType(CrossType.Pure)
