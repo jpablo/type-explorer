@@ -36,15 +36,16 @@ body {
 
 
 #te-left-column {
-
+    padding: 10px;
 }
 
 #te-center-column {
     border: 1px solid black;
+    padding: 10px;
 }
 
 #te-right-column {
-
+    padding: 10px;
 }
 
 div {

@@ -13,17 +13,21 @@ object LeftColumn {
       children <-- elementStream
     )
 
-  def renderType(id: String, initial: Type, typeStream: EventStream[Type]): Div =
+  def renderType(id: String, initial: Type, typeStream: EventStream[Type]): Div = {
+    val entryId = s"menu-$id"
     div(cls := "accordion-item",
       div(cls := "accordion-header",
-        button(cls := "accordion-button", typ := "button",
+        button(cls := "accordion-button", typ := "button", dataAttr("bs-toggle") := "collapse", dataAttr("bs-target") := "#" + entryId,
           child.text <-- typeStream.map(_.name)
         )
       ),
-      div(cls :="accordion-collapse",
-        children <-- typeStream.map(p => p.methods.map(m => div(m.name)))
+      div(cls := "accordion-collapse collapse show", idAttr := entryId,
+        div(cls := "accordion-body",
+          children <-- typeStream.map(_.methods.map(m => div(m.name)))
+        )
       )
     )
+  }
 
 }
 

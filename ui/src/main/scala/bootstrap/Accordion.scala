@@ -1,0 +1,5 @@
+package bootstrap
+
+object Accordion {
+
+}
