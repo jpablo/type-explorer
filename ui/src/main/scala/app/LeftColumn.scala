@@ -9,13 +9,20 @@ object LeftColumn {
     MockData.typeStream.split(_.name)(renderType)
 
   def leftColumn =
-    div(cls := "col sidebar", idAttr := "te-left-column",
+    div(cls := "col accordion", idAttr := "te-left-column",
       children <-- elementStream
     )
 
   def renderType(id: String, initial: Type, typeStream: EventStream[Type]): Div =
-    div(
-      p(child.text <-- typeStream.map(_.name))
+    div(cls := "accordion-item",
+      div(cls := "accordion-header",
+        button(cls := "accordion-button", typ := "button",
+          child.text <-- typeStream.map(_.name)
+        )
+      ),
+      div(cls :="accordion-collapse",
+        children <-- typeStream.map(p => p.methods.map(m => div(m.name)))
+      )
     )
 
 }

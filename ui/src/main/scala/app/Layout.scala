@@ -11,7 +11,7 @@ object Layout {
 
   def container =
     div(idAttr := "te-toplevel",
-      div(idAttr := "te-header", "header"),
+      div(idAttr := "te-header", "Type Explorer"),
       div(idAttr := "te-main-area", cls := "container-fluid",
         div(cls := "row", styleAttr := "height: 100%",
           leftColumn,
@@ -19,7 +19,7 @@ object Layout {
           rightColumn
         ),
       ),
-      div(idAttr := "te-footer", "footer")
+      div(idAttr := "te-footer", "Environment: DEV")
     )
 
 }
