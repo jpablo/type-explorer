@@ -57,7 +57,7 @@ object CallGraphExamples {
       getUserSuperRatingTaskUnits       -> updateMetricsSuperRatingStatus,
     )
 
-  val callGraphExample =
+  lazy val callGraphExample =
     CallGraph(
       pairs = pairs,
       namesSpaces = List(

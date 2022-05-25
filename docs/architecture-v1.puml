@@ -7,34 +7,42 @@ skinparam responseMessageBelowArrow true
 participant UI
 
 group initial request
+    UI -> Backend: initial request
+    activate Backend
 
-UI -> Backend: initial request
+        Backend -> "Source/Jar": load Semantic DB
+        Backend <-- "Source/Jar": Semantic DB
 
-activate Backend
+        UI <- Backend: classes, functions,...
+    deactivate Backend
+end
 
-Backend -> "Source/Jar": load Semantic DB
-Backend <-- "Source/Jar": Semantic DB
-Backend -> PlantUML: puml diagram
-PlantUML -> Graphviz
-Backend <-- PlantUML: SVG
-UI <-- Backend: SVG
+group diagram request
+    UI -> Backend: selected classes
+    activate Backend
 
-deactivate Backend
+        Backend -> "Source/Jar": load Semantic DB
+        Backend <-- "Source/Jar": Semantic DB
+        Backend -> PlantUML: puml text
+        PlantUML -> Graphviz : render
+        Backend <-- PlantUML: SVG
+        UI <-- Backend: SVG
+    deactivate Backend
 end
 
 ...
 group interaction request
 
-autonumber 1
+    autonumber 1
 
-UI -> Backend: user event
+    UI -> Backend: user event
 
-activate Backend
+    activate Backend
 
-Backend -> PlantUML: puml diagram
-Backend <-- PlantUML: SVG
-UI <- Backend: SVG
-deactivate Backend
+    Backend -> PlantUML: puml text
+    Backend <-- PlantUML: SVG
+    UI <- Backend: SVG
+    deactivate Backend
 end
 
 @enduml

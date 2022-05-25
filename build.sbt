@@ -6,6 +6,7 @@ val circeVersion = "0.14.1"
 val zioPreludeVersion = "1.0.0-RC7"
 
 ThisBuild / organization := "net.jpablo"
+ThisBuild / scalaVersion := scala3Version
 ThisBuild / scalacOptions ++=
   Seq(
     "-Ykind-projector:underscores",
@@ -15,24 +16,24 @@ ThisBuild / scalacOptions ++=
 
 
 lazy val shared =
-  project
+  crossProject(JSPlatform, JVMPlatform)
+    .crossType(CrossType.Pure)
     .in(file("shared"))
     .settings(
       name := "type-explorer-shared",
-      version := "0.1.0",
-      scalaVersion := scala3Version
+      version := "0.1.0"
+    )
+    .jsSettings(
+      scalaJSUseMainModuleInitializer := false
     )
 
 lazy val core =
   project
     .in(file("core"))
-    .dependsOn(shared)
+    .dependsOn(shared.jvm)
     .settings(
       name := "type-explorer-core",
       version := "0.1.0",
-
-      scalaVersion := scala3Version,
-
       libraryDependencies ++= Seq(
         "dev.zio" %% "zio"               % zioVersion,
         "dev.zio" %% "zio-prelude"       % "1.0.0-RC8",
@@ -51,7 +52,7 @@ lazy val core =
 //        "io.circe" %% "circe-parser" % circeVersion,
 
         "com.lihaoyi" %% "scalatags" % "0.11.1" cross CrossVersion.for3Use2_13,
-        "org.scalameta" %% "scalameta" % "4.5.7" cross CrossVersion.for3Use2_13,
+        "org.scalameta" %% "scalameta" % "4.5.7" cross CrossVersion.for3Use2_13
       ),
       testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework")
     )
@@ -63,10 +64,9 @@ val publicProd = taskKey[String]("output directory for `npm run build`")
 lazy val ui =
   project
     .in(file("ui"))
-    .dependsOn(shared)
+    .dependsOn(shared.js)
     .enablePlugins(ScalaJSPlugin)
     .settings(
-      scalaVersion := scala3Version,
       scalaJSUseMainModuleInitializer := true,
       scalaJSLinkerConfig ~= {
         _.withModuleKind(ModuleKind.ESModule)
@@ -88,13 +88,13 @@ lazy val ui =
         "com.thesamet.scalapb" %% "scalapb-json4s" % "0.12.0" cross CrossVersion.for3Use2_13,
         "org.scalameta" %%% "scalameta" % "4.4.30" cross CrossVersion.for3Use2_13,
         "org.scala-js" %%% "scalajs-dom" % "2.0.0",
-        "com.raquo" %%% "laminar" % "0.14.2",
+        "com.raquo" %%% "laminar" % "0.14.2"
 //        "io.frontroute" %%% "frontroute" % "0.14.0"
       ),
       testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework"),
 
       publicDev := linkerOutputDirectory((Compile / fastLinkJS).value).getAbsolutePath,
-      publicProd := linkerOutputDirectory((Compile / fullLinkJS).value).getAbsolutePath,
+      publicProd := linkerOutputDirectory((Compile / fullLinkJS).value).getAbsolutePath
 
     )
 
@@ -107,8 +107,8 @@ def linkerOutputDirectory(v: Attributed[org.scalajs.linker.interface.Report]): F
 lazy val root =
   project
     .in(file("."))
-    .aggregate(core, ui)
+    .aggregate(core, ui, shared.js, shared.jvm)
     .settings(
       name := "type-explorer",
-      version := "0.1.0",
+      version := "0.1.0"
     )

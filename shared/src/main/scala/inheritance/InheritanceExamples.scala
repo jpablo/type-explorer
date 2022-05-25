@@ -52,7 +52,7 @@ object InheritanceExamples {
       `val`              -> strictSignal
     )
 
-  val laminar =
+  lazy val laminar =
     InheritanceDiagram(
       pairs = pairs,
       types = (pairs.map(_._1) ++ pairs.map(_._2)).distinct
@@ -61,6 +61,6 @@ object InheritanceExamples {
 }
 
 
-@main
-def inheritanceExample() =
-  println(InheritanceExamples.laminar)
+//@main
+//def inheritanceExample() =
+//  println(InheritanceExamples.laminar)
