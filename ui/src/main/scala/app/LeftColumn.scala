@@ -5,14 +5,13 @@ import models.Type
 
 object LeftColumn {
 
-  val elementStream: EventStream[List[Div]] = MockData.typeStream.split(_.name)(renderType)
+  val elementStream =
+    MockData.typeStream.split(_.name)(renderType)
 
-  def leftColumn() = {
-    div(cls := "col",
+  def leftColumn =
+    div(cls := "col sidebar", idAttr := "te-left-column",
       children <-- elementStream
     )
-  }
-
 
   def renderType(id: String, initial: Type, typeStream: EventStream[Type]): Div =
     div(

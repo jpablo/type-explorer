@@ -22,6 +22,8 @@ ThisBuild / scalacOptions ++=
   *   - shared/.js (js stuff)
   *   - shared/.jvm (jvm stuff)
   *   - shared/src (for shared code)
+  *
+  *   Check https://github.com/portable-scala/sbt-crossproject for more info
   */
 lazy val shared =
   crossProject(JSPlatform, JVMPlatform)

@@ -1,6 +1,8 @@
 package app
 
+import app.CenterColumn.centerColumn
 import app.LeftColumn.leftColumn
+import app.RightColumn.rightColumn
 import org.scalajs.dom
 import com.raquo.laminar.api.L.*
 
@@ -8,16 +10,16 @@ import com.raquo.laminar.api.L.*
 object Layout {
 
   def container =
-    div(cls := "container",
-
-      div(cls := "row",
-        leftColumn(),
-        div(cls := "col-6",
-          p("Col 2")
+    div(idAttr := "te-toplevel",
+      div(idAttr := "te-header", "header"),
+      div(idAttr := "te-main-area", cls := "container-fluid",
+        div(cls := "row", styleAttr := "height: 100%",
+          leftColumn,
+          centerColumn,
+          rightColumn
         ),
-        div(cls := "col",
-          p("Col 3")
-        )
-      )
+      ),
+      div(idAttr := "te-footer", "footer")
     )
+
 }

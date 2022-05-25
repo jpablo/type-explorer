@@ -1,8 +1,51 @@
+html {
+    height: 100%;
+}
+
+body {
+    font-family: Avenir, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    height: 100%;
+}
+
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+    /*background: lightsteelblue;*/
+    height: 100%;
+}
+
+#te-toplevel {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+#te-header {
+    background: lightpink;
+}
+
+#te-footer {
+    background: lightsteelblue;
+}
+
+#te-main-area {
+    border: 1px solid black;
+    flex-grow: 1;
+}
+
+
+#te-left-column {
+
+}
+
+#te-center-column {
+    border: 1px solid black;
+}
+
+#te-right-column {
+
+}
+
+div {
 }
