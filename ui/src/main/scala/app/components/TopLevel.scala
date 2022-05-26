@@ -7,10 +7,15 @@ object TopLevel {
   val newDiagramBus = new EventBus[String]
 
   def topLevel: Div =
-    div (idAttr := "te-toplevel",
+    div (
+      idAttr := "te-toplevel",
       appHeader (newDiagramBus),
-      div (idAttr := "te-main-area", cls := "container-fluid",
-        div (cls := "row", styleAttr := "height: 100%",
+      div (
+        idAttr := "te-main-area", 
+        cls := "container-fluid",
+        div (
+          cls := "row", 
+          styleAttr := "height: 100%",
           leftColumn,
           centerColumn (newDiagramBus.events),
           rightColumn

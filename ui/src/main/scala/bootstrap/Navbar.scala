@@ -3,9 +3,11 @@ package bootstrap
 import com.raquo.laminar.api.L.*
 
 def navbar(id: String, brand: String, items: Div*): Element =
-  nav (cls := "navbar navbar-expand-lg bg-light",
+  nav (
+    cls := "navbar navbar-expand-lg bg-light",
     idAttr := id,
-    div (cls :="container-fluid",
+    div (
+      cls :="container-fluid",
       a (cls :="navbar-brand", brand),
       button (
           cls := "navbar-toggler",
