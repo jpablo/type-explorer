@@ -2,7 +2,7 @@ package bootstrap
 
 import com.raquo.laminar.api.L.*
 
-def navbar(id: String, brand: String, items: Div*) =
+def navbar(id: String, brand: String, items: Div*): Element =
   nav (cls := "navbar navbar-expand-lg bg-light",
     idAttr := id,
     div (cls :="container-fluid",
