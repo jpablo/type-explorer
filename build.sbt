@@ -37,12 +37,12 @@ lazy val shared =
       scalaJSUseMainModuleInitializer := false
     )
 
-lazy val core =
+lazy val backend =
   project
-    .in(file("core"))
+    .in(file("backend"))
     .dependsOn(shared.jvm)
     .settings(
-      name := "type-explorer-core",
+      name := "type-explorer-backend",
       version := "0.1.0",
       libraryDependencies ++= Seq(
         "dev.zio" %% "zio"               % zioVersion,
@@ -117,7 +117,7 @@ def linkerOutputDirectory(v: Attributed[org.scalajs.linker.interface.Report]): F
 lazy val root =
   project
     .in(file("."))
-    .aggregate(core, ui, shared.js, shared.jvm)
+    .aggregate(backend, ui, shared.js, shared.jvm)
     .settings(
       name := "type-explorer",
       version := "0.1.0"
