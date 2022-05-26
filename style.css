@@ -4,6 +4,7 @@ html {
 
 body {
     font-family: Avenir, Helvetica, Arial, sans-serif;
+    font-size: small;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     height: 100%;
@@ -30,7 +31,7 @@ body {
 }
 
 #te-main-area {
-    border: 1px solid black;
+    border: 1px solid lightgray;
     flex-grow: 1;
 }
 
@@ -40,7 +41,8 @@ body {
 }
 
 #te-center-column {
-    border: 1px solid black;
+    border-left: 1px solid lightgray;
+    border-right: 1px solid lightgray;
     padding: 10px;
 }
 

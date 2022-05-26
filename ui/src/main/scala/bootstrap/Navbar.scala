@@ -20,9 +20,9 @@ def navbar(id: String, brand: String, items: Div*) =
           input (
             cls := "form-control me-2",
             tpe := "search",
-            value := "/a/b/c"
+            value := "/path/to/my/project"
           ),
-          button (cls := "btn btn-outline-success", tpe := "submit", "go")
+          button (cls := "btn btn-outline-success", tpe := "button", "go")
         ),
         ul (cls := "navbar-nav",
           li (cls := "nav-item",

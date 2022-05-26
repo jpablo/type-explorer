@@ -5,6 +5,6 @@ import com.raquo.laminar.api.L.*
 object RightColumn {
   def rightColumn =
     div (cls := "col", idAttr := "te-right-column",
-      p ("Col 3")
+      p ("Properties panel")
     )
 }

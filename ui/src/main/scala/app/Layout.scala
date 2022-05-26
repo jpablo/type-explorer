@@ -3,7 +3,7 @@ package app
 import app.CenterColumn.centerColumn
 import app.LeftColumn.leftColumn
 import app.RightColumn.rightColumn
-import app.Header.header
+import app.{header, footer}
 import org.scalajs.dom
 import com.raquo.laminar.api.L.*
 
@@ -12,7 +12,7 @@ object Layout {
 
   val newDiagramBus = new EventBus[String]
 
-  def container =
+  def container: Div =
     div (idAttr := "te-toplevel",
       header (newDiagramBus),
       div (idAttr := "te-main-area", cls := "container-fluid",
@@ -22,7 +22,7 @@ object Layout {
           rightColumn
         ),
       ),
-      div (idAttr := "te-footer", "Environment: DEV")
+      footer
     )
 
 }
