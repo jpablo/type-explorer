@@ -1,6 +1,6 @@
-package app
+package app.components
 
 import com.raquo.laminar.api.L.*
 
-def footer: Div =
+def appFooter: Div =
   div (idAttr := "te-footer", "Environment: DEV")

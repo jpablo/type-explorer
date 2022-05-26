@@ -1,20 +1,14 @@
-package app
+package app.components
 
-import app.CenterColumn.centerColumn
-import app.LeftColumn.leftColumn
-import app.RightColumn.rightColumn
-import app.{header, footer}
-import org.scalajs.dom
 import com.raquo.laminar.api.L.*
 
-
-object Layout {
+object TopLevel {
 
   val newDiagramBus = new EventBus[String]
 
   def topLevel: Div =
     div (idAttr := "te-toplevel",
-      header (newDiagramBus),
+      appHeader (newDiagramBus),
       div (idAttr := "te-main-area", cls := "container-fluid",
         div (cls := "row", styleAttr := "height: 100%",
           leftColumn,
@@ -22,7 +16,7 @@ object Layout {
           rightColumn
         ),
       ),
-      footer
+      appFooter
     )
-
 }
+

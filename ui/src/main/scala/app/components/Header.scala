@@ -1,10 +1,10 @@
-package app
+package app.components
 
 import com.raquo.laminar.api.L.*
 import org.scalajs.dom
 import bootstrap.{dropdown, navbar}
 
-def header(selectionBus: EventBus[String]) =
+def appHeader(selectionBus: EventBus[String]) =
   navbar (
     id    = "te-header",
     brand = "Type Explorer",

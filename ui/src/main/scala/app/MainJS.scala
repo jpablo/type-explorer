@@ -5,6 +5,6 @@ import com.raquo.laminar.api.L.render
 
 object MainJS {
   def main(args: Array[String]): Unit =
-    render(document.querySelector("#app"), app.Layout.topLevel)
+    render(document.querySelector("#app"), components.TopLevel.topLevel)
 
 }
