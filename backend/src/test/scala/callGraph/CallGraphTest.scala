@@ -14,7 +14,7 @@ import scala.meta.*
 import scalapb.json4s.JsonFormat
 
 
-object CallGraphTest extends DefaultRunnableSpec {
+object CallGraphTest extends ZIOSpecDefault {
 
 //  val path = Paths.get(new URI("file:///Users/jpablo/proyectos/varios/type-explorer-core/core/src/test/resources/QueryController.scala.semanticdb"))
   val paths = Paths.get(new URI("file:///Users/jpablo/code/Event-Horizon-API/target/scala-2.12/classes/META-INF/semanticdb/app/controllers/QueryController.scala.semanticdb"))

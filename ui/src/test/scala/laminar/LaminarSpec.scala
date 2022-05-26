@@ -4,7 +4,7 @@ import zio.test.*
 import zio.test.Assertion.*
 import com.raquo.laminar.api.L.{*, given}
 
-object LaminarSpec extends DefaultRunnableSpec {
+object LaminarSpec extends ZIOSpecDefault {
 
   def spec = suite("LaminarSpec")(
     test("div") {

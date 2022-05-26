@@ -2,7 +2,7 @@ import zio.test.*
 import zio.test.Assertion.*
 // import zio.test.magnolia.DeriveGen
 
-object Test1Spec extends DefaultRunnableSpec {
+object Test1Spec extends ZIOSpecDefault {
 
   def spec = suite("suite")(
     test("test") {

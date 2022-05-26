@@ -12,7 +12,7 @@ import scala.concurrent.Future
 import concurrent.ExecutionContext.Implicits.global
 import fixtures.TestableOwner
 
-object AirFlowSpec extends DefaultRunnableSpec {
+object AirFlowSpec extends ZIOSpecDefault {
 
   given owner: Owner = new TestableOwner
 

@@ -1,9 +1,11 @@
 import org.scalajs.linker.interface.ModuleSplitStyle
 
 val scala3Version = "3.1.2"
-val zioVersion = "2.0.0-M6-2"
+val zioVersion = "2.0.0-RC5"
 val circeVersion = "0.14.1"
-val zioPreludeVersion = "1.0.0-RC7"
+val zioPreludeVersion = "1.0.0-RC14"
+val scalametaVersion = "4.5.8"
+val zioHttpVersion = "2.0.0-RC7"
 
 ThisBuild / organization := "net.jpablo"
 ThisBuild / scalaVersion := scala3Version
@@ -46,10 +48,12 @@ lazy val backend =
       version := "0.1.0",
       libraryDependencies ++= Seq(
         "dev.zio" %% "zio"               % zioVersion,
-        "dev.zio" %% "zio-prelude"       % "1.0.0-RC8",
+//        "dev.zio" %% "zio-prelude"       % zioPreludeVersion,
         "dev.zio" %% "zio-test"          % zioVersion % "test",
         "dev.zio" %% "zio-test-sbt"      % zioVersion % "test",
         "dev.zio" %% "zio-test-magnolia" % zioVersion % "test",
+
+        "io.d11"  %% "zhttp" % zioHttpVersion,
 
         "guru.nidi" % "graphviz-java" % "0.18.1",
         "net.sourceforge.plantuml" % "plantuml" % "1.2022.5",
@@ -62,7 +66,7 @@ lazy val backend =
 //        "io.circe" %% "circe-parser" % circeVersion,
 
         "com.lihaoyi" %% "scalatags" % "0.11.1" cross CrossVersion.for3Use2_13,
-        "org.scalameta" %% "scalameta" % "4.5.7" cross CrossVersion.for3Use2_13
+        "org.scalameta" %% "scalameta" % scalametaVersion cross CrossVersion.for3Use2_13
       ),
       testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework")
     )
@@ -96,7 +100,7 @@ lazy val ui =
         "dev.zio" %%% "zio-test-magnolia" % zioVersion % "test",
 
         "com.thesamet.scalapb" %% "scalapb-json4s" % "0.12.0" cross CrossVersion.for3Use2_13,
-        "org.scalameta" %%% "scalameta" % "4.4.30" cross CrossVersion.for3Use2_13,
+        "org.scalameta" %%% "scalameta" % scalametaVersion cross CrossVersion.for3Use2_13,
         "org.scala-js" %%% "scalajs-dom" % "2.0.0",
         "com.raquo" %%% "laminar" % "0.14.2"
 //        "io.frontroute" %%% "frontroute" % "0.14.0"
