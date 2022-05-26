@@ -7,13 +7,13 @@ import models.Type
 object LeftColumn {
 
   def leftColumn =
-    accordion(
+    accordion (
       section         = MockData.typeStream,
       sectionId       = _.name,
       sectionHeader   = _.name,
       sectionChildren = _.methods.map(m => div(m.name)),
       alwaysOpen      = true
-    ).amend(
+    ) amend (
       idAttr := "te-left-column",
       cls := ("col", `accordion-flush`, open)
     )

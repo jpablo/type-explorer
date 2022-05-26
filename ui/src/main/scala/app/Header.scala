@@ -7,10 +7,10 @@ import bootstrap.{dropdown, navbar}
 object Header {
 
   def header(selectionBus: EventBus[String]) =
-    navbar(
+    navbar (
       id    = "te-header",
       brand = "Type Explorer",
-      items = dropdown(
+      dropdown (
         label = "Diagram",
         elements = List("Inheritance", "Call graph"),
         selectionBus = selectionBus
