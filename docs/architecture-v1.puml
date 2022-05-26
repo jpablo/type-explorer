@@ -7,7 +7,7 @@ skinparam responseMessageBelowArrow true
 participant UI
 
 group initial request
-    UI -> Backend: initial request
+    UI -> Backend: path to Scala project
     activate Backend
 
         Backend -> "Source/Jar": load Semantic DB

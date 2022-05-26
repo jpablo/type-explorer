@@ -42,7 +42,7 @@ object PlantumlInheritance {
 
 @main
 def plantumlExample() = {
-  val diagram = toDiagram(InheritanceExamples.laminar)
+  val diagram: String = toDiagram(InheritanceExamples.laminar)
   println(diagram)
   println("-------------------")
   var svg = renderDiagram("laminar", diagram)
