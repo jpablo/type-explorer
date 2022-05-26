@@ -12,7 +12,7 @@ object Layout {
 
   val newDiagramBus = new EventBus[String]
 
-  def container: Div =
+  def topLevel: Div =
     div (idAttr := "te-toplevel",
       header (newDiagramBus),
       div (idAttr := "te-main-area", cls := "container-fluid",
