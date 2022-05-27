@@ -1,7 +1,7 @@
 import org.scalajs.linker.interface.ModuleSplitStyle
 
 val scala3Version = "3.1.2"
-val zioVersion = "2.0.0-RC5"
+val zioVersion = "2.0.0-RC6"
 val circeVersion = "0.14.1"
 val zioPreludeVersion = "1.0.0-RC14"
 val scalametaVersion = "4.5.8"
@@ -53,7 +53,9 @@ lazy val backend =
         "dev.zio" %% "zio-test-sbt"      % zioVersion % "test",
         "dev.zio" %% "zio-test-magnolia" % zioVersion % "test",
 
-        "io.d11"  %% "zhttp" % zioHttpVersion,
+        "io.d11"  %% "zhttp" % zioHttpVersion excludeAll (
+          ExclusionRule(organization = "org.scala-lang.modules")
+        ),
 
         "guru.nidi" % "graphviz-java" % "0.18.1",
         "net.sourceforge.plantuml" % "plantuml" % "1.2022.5",
