@@ -5,7 +5,7 @@ val zioVersion = "2.0.0-RC6"
 val circeVersion = "0.14.1"
 val zioPreludeVersion = "1.0.0-RC14"
 val scalametaVersion = "4.5.8"
-val zioHttpVersion = "2.0.0-RC7"
+val zioHttpVersion = "2.0.0-RC7+1-c29b7875+20220528-1913-SNAPSHOT"
 
 ThisBuild / organization := "net.jpablo"
 ThisBuild / scalaVersion := scala3Version
@@ -53,9 +53,7 @@ lazy val backend =
         "dev.zio" %% "zio-test-sbt"      % zioVersion % "test",
         "dev.zio" %% "zio-test-magnolia" % zioVersion % "test",
 
-        "io.d11"  %% "zhttp" % zioHttpVersion excludeAll (
-          ExclusionRule(organization = "org.scala-lang.modules")
-        ),
+        "io.d11"  %% "zhttp" % zioHttpVersion,
 
         "guru.nidi" % "graphviz-java" % "0.18.1",
         "net.sourceforge.plantuml" % "plantuml" % "1.2022.5",
