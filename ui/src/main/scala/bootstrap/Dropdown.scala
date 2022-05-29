@@ -2,7 +2,7 @@ package bootstrap
 
 import com.raquo.laminar.api.L.{*, given}
 
-def dropdown(label: String, elements: List[String], selectionBus: EventBus[String]): Div =
+def dropdown[A](label: String, elements: List[A], selectionBus: EventBus[A]): Div =
   div (cls := "dropdown",
     button (
       cls := "btn btn-primary dropdown-toggle",
@@ -13,7 +13,7 @@ def dropdown(label: String, elements: List[String], selectionBus: EventBus[Strin
     ul (cls := "dropdown-menu",
       for elem <- elements yield
         li (cls := "dropdown-item", href := "#",
-          elem,
+          elem.toString,
           onClick.map(_ => elem) --> selectionBus
         )
     )
