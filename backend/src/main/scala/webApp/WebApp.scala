@@ -12,7 +12,10 @@ object WebApp extends ZIOAppDefault {
     case Method.GET -> !! / "inheritance" =>
       val plantUmlText = PlantumlInheritance.toDiagram(InheritanceExamples.laminar)
       val svgText = PlantumlInheritance.renderDiagram("laminar", plantUmlText)
-      Response.text(svgText).withContentType("image/svg+xml").addHeader("Access-Control-Allow-Origin" -> "*")
+      
+      Response.text(svgText)
+        .withContentType("image/svg+xml")
+        .addHeader("Access-Control-Allow-Origin" -> "*")
   }
 
   val run =
