@@ -3,22 +3,29 @@ package app.components
 import com.raquo.laminar.api.L.*
 import io.laminext.fetch.*
 import org.scalajs.dom
+import org.scalajs.dom.Document
+
+import scala.scalajs.js.Object.keys
 
 object TopLevel {
 
   val newDiagramBus = new EventBus[DiagramType]
   val parser = new dom.DOMParser()
 
-  var svgStream: EventStream[dom.Document] =
+  var svgStream: EventStream[dom.Element] =
     for
-      dt <- newDiagramBus.events
-      fetchEventStreamBuilder =
-        dt match
+      event <- newDiagramBus.events // EventStream[DiagramType]
+      fetchEventStreamBuilder: FetchEventStreamBuilder =
+        event match
           case DiagramType.Inheritance => Fetch.get("http://localhost:8090/inheritance")
           case DiagramType.CallGraph => Fetch.get("http://localhost:8090/call-graph")
-      response: FetchResponse[String] <- fetchEventStreamBuilder.text
+      response: FetchResponse[String] <- fetchEventStreamBuilder.text // EventStream[FetchResponse[String]]
     yield
-      parser.parseFromString(response.data, dom.MIMEType.`image/svg+xml`)
+      val mimeType =
+        dom.MIMEType.`image/svg+xml`
+      val d: Document = parser.parseFromString(response.data, mimeType)
+//      val errorNode = d.querySelector("parsererror")
+      d.documentElement
 
   def topLevel: Div =
     div (

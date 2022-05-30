@@ -22,7 +22,7 @@ object InheritanceExamples {
   val strictSignal       = Type("StrictSignal")
   val `val`              = Type("Val")
 
-  val pairs =
+  val pairs: List[(Type, Type)] =
     List(
       baseObservable     -> source,
       baseObservable     -> named,
