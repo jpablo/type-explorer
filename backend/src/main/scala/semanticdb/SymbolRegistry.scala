@@ -3,6 +3,8 @@ package semanticdb
 import java.nio.file.Path
 import scala.meta.internal.semanticdb
 import scala.meta.internal.semanticdb.{SymbolInformation, SymbolOccurrence, TextDocument, TextDocuments}
+import java.nio.file.Paths
+import java.net.URI
 
 object SymbolRegistry {
 
@@ -11,8 +13,12 @@ object SymbolRegistry {
     * @param p Path to scan
     * @return
     */
-  def scan(p: Path) = {
-    val documents = collection.mutable.Map.empty[SymbolInformation, List[SymbolOccurrence]].withDefaultValue(List.empty)
+  def scan(p: Path): List[(SymbolInformation, List[SymbolOccurrence])] = {
+    
+    val documents = 
+      collection.mutable.Map.empty[SymbolInformation, List[SymbolOccurrence]]
+      .withDefaultValue(List.empty)
+
     semanticdb.Locator(p) { (_, payload: TextDocuments) =>
       for (document <- payload.documents) do
         val occurrences = document.occurrences.groupBy(_.symbol).withDefaultValue(List.empty)
@@ -23,3 +29,13 @@ object SymbolRegistry {
   }
 
 }
+
+
+@main
+def testScan =
+  val paths = Paths.get(new URI(
+    // "file:///Users/jpablo/proyectos/playground/type-explorer/.bloop/sharedJVM/bloop-bsp-clients-classes/classes-Metals-tWte2ISDQFO3HZuNZmpIQA==/META-INF/semanticdb/shared/src/main/scala/models/Models.scala.semanticdb",
+    "file:///Users/jpablo/proyectos/playground/type-explorer/.bloop/"
+  ))
+  val lst = SymbolRegistry.scan(paths)
+  lst.map(_._1.displayName).foreach(println)

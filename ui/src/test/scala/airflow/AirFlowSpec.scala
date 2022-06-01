@@ -29,7 +29,7 @@ object AirFlowSpec extends ZIOSpecDefault {
 //      val s: Subscription = intStream.addObserver(???)(???)
 //      s.kill()
 
-      val futureStream: EventStream[Int] = EventStream.fromFuture(Future.apply(1))
+      val futureStream: EventStream[Int] = EventStream.fromFuture(Future(1))
 
       // avoid
       val seqStream: EventStream[Int] = EventStream.fromSeq(List(1,2,3))
@@ -41,7 +41,7 @@ object AirFlowSpec extends ZIOSpecDefault {
       stream.foreach(println)
       callback(2)
 
-      assert(1)(equalTo(1))
+      assertTrue(false)
     },
     test("Signal") {
 

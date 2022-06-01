@@ -2,7 +2,8 @@ import org.scalajs.linker.interface.ModuleSplitStyle
 
 val scala3Version = "3.1.2"
 val zioVersion = "2.0.0-RC6"
-val circeVersion = "0.14.1"
+val zioJsonVersion = "0.3.0-RC8"
+val circeVersion = "0.14.2"
 val zioPreludeVersion = "1.0.0-RC14"
 val scalametaVersion = "4.5.8"
 val zioHttpVersion = "2.0.0-RC7+1-c29b7875+20220528-1913-SNAPSHOT"
@@ -11,6 +12,7 @@ ThisBuild / organization := "net.jpablo"
 ThisBuild / scalaVersion := scala3Version
 ThisBuild / scalacOptions ++=
   Seq(
+//    "-Yrangepos",
     "-Ykind-projector:underscores",
     "-language:implicitConversions",
     "-source:future"
@@ -33,7 +35,12 @@ lazy val shared =
     .in(file("shared"))
     .settings(
       name := "type-explorer-shared",
-      version := "0.1.0"
+      version := "0.1.0",
+      libraryDependencies ++= Seq(
+        "io.circe" %%% "circe-core" % circeVersion,
+        "io.circe" %%% "circe-generic" % circeVersion,
+        "io.circe" %%% "circe-parser" % circeVersion
+      )
     )
     .jsSettings(
       scalaJSUseMainModuleInitializer := false
@@ -53,6 +60,10 @@ lazy val backend =
         "dev.zio" %% "zio-test-sbt"      % zioVersion % "test",
         "dev.zio" %% "zio-test-magnolia" % zioVersion % "test",
 
+        // This has a conflict with scalameta
+        // org.scala-lang.modules:scala-collection-compat _3, _2.13
+//        "dev.zio"  %% "zio-json" % zioJsonVersion,
+
         "io.d11"  %% "zhttp" % zioHttpVersion,
 
         "guru.nidi" % "graphviz-java" % "0.18.1",
@@ -61,9 +72,9 @@ lazy val backend =
 //        "com.softwaremill.quicklens" %% "quicklens" % "1.7.5",
 //        "org.typelevel" %% "cats-core" % "2.6.1",
 
-//        "io.circe" %% "circe-core" % circeVersion,
-//        "io.circe" %% "circe-generic" % circeVersion,
-//        "io.circe" %% "circe-parser" % circeVersion,
+        "io.circe" %% "circe-core" % circeVersion,
+        "io.circe" %% "circe-generic" % circeVersion,
+        "io.circe" %% "circe-parser" % circeVersion,
 
         "com.lihaoyi" %% "scalatags" % "0.11.1" cross CrossVersion.for3Use2_13,
         "org.scalameta" %% "scalameta" % scalametaVersion cross CrossVersion.for3Use2_13

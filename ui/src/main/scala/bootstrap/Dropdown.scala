@@ -14,7 +14,7 @@ def dropdown[A](label: String, elements: List[A], selectionBus: EventBus[A]): Di
       for elem <- elements yield
         li (cls := "dropdown-item", href := "#",
           elem.toString,
-          onClick.map(_ => elem) --> selectionBus
+          onClick.mapToStrict(elem) --> selectionBus
         )
     )
   )

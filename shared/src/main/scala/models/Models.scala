@@ -1,6 +1,13 @@
 package models
 
+import io.circe.*, io.circe.generic.semiauto.*
+
 case class Package(name: String)
+
+object Package:
+  given Encoder[Package] = deriveEncoder
+
+
 
 case class Type(
   name     : String,
@@ -8,4 +15,12 @@ case class Type(
   methods  : List[Method] = List.empty
 )
 
+object Type:
+  given Encoder[Type] = deriveEncoder
+
+
+
 case class Method(name: String, returnType: Option[Type] = None)
+
+object Method:
+  given Encoder[Method] = deriveEncoder
