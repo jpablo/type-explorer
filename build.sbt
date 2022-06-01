@@ -114,7 +114,8 @@ lazy val ui =
         "org.scalameta" %%% "scalameta" % scalametaVersion cross CrossVersion.for3Use2_13,
         "org.scala-js" %%% "scalajs-dom" % "2.0.0",
         "com.raquo" %%% "laminar" % "0.14.2",
-        "io.laminext" %%% "fetch" % "0.14.3"
+        "io.laminext" %%% "fetch" % "0.14.3",
+        "io.laminext" %%% "fetch-circe" % "0.14.3"
 //        "io.frontroute" %%% "frontroute" % "0.14.0"
       ),
       testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework"),

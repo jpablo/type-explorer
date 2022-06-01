@@ -5,7 +5,7 @@ import io.circe.*, io.circe.generic.semiauto.*
 case class Package(name: String)
 
 object Package:
-  given Encoder[Package] = deriveEncoder
+  given Codec[Package] = deriveCodec
 
 
 
@@ -16,11 +16,11 @@ case class Type(
 )
 
 object Type:
-  given Encoder[Type] = deriveEncoder
+  given Codec[Type] = deriveCodec
 
 
 
 case class Method(name: String, returnType: Option[Type] = None)
 
 object Method:
-  given Encoder[Method] = deriveEncoder
+  given Codec[Method] = deriveCodec
