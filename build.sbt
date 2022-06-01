@@ -22,7 +22,7 @@ ThisBuild / scalacOptions ++=
   * The configuration
   *   {{{ .crossType(CrossType.Pure).in(file("shared")) }}}
   *
-  *   enable three subprojects:
+  *   enables three subprojects:
   *   - shared/.js (js stuff)
   *   - shared/.jvm (jvm stuff)
   *   - shared/src (for shared code)

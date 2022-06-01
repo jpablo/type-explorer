@@ -17,40 +17,40 @@ import java.io.File
 
 object GraphvizCallGraph:
 
-  def toGraph(name: String, diagram: CallGraph): Graph =
+  def toGraph (name: String, diagram: CallGraph): Graph =
     val (subGraphs, nodes) =
       diagram.namesSpaces
-        .map(toSubgraph)
+        .map (toSubgraph)
         .unzip
 
     val combinedNodes: Map[Method, Node] =
-      nodes.foldLeft(Map.empty)(_ ++ _)
+      nodes.foldLeft (Map.empty) (_ ++ _)
 
     val links =
       for (source, target) <- diagram.pairs yield
-        combinedNodes(source) link to(combinedNodes(target))
+        combinedNodes (source) link to (combinedNodes (target))
 
-    graph(name)
+    graph (name)
       .directed
       .nodeAttr.`with`(Style.FILLED, Shape.RECT, Color.rgb("#b7c9e3").fill)
       .`with`(subGraphs*)
       .`with`(links*)
 
-  def toSubgraph(ns: Type): (Graph, Map[Method, Node]) =
+  def toSubgraph (ns: Type): (Graph, Map[Method, Node]) =
     val methods =
       ns.methods
-        .map(m => m -> toNode(m))
+        .map (m => m -> toNode (m))
         .toMap
     val g =
-      graph(ns.name)
+      graph (ns.name)
         .cluster
         .graphAttr.`with`(Label.of(ns.name))
         .`with`(methods.values.toSeq*)
     (g, methods)
 
 
-  private def toNode(box: Method): Node =
-    node(box.name)
+  private def toNode (box: Method): Node =
+    node (box.name)
 
 end GraphvizCallGraph
 
