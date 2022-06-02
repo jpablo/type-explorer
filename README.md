@@ -29,6 +29,12 @@ $ npm install
 
 ## Development
 
+### Running the Backend
+
+Running inside and IDE InteliJ, run the `WebApp` module at at `WebApp.scala` 
+
+### Running the UI
+
 Open two terminals.
 In the first one, start `sbt` and, within, continuously build the Scala.js project:
 
@@ -48,7 +54,7 @@ $ npm run dev
 
 Follow the URL presented to you by Vite to open the application.
 
-You can now continuously edit the `Main.scala` file, and Vite will automatically reload the page on save.
+You can now continuously edit files in the subproject `UI`, for example the `MainJS.scala` file, and Vite will automatically reload the page on save.
 
 ## Production build
 
