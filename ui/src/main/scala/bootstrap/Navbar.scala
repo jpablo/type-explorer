@@ -1,8 +1,10 @@
 package bootstrap
 
 import com.raquo.laminar.api.L.*
+import org.scalajs.dom
 
-def navbar(id: String, brand: String, items: Div*): Element =
+def navbar(id: String, brand: String, projectPath: Var[String], items: Div*): Element =
+  val onEnterPress = onKeyPress.filter(_.keyCode == dom.ext.KeyCode.Enter)
   nav (
     cls := "navbar navbar-expand-lg bg-light",
     idAttr := id,
@@ -22,7 +24,7 @@ def navbar(id: String, brand: String, items: Div*): Element =
           input (
             cls := "form-control me-2",
             tpe := "search",
-            value := "/path/to/my/project"
+            onEnterPress.preventDefault.mapToValue --> projectPath
           ),
           button (cls := "btn btn-outline-success", tpe := "button", "go")
         ),

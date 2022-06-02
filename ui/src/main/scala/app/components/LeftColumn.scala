@@ -3,13 +3,11 @@ package app.components
 import bootstrap.Accordion.{`accordion-flush`, accordion, open}
 import com.raquo.laminar.api.L.*
 import models.Type
-import io.laminext.fetch.*
-import io.laminext.fetch.circe.*
 import com.raquo.airstream.core.EventStream
 
-def leftColumn =
+def leftColumn($classes: EventStream[List[Type]]) =
   accordion (
-    section         = getClasses,
+    section         = $classes,
     sectionId       = _.name,
     sectionHeader   = _.name,
     sectionChildren = _.methods.map(m => div(m.name)),
@@ -19,11 +17,6 @@ def leftColumn =
     cls := ("col", `accordion-flush`, open)
   )
 
-def getClasses: EventStream[List[Type]] =
-  for
-    response <- Fetch.get("http://localhost:8090/classes").decode[List[Type]]
-  yield
-    response.data
 
 object MockData {
   val types =

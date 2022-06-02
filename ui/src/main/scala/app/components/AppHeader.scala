@@ -14,14 +14,15 @@ enum DiagramType:
 
 import DiagramType.*
 
-def appHeader(selectionBus: EventBus[DiagramType]) =
+def appHeader($selection: EventBus[DiagramType], $projectPath: Var[String]) =
   navbar (
     id    = "te-header",
     brand = "Type Explorer",
+    projectPath = $projectPath,
     dropdown (
       label = "Diagram",
       elements = List(Inheritance, CallGraph),
-      selectionBus = selectionBus
+      $selection = $selection
     )
   )
 

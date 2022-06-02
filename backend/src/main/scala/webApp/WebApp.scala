@@ -12,14 +12,16 @@ import java.net.URI
 
 object WebApp extends ZIOAppDefault {
 
+  val allowCors = "Access-Control-Allow-Origin" -> "*"
+
   val app = Http.collect[Request] {
 
-    case Method.GET -> !! / "classes" =>
+    case Method.GET -> !! / "classes" / path =>
       val paths = 
-        Paths.get (new URI ("file:///Users/jpablo/proyectos/playground/type-explorer/.bloop/"))      
+        Paths.get (new URI (s"file://$path"))      
       val namespaces = ClassesList.scan (paths)
       Response.json(namespaces.asJson.toString)
-        .addHeader("Access-Control-Allow-Origin" -> "*")
+        .addHeader(allowCors)
 
     case Method.GET -> !! / "inheritance" =>
       val plantUmlText = PlantumlInheritance.toDiagram(InheritanceExamples.laminar)
@@ -27,7 +29,7 @@ object WebApp extends ZIOAppDefault {
 
       Response.text(svgText)
         .withContentType("image/svg+xml")
-        .addHeader("Access-Control-Allow-Origin" -> "*")
+        .addHeader(allowCors)
   }
 
   val run =
