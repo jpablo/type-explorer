@@ -10,7 +10,7 @@ def leftColumn($classes: EventStream[List[Type]]) =
     section         = $classes,
     sectionId       = _.name,
     sectionHeader   = _.name,
-    sectionChildren = _.methods.map(m => div(m.name)),
+    sectionChildren = _.methods.map (m => div (m.name)),
     alwaysOpen      = true
   ) amend (
     idAttr := "te-left-column",

@@ -16,12 +16,16 @@ object WebApp extends ZIOAppDefault {
 
   val app = Http.collect[Request] {
 
-    case Method.GET -> !! / "classes" / path =>
-      val paths = 
-        Paths.get (new URI (s"file://$path"))      
-      val namespaces = ClassesList.scan (paths)
-      Response.json(namespaces.asJson.toString)
-        .addHeader(allowCors)
+    case req @ Method.GET -> !! / "classes" =>
+
+      req.url.queryParams.get("path") match
+        case Some(h :: t) =>
+          val paths = Paths.get(h, t*)
+          val namespaces = ClassesList.scan(paths)
+          Response.json(namespaces.asJson.toString)
+            .addHeader(allowCors)
+        case _ =>
+          Response.status(Status.BadRequest)
 
     case Method.GET -> !! / "inheritance" =>
       val plantUmlText = PlantumlInheritance.toDiagram(InheritanceExamples.laminar)

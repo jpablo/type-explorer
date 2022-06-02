@@ -49,9 +49,9 @@ object ClassesList {
 //        }
       Type (
         sym.displayName,
-        Some (Package (sym.symbol.split("/").init.mkString("/"))),
+        Some (Package (sym.symbol.split ("/").init.mkString ("/"))),
         sl.map { fullName =>
-          val parts = fullName.split("""\.""")
+          val parts = fullName.split ("""\.""")
           val name = if parts.length > 1 then parts(1) else ""
           Method(name)
         }
