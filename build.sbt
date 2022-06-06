@@ -8,9 +8,12 @@ val zioPreludeVersion = "1.0.0-RC14"
 val scalametaVersion = "4.5.8"
 val zioHttpVersion = "2.0.0-RC8+1-6d179026-SNAPSHOT"
 
+Global / onChangedBuildSource := ReloadOnSourceChanges
+
 ThisBuild / resolvers += "Sonatype OSS Snapshots" at "https://s01.oss.sonatype.org/content/repositories/snapshots"
 ThisBuild / organization := "net.jpablo"
 ThisBuild / scalaVersion := scala3Version
+ThisBuild / semanticdbEnabled := true
 ThisBuild / scalacOptions ++=
   Seq(
 //    "-Yrangepos",

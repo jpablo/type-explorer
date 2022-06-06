@@ -24,6 +24,7 @@ object WebApp extends ZIOAppDefault {
           val namespaces = ClassesList.scan(paths)
           Response.json(namespaces.asJson.toString)
             .addHeader(allowCors)
+            
         case _ =>
           Response.status(Status.BadRequest)
 
