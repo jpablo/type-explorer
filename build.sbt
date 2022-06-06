@@ -6,8 +6,9 @@ val zioJsonVersion = "0.3.0-RC8"
 val circeVersion = "0.14.2"
 val zioPreludeVersion = "1.0.0-RC14"
 val scalametaVersion = "4.5.8"
-val zioHttpVersion = "2.0.0-RC7+1-c29b7875+20220528-1913-SNAPSHOT"
+val zioHttpVersion = "2.0.0-RC8+1-6d179026-SNAPSHOT"
 
+ThisBuild / resolvers += "Sonatype OSS Snapshots" at "https://s01.oss.sonatype.org/content/repositories/snapshots"
 ThisBuild / organization := "net.jpablo"
 ThisBuild / scalaVersion := scala3Version
 ThisBuild / scalacOptions ++=
