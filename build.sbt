@@ -73,8 +73,8 @@ lazy val backend =
         "guru.nidi" % "graphviz-java" % "0.18.1",
         "net.sourceforge.plantuml" % "plantuml" % "1.2022.5",
         "com.thesamet.scalapb" %% "scalapb-json4s" % "0.12.0" cross CrossVersion.for3Use2_13,
+        "org.json4s" %% "json4s-native" % "4.0.5" cross CrossVersion.for3Use2_13,
 //        "com.softwaremill.quicklens" %% "quicklens" % "1.7.5",
-//        "org.typelevel" %% "cats-core" % "2.6.1",
 
         "io.circe" %% "circe-core" % circeVersion,
         "io.circe" %% "circe-generic" % circeVersion,

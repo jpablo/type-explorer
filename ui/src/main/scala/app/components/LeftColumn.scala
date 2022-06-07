@@ -17,21 +17,3 @@ def leftColumn($classes: EventStream[List[Type]]) =
     cls := ("col", `accordion-flush`, open)
   )
 
-
-object MockData {
-  val types =
-    List(
-      callGraph.CallGraphExamples.TaskAllocationController,
-      callGraph.CallGraphExamples.TaskAllocationServiceImpl,
-      callGraph.CallGraphExamples.MetricsServiceImpl,
-      inheritance.InheritanceExamples.baseObservable,
-      inheritance.InheritanceExamples.observable,
-      inheritance.InheritanceExamples.observer,
-      inheritance.InheritanceExamples.source,
-      inheritance.InheritanceExamples.named,
-      inheritance.InheritanceExamples.eventStream,
-    )
-
-  val typeStream: EventStream[List[Type]] =
-    EventStream.fromSeq(List(types))
-}
