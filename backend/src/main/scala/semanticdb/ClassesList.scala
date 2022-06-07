@@ -11,9 +11,7 @@ import models.{Package, Type, Method}
 object ClassesList {
 
   def scan (p: Path): List[Type] = {
-    
     val documents = collection.mutable.ArrayBuffer.empty[SymbolInformation]
-
     semanticdb.Locator (p) { (_, payload: TextDocuments) =>
       for 
         document <- payload.documents

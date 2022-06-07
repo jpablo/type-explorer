@@ -19,12 +19,13 @@ object WebApp extends ZIOAppDefault {
     case req @ Method.GET -> !! / "classes" =>
 
       req.url.queryParams.get("path") match
-        case Some(h :: t) =>
+
+        case r @ Some(h :: t) if h.nonEmpty =>
           val paths = Paths.get(h, t*)
           val namespaces = ClassesList.scan(paths)
           Response.json(namespaces.asJson.toString)
             .addHeader(allowCors)
-            
+
         case _ =>
           Response.status(Status.BadRequest)
 
