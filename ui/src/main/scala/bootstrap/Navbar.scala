@@ -24,6 +24,7 @@ def navbar(id: String, brand: String, projectPath: Var[String], items: Div*): El
           input (
             cls := "form-control me-2",
             tpe := "search",
+            value := "/Users/jpablo/proyectos/playground/type-explorer",
             onEnterPress.preventDefault.mapToValue --> projectPath
           ),
           button (cls := "btn btn-outline-success", tpe := "button", "go")

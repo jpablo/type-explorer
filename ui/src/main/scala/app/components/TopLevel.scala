@@ -6,12 +6,13 @@ import org.scalajs.dom
 import models.Type
 import io.laminext.fetch.*
 import io.laminext.fetch.circe.*
-
+import scala.scalajs.js.typedarray.Int8Array
+import scala.meta.internal.semanticdb.{TextDocuments, TextDocument}
 
 object TopLevel {
 
   val $newDiagramType = new EventBus[DiagramType]
-  val $projectPath = Var[String] ("")
+  val $projectPath = Var[String] ("/Users/jpablo/proyectos/playground/type-explorer")
   val parser = new dom.DOMParser()
 
   def topLevel: Div =
@@ -33,12 +34,13 @@ object TopLevel {
     )
 
 
-  def getClasses ($projectPath: Signal[String]): EventStream[List[Type]] =
+  def getClasses ($projectPath: Signal[String]) : EventStream[List[TextDocument]] =
     for
       pp <- $projectPath
-      response <- Fetch.get("http://localhost:8090/classes?path=" + pp).decode[List[Type]]
+      response <- Fetch.get("http://localhost:8090/semanticdb?path=" + pp).arrayBuffer
     yield
-      response.data
+      val ia = Int8Array(response.data, 0, length = response.data.byteLength)
+      TextDocuments.parseFrom(ia.toArray).documents.toList
 
 
   def svgStream ($diagramType: EventStream[DiagramType]): EventStream[dom.Element] =

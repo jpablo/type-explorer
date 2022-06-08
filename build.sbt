@@ -114,7 +114,8 @@ lazy val ui =
         "dev.zio" %%% "zio-test-sbt"      % zioVersion % "test",
         "dev.zio" %%% "zio-test-magnolia" % zioVersion % "test",
 
-        "com.thesamet.scalapb" %% "scalapb-json4s" % "0.12.0" cross CrossVersion.for3Use2_13,
+//        "com.thesamet.scalapb" %%% "scalapb-runtime" % scalapb.compiler.Version.scalapbVersion cross CrossVersion.for3Use2_13,
+//        "com.thesamet.scalapb" %%% "scalapb-json4s" % "0.12.0" cross CrossVersion.for3Use2_13,
         "org.scalameta" %%% "scalameta" % scalametaVersion cross CrossVersion.for3Use2_13,
         "org.scala-js" %%% "scalajs-dom" % "2.0.0",
         "com.raquo" %%% "laminar" % "0.14.2",
