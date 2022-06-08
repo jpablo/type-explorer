@@ -12,29 +12,21 @@ import scala.meta.internal.semanticdb.{TextDocuments, TextDocument}
 object TopLevel {
 
   val $newDiagramType = new EventBus[DiagramType]
-  val $projectPath = Var[String] ("/Users/jpablo/proyectos/playground/type-explorer")
+  val $projectPath = Var[String]("/Users/jpablo/proyectos/playground/type-explorer")
   val parser = new dom.DOMParser()
 
   def topLevel: Div =
     div (
       idAttr := "te-toplevel",
-      appHeader ($newDiagramType, $projectPath),
-      div (
-        idAttr := "te-main-area", 
-        cls := "container-fluid",
-        div (
-          cls := "row", 
-          styleAttr := "height: 100%",
-          leftColumn (getClasses ($projectPath.signal)),
-          centerColumn (svgStream ($newDiagramType.events)),
-          rightColumn
-        ),
-      ),
+      appHeader($newDiagramType, $projectPath),
+      leftColumn(getClasses($projectPath.signal)),
+      centerColumn(svgStream($newDiagramType.events)),
+      rightColumn,
       appFooter
     )
 
 
-  def getClasses ($projectPath: Signal[String]) : EventStream[List[TextDocument]] =
+  def getClasses($projectPath: Signal[String]): EventStream[List[TextDocument]] =
     for
       pp <- $projectPath
       response <- Fetch.get("http://localhost:8090/semanticdb?path=" + pp).arrayBuffer
@@ -43,7 +35,7 @@ object TopLevel {
       TextDocuments.parseFrom(ia.toArray).documents.toList
 
 
-  def svgStream ($diagramType: EventStream[DiagramType]): EventStream[dom.Element] =
+  def svgStream($diagramType: EventStream[DiagramType]): EventStream[dom.Element] =
     for
       event <- $diagramType
       fetchEventStreamBuilder = event match

@@ -26,8 +26,6 @@ import java.nio.file
 
 object WebApp extends ZIOAppDefault {
 
-  val allowCors = "Access-Control-Allow-Origin" -> "*"
-
   given formats: Formats =
     Serialization.formats(NoTypeHints)
 
@@ -41,6 +39,9 @@ object WebApp extends ZIOAppDefault {
     CorsConfig(allowedOrigins = _ => true)
 
 
+  // ----------
+  // endpoints
+  // ----------
   val app = Http.collect[Request] {
 
     case req @ Method.GET -> !! / "semanticdb.json" =>

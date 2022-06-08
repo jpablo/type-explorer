@@ -9,39 +9,37 @@ import scala.meta.internal.semanticdb.{TextDocument, SymbolInformation}
 def leftColumn(documents: EventStream[List[TextDocument]]) =
   div(
     idAttr := "te-left-column",
-    cls := "col",
+    cls := "",
     div(
-      cls := "list-group",
+      cls := "text-document-container",
       children <-- documents.split(_.uri)(LeftColumn.renderTextDocument)
     )
   )
 
-  
+
 object LeftColumn:
 
   def renderTextDocument(id: String, initial: TextDocument, elem: EventStream[TextDocument]) = 
     div(
-      cls := "list-group-item",
-      b(
+      cls := "text-document",
+      h4(
         child.text <-- elem.map(_.uri)
       ),
       div(
-        cls := "list-group",
+        cls := "symbol-information-container",
         children <-- elem.map(_.symbols).split(_.symbol)(renderSymbolInformation)
       )
     )
 
   def renderSymbolInformation(id: String, initial: SymbolInformation, elem: EventStream[SymbolInformation]) =
     div(
-      cls := "list-group-item",
+      cls := "card symbol-information",
+      background := "gray",
       div(
-        cls := "card",
-        div(
-          cls := "card-body",
-          pre(
-            child.text <-- elem.map(_.toProtoString)
-          )          
-        )
+        cls := "card-body",
+        pre(
+          child.text <-- elem.map(_.toProtoString)
+        )          
       )
     )
   

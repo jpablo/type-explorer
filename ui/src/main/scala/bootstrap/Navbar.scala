@@ -6,8 +6,8 @@ import org.scalajs.dom
 def navbar(id: String, brand: String, projectPath: Var[String], items: Div*): Element =
   val onEnterPress = onKeyPress.filter(_.keyCode == dom.ext.KeyCode.Enter)
   nav (
-    cls := "navbar navbar-expand-lg bg-light",
     idAttr := id,
+    cls := "navbar navbar-expand-lg bg-light",
     div (
       cls :="container-fluid",
       a (cls :="navbar-brand", brand),
