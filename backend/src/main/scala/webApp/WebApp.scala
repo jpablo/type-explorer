@@ -52,7 +52,8 @@ object WebApp extends ZIOAppDefault {
     case req @ Method.GET -> !! / "semanticdb" =>
       (req |> getPath |> readTextDocuments)
         .map(_.toByteArray)
-        .map(Chunk.fromArray(_) |> HttpData.fromChunk)
+        .map(Chunk.fromArray)
+        .map(HttpData.fromChunk)
         .map(d => Response(data = d))
         .getOrElse(badRequest)
 
@@ -77,7 +78,7 @@ object WebApp extends ZIOAppDefault {
 
     case req @ Method.GET -> !! / "inheritance" =>
       (req |> getPath |> readTextDocuments)
-        .map(PlantumlInheritance.toDiagram)
+        .map(PlantumlInheritance.fromTextDocuments)
         .map(PlantumlInheritance.renderDiagram("laminar", _))
         .map(Response.text)
         .map(_.withContentType("image/svg+xml"))

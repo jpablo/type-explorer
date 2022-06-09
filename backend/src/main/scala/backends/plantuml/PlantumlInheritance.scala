@@ -1,6 +1,6 @@
 package backends.plantuml
 
-import backends.plantuml.PlantumlInheritance.{renderDiagram, toDiagram}
+import backends.plantuml.PlantumlInheritance.{renderDiagram, fromTextDocuments}
 import net.sourceforge.plantuml.FileFormat
 import net.sourceforge.plantuml.FileFormatOption
 import net.sourceforge.plantuml.SourceStringReader
@@ -16,7 +16,7 @@ import scala.meta.internal.semanticdb.{ClassSignature, MethodSignature, SymbolIn
 
 object PlantumlInheritance {
 
-  def toDiagram(textDocuments: TextDocuments): String =
+  def fromTextDocuments(textDocuments: TextDocuments): String =
     val tuples =
       for
         doc <- textDocuments.documents
@@ -108,7 +108,7 @@ def plantumlExample() = {
 
   val docs =
     All.scan (file.Paths.get("/Users/jpablo/proyectos/playground/type-explorer")) flatMap (_._2.documents) pipe TextDocuments.apply
-  val diagram: String = toDiagram(docs)
+  val diagram: String = fromTextDocuments(docs)
   println(diagram)
 //  println("-------------------")
 //  var svg = renderDiagram("laminar", diagram)
