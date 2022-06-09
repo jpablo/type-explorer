@@ -43,7 +43,8 @@ lazy val shared =
       libraryDependencies ++= Seq(
         "io.circe" %%% "circe-core" % circeVersion,
         "io.circe" %%% "circe-generic" % circeVersion,
-        "io.circe" %%% "circe-parser" % circeVersion
+        "io.circe" %%% "circe-parser" % circeVersion,
+        "dev.zio"  %%% "zio-prelude"  % zioPreludeVersion
       )
     )
     .jsSettings(
@@ -109,7 +110,7 @@ lazy val ui =
 
       libraryDependencies ++= Seq(
         "dev.zio" %%% "zio"               % zioVersion,
-        "dev.zio" %%% "zio-prelude"       % zioPreludeVersion,
+
         "dev.zio" %%% "zio-test"          % zioVersion % "test",
         "dev.zio" %%% "zio-test-sbt"      % zioVersion % "test",
         "dev.zio" %%% "zio-test-magnolia" % zioVersion % "test",

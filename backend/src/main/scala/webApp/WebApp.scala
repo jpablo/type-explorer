@@ -21,49 +21,46 @@ import org.json4s.native.Serialization
 import org.json4s.native.Serialization.{read, write}
 import zhttp.http.Middleware.cors
 import zhttp.http.middleware.Cors.CorsConfig
-import scala.util.chaining.*
 import java.nio.file
+import util.Operators.*
 
 object WebApp extends ZIOAppDefault {
 
   given formats: Formats =
     Serialization.formats(NoTypeHints)
 
-
-  def buildDocs(path: file.Path): TextDocuments =
-    All.scan (path) flatMap (_._2.documents) pipe TextDocuments.apply
-
+  def readTextDocuments(path: Option[List[String]]): Option[TextDocuments] =
+    for
+      case h :: t <- path if h.nonEmpty
+    yield
+      (file.Paths.get(h, t *) |> All.scan flatMap (_._2.documents)) |> TextDocuments.apply
 
   val corsConfig =
     CorsConfig(allowedOrigins = _ => true)
 
+  def getPath(req: Request) = req.url.queryParams.get("path")
 
+  val badRequest = Response.status(Status.BadRequest)
   // ----------
   // endpoints
   // ----------
   val app = Http.collect[Request] {
 
     case req @ Method.GET -> !! / "semanticdb.json" =>
-      req.url.queryParams.get("path") match
-        case Some(h :: t) if h.nonEmpty =>
-          Response.json(write(buildDocs(file.Paths.get(h, t*))))
-        case _ =>
-          Response.json("[]")
+      (req |> getPath |> readTextDocuments)
+        .map(_ |> write |> Response.json)
+        .getOrElse(badRequest)
 
     case req @ Method.GET -> !! / "semanticdb" =>
-      req.url.queryParams.get("path") match
-        case Some(h :: t) if h.nonEmpty =>
-          val docs: TextDocuments = buildDocs(file.Paths.get(h, t*))
-          Response(data = HttpData.fromChunk(Chunk.fromArray(docs.toByteArray)))
-        case _ =>
-          Response.text("")
+      (req |> getPath |> readTextDocuments)
+        .map(_ |> (_.toByteArray) |> Chunk.fromArray |> HttpData.fromChunk)
+        .map(d => Response(data = d))
+        .getOrElse(badRequest)
 
     case req @ Method.GET -> !! / "semanticdb.textproto" =>
-      req.url.queryParams.get("path") match
-        case Some(h :: t) if h.nonEmpty =>
-          Response.text(buildDocs(file.Paths.get(h, t *)).toProtoString)
-        case _ =>
-          Response.text("")
+      (req |> getPath |> readTextDocuments)
+        .map(_ |> (_.toProtoString) |> Response.text)
+        .getOrElse(badRequest)
 
     case req @ Method.GET -> !! / "classes" =>
       req.url.queryParams.get("path") match
@@ -71,24 +68,19 @@ object WebApp extends ZIOAppDefault {
           val paths = file.Paths.get(h, t*)
           val namespaces = ClassesList.scan(paths)
           Response.json(namespaces.asJson.toString)
-
         case _ =>
-          Response.status(Status.BadRequest)
+          badRequest
 
     case req @ Method.GET -> !! / "inheritance" =>
       val response =
         for
-          case h :: t <- req.url.queryParams.get("path") if h.nonEmpty
-          paths = file.Paths.get(h, t*)
-          textDocuments = buildDocs(paths)
+          textDocuments <- req |> getPath |> readTextDocuments
           plantUmlText = PlantumlInheritance.toDiagram(textDocuments)
           svgText = PlantumlInheritance.renderDiagram("laminar", plantUmlText)
         yield
-          Response
-            .text(svgText)
-            .withContentType("image/svg+xml")
-          
-      response.getOrElse(Response.status(Status.BadRequest))
+          Response.text(svgText).withContentType("image/svg+xml")
+
+      response.getOrElse(badRequest)
 
   } @@ cors(corsConfig)
 
