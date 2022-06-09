@@ -2,10 +2,14 @@ package app.components
 
 
 import com.raquo.laminar.api.L.*
-import app.components.tabs.semanticDBTab
+import app.components.tabs.{semanticDBTab, classesTab}
 import scala.meta.internal.semanticdb.TextDocument
+import org.scalajs.dom
 
-def tabsArea(documents: EventStream[List[TextDocument]]) =
+def tabsArea(
+  documents: EventStream[List[TextDocument]],
+  svgDiagram: EventStream[dom.Element]
+) =
   div(
     idAttr := "te-tabs-area",
     ul(
@@ -32,7 +36,7 @@ def tabsArea(documents: EventStream[List[TextDocument]]) =
                 dataAttr("bs-target") := "#classes-tab-pane",
                 tpe := "button",
                 role := "tab",
-                "Classes"
+                "Inheritance"
             )
         ),
         // li(
@@ -80,7 +84,7 @@ def tabsArea(documents: EventStream[List[TextDocument]]) =
         cls := "tab-pane fade",
         role := "tabpanel",
         tabIndex := 0,
-        "Classes ..."
+        classesTab(svgDiagram)
       ),
       div(
         idAttr := "semanticdb-tab-pane",

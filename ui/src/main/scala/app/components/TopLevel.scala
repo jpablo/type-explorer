@@ -8,45 +8,26 @@ import io.laminext.fetch.*
 import io.laminext.fetch.circe.*
 import scala.scalajs.js.typedarray.Int8Array
 import scala.meta.internal.semanticdb.{TextDocuments, TextDocument}
+import app.client.{fetchSVGDiagram, fetchDocuments}
 
 object TopLevel {
 
   val newDiagramType = new EventBus[DiagramType]
   val projectPath = Var[String]("/Users/jpablo/proyectos/playground/type-explorer")
+  var documents = fetchDocuments(projectPath.signal)
+  var inheritance = fetchSVGDiagram(projectPath.signal.map(path => (DiagramType.Inheritance, path)))
   val parser = new dom.DOMParser()
 
   def topLevel: Div =
     div (
       idAttr := "te-toplevel",
       appHeader(newDiagramType, projectPath),
-      tabsArea(getClasses(projectPath.signal)),
-      // centerColumn(svgStream(newDiagramType.events)),
-      // rightColumn,
+      tabsArea(
+        documents,
+        inheritance
+      ),
       appFooter
     )
 
-
-  def getClasses($projectPath: Signal[String]): EventStream[List[TextDocument]] =
-    for
-      pp <- $projectPath
-      response <- Fetch.get("http://localhost:8090/semanticdb?path=" + pp).arrayBuffer
-    yield
-      val ia = Int8Array(response.data, 0, length = response.data.byteLength)
-      TextDocuments.parseFrom(ia.toArray).documents.toList
-
-
-  def svgStream($diagramType: EventStream[DiagramType]): EventStream[dom.Element] =
-    for
-      event <- $diagramType
-      fetchEventStreamBuilder = event match
-        case DiagramType.Inheritance => Fetch.get ("http://localhost:8090/inheritance")
-        case DiagramType.CallGraph => Fetch.get ("http://localhost:8090/call-graph")
-      fetchResponse <- fetchEventStreamBuilder.text
-      doc = parser.parseFromString(fetchResponse.data, dom.MIMEType.`image/svg+xml`)
-//      errorNode = doc.querySelector("parsererror")
-    yield
-      doc.documentElement
-
-      
 }
 
