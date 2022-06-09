@@ -1,4 +1,4 @@
-package app.components
+package app.components.tabs
 
 import bootstrap.Accordion.{`accordion-flush`, accordion, open}
 import com.raquo.laminar.api.L.*
@@ -6,23 +6,24 @@ import models.Type
 import com.raquo.airstream.core.EventStream
 import scala.meta.internal.semanticdb.{TextDocument, SymbolInformation}
 
-def leftColumn(documents: EventStream[List[TextDocument]]) =
+
+def semanticDBTab(documents: EventStream[List[TextDocument]]) =
   div(
     idAttr := "te-left-column",
     cls := "",
     div(
       cls := "text-document-container",
-      children <-- documents.split(_.uri)(LeftColumn.renderTextDocument)
+      children <-- documents.split(_.uri)(SemanticDB.renderTextDocument)
     )
   )
 
 
-object LeftColumn:
+object SemanticDB:
 
   def renderTextDocument(id: String, initial: TextDocument, elem: EventStream[TextDocument]) = 
     div(
       cls := "text-document",
-      h4(
+      b(
         child.text <-- elem.map(_.uri)
       ),
       div(
@@ -34,7 +35,6 @@ object LeftColumn:
   def renderSymbolInformation(id: String, initial: SymbolInformation, elem: EventStream[SymbolInformation]) =
     div(
       cls := "card symbol-information",
-      background := "gray",
       div(
         cls := "card-body",
         pre(
@@ -43,4 +43,4 @@ object LeftColumn:
       )
     )
   
-end LeftColumn
+end SemanticDB

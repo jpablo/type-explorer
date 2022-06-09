@@ -16,41 +16,59 @@ body {
 
 #te-toplevel {
     display: grid;
-    gap: 2px;
-    grid-template-columns: 1fr 3fr 1fr;
+    gap: 1px;
+    grid-template-areas: 
+        "header"
+        "tabs"
+        "footer"
+        ;
+    grid-template-rows: max-content auto max-content;
     height: 100%;
-    background-color: blueviolet;
+    align-items: start;
 }
 
 
 #te-header {
-    grid-column: span 3;
+    grid-area: header;
+    /* max-height: 100px; */
+}
+
+#te-tabs-area {
+    grid-area: tabs;
+    align-self: stretch;
 }
 
 #te-left-column {
-    padding: 0;
-    background-color: blue;
-    overflow-x: scroll;
+    overflow: scroll;
+    background-color: white;
+    /* border: 1px solid gray; */
 }
-
-#te-left-column .text-document {
-}
-
 
 #te-center-column {
-    background-color: yellow;
-    /* border-left: 1px solid lightgray; */
-    /* border-right: 1px solid lightgray; */
-    /* padding: 0px; */
+    overflow: scroll;
+    background-color: white;
 }
 
 #te-right-column {
-    /* padding: 0px; */
-    background-color: darkorange;
+    background-color: white;
 }
 
 #te-footer {
-    background: lightsteelblue;
-    grid-column: span 3;    
+    background: rgb(248, 249, 250);
+    grid-area: footer;
+    align-self: end;
 }
 
+
+.text-document-container {
+    padding: 10px;
+}
+
+.symbol-information {
+    margin: 5px 0px 5px 0px;
+    background-color: lightblue;
+}
+
+.symbol-information pre {
+    margin: 0px;
+}

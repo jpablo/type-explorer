@@ -11,7 +11,6 @@ def svgToLaminar (svg: Element) =
 def centerColumn (newDiagramStream: EventStream[Element]) =
   div (
     idAttr := "te-center-column",
-    div("center"),
     div (
       child <-- newDiagramStream.map(svgToLaminar)
     )

@@ -11,17 +11,17 @@ import scala.meta.internal.semanticdb.{TextDocuments, TextDocument}
 
 object TopLevel {
 
-  val $newDiagramType = new EventBus[DiagramType]
-  val $projectPath = Var[String]("/Users/jpablo/proyectos/playground/type-explorer")
+  val newDiagramType = new EventBus[DiagramType]
+  val projectPath = Var[String]("/Users/jpablo/proyectos/playground/type-explorer")
   val parser = new dom.DOMParser()
 
   def topLevel: Div =
     div (
       idAttr := "te-toplevel",
-      appHeader($newDiagramType, $projectPath),
-      leftColumn(getClasses($projectPath.signal)),
-      centerColumn(svgStream($newDiagramType.events)),
-      rightColumn,
+      appHeader(newDiagramType, projectPath),
+      tabsArea(getClasses(projectPath.signal)),
+      // centerColumn(svgStream(newDiagramType.events)),
+      // rightColumn,
       appFooter
     )
 
