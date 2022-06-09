@@ -103,7 +103,7 @@ object PlantumlInheritance {
 
 
 @main
-def plantumlExample() = {
+def plantumlExample(): Unit = {
   import scala.util.chaining.*
 
   val docs =

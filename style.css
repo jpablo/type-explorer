@@ -7,7 +7,7 @@ body {
     font-size: small;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    height: 100%;
+    height: 100vh;
 }
 
 #app {
@@ -30,18 +30,24 @@ body {
 
 #te-header {
     grid-area: header;
-    /* max-height: 100px; */
+    z-index: 100;
+
 }
 
 #te-tabs-area {
     grid-area: tabs;
-    align-self: stretch;
+    align-self: start;
+    max-height: 100%;
+}
+
+.scrollable {
+    max-height: 90vh;
+    overflow: auto;
 }
 
 #te-left-column {
-    overflow: scroll;
-    background-color: white;
-    /* border: 1px solid gray; */
+    /* overflow: scroll; */
+    /* background-color: white; */
 }
 
 #te-center-column {
@@ -57,6 +63,8 @@ body {
     background: rgb(248, 249, 250);
     grid-area: footer;
     align-self: end;
+    z-index: 100;
+    /* position: fixed; */
 }
 
 

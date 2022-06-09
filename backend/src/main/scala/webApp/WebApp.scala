@@ -26,24 +26,6 @@ import util.Operators.*
 
 object WebApp extends ZIOAppDefault {
 
-  given formats: Formats =
-    Serialization.formats(NoTypeHints)
-
-  def readTextDocuments(path: Option[List[String]]) =
-    for p <- combinePaths(path) yield
-      All.scan(p).flatMap(_._2.documents.toList) |> TextDocuments.apply
-
-  def combinePaths(path: Option[List[String]]) =
-    for case h :: t <- path if h.nonEmpty yield
-      file.Paths.get(h, t*)
-
-  def getPath(req: Request) =
-    req.url.queryParams.get("path")
-
-  val corsConfig =
-    CorsConfig(allowedOrigins = _ => true)
-
-  val badRequest = Response.status(Status.BadRequest)
   // ----------
   // endpoints
   // ----------
@@ -88,4 +70,29 @@ object WebApp extends ZIOAppDefault {
 
   val run =
     Server.start(8090, app)
+
+  // -----------------
+  // helper functions
+  // -----------------
+
+  given formats: Formats =
+    Serialization.formats(NoTypeHints)
+
+  def readTextDocuments(path: Option[List[String]]) =
+    for p <- combinePaths(path) yield
+      All.scan(p).flatMap(_._2.documents.toList) |> TextDocuments.apply
+
+  def combinePaths(path: Option[List[String]]) =
+    for case h :: t <- path if h.nonEmpty yield
+      file.Paths.get(h, t*)
+
+  def getPath(req: Request) =
+    req.url.queryParams.get("path")
+
+  lazy val corsConfig =
+    CorsConfig(allowedOrigins = _ => true)
+
+  val badRequest =
+    Response.status(Status.BadRequest)
+
 }

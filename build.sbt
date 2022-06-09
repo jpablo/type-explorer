@@ -18,6 +18,7 @@ ThisBuild / scalacOptions ++=
   Seq(
 //    "-Yrangepos",
     "-Ykind-projector:underscores",
+    "-Ysafe-init",
     "-language:implicitConversions",
     "-source:future"
   )

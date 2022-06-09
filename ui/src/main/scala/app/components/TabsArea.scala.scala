@@ -15,23 +15,23 @@ def tabsArea(
     ul(
         cls := "nav nav-tabs",
         role := "tablist",
+        // li(
+        //     cls := "nav-item",
+        //     role := "presentation",
+        //     button(
+        //         cls := "nav-link active",
+        //         dataAttr("bs-toggle") := "tab",
+        //         dataAttr("bs-target") := "#packages-tab-pane",
+        //         tpe := "button",
+        //         role := "tab",
+        //         "Packages"
+        //     )
+        // ),
         li(
             cls := "nav-item",
             role := "presentation",
             button(
                 cls := "nav-link active",
-                dataAttr("bs-toggle") := "tab",
-                dataAttr("bs-target") := "#packages-tab-pane",
-                tpe := "button",
-                role := "tab",
-                "Packages"
-            )
-        ),
-        li(
-            cls := "nav-item",
-            role := "presentation",
-            button(
-                cls := "nav-link",
                 dataAttr("bs-toggle") := "tab",
                 dataAttr("bs-target") := "#classes-tab-pane",
                 tpe := "button",
@@ -72,16 +72,16 @@ def tabsArea(
     ),
     div(
       cls := "tab-content",
-      div(
-        idAttr := "packages-tab-pane",
-        cls := "tab-pane fade show active",
-        role := "tabpanel",
-        tabIndex := 0,
-        "Packages ..."
-      ),
+    //   div(
+    //     idAttr := "packages-tab-pane",
+    //     cls := "tab-pane fade show active",
+    //     role := "tabpanel",
+    //     tabIndex := 0,
+    //     "Packages ..."
+    //   ),
       div(
         idAttr := "classes-tab-pane",
-        cls := "tab-pane fade",
+        cls := "tab-pane fade show active",
         role := "tabpanel",
         tabIndex := 0,
         inheritanceTab(svgDiagram)
