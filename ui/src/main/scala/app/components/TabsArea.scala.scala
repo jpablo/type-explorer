@@ -2,7 +2,7 @@ package app.components
 
 
 import com.raquo.laminar.api.L.*
-import app.components.tabs.{semanticDBTab, classesTab}
+import app.components.tabs.{semanticDBTab, inheritanceTab}
 import scala.meta.internal.semanticdb.TextDocument
 import org.scalajs.dom
 
@@ -84,7 +84,7 @@ def tabsArea(
         cls := "tab-pane fade",
         role := "tabpanel",
         tabIndex := 0,
-        classesTab(svgDiagram)
+        inheritanceTab(svgDiagram)
       ),
       div(
         idAttr := "semanticdb-tab-pane",
