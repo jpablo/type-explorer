@@ -6,14 +6,14 @@ import scala.meta.internal.semanticdb.{ClassSignature, MethodSignature, Scope, S
 import java.nio.file.Paths
 import java.net.URI
 import scala.meta.internal.semanticdb.SymbolInformation.Kind
-import models.{Package, Type, Method}
+import models.{Method, Package, Type}
+import scala.collection.mutable
 
 
-object All {
-  def scan (p: Path): List[(Path, TextDocuments)] =
-    val documents = collection.mutable.ArrayBuffer.empty[(Path, TextDocuments)]
-    semanticdb.Locator (p) { (path, textDocuments) =>
+object All:
+  def scan(p: Path): List[(Path, TextDocuments)] =
+    val documents = mutable.ArrayBuffer.empty[(Path, TextDocuments)]
+    semanticdb.Locator(p) { (path, textDocuments) =>
       documents += ((path, textDocuments))
     }
     documents.toList
-}

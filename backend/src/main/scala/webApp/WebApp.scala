@@ -21,7 +21,7 @@ import org.json4s.native.Serialization
 import org.json4s.native.Serialization.{read, write}
 import zhttp.http.Middleware.cors
 import zhttp.http.middleware.Cors.CorsConfig
-
+import scala.util.chaining.*
 import java.nio.file
 
 object WebApp extends ZIOAppDefault {
@@ -31,8 +31,7 @@ object WebApp extends ZIOAppDefault {
 
 
   def buildDocs(path: file.Path): TextDocuments =
-    val docsWithPaths = All.scan(path)
-    TextDocuments(docsWithPaths.flatMap(_._2.documents))
+    All.scan (path) flatMap (_._2.documents) pipe TextDocuments.apply
 
 
   val corsConfig =
@@ -52,16 +51,14 @@ object WebApp extends ZIOAppDefault {
           Response.json("[]")
 
     case req @ Method.GET -> !! / "semanticdb" =>
-
       req.url.queryParams.get("path") match
         case Some(h :: t) if h.nonEmpty =>
-          val docs = buildDocs(file.Paths.get(h, t*))
+          val docs: TextDocuments = buildDocs(file.Paths.get(h, t*))
           Response(data = HttpData.fromChunk(Chunk.fromArray(docs.toByteArray)))
         case _ =>
           Response.text("")
 
     case req @ Method.GET -> !! / "semanticdb.textproto" =>
-
       req.url.queryParams.get("path") match
         case Some(h :: t) if h.nonEmpty =>
           Response.text(buildDocs(file.Paths.get(h, t *)).toProtoString)
@@ -78,12 +75,20 @@ object WebApp extends ZIOAppDefault {
         case _ =>
           Response.status(Status.BadRequest)
 
-    case Method.GET -> !! / "inheritance" =>
-      val plantUmlText = PlantumlInheritance.toDiagram(InheritanceExamples.laminar)
-      val svgText = PlantumlInheritance.renderDiagram("laminar", plantUmlText)
-      Response
-        .text(svgText)
-        .withContentType("image/svg+xml")
+    case req @ Method.GET -> !! / "inheritance" =>
+      val response =
+        for
+          case h :: t <- req.url.queryParams.get("path") if h.nonEmpty
+          paths = file.Paths.get(h, t*)
+          textDocuments = buildDocs(paths)
+          plantUmlText = PlantumlInheritance.toDiagram(textDocuments)
+          svgText = PlantumlInheritance.renderDiagram("laminar", plantUmlText)
+        yield
+          Response
+            .text(svgText)
+            .withContentType("image/svg+xml")
+          
+      response.getOrElse(Response.status(Status.BadRequest))
 
   } @@ cors(corsConfig)
 

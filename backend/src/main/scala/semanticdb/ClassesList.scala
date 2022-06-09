@@ -8,57 +8,51 @@ import java.net.URI
 import scala.meta.internal.semanticdb.SymbolInformation.Kind
 import models.{Package, Type, Method}
 
-object ClassesList {
+object ClassesList:
 
-  def scan (p: Path): List[Type] = {
-    val documents = collection.mutable.ArrayBuffer.empty[SymbolInformation]
-    semanticdb.Locator (p) { (_, payload: TextDocuments) =>
-      for 
-        document <- payload.documents
-        sym <- document.symbols
-        if sym.kind == Kind.OBJECT
+  def scan(p: Path): List[Type] =
+    val kinds = Set(Kind.OBJECT, Kind.CLASS, Kind.TRAIT)
+    val symbols =
+      collection.mutable.ArrayBuffer.empty[SymbolInformation]
+    // --- load all documents ----
+    semanticdb.Locator(p) { (_, textDocuments: TextDocuments) =>
+      for
+        document <- textDocuments.documents
+        symbol <- document.symbols
+        k: Kind = symbol.kind
+        if kinds contains ??? //symbol.kind
       do
-        documents += sym
+        symbols += symbol
     }
+    // --------------------------
 
-    documents.toList.map { (sym: SymbolInformation) =>
-      val sl =
+    symbols.toList.map { (symbol: SymbolInformation) =>
+      val symlinks =
         for
-          ne <- sym.signature.asNonEmpty.toList
-          scope <- ne match
+          sig <- symbol.signature.asNonEmpty.toList
+          scope <- sig match
             case cs: ClassSignature => cs.declarations.toList
             case _ => List.empty
           symlink <- scope.symlinks
         yield
           symlink
 
-//      val ss =
-//        sym.signature.asNonEmpty.map { ne =>
-//          ne match
-//            case ValueSignature(tpe) => None
-//            case ClassSignature(typeParameters, parents, self, declarations: Option[Scope]) =>
-//              declarations match
-//                case Some(scope) =>
-//                  Some(scope.symlinks)
-//                case None =>
-//                  None
-//            case MethodSignature(typeParameters, parameterLists, returnType) => None
-//            case TypeSignature(typeParameters, lowerBound, upperBound) => None
-//        }
-      Type (
-        sym.displayName,
-        Some (Package (sym.symbol.split ("/").init.mkString ("/"))),
-        sl.map { fullName =>
-          val parts = fullName.split ("""\.""")
+      val methods =
+        symlinks.map { fullName =>
+          val parts = fullName.split("""\.""")
           val name = if parts.length > 1 then parts(1) else ""
           Method(name)
         }
+
+      Type(
+        name = symbol.displayName,
+        `package` = Some(Package(symbol.symbol.split("/").init.mkString("/"))),
+        methods = methods
       )
     }
-  }
+  end scan
 
-  
-}
+end ClassesList
 
 
 @main

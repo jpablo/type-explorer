@@ -2,11 +2,11 @@ syntax = "proto3";
 
 package scala.meta.internal.semanticdb;
 
-import "scalapb/scalapb.proto";
-
-option (scalapb.options) = {
-  preserve_unknown_fields: false
-};
+//import "scalapb/scalapb.proto";
+//
+//option (scalapb.options) = {
+//  preserve_unknown_fields: false
+//};
 
 enum Schema {
   LEGACY = 0;

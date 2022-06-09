@@ -9,7 +9,7 @@ import models.Type
 import app.components.DiagramType
 
 
-def fetchBase(path: String) =
+def fetchBase(path: String): FetchEventStreamBuilder =
   Fetch.get(s"http://localhost:8090/$path")
 
 
