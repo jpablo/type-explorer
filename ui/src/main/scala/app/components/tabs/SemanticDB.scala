@@ -5,6 +5,7 @@ import com.raquo.laminar.api.L.*
 import models.Type
 import com.raquo.airstream.core.EventStream
 import scala.meta.internal.semanticdb.{TextDocument, SymbolInformation, SymbolOccurrence, Synthetic}
+import scalapb.GeneratedMessage
 
 
 def semanticDBTab(documents: EventStream[List[TextDocument]]) =
@@ -24,21 +25,21 @@ object SemanticDB:
       ),
       div(
         cls := "symbol-information-container",
-        children <-- elem.map(_.symbols).split(_.symbol)(renderSymbolInformation)
+        children <-- elem.map(_.symbols).split(_.symbol)(renderGeneratedMessage("symbol-information"))
       ),
       div(
         cls := "occurrences-container",
-        children <-- elem.map(_.occurrences).split(_.symbol)(renderOcurrence)
+        children <-- elem.map(_.occurrences).split(_.symbol)(renderGeneratedMessage("occurrence"))
       ),
       div(
         cls := "synthetics-container",
-        children <-- elem.map(_.synthetics).split(_.range.map(_.toProtoString).getOrElse(""))(renderSynthetics)
+        children <-- elem.map(_.synthetics).split(_.range.map(_.toProtoString).getOrElse(""))(renderGeneratedMessage("synthetic"))
       )
     )
 
-  def renderSymbolInformation(id: String, initial: SymbolInformation, elem: EventStream[SymbolInformation]) =
+  def renderGeneratedMessage(className: String)(id: String, initial: GeneratedMessage, elem: EventStream[GeneratedMessage]) =
     div(
-      cls := "card symbol-information",
+      cls := ("card", className),
       div(
         cls := "card-body",
         pre(
@@ -46,27 +47,5 @@ object SemanticDB:
         )          
       )
     )
-  
-  def renderOcurrence(id: String, initial: SymbolOccurrence, elem: EventStream[SymbolOccurrence]) =
-    div(
-      cls := "card occurrence",
-      div(
-        cls := "card-body",
-        pre(
-          child.text <-- elem.map(_.toProtoString)
-        )          
-      )
-    )
-  
-  def renderSynthetics(id: String, initial: Synthetic, elem: EventStream[Synthetic]) =
-    div(
-      cls := "card synthetic",
-      div(
-        cls := "card-body",
-        pre(
-          child.text <-- elem.map(_.toProtoString)
-        )          
-      )
-    )
-  
+    
 end SemanticDB
