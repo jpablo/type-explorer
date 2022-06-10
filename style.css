@@ -40,6 +40,7 @@ body {
 .tabs-container {
     grid-area: tabs-container;
     overflow: auto;
+    border-left: 1px solid lightgray;
 }
 
 #te-footer {
@@ -50,13 +51,41 @@ body {
 
 .text-document-container {
     padding: 10px;
+    padding-left: 0px;
+}
+
+.text-document {
+    border-top: 1px solid lightgray;
+    margin-top: 10px;
+    padding: 5px;
 }
 
 .symbol-information {
-    margin: 5px 0px 5px 0px;
+    margin: 5px 0px 5px 20px;
     background-color: lightblue;
 }
 
 .symbol-information pre {
     margin: 0px;
+    font-size: xx-small;
+}
+
+.occurrence {
+    margin: 5px 0px 5px 20px;
+    background-color: lightgoldenrodyellow;
+}
+
+.occurrence pre {
+    margin: 0px;
+    font-size: xx-small;
+}
+
+.synthetic {
+    margin: 5px 0px 5px 20px;
+    background-color: lightpink;
+}
+
+.synthetic pre {
+    margin: 0px;
+    font-size: xx-small;
 }
