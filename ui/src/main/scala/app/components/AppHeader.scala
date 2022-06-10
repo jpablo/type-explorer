@@ -15,14 +15,17 @@ enum DiagramType:
 import DiagramType.*
 
 def appHeader(selection: EventBus[DiagramType], projectPath: Var[String]) =
-  navbar (
-    id    = "te-header",
-    brand = "Type Explorer",
-    projectPath = projectPath,
-    dropdown (
-      label = "Diagram",
-      elements = List(Inheritance, CallGraph),
-      selection = selection
+  div(
+    idAttr := "te-header",
+    navbar (
+      id    = "te-header-content",
+      brand = "Type Explorer",
+      projectPath = projectPath,
+      dropdown (
+        label = "Diagram",
+        elements = List(Inheritance, CallGraph),
+        selection = selection
+      )
     )
   )
 

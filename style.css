@@ -1,6 +1,3 @@
-html {
-    height: 100%;
-}
 
 body {
     font-family: Avenir, Helvetica, Arial, sans-serif;
@@ -11,60 +8,43 @@ body {
 }
 
 #app {
-    height: 100%;
+    /* height: 100vh; */
 }
 
 #te-toplevel {
     display: grid;
     gap: 1px;
     grid-template-areas: 
-        "header"
-        "tabs"
-        "footer"
+        "header header"
+        "te-tabs-header te-tabs-header"
+        "structure tabs-container"
+        "footer footer"
         ;
-    grid-template-rows: max-content auto max-content;
-    height: 100%;
-    align-items: start;
+    grid-template-columns: minmax(auto, 12em) 1fr;
+    grid-template-rows: auto auto minmax(10px, 1fr) auto;
+    height: 100vh;
 }
-
 
 #te-header {
     grid-area: header;
-    z-index: 100;
-
 }
 
-#te-tabs-area {
-    grid-area: tabs;
-    align-self: start;
-    max-height: 100%;
+#structure {
+    grid-area: structure;
 }
 
-.scrollable {
-    max-height: 90vh;
+#te-tabs-header {
+    grid-area: te-tabs-header;
+}
+
+.tabs-container {
+    grid-area: tabs-container;
     overflow: auto;
 }
 
-#te-left-column {
-    /* overflow: scroll; */
-    /* background-color: white; */
-}
-
-#te-center-column {
-    overflow: scroll;
-    background-color: white;
-}
-
-#te-right-column {
-    background-color: white;
-}
-
 #te-footer {
-    background: rgb(248, 249, 250);
     grid-area: footer;
-    align-self: end;
-    z-index: 100;
-    /* position: fixed; */
+    background: rgb(248, 249, 250);
 }
 
 

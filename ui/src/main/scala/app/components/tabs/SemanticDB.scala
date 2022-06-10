@@ -9,12 +9,8 @@ import scala.meta.internal.semanticdb.{TextDocument, SymbolInformation}
 
 def semanticDBTab(documents: EventStream[List[TextDocument]]) =
   div(
-    idAttr := "te-left-column",
-    cls := "scrollable",
-    div(
-      cls := "text-document-container",
-      children <-- documents.split(_.uri)(SemanticDB.renderTextDocument)
-    )
+    cls := "text-document-container",
+    children <-- documents.split(_.uri)(SemanticDB.renderTextDocument)
   )
 
 
