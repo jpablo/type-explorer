@@ -23,6 +23,28 @@ ThisBuild / scalacOptions ++=
     "-source:future"
   )
 
+lazy val protos =
+  project
+    .in(file("protos"))
+    .settings(
+      name := "type-explorer-protos",
+      version := "0.1.0",
+      scalaVersion := "2.13.6",
+      libraryDependencies ++= Seq(
+      ),
+      Compile / PB.targets := Seq(
+        scalapb.gen() -> (Compile / sourceManaged).value / "scalapb"
+      ),
+      scalacOptions --= Seq(
+        "-Ykind-projector:underscores",
+        "-Ysafe-init",
+        "-source:future"
+      ),
+      scalacOptions ++= Seq(
+        "-Xsource:3"
+      )
+    )
+
 /**
   * The configuration
   *   {{{ .crossType(CrossType.Pure).in(file("shared")) }}}
@@ -77,10 +99,7 @@ lazy val backend =
         "com.thesamet.scalapb"   % "scalapb-runtime_3",
         "org.scala-lang.modules" % "scala-collection-compat_3",
       ),
-      testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework"),
-      Compile / PB.targets := Seq(
-        scalapb.gen() -> (Compile / sourceManaged).value / "scalapb"
-      )
+      testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework")
     )
 
 val publicDev = taskKey[String]("output directory for `npm run dev`")
