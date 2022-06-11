@@ -42,9 +42,6 @@ lazy val shared =
       name := "type-explorer-shared",
       version := "0.1.0",
       libraryDependencies ++= Seq(
-        "io.circe" %%% "circe-core" % circeVersion,
-        "io.circe" %%% "circe-generic" % circeVersion,
-        "io.circe" %%% "circe-parser" % circeVersion,
         "dev.zio"  %%% "zio-prelude"  % zioPreludeVersion
       )
     )
@@ -61,31 +58,29 @@ lazy val backend =
       version := "0.1.0",
       libraryDependencies ++= Seq(
         "dev.zio" %% "zio"               % zioVersion,
-//        "dev.zio" %% "zio-prelude"       % zioPreludeVersion,
         "dev.zio" %% "zio-test"          % zioVersion % "test",
         "dev.zio" %% "zio-test-sbt"      % zioVersion % "test",
         "dev.zio" %% "zio-test-magnolia" % zioVersion % "test",
-
-        // This has a conflict with scalameta
-        // org.scala-lang.modules:scala-collection-compat _3, _2.13
-//        "dev.zio"  %% "zio-json" % zioJsonVersion,
+        "dev.zio"  %% "zio-json" % zioJsonVersion,
 
         "io.d11"  %% "zhttp" % zioHttpVersion,
 
         "guru.nidi" % "graphviz-java" % "0.18.1",
         "net.sourceforge.plantuml" % "plantuml" % "1.2022.5",
-        "com.thesamet.scalapb" %% "scalapb-json4s" % "0.12.0" cross CrossVersion.for3Use2_13,
-        "org.json4s" %% "json4s-native" % "4.0.5" cross CrossVersion.for3Use2_13,
+        "org.json4s" %% "json4s-native" % "4.0.5",
 //        "com.softwaremill.quicklens" %% "quicklens" % "1.7.5",
 
-        "io.circe" %% "circe-core" % circeVersion,
-        "io.circe" %% "circe-generic" % circeVersion,
-        "io.circe" %% "circe-parser" % circeVersion,
-
         "com.lihaoyi" %% "scalatags" % "0.11.1" cross CrossVersion.for3Use2_13,
-        "org.scalameta" %% "scalameta" % scalametaVersion cross CrossVersion.for3Use2_13
+        "org.scalameta" %% "scalameta" % scalametaVersion cross CrossVersion.for3Use2_13,
       ),
-      testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework")
+      excludeDependencies ++= Seq(
+        "com.thesamet.scalapb" % "scalapb-runtime_3",
+        "org.scala-lang.modules" % "scala-collection-compat_3",
+      ),
+      testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework"),
+      Compile / PB.targets := Seq(
+        scalapb.gen() -> (Compile / sourceManaged).value / "scalapb"
+      )
     )
 
 val publicDev = taskKey[String]("output directory for `npm run dev`")
@@ -116,8 +111,6 @@ lazy val ui =
         "dev.zio" %%% "zio-test-sbt"      % zioVersion % "test",
         "dev.zio" %%% "zio-test-magnolia" % zioVersion % "test",
 
-//        "com.thesamet.scalapb" %%% "scalapb-runtime" % scalapb.compiler.Version.scalapbVersion cross CrossVersion.for3Use2_13,
-//        "com.thesamet.scalapb" %%% "scalapb-json4s" % "0.12.0" cross CrossVersion.for3Use2_13,
         "org.scalameta" %%% "scalameta" % scalametaVersion cross CrossVersion.for3Use2_13,
         "org.scala-js" %%% "scalajs-dom" % "2.0.0",
         "com.raquo" %%% "laminar" % "0.14.2",

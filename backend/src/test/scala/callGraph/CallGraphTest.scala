@@ -11,7 +11,6 @@ import scala.meta.internal.semanticdb.TextDocuments
 // import zio.test.magnolia.DeriveGen
 
 import scala.meta.*
-import scalapb.json4s.JsonFormat
 
 
 object CallGraphTest extends ZIOSpecDefault {
@@ -34,7 +33,7 @@ object CallGraphTest extends ZIOSpecDefault {
           td <- payload.documents
           si <- td.symbols
         } do
-          println(JsonFormat.toJsonString(si))
+          println(si)
       }
 
       // IDEA: construct a btree with the line/char positions of each definition

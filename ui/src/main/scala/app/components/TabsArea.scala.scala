@@ -43,7 +43,7 @@ def tabsArea(
       )
     ),
     div(
-      cls := "tabs-container",
+      cls := "te-tabs-container",
       div(
         cls := "tab-content",
         div(

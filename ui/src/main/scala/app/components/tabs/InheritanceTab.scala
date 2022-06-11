@@ -10,5 +10,7 @@ def svgToLaminar(svg: Element) =
 
 def inheritanceTab(svgDiagram: EventStream[Element]) =
   div (
-    child <-- svgDiagram.map(svgToLaminar)
+    cls := "inheritance-container",
+    div(cls := "structure", "Structure"),
+    div(child <-- svgDiagram.map(svgToLaminar))
   )

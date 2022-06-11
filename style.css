@@ -15,12 +15,12 @@ body {
     display: grid;
     gap: 1px;
     grid-template-areas: 
-        "header header"
-        "te-tabs-header te-tabs-header"
-        "structure tabs-container"
-        "footer footer"
+        "header"
+        "te-tabs-header"
+        "te-tabs-container"
+        "footer"
         ;
-    grid-template-columns: minmax(auto, 12em) 1fr;
+    /* grid-template-columns: minmax(auto, 12em) 1fr; */
     grid-template-rows: auto auto minmax(10px, 1fr) auto;
     height: 100vh;
 }
@@ -29,40 +29,38 @@ body {
     grid-area: header;
 }
 
-#structure {
-    grid-area: structure;
+/* -------- tabs ------------- */
+.te-tabs-container {
+    grid-area: te-tabs-container;
+    border-left: 1px solid lightgray;
+    /* background-color: yellowgreen; */
+    /* padding: 5px; */
+    /* border: 1px solid black; */
+}
+
+.tab-content {
+    /* border: 1px solid red; */
+    /* background-color: lightcoral; */
 }
 
 #te-tabs-header {
     grid-area: te-tabs-header;
 }
 
-.tabs-container {
-    grid-area: tabs-container;
-    overflow: auto;
-    border-left: 1px solid lightgray;
-}
+
 
 #te-footer {
     grid-area: footer;
     background: rgb(248, 249, 250);
+    z-index: 10;
 }
 
 
-.text-document-container {
-    padding: 10px;
-    padding-left: 0px;
-}
-
-.text-document {
-    border-top: 1px solid lightgray;
-    margin-top: 10px;
-    padding: 5px;
-}
 
 .symbol-information {
-    margin: 5px 0px 5px 20px;
+    /* margin: 5px 0px 5px 20px; */
     background-color: lightblue;
+    /* margin: 5px; */
 }
 
 .symbol-information pre {
@@ -71,7 +69,7 @@ body {
 }
 
 .occurrence {
-    margin: 5px 0px 5px 20px;
+    /* margin: 5px 0px 5px 20px; */
     background-color: lightgoldenrodyellow;
 }
 
@@ -81,11 +79,70 @@ body {
 }
 
 .synthetic {
-    margin: 5px 0px 5px 20px;
+    /* margin: 5px 0px 5px 20px; */
     background-color: lightpink;
 }
 
 .synthetic pre {
     margin: 0px;
     font-size: xx-small;
+}
+
+/* ------------------ */
+
+.inheritance-container, .text-document-areas {
+    display: grid;
+    grid-template-columns: minmax(auto, 12em) 1fr;
+    /* grid-template-rows: minmax(auto, 100px); */
+
+    /* border: 1px solid black; */
+    /* padding: 5px; */
+
+    /* max-height: 50vh; */
+    /* background-color: rgb(249, 27, 27); */
+
+    
+}
+
+.text-document-container {
+    /* padding: 10px; */
+    /* border: 1px solid black; */
+    /* background-color: rgb(91, 109, 251); */
+    max-height: 90vh;
+    overflow: auto;
+}
+/* 
+.text-document:nth-child(1) {
+    border-top: none;
+    margin-top: 0px;
+} */
+
+.text-document {
+    /* padding: 5px; */
+    /* border: 1px solid black; */
+    /* background-color: burlywood; */
+}
+
+
+.structure {
+    /* background: orange; */
+    /* border: 1px solid rgb(123, 80, 1); */
+    /* align-self: start; */
+}
+
+.symbol-information-container {
+    /* background: darkgreen; */
+    /* border: 1px solid black; */
+    /* padding: 0px; */
+}
+
+#semanticdb-tab-pane {
+    /* background-color: rgb(173, 120, 223); */
+    /* border: 1px solid blueviolet; */
+    /* margin: 5px; */
+    /* padding: 5px; */
+}
+
+.card {
+    margin: 5px;
 }

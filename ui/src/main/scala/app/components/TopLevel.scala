@@ -22,7 +22,6 @@ object TopLevel {
     div (
       idAttr := "te-toplevel",
       appHeader(newDiagramType, projectPath),
-      div(idAttr := "structure", "Structure"),
       tabsArea(
         documents,
         inheritance

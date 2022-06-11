@@ -1,11 +1,11 @@
 package models
 
-import io.circe.*, io.circe.generic.semiauto.*
+//import io.circe.*, io.circe.generic.semiauto.*
 
 case class Package(name: String)
 
-object Package:
-  given Codec[Package] = deriveCodec
+//object Package:
+//  given Codec[Package] = deriveCodec
 
 
 
@@ -15,12 +15,12 @@ case class Type(
   methods  : List[Method] = List.empty
 )
 
-object Type:
-  given Codec[Type] = deriveCodec
+//object Type:
+//  given Codec[Type] = deriveCodec
 
 
 
 case class Method(name: String, returnType: Option[Type] = None)
 
-object Method:
-  given Codec[Method] = deriveCodec
+//object Method:
+//  given Codec[Method] = deriveCodec

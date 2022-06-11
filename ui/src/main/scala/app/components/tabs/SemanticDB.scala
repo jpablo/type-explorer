@@ -10,8 +10,12 @@ import scalapb.GeneratedMessage
 
 def semanticDBTab(documents: EventStream[List[TextDocument]]) =
   div(
-    cls := "text-document-container",
-    children <-- documents.split(_.uri)(SemanticDB.renderTextDocument)
+    cls := "text-document-areas",
+    div(cls := "structure", "Structure2"),
+    div(
+      cls := "text-document-container",
+      children <-- documents.split(_.uri)(SemanticDB.renderTextDocument)
+    )
   )
 
 
@@ -21,6 +25,7 @@ object SemanticDB:
     div(
       cls := "text-document",
       b(
+        "uri: ", 
         child.text <-- elem.map(_.uri)
       ),
       div(
@@ -47,5 +52,5 @@ object SemanticDB:
         )          
       )
     )
-    
+
 end SemanticDB

@@ -5,18 +5,10 @@ import inheritance.InheritanceExamples
 import zio.*
 import zhttp.http.*
 import zhttp.service.Server
-import io.circe.syntax.*
-import io.circe.parser.*
 import semanticdb.{All, ClassesList}
-
 import scala.meta.internal.semanticdb.TextDocuments
-import scalapb.json4s.JsonFormat
-
 import java.net.URI
-import io.circe.Json
 import org.json4s.*
-import org.json4s.JsonDSL.*
-import org.json4s.native.JsonMethods.*
 import org.json4s.native.Serialization
 import org.json4s.native.Serialization.{read, write}
 import zhttp.http.Middleware.cors
@@ -51,12 +43,12 @@ object WebApp extends ZIOAppDefault {
         .map(Response.text)
         .getOrElse(badRequest)
 
-    case req @ Method.GET -> !! / "classes" =>
-      (req |> getPath |> combinePaths)
-        .map(ClassesList.scan)
-        .map(_.asJson.toString)
-        .map(Response.json)
-        .getOrElse(badRequest)
+//    case req @ Method.GET -> !! / "classes" =>
+//      (req |> getPath |> combinePaths)
+//        .map(ClassesList.scan)
+//        .map(_.asJson.toString)
+//        .map(Response.json)
+//        .getOrElse(badRequest)
 
     case req @ Method.GET -> !! / "inheritance" =>
       (req |> getPath |> readTextDocuments)
@@ -82,7 +74,7 @@ object WebApp extends ZIOAppDefault {
     for p <- combinePaths(path) yield
       All.scan(p).flatMap(_._2.documents.toList) |> TextDocuments.apply
 
-  def combinePaths(path: Option[List[String]]) =
+  def combinePaths(path: Option[List[String]]): Option[file.Path] =
     for case h :: t <- path if h.nonEmpty yield
       file.Paths.get(h, t*)
 
@@ -92,7 +84,7 @@ object WebApp extends ZIOAppDefault {
   lazy val corsConfig =
     CorsConfig(allowedOrigins = _ => true)
 
-  val badRequest =
+  lazy val badRequest =
     Response.status(Status.BadRequest)
 
 }
