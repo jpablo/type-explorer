@@ -5,7 +5,7 @@ val zioVersion = "2.0.0-RC6"
 val zioJsonVersion = "0.3.0-RC8"
 val circeVersion = "0.14.2"
 val zioPreludeVersion = "1.0.0-RC14"
-val scalametaVersion = "4.5.8"
+val scalametaVersion = "4.5.9"
 val zioHttpVersion = "2.0.0-RC8+1-6d179026-SNAPSHOT"
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
@@ -14,7 +14,7 @@ ThisBuild / resolvers += "Sonatype OSS Snapshots" at "https://s01.oss.sonatype.o
 ThisBuild / organization := "net.jpablo"
 ThisBuild / scalaVersion := scala3Version
 ThisBuild / semanticdbEnabled := true
-ThisBuild / scalacOptions ++=
+ThisBuild / scalacOptions ++= // Scala 3.x options
   Seq(
 //    "-Yrangepos",
     "-Ykind-projector:underscores",
@@ -31,6 +31,9 @@ lazy val protos =
       version := "0.1.0",
       scalaVersion := "2.13.6",
       libraryDependencies ++= Seq(
+        "com.thesamet.scalapb" %% "scalapb-runtime" % scalapb.compiler.Version.scalapbVersion % "protobuf",
+        "org.scalameta"        %% "scalameta"       % scalametaVersion                        % "protobuf",
+        "org.scalameta"        %% "scalameta"       % scalametaVersion
       ),
       Compile / PB.targets := Seq(
         scalapb.gen() -> (Compile / sourceManaged).value / "scalapb"
@@ -154,7 +157,7 @@ def linkerOutputDirectory(v: Attributed[org.scalajs.linker.interface.Report]): F
 lazy val root =
   project
     .in(file("."))
-    .aggregate(backend, ui, shared.js, shared.jvm)
+    .aggregate(protos, backend, ui, shared.js, shared.jvm)
     .settings(
       name := "type-explorer",
       version := "0.1.0"

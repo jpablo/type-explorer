@@ -1,11 +1,12 @@
 syntax = "proto3";
-//import "scala/meta/internal/semanticdb/semanticdb.proto";
 
 package org.jpablo.typeexplorer;
 
+//import "scalapb/scalapb.proto";
+import "semanticdb.proto";
 
 
 message View {
   string structure = 1;
-  string textDocuments = 2;
+  scala.meta.internal.semanticdb.TextDocuments textDocuments = 2;
 }
