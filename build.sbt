@@ -31,12 +31,13 @@ lazy val protos =
       version := "0.1.0",
       scalaVersion := "2.13.6",
       libraryDependencies ++= Seq(
-        "com.thesamet.scalapb" %% "scalapb-runtime" % scalapb.compiler.Version.scalapbVersion % "protobuf",
-        "org.scalameta"        %% "scalameta"       % scalametaVersion                        % "protobuf",
-        "org.scalameta"        %% "scalameta"       % scalametaVersion
+        "org.scalameta" %% "common" % scalametaVersion % "protobuf",
+        "org.scalameta" %% "common" % scalametaVersion
       ),
       Compile / PB.targets := Seq(
-        scalapb.gen() -> (Compile / sourceManaged).value / "scalapb"
+        scalapb.gen(
+          flatPackage = true
+        ) -> (Compile / sourceManaged).value / "scalapb"
       ),
       scalacOptions --= Seq(
         "-Ykind-projector:underscores",

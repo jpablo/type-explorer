@@ -2,7 +2,6 @@ syntax = "proto3";
 
 package org.jpablo.typeexplorer;
 
-//import "scalapb/scalapb.proto";
 import "semanticdb.proto";
 
 
