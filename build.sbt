@@ -28,8 +28,8 @@ lazy val protos =
     .crossType(CrossType.Full)
     .in(file("protos"))
     .settings(
-      name := "type-explorer-protos",
-      version := "0.1.0",
+      name         := "type-explorer-protos",
+      version      := "0.1.0",
       scalaVersion := "2.13.6",
       libraryDependencies ++= Seq(
         "org.scalameta" %%% "common" % scalametaVersion % "protobuf",
@@ -40,15 +40,10 @@ lazy val protos =
         "-Ysafe-init",
         "-source:future"
       ),
-      scalacOptions ++= Seq(
-        "-Xsource:3"
-      ),
-      Compile / PB.targets := Seq(
-        scalapb.gen(flatPackage = true) -> (Compile / sourceManaged).value / "scalapb"
-      ),
-      Compile / PB.protoSources  := Seq(
-        file("protos/shared/src/main/protobuf")
-      )
+      scalacOptions ++= Seq("-Xsource:3"),
+      Compile / PB.targets :=
+        Seq(scalapb.gen(flatPackage = true) -> (Compile / sourceManaged).value / "scalapb"),
+      Compile / PB.protoSources := Seq(file("protos/shared/src/main/protobuf"))
     )
     .jsSettings(
       scalaJSUseMainModuleInitializer := false

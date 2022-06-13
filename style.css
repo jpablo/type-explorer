@@ -92,10 +92,11 @@ body {
 
 .inheritance-container, .text-document-areas {
     display: grid;
-    grid-template-columns: minmax(100px, 1fr) minmax(min-content, 2fr);
+    /* grid-template-columns: minmax(100px, 1fr) minmax(min-content, 2fr); */
+    grid-template-columns: 2fr 1fr;
 }
 
-.text-document-container {
+.semanticdb-document-container {
     /* padding: 10px; */
     /* border: 1px solid black; */
     /* background-color: rgb(91, 109, 251); */

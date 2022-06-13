@@ -10,34 +10,63 @@ import scalapb.GeneratedMessage
 
 
 def semanticDBTab(documentsWithSource: EventStream[List[TextDocumentsWithSource]]) =
-  val documents =
-    documentsWithSource.map(docs => docs.flatMap(_.documents.toList))
   div(
     cls := "text-document-areas",
-    SemanticDB.structure(documents),
-    div(
-      cls := "text-document-container",
-      children <-- documents.split(_.uri)(SemanticDB.renderTextDocument)
+    SemanticDB.structure(documentsWithSource),
+    ol(
+      cls := "semanticdb-document-container",
+      children <-- documentsWithSource.split(_.semanticDbUri)(SemanticDB.renderTextDocumentsWithSource)
     )
   )
 
 
 object SemanticDB:
 
-  def structure(documents: EventStream[List[TextDocument]]) =
-    div(
+  // TODO: render individual elements using .split
+  def structure(documents: EventStream[List[TextDocumentsWithSource]]) =
+    ol(
       cls := "structure", 
       children <-- 
         documents.map { docs =>
-          for doc <- docs yield
-            div(
+          for docWithSource <- docs yield
+            li(
               whiteSpace := "nowrap",
               a(
-                href := "#" + doc.uri,
-                doc.uri
+                href := "#" + docWithSource.semanticDbUri,
+                docWithSource.semanticDbUri
+              ),
+              ul(
+                for doc <- docWithSource.documents yield
+                  li(
+                    a(
+                      href := "#" + doc.uri,
+                      doc.uri
+                    ),
+                    ul(
+                      for sym <- doc.symbols yield
+                        li(
+                          sym.symbol
+                        )
+                    )
+                  )
               )
             )
         }
+    )
+  
+
+  def renderTextDocumentsWithSource(id: String, initial: TextDocumentsWithSource, elem: EventStream[TextDocumentsWithSource]) =
+    li(
+      idAttr := id,
+      cls := "semanticdb-document",
+      b(
+        "path:",
+        child.text <-- elem.map(_.semanticDbUri)
+      ),
+      div(
+        cls := "text-document-container",
+        children <-- elem.map(_.documents).split(_.uri)(SemanticDB.renderTextDocument)
+      )
     )
 
   def renderTextDocument(id: String, initial: TextDocument, elem: EventStream[TextDocument]) = 
