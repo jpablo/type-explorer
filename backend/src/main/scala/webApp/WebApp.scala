@@ -2,7 +2,7 @@ package webApp
 
 import backends.plantuml.PlantumlInheritance
 import inheritance.InheritanceExamples
-import org.jpablo.typeexplorer.TextDocumentWithSource
+import org.jpablo.typeexplorer.{TextDocumentsWithSource, TextDocumentsWithSourceSeq}
 import zio.*
 import zhttp.http.*
 import zhttp.service.Server
@@ -55,6 +55,7 @@ object WebApp extends ZIOAppDefault {
 
     case req @ Method.GET -> !! / "inheritance" =>
       (req |> getPath |> readTextDocuments)
+        .map(toTextDocuments)
         .map(PlantumlInheritance.fromTextDocuments)
         .map(PlantumlInheritance.renderDiagram("laminar", _))
         .map(Response.text)
@@ -73,9 +74,16 @@ object WebApp extends ZIOAppDefault {
   given formats: Formats =
     Serialization.formats(NoTypeHints)
 
-  def readTextDocuments(path: Option[List[String]]) =
+  def toTextDocuments(docs: TextDocumentsWithSourceSeq): TextDocuments =
+    docs.documentsWithSource.flatMap(_.documents) |> TextDocuments.apply
+
+  def readTextDocuments(path: Option[List[String]]): Option[TextDocumentsWithSourceSeq] =
     for p <- combinePaths(path) yield
-      All.scan(p).flatMap(_._2.documents.toList) |> TextDocuments.apply
+      TextDocumentsWithSourceSeq(
+        All.scan(p).map { case (path, d) =>
+          TextDocumentsWithSource(path.toString).withDocuments(d.documents)
+        }
+      )
 
   def combinePaths(path: Option[List[String]]): Option[file.Path] =
     for case h :: t <- path if h.nonEmpty yield

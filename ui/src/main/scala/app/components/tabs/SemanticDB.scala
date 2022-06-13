@@ -5,10 +5,13 @@ import com.raquo.laminar.api.L.*
 import models.Type
 import com.raquo.airstream.core.EventStream
 import scala.meta.internal.semanticdb.{TextDocument, SymbolInformation, SymbolOccurrence, Synthetic}
+import org.jpablo.typeexplorer.TextDocumentsWithSource
 import scalapb.GeneratedMessage
 
 
-def semanticDBTab(documents: EventStream[List[TextDocument]]) =
+def semanticDBTab(documentsWithSource: EventStream[List[TextDocumentsWithSource]]) =
+  val documents =
+    documentsWithSource.map(docs => docs.flatMap(_.documents.toList))
   div(
     cls := "text-document-areas",
     SemanticDB.structure(documents),

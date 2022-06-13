@@ -3,11 +3,11 @@ package app.components
 
 import com.raquo.laminar.api.L.*
 import app.components.tabs.{semanticDBTab, inheritanceTab}
-import scala.meta.internal.semanticdb.TextDocument
+import org.jpablo.typeexplorer.TextDocumentsWithSource
 import org.scalajs.dom
 
 def tabsArea(
-  documents: EventStream[List[TextDocument]],
+  documents: EventStream[List[TextDocumentsWithSource]],
   svgDiagram: EventStream[dom.Element]
 ) =
   List(

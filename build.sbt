@@ -24,20 +24,16 @@ ThisBuild / scalacOptions ++= // Scala 3.x options
   )
 
 lazy val protos =
-  project
+  crossProject(JSPlatform, JVMPlatform)
+    .crossType(CrossType.Full)
     .in(file("protos"))
     .settings(
       name := "type-explorer-protos",
       version := "0.1.0",
       scalaVersion := "2.13.6",
       libraryDependencies ++= Seq(
-        "org.scalameta" %% "common" % scalametaVersion % "protobuf",
-        "org.scalameta" %% "common" % scalametaVersion
-      ),
-      Compile / PB.targets := Seq(
-        scalapb.gen(
-          flatPackage = true
-        ) -> (Compile / sourceManaged).value / "scalapb"
+        "org.scalameta" %%% "common" % scalametaVersion % "protobuf",
+        "org.scalameta" %%% "common" % scalametaVersion
       ),
       scalacOptions --= Seq(
         "-Ykind-projector:underscores",
@@ -46,7 +42,16 @@ lazy val protos =
       ),
       scalacOptions ++= Seq(
         "-Xsource:3"
+      ),
+      Compile / PB.targets := Seq(
+        scalapb.gen(flatPackage = true) -> (Compile / sourceManaged).value / "scalapb"
+      ),
+      Compile / PB.protoSources  := Seq(
+        file("protos/shared/src/main/protobuf")
       )
+    )
+    .jsSettings(
+      scalaJSUseMainModuleInitializer := false
     )
 
 /**
@@ -78,7 +83,7 @@ lazy val shared =
 lazy val backend =
   project
     .in(file("backend"))
-    .dependsOn(shared.jvm, protos)
+    .dependsOn(shared.jvm, protos.jvm)
     .settings(
       name := "type-explorer-backend",
       version := "0.1.0",
@@ -113,7 +118,7 @@ val publicProd = taskKey[String]("output directory for `npm run build`")
 lazy val ui =
   project
     .in(file("ui"))
-    .dependsOn(shared.js)
+    .dependsOn(shared.js, protos.js)
     .enablePlugins(ScalaJSPlugin)
     .settings(
       scalaJSUseMainModuleInitializer := true,
@@ -158,7 +163,7 @@ def linkerOutputDirectory(v: Attributed[org.scalajs.linker.interface.Report]): F
 lazy val root =
   project
     .in(file("."))
-    .aggregate(protos, backend, ui, shared.js, shared.jvm)
+    .aggregate(protos.js, protos.jvm, backend, ui, shared.js, shared.jvm)
     .settings(
       name := "type-explorer",
       version := "0.1.0"

@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package org.jpablo.typeexplorer;
+
+import "semanticdb.proto";
+import "scalapb/scalapb.proto";
+
+option (scalapb.options) = {
+  preserve_unknown_fields: false
+};
+
+
+
+message TextDocumentsWithSourceSeq {
+  repeated TextDocumentsWithSource documentsWithSource = 1;
+}
+
+
+message TextDocumentsWithSource {
+  string semanticDbUri = 1;
+  repeated scala.meta.internal.semanticdb.TextDocument documents = 2;
+}

@@ -7,7 +7,6 @@ import models.Type
 import io.laminext.fetch.*
 import io.laminext.fetch.circe.*
 import scala.scalajs.js.typedarray.Int8Array
-import scala.meta.internal.semanticdb.{TextDocuments, TextDocument}
 import app.client.{fetchSVGDiagram, fetchDocuments}
 
 object TopLevel {
