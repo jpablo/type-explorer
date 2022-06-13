@@ -8,30 +8,22 @@ body {
 }
 
 #app {
-    /* height: 100vh; */
+     height: 100vh;
 }
 
 #te-toplevel {
-    display: grid;
+    display: flex;
+    flex-direction: column;
     gap: 1px;
-    grid-template-areas: 
-        "header"
-        "te-tabs-header"
-        "te-tabs-container"
-        "footer"
-        ;
-    /* grid-template-columns: minmax(auto, 12em) 1fr; */
-    grid-template-rows: auto auto minmax(10px, 1fr) auto;
-    height: 100vh;
+    height: 100%;
 }
 
 #te-header {
-    grid-area: header;
 }
 
 /* -------- tabs ------------- */
 .te-tabs-container {
-    grid-area: te-tabs-container;
+    flex: 1;
     border-left: 1px solid lightgray;
     /* background-color: yellowgreen; */
     /* padding: 5px; */
@@ -44,13 +36,11 @@ body {
 }
 
 #te-tabs-header {
-    grid-area: te-tabs-header;
 }
 
 
 
 #te-footer {
-    grid-area: footer;
     background: rgb(248, 249, 250);
     z-index: 10;
 }
@@ -64,7 +54,7 @@ body {
 }
 
 .symbol-information pre {
-    margin: 0px;
+    margin: 0;
     font-size: xx-small;
 }
 
@@ -74,7 +64,7 @@ body {
 }
 
 .occurrence pre {
-    margin: 0px;
+    margin: 0;
     font-size: xx-small;
 }
 
@@ -84,7 +74,7 @@ body {
 }
 
 .synthetic pre {
-    margin: 0px;
+    margin: 0;
     font-size: xx-small;
 }
 
