@@ -38,14 +38,20 @@ object SemanticDB:
               ul(
                 for doc <- docWithSource.documents yield
                   li(
+                    "uri: ",
                     a(
                       href := "#" + doc.uri,
                       doc.uri
                     ),
-                    ul(
-                      for sym <- doc.symbols yield
+                    ol(
+                      for sym <- doc.symbols.sortBy(_.symbol) yield
                         li(
-                          sym.symbol
+                          "symbol: " + sym.symbol,
+                          ul(
+                            color := "gray",
+                            li( "kind: "  + sym.kind ),
+                            li( "displayName: "  + sym.displayName ),
+                          )
                         )
                     )
                   )
@@ -79,7 +85,7 @@ object SemanticDB:
       ),
       div(
         cls := "symbol-information-container",
-        children <-- elem.map(_.symbols).split(_.symbol)(renderGeneratedMessage("symbol-information"))
+        children <-- elem.map(_.symbols.sortBy(_.symbol)).split(_.symbol)(renderGeneratedMessage("symbol-information"))
       ),
       div(
         cls := "occurrences-container",
