@@ -11,7 +11,7 @@ import scalapb.GeneratedMessage
 def semanticDBTab(documents: EventStream[List[TextDocument]]) =
   div(
     cls := "text-document-areas",
-    div(cls := "structure", "Structure2"),
+    SemanticDB.structure(documents),
     div(
       cls := "text-document-container",
       children <-- documents.split(_.uri)(SemanticDB.renderTextDocument)
@@ -21,8 +21,25 @@ def semanticDBTab(documents: EventStream[List[TextDocument]]) =
 
 object SemanticDB:
 
+  def structure(documents: EventStream[List[TextDocument]]) =
+    div(
+      cls := "structure", 
+      children <-- 
+        documents.map { docs =>
+          for doc <- docs yield
+            div(
+              whiteSpace := "nowrap",
+              a(
+                href := "#" + doc.uri,
+                doc.uri
+              )
+            )
+        }
+    )
+
   def renderTextDocument(id: String, initial: TextDocument, elem: EventStream[TextDocument]) = 
     div(
+      idAttr := id,
       cls := "text-document",
       b(
         "uri: ", 
@@ -44,6 +61,7 @@ object SemanticDB:
 
   def renderGeneratedMessage(className: String)(id: String, initial: GeneratedMessage, elem: EventStream[GeneratedMessage]) =
     div(
+      idAttr := id,
       cls := ("card", className),
       div(
         cls := "card-body",

@@ -19,7 +19,7 @@ def fetchDocuments(projectPath: Signal[String]): EventStream[List[TextDocument]]
     response <- fetchBase("semanticdb?path=" + path).arrayBuffer
   yield
     val ia = Int8Array(response.data, 0, length = response.data.byteLength)
-    TextDocuments.parseFrom(ia.toArray).documents.toList
+    TextDocuments.parseFrom(ia.toArray).documents.toList.sortBy(_.uri)
 
 
 

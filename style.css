@@ -92,16 +92,7 @@ body {
 
 .inheritance-container, .text-document-areas {
     display: grid;
-    grid-template-columns: minmax(auto, 12em) 1fr;
-    /* grid-template-rows: minmax(auto, 100px); */
-
-    /* border: 1px solid black; */
-    /* padding: 5px; */
-
-    /* max-height: 50vh; */
-    /* background-color: rgb(249, 27, 27); */
-
-    
+    grid-template-columns: minmax(100px, 1fr) minmax(min-content, 2fr);
 }
 
 .text-document-container {
@@ -125,9 +116,8 @@ body {
 
 
 .structure {
-    /* background: orange; */
-    /* border: 1px solid rgb(123, 80, 1); */
-    /* align-self: start; */
+    max-height: 90vh;
+    overflow: auto;
 }
 
 .symbol-information-container {

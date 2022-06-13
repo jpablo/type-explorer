@@ -2,10 +2,12 @@ package webApp
 
 import backends.plantuml.PlantumlInheritance
 import inheritance.InheritanceExamples
+import org.jpablo.typeexplorer.TextDocumentWithSource
 import zio.*
 import zhttp.http.*
 import zhttp.service.Server
 import semanticdb.{All, ClassesList}
+
 import scala.meta.internal.semanticdb.TextDocuments
 import java.net.URI
 import org.json4s.*
@@ -13,6 +15,7 @@ import org.json4s.native.Serialization
 import org.json4s.native.Serialization.{read, write}
 import zhttp.http.Middleware.cors
 import zhttp.http.middleware.Cors.CorsConfig
+
 import java.nio.file
 import util.Operators.*
 

@@ -78,7 +78,7 @@ lazy val shared =
 lazy val backend =
   project
     .in(file("backend"))
-    .dependsOn(shared.jvm)
+    .dependsOn(shared.jvm, protos)
     .settings(
       name := "type-explorer-backend",
       version := "0.1.0",
