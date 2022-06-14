@@ -9,6 +9,8 @@ import org.jpablo.typeexplorer.TextDocumentsWithSource
 import scalapb.GeneratedMessage
 import org.scalajs.dom.html.LI
 import com.raquo.laminar.nodes.ReactiveHtmlElement
+import com.raquo.laminar.nodes.ReactiveElement.Base
+import com.raquo.airstream.core.Signal
 
 
 def semanticDBTab(documentsWithSource: EventStream[List[TextDocumentsWithSource]]) =
@@ -40,43 +42,41 @@ object SemanticDB:
     )
 
   def structureLevel2(id: String, initial: TextDocument, elem: EventStream[TextDocument]) =
-    li(
-      a(cls := "bi bi-chevron-right"),
-      "uri: ",
-      child <-- elem.map(doc => a(href := "#" + doc.uri, doc.uri)),
-      ul(
-        children <-- 
-          elem.map(_.symbols.sortBy(_.symbol)).split(_.symbol)(structureLevel3),
-      )
-    )
+    val $body = elem.startWith(initial).map(_.symbols.sortBy(_.symbol)).split(_.symbol)(structureLevel3)
+    val head = 
+      span("uri: ", child <-- elem.map(doc => a(href := "#" + doc.uri, doc.uri) ))
 
-  def collapsable(head: HtmlElement, contentStream: EventStream[List[HtmlElement]]) =
-    val open = Var[Boolean](false)
-    val contents = 
-      open.signal.changes
-        .combineWith(contentStream)
-        .map((o, content) => if o then content else List.empty)
-    
-    li(
-      a(
-        cls := "bi",
-        cls <-- open.signal.map(o => if o then "bi-chevron-down" else "bi-chevron-right"),
-        onClick --> { _ => open.update(v => !v) }
-      ),               
-      head,
-      ul( children <-- contents )
-    )
+    collapsable(head, $body)
 
-  def structureLevel3(id: String, initial: SymbolInformation, elem: EventStream[SymbolInformation]) =
+
+  def structureLevel3(id: String, initial: SymbolInformation, elem: Signal[SymbolInformation]): ReactiveHtmlElement[LI] =
     collapsable(
-      span(child.text <-- elem.map(sym => s"${sym.kind}: ${sym.symbol}")),
-      elem.map(sym =>             
+      head = span(child.text <-- elem.map(sym => s"${sym.kind}: ${sym.displayName}")),
+      $body = elem.map(sym =>
         List(
           li( "kind: "  + sym.kind ),
-          li( "displayName: "  + sym.displayName ),
+          li( "symbol: "  + sym.symbol ),
         )
       )
     )
+
+
+  def collapsable(head: HtmlElement, $body: Signal[Seq[HtmlElement]], open: Boolean = false) =
+    val $open = Var(open)
+    val $managedChildren = 
+      $open.signal.combineWith($body).mapN((o, children) => if o then children else Seq.empty)
+
+    li(
+      cls := "collapsable",
+      a(
+        cls := "bi",
+        cls <-- $open.signal.map(o => if o then "bi-chevron-down" else "bi-chevron-right"),
+        onClick --> $open.updater((v, _) => !v)
+      ),               
+      head,
+      ul( children <-- $managedChildren )
+    )
+
 
   // -------- protobuf text --------------
 
