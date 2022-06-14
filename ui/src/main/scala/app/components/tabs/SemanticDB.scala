@@ -16,13 +16,17 @@ import com.raquo.airstream.core.Signal
 def semanticDBTab(documentsWithSource: EventStream[List[TextDocumentsWithSource]]) =
   div(
     cls := "text-document-areas",
-    ol(
+    div(
       cls := "structure",
-      children <-- documentsWithSource.split(_.semanticDbUri)(SemanticDB.structureLevel1),
+      ol(
+        children <-- documentsWithSource.split(_.semanticDbUri)(SemanticDB.structureLevel1),
+      )
     ),
-    ol(
+    div(
       cls := "semanticdb-document-container",
-      children <-- documentsWithSource.split(_.semanticDbUri)(SemanticDB.renderTextDocumentsWithSource)
+      ol(
+        children <-- documentsWithSource.split(_.semanticDbUri)(SemanticDB.renderTextDocumentsWithSource)
+      )
     )
   )
 
