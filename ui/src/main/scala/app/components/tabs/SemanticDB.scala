@@ -51,7 +51,13 @@ object SemanticDB:
 
   def structureLevel3(id: String, initial: SymbolInformation, elem: Signal[SymbolInformation]): ReactiveHtmlElement[LI] =
     collapsable(
-      head = span(child.text <-- elem.map(sym => s"${sym.kind}: ${sym.displayName}")),
+      head = span(children <-- elem.map(sym =>  
+          List(
+            span(sym.kind.toString), 
+            span(": "), 
+            a(href := "#" + sym.symbol,  sym.displayName)
+          )
+      )),
       $body = elem.map(sym =>
         List(
           li( "kind: "  + sym.kind ),
