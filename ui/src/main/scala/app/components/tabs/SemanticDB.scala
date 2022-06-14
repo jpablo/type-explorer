@@ -7,12 +7,17 @@ import com.raquo.airstream.core.EventStream
 import scala.meta.internal.semanticdb.{TextDocument, SymbolInformation, SymbolOccurrence, Synthetic}
 import org.jpablo.typeexplorer.TextDocumentsWithSource
 import scalapb.GeneratedMessage
+import org.scalajs.dom.html.LI
+import com.raquo.laminar.nodes.ReactiveHtmlElement
 
 
 def semanticDBTab(documentsWithSource: EventStream[List[TextDocumentsWithSource]]) =
   div(
     cls := "text-document-areas",
-    SemanticDB.structure(documentsWithSource),
+    ol(
+      cls := "structure",
+      children <-- documentsWithSource.split(_.semanticDbUri)(SemanticDB.structureLevel1),
+    ),
     ol(
       cls := "semanticdb-document-container",
       children <-- documentsWithSource.split(_.semanticDbUri)(SemanticDB.renderTextDocumentsWithSource)
@@ -22,44 +27,58 @@ def semanticDBTab(documentsWithSource: EventStream[List[TextDocumentsWithSource]
 
 object SemanticDB:
 
-  // TODO: render individual elements using .split
-  def structure(documents: EventStream[List[TextDocumentsWithSource]]) =
-    ol(
-      cls := "structure", 
-      children <-- 
-        documents.map { docs =>
-          for docWithSource <- docs yield
-            li(
-              whiteSpace := "nowrap",
-              a(
-                href := "#" + docWithSource.semanticDbUri,
-                docWithSource.semanticDbUri
-              ),
-              ul(
-                for doc <- docWithSource.documents yield
-                  li(
-                    "uri: ",
-                    a(
-                      href := "#" + doc.uri,
-                      doc.uri
-                    ),
-                    ol(
-                      for sym <- doc.symbols.sortBy(_.symbol) yield
-                        li(
-                          "symbol: " + sym.symbol,
-                          ul(
-                            color := "gray",
-                            li( "kind: "  + sym.kind ),
-                            li( "displayName: "  + sym.displayName ),
-                          )
-                        )
-                    )
-                  )
-              )
-            )
-        }
+  // -------- Structure --------------
+
+  def structureLevel1(id: String, initial: TextDocumentsWithSource, elem: EventStream[TextDocumentsWithSource]) =
+    li(
+      whiteSpace := "nowrap",
+      child <-- elem.map(doc => a(href := "#" + doc.semanticDbUri, doc.semanticDbUri)),
+      ul(
+        children <-- 
+          elem.map(_.documents).split(_.uri)(structureLevel2),
+      )
     )
-  
+
+  def structureLevel2(id: String, initial: TextDocument, elem: EventStream[TextDocument]) =
+    li(
+      a(cls := "bi bi-chevron-right"),
+      "uri: ",
+      child <-- elem.map(doc => a(href := "#" + doc.uri, doc.uri)),
+      ul(
+        children <-- 
+          elem.map(_.symbols.sortBy(_.symbol)).split(_.symbol)(structureLevel3),
+      )
+    )
+
+  def collapsable(head: HtmlElement, contentStream: EventStream[List[HtmlElement]]) =
+    val open = Var[Boolean](false)
+    val contents = 
+      open.signal.changes
+        .combineWith(contentStream)
+        .map((o, content) => if o then content else List.empty)
+    
+    li(
+      a(
+        cls := "bi",
+        cls <-- open.signal.map(o => if o then "bi-chevron-down" else "bi-chevron-right"),
+        onClick --> { _ => open.update(v => !v) }
+      ),               
+      head,
+      ul( children <-- contents )
+    )
+
+  def structureLevel3(id: String, initial: SymbolInformation, elem: EventStream[SymbolInformation]) =
+    collapsable(
+      span(child.text <-- elem.map(sym => s"${sym.kind}: ${sym.symbol}")),
+      elem.map(sym =>             
+        List(
+          li( "kind: "  + sym.kind ),
+          li( "displayName: "  + sym.displayName ),
+        )
+      )
+    )
+
+  // -------- protobuf text --------------
 
   def renderTextDocumentsWithSource(id: String, initial: TextDocumentsWithSource, elem: EventStream[TextDocumentsWithSource]) =
     li(

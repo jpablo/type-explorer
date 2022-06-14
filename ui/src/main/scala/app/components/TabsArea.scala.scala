@@ -20,7 +20,7 @@ def tabsArea(
               cls := "nav-item",
               role := "presentation",
               button(
-                  cls := "nav-link active",
+                  cls := "nav-link",
                   dataAttr("bs-toggle") := "tab",
                   dataAttr("bs-target") := "#classes-tab-pane",
                   tpe := "button",
@@ -31,7 +31,7 @@ def tabsArea(
           li(
               cls := "nav-item",
               a(
-                  cls := "nav-link",
+                  cls := "nav-link active",
                   href := "#",
                   dataAttr("bs-toggle") := "tab",
                   dataAttr("bs-target") := "#semanticdb-tab-pane",
@@ -48,14 +48,14 @@ def tabsArea(
         cls := "tab-content",
         div(
           idAttr := "classes-tab-pane",
-          cls := "tab-pane fade show active",
+          cls := "tab-pane fade",
           role := "tabpanel",
           tabIndex := 0,
           inheritanceTab(svgDiagram)
         ),
         div(
           idAttr := "semanticdb-tab-pane",
-          cls := "tab-pane fade",
+          cls := "tab-pane fade show active",
           role := "tabpanel",
           tabIndex := 0,
           semanticDBTab(documents)
