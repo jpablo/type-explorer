@@ -31,18 +31,18 @@ object FileTree:
   type Segments[A] = List[(A, List[Name])]
 
   def build[A](files: List[A])(getPath: A => String): List[FileTree[A]] =
-    buildRec(buildSegments(files, getPath))
+    fromSegments(buildSegments(files, getPath))
 
   // -----------------------
 
-  private def buildRec[A](segments: Segments[A]): List[FileTree[A]] =
+  private def fromSegments[A](segments: Segments[A]): List[FileTree[A]] =
     val tails =
       segments
         .groupBy(_._2.head)
         .transform((_, groups) => dropHeads(groups))
     for (name, nextSegments) <- tails.toList yield nextSegments match
       case (doc -> Nil) :: Nil => File(name, doc)
-      case _ => buildRec(nextSegments) match
+      case _ => fromSegments(nextSegments) match
         // join directories with a single directory child
         case Directory(nextName, nextContents) :: Nil => Directory(name + "/" + nextName, nextContents)
         case contents                                 => Directory(name, contents)
@@ -63,12 +63,3 @@ object FileTree:
   private def dropHeads[A](segments: Segments[A]): Segments[A] =
     for case (file, _ :: next) <- segments yield
       file -> next
-
-object SemanticDBStructureNested:
-
-
-  def structureLevel0(documentsWithSource:List[TextDocumentsWithSource]) =
-    documentsWithSource.map(_.semanticDbUri.split("/").toList)
-
-
-end SemanticDBStructureNested

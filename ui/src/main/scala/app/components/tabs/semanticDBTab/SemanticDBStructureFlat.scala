@@ -18,7 +18,7 @@ import widgets.collapsable
 object SemanticDBStructureFlat:
 
 
-  def structureLevel1(id: String, initial: TextDocumentsWithSource, elem: EventStream[TextDocumentsWithSource]) =
+  def structureLevel1(id: String, initial: TextDocumentsWithSource, elem: EventStream[TextDocumentsWithSource]): ReactiveHtmlElement[LI] =
     li(
       whiteSpace := "nowrap",
       child <-- elem.map(doc => a(href := "#" + doc.semanticDbUri, doc.semanticDbUri)),
@@ -29,17 +29,23 @@ object SemanticDBStructureFlat:
       )
     )
 
-  def structureLevel2(id: String, initial: TextDocument, elem: EventStream[TextDocument]) =
-    val $body = elem.startWith(initial).map(_.symbols.sortBy(_.symbol)).split(_.symbol)(structureLevel3)
-    val head = 
-      span("uri: ", child <-- elem.map(doc => a(href := "#" + encodeURIComponent(doc.uri), doc.uri) ))
+  def structureLevel2(id: String, initial: TextDocument, elem: EventStream[TextDocument]): ReactiveHtmlElement[org.scalajs.dom.html.Div] =
+    val textDocSignal: Signal[TextDocument] =
+      elem.startWith(initial)
+
+    val $body =
+      textDocSignal
+        .map(_.symbols.sortBy(_.symbol))
+        .split(_.symbol)(structureLevel3)
+
+    val head = span("uri: ", child <-- elem.map(doc => a(href := "#" + encodeURIComponent(doc.uri), doc.uri) ))
 
     collapsable(head, $body)
 
 
-  def structureLevel3(id: String, initial: SymbolInformation, elem: Signal[SymbolInformation]) =
+  def structureLevel3(id: String, initial: SymbolInformation, elem: Signal[SymbolInformation]): ReactiveHtmlElement[org.scalajs.dom.html.Div] =
     collapsable(
-      branchLabel = span(children <-- elem.map(sym =>  
+      branchLabel = span(children <-- elem.map(sym =>
           List(
             span(sym.kind.toString), 
             span(": "), 

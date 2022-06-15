@@ -21,18 +21,8 @@ import FileTree.*
 import util.Operators.*
 
 import scala.compiletime.ops.int.ToString
-
-val tree =
-  Directory("Users", List(
-    Directory("jpablo",
-      List.tabulate(10)(i => File(s"file$i.semanticdb", i))
-    ),
-    Directory("other_dir", List(
-      Directory.apply("nested", List(
-        File("file3.semanticdb", 3)
-      )),
-    )),
-  ))
+import com.raquo.airstream.state.Val
+import jdk.jfr.consumer
 
 
 def renderTree[A]
@@ -55,6 +45,22 @@ def renderTree[A]
   case File(name, data) =>
     renderLeaf(name, data)
 
+def renderSymbolInformation(id: String, initial: SymbolInformation, elem: Signal[SymbolInformation]) =
+  collapsable(
+    branchLabel = span(children <-- elem.map(sym =>
+      List(
+        span(sym.kind.toString),
+        span(": "),
+        a(href := "#" + encodeURIComponent(sym.symbol),  sym.displayName)
+      )
+    )),
+    $children = elem.map(sym =>
+      List(
+        li( "kind: "  + sym.kind ),
+        li( "symbol: "  + sym.symbol ),
+      )
+    )
+  )
 
 def semanticDBTab($documents: EventStream[List[TextDocumentsWithSource]]) =
   val $tree =
@@ -63,14 +69,20 @@ def semanticDBTab($documents: EventStream[List[TextDocumentsWithSource]]) =
         renderTree(fileTree)(
           renderBranch = b =>
             span(cls := "collapsable-branch-label", b),
-          renderLeaf = (name, doc) =>
-            span(
-              cls := "collapsable-leaf",
-              Icons.fileBinary,
-              a(href := "#" + doc.semanticDbUri, name)
+
+          renderLeaf = (name, doc: TextDocumentsWithSource) =>
+            val cs =
+              for doc <- doc.documents yield
+                val $body = Signal.fromValue(doc).map(_.symbols.sortBy(_.symbol)).split(_.symbol)(renderSymbolInformation)
+                collapsable(
+                  span("uri: ", a(href := "#" + encodeURIComponent(doc.uri), doc.uri)),
+                  $body
+                )
+            collapsable(
+              branchLabel = span(cls := "collapsable-leaf", Icons.fileBinary, a(href := "#" + doc.semanticDbUri, name)),
+              $children = Signal.fromValue(cs)
             )
         )
-
   div(
     cls := "text-document-areas",
     div(
