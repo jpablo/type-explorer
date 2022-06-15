@@ -48,8 +48,17 @@ object FileTree:
         case contents                                 => Directory(name, contents)
 
   private def buildSegments[A](files: List[A], getPath: A => String): Segments[A] =
-    for file <- files yield
-      file -> getPath(file).split("/").toList.filter(_.nonEmpty)
+    for
+      file <- files
+      path = getPath(file)
+      segments = path.split("/").toList.filter(_.nonEmpty)
+      withRoot =
+        if path.startsWith("/")
+        then ("/" + segments.head) :: segments.tail
+        else segments
+    yield
+      (file, withRoot)
+
 
   private def dropHeads[A](segments: Segments[A]): Segments[A] =
     for case (file, _ :: next) <- segments yield
