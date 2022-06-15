@@ -14,31 +14,13 @@ import com.raquo.airstream.core.Signal
 import scalajs.js.URIUtils.encodeURIComponent
 import org.scalajs.dom
 
-//def collapsable2(head: HtmlElement, $body: Signal[Seq[HtmlElement]], open: Boolean = false) =
-//  val $open = Var(open)
-//  val $managedChildren =
-//    $open.signal.combineWith($body).mapN((o, children) => if o then children else Seq.empty)
-//
-//  li(
-//    cls := "collapsable-wrapper",
-//    a(
-//      cls := "bi",
-//      cls <-- $open.signal.map(o => if o then "bi-chevron-down" else "bi-chevron-right"),
-//      onClick --> $open.updater((v, _) => !v)
-//    ),
-//    head,
-//    ul( children <-- $managedChildren )
-//  )
-
-def collapsable(head: HtmlElement, $children: Signal[Seq[HtmlElement]], open: Boolean = false) =
+def collapsable(branchLabel: HtmlElement, $children: Signal[Seq[HtmlElement]], open: Boolean = false) =
   val $open = Var(open)
   val $managedChildren =
     $open.signal
       .combineWith($children)
       .mapN((open, children) =>
-        if open then
-          children.map(li(_))
-        else Seq.empty
+        if open then children.map(li(_)) else Seq.empty
       )
 
   div(
@@ -48,7 +30,7 @@ def collapsable(head: HtmlElement, $children: Signal[Seq[HtmlElement]], open: Bo
       cls := "collapsable-button",
       onClick --> $open.updater((v, _) => !v)
     ),
-    head,
+    branchLabel,
     ul(
       cls := "collapsable-children",
       children <-- $managedChildren

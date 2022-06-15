@@ -39,7 +39,7 @@ object SemanticDBStructureFlat:
 
   def structureLevel3(id: String, initial: SymbolInformation, elem: Signal[SymbolInformation]) =
     collapsable(
-      head = span(children <-- elem.map(sym =>  
+      branchLabel = span(children <-- elem.map(sym =>  
           List(
             span(sym.kind.toString), 
             span(": "), 

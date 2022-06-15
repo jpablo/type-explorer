@@ -44,7 +44,7 @@ def renderTree[A]
 : HtmlElement = t match
   case Directory(name, files) =>
     collapsable(
-      head = renderBranch(name),
+      branchLabel = renderBranch(name),
       $children =
         Signal.fromValue {
           for f <- files yield
@@ -56,28 +56,27 @@ def renderTree[A]
     renderLeaf(name, data)
 
 
-def semanticDBTab(documentsWithSource: EventStream[List[TextDocumentsWithSource]]) =
-
-  val $tree = documentsWithSource
-    .map( docs =>
-      renderTree(FileTree.fromTextDocuments(docs))(
-        renderBranch =
-          span(_),
-        renderLeaf = (name, doc) =>
-          span(
-            cls := "collapsable-leaf",
-            Icons.fileBinary,
-            a(href := "#" + doc.semanticDbUri, name)
-          )
-      )
-    )
+def semanticDBTab($documents: EventStream[List[TextDocumentsWithSource]]) =
+  val $tree =
+    for documents <- $documents yield
+      for fileTree <- FileTree.build(documents)(_.semanticDbUri) yield
+        renderTree(fileTree)(
+          renderBranch = b =>
+            span(cls := "collapsable-branch-label", b),
+          renderLeaf = (name, doc) =>
+            span(
+              cls := "collapsable-leaf",
+              Icons.fileBinary,
+              a(href := "#" + doc.semanticDbUri, name)
+            )
+        )
 
   div(
     cls := "text-document-areas",
     div(
       cls := "structure",
       div(""), // TODO: add controls to expand / collapse all
-      child <-- $tree
+      children <-- $tree
 //      ol(
 //        children <-- documentsWithSource.split(_.semanticDbUri)(SemanticDBStructureFlat.structureLevel1),
 //      )
@@ -85,7 +84,7 @@ def semanticDBTab(documentsWithSource: EventStream[List[TextDocumentsWithSource]
     div(
       cls := "semanticdb-document-container",
       ol(
-        children <-- documentsWithSource.split(_.semanticDbUri)(SemanticDBText.renderTextDocumentsWithSource)
+        children <-- $documents.split(_.semanticDbUri)(SemanticDBText.renderTextDocumentsWithSource)
       )
     )
   )

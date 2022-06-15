@@ -108,32 +108,26 @@ a {
     margin: 5px;
 }
 
-/* ----- collpsable --------- */
-
+/* ----- collapsable --------- */
 
 .collapsable-wrapper {
-    /* border: .5px dotted gray; */
-    /* white-space: nowrap; */
+     white-space: nowrap;
 }
 
 ul.collapsable-children {
-    /* border: .5px dotted red; */
-    padding-left: 1em;
+    padding-left: 1.5em;
     list-style: none;
 }
 
 ul.collapsable-children > li > .collapsable-wrapper {
-    /* border: .1px dashed blue; */
     margin-left: 0;
     border-left: 1px dotted lightblue;
 }
 
 .collapsable {
-    /* list-style: none; */
 }
 
 .collapsable-leaf {
-    /*background-color: aqua;*/
     margin-left: 1px;
 }
 
@@ -144,5 +138,8 @@ ul.collapsable-children > li > .collapsable-wrapper {
 .collapsable-button {
     width: 15px;
     display: inline-block;
-    /*position: relative;*/
+}
+
+.collapsable-branch-label {
+    white-space: nowrap;
 }
