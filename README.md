@@ -31,7 +31,11 @@ $ npm install
 
 ### Running the Backend
 
-Running inside and IDE InteliJ, run the `WebApp` module at at `WebApp.scala` 
+From `sbt`:
+
+```
+backend/runMain webApp.WebApp
+```
 
 ### Running the UI
 

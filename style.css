@@ -7,8 +7,12 @@ body {
     height: 100vh;
 }
 
+a {
+    text-decoration: none;
+}
+
 #app {
-     height: 100vh;
+    height: 100vh;
 }
 
 #te-toplevel {
@@ -20,7 +24,14 @@ body {
 
 #te-header {
     grid-area: header;
+    border-bottom: 1px solid lightgray;
 }
+
+#te-footer {
+    background: rgb(248, 249, 250);
+    border-top: 1px solid lightgray;
+}
+
 
 /* -------- tabs ------------- */
 .te-tabs-container {
@@ -28,85 +39,56 @@ body {
     grid-area: te-tabs-container;
     border-left: 1px solid lightgray;
     overflow: auto;
-    /* background-color: yellowgreen; */
-    /* padding: 5px; */
-    /* border: 1px solid black; */
+    padding-top: 5px;
 }
 
 .tab-content {
     height: 100%;
-    /* border: 1px solid red; */
-    /* background-color: lightcoral; */
 }
 
 #te-tabs-header {
+    margin-top: 5px;
 }
 
-
-
-#te-footer {
-    background: rgb(248, 249, 250);
+/*---- cards --- */
+.card-uri {
+    background-color: lightgray;
 }
 
-
-
-.symbol-information {
-    /* margin: 5px 0px 5px 20px; */
+.card-symbol-information {
     background-color: lightblue;
-    /* margin: 5px; */
 }
 
-.symbol-information pre {
+.card-uri pre,
+.card-occurrence pre,
+.card-synthetic pre,
+.card-symbol-information pre {
     margin: 0;
     font-size: xx-small;
 }
 
-.occurrence {
-    /* margin: 5px 0px 5px 20px; */
+.card-occurrence {
     background-color: lightgoldenrodyellow;
 }
 
-.occurrence pre {
-    margin: 0;
-    font-size: xx-small;
-}
-
-.synthetic {
-    /* margin: 5px 0px 5px 20px; */
+.card-synthetic {
     background-color: lightpink;
-}
-
-.synthetic pre {
-    margin: 0;
-    font-size: xx-small;
 }
 
 /* ------------------ */
 
 .inheritance-container, .text-document-areas {
     display: grid;
-    /* grid-template-columns: minmax(100px, 1fr) minmax(min-content, 2fr); */
     grid-template-columns: 2fr 1fr;
     height: 100%
 }
 
 .semanticdb-document-container {
-    /* padding: 10px; */
-    /* border: 1px solid black; */
-    /* background-color: rgb(91, 109, 251); */
     height: 100%;
     overflow: auto;
 }
-/* 
-.text-document:nth-child(1) {
-    border-top: none;
-    margin-top: 0px;
-} */
 
 .text-document {
-    /* padding: 5px; */
-    /* border: 1px solid black; */
-    /* background-color: burlywood; */
 }
 
 
@@ -116,19 +98,51 @@ body {
 }
 
 .symbol-information-container {
-    /* background: darkgreen; */
-    /* border: 1px solid black; */
-    /* padding: 0px; */
 }
 
 #semanticdb-tab-pane {
     height: 100%;
-    /* background-color: rgb(173, 120, 223); */
-    /* border: 1px solid blueviolet; */
-    /* margin: 5px; */
-    /* padding: 5px; */
 }
 
 .card {
     margin: 5px;
+}
+
+/* ----- collpsable --------- */
+
+
+.collapsable-wrapper {
+    /* border: .5px dotted gray; */
+    /* white-space: nowrap; */
+}
+
+ul.collapsable-children {
+    /* border: .5px dotted red; */
+    padding-left: 1em;
+    list-style: none;
+}
+
+ul.collapsable-children > li > .collapsable-wrapper {
+    /* border: .1px dashed blue; */
+    margin-left: 0;
+    border-left: 1px dotted lightblue;
+}
+
+.collapsable {
+    /* list-style: none; */
+}
+
+.collapsable-leaf {
+    /*background-color: aqua;*/
+    margin-left: 1px;
+}
+
+.collapsable-leaf > a {
+    margin-left: 1px;
+}
+
+.collapsable-button {
+    width: 15px;
+    display: inline-block;
+    /*position: relative;*/
 }

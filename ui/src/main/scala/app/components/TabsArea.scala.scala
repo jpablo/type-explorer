@@ -2,7 +2,8 @@ package app.components
 
 
 import com.raquo.laminar.api.L.*
-import app.components.tabs.{semanticDBTab, inheritanceTab}
+import app.components.tabs.semanticDBTab.semanticDBTab
+import app.components.tabs.inheritanceTab
 import org.jpablo.typeexplorer.TextDocumentsWithSource
 import org.scalajs.dom
 
