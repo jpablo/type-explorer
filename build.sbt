@@ -14,9 +14,9 @@ ThisBuild / resolvers += "Sonatype OSS Snapshots" at "https://s01.oss.sonatype.o
 ThisBuild / organization := "net.jpablo"
 ThisBuild / scalaVersion := scala3Version
 ThisBuild / semanticdbEnabled := true
+ThisBuild / semanticdbVersion := scalametaVersion
 ThisBuild / scalacOptions ++= // Scala 3.x options
   Seq(
-//    "-Yrangepos",
     "-Ykind-projector:underscores",
     "-Ysafe-init",
     "-language:implicitConversions",
