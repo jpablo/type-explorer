@@ -24,28 +24,38 @@ import scala.scalajs.js.URIUtils.encodeURIComponent
 object SemanticDBTree:
 
   def buildTree($documents: EventStream[List[TextDocumentsWithSource]]): EventStream[List[HtmlElement]] =
-    for documents <- $documents yield
-      for fileTree <- FileTree.build(documents)(_.semanticDbUri) yield
-        renderTree(fileTree)(
-          renderBranch = b =>
-            span(cls := "collapsable-branch-label", b),
+    for documentsWithSource <- $documents yield
+      for fileTree <- FileTree.build(documentsWithSource)(_.semanticDbUri) yield
+        fromFileTree(fileTree)(
+          renderBranch =
+            b =>
+              span(cls := "collapsable-branch-label", b),
 
-          renderLeaf = (name, doc: TextDocumentsWithSource) =>
-            val cs =
-              for doc <- doc.documents yield
-                val $body = Signal.fromValue(doc).map(_.symbols.sortBy(_.symbol)).split(_.symbol)(renderSymbolInformation)
-                  collapsable(
-                  span("uri: ", a(href := "#" + encodeURIComponent(doc.uri), doc.uri)),
-                  $body
-                )
-            collapsable(
-              branchLabel = span(cls := "collapsable-leaf", Icons.fileBinary, a(href := "#" + doc.semanticDbUri, name)),
-              $children = Signal.fromValue(cs)
-            )
+          renderLeaf =
+            (name, docWithSource: TextDocumentsWithSource) =>
+              collapsable(
+                branchLabel =
+                  span(cls := "collapsable-leaf", Icons.fileBinary, a(href := "#" + docWithSource.semanticDbUri, name)),
+
+                $children =
+                  Signal.fromValue {
+                    for doc <- docWithSource.documents yield
+                      collapsable(
+                        branchLabel = 
+                          span("uri: ", a(href := "#" + encodeURIComponent(doc.uri), doc.uri)),
+
+                        $children =
+                          Signal.fromValue(doc).map(_.symbols.sortBy(_.symbol)).split(_.symbol)(renderSymbolInformation),
+
+                        open = true
+                      )
+                  },
+                open = true
+              )
         )
 
 
-  def renderTree[A]
+  def fromFileTree[A]
     (t: FileTree[A])
     (
       renderBranch: String => HtmlElement,
@@ -58,7 +68,7 @@ object SemanticDBTree:
         $children =
           Signal.fromValue {
             for f <- files yield
-              renderTree(f)(renderBranch, renderLeaf)
+              fromFileTree(f)(renderBranch, renderLeaf)
           },
         open = true
       )
@@ -67,13 +77,16 @@ object SemanticDBTree:
 
   def renderSymbolInformation(id: String, initial: SymbolInformation, elem: Signal[SymbolInformation]) =
     collapsable(
-      branchLabel = span(children <-- elem.map(sym =>
-        List(
-          span(sym.kind.toString),
-          span(": "),
-          a(href := "#" + encodeURIComponent(sym.symbol),  sym.displayName)
-        )
-      )),
+      branchLabel =
+        span(
+          children <-- elem.map(sym =>
+            List(
+              span(sym.kind.toString),
+              span(": "),
+              a(href := "#" + encodeURIComponent(sym.symbol),  sym.displayName)
+            )
+          )
+        ),
       $children = elem.map(sym =>
         List(
           li( "kind: "  + sym.kind ),
