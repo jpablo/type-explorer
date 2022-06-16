@@ -1,12 +1,14 @@
 import org.scalajs.linker.interface.ModuleSplitStyle
 
-val scala3Version = "3.1.2"
-val zioVersion = "2.0.0-RC6"
-val zioJsonVersion = "0.3.0-RC8"
-val circeVersion = "0.14.2"
+val scala3Version     = "3.1.2"
+val zioVersion        = "2.0.0-RC6"
+val zioJsonVersion    = "0.3.0-RC8"
+val circeVersion      = "0.14.2"
 val zioPreludeVersion = "1.0.0-RC14"
-val scalametaVersion = "4.5.9"
-val zioHttpVersion = "2.0.0-RC8+1-6d179026-SNAPSHOT"
+val scalametaVersion  = "4.5.9"
+val zioHttpVersion    = "2.0.0-RC8+1-6d179026-SNAPSHOT"
+
+val typeExplorerScalaDbRoot = ".type-explorer/meta"
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
@@ -41,9 +43,9 @@ lazy val protos =
         "-source:future"
       ),
       scalacOptions ++= Seq("-Xsource:3"),
-      Compile / PB.targets :=
-        Seq(scalapb.gen(flatPackage = true) -> (Compile / sourceManaged).value / "scalapb"),
-      Compile / PB.protoSources := Seq(file("protos/shared/src/main/protobuf"))
+      Compile / PB.targets      := Seq(scalapb.gen(flatPackage = true) -> (Compile / sourceManaged).value / "scalapb"),
+      Compile / PB.protoSources := Seq(file("protos/shared/src/main/protobuf")),
+      Compile / semanticdbTargetRoot := file(typeExplorerScalaDbRoot)
     )
     .jsSettings(
       scalaJSUseMainModuleInitializer := false
@@ -69,7 +71,8 @@ lazy val shared =
       version := "0.1.0",
       libraryDependencies ++= Seq(
         "dev.zio" %%% "zio-prelude" % zioPreludeVersion
-      )
+      ),
+      Compile / semanticdbTargetRoot := file(typeExplorerScalaDbRoot)
     )
     .jsSettings(
       scalaJSUseMainModuleInitializer := false
@@ -103,7 +106,8 @@ lazy val backend =
         "com.thesamet.scalapb"   % "scalapb-runtime_3",
         "org.scala-lang.modules" % "scala-collection-compat_3",
       ),
-      testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework")
+      testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework"),
+      Compile / semanticdbTargetRoot := file(typeExplorerScalaDbRoot)
     )
 
 val publicDev = taskKey[String]("output directory for `npm run dev`")
@@ -145,8 +149,9 @@ lazy val ui =
       testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework"),
 
       publicDev := linkerOutputDirectory((Compile / fastLinkJS).value).getAbsolutePath,
-      publicProd := linkerOutputDirectory((Compile / fullLinkJS).value).getAbsolutePath
+      publicProd := linkerOutputDirectory((Compile / fullLinkJS).value).getAbsolutePath,
 
+      Compile / semanticdbTargetRoot := file(typeExplorerScalaDbRoot)
     )
 
 def linkerOutputDirectory(v: Attributed[org.scalajs.linker.interface.Report]): File =
