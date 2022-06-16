@@ -1,18 +1,9 @@
 package app.components.tabs.semanticDBTab
 
 import app.components.tabs.semanticDBTab.FileTree.*
-import app.components.tabs.semanticDBTab.SemanticDBText
-import com.raquo.airstream.core.{EventStream, Signal}
-import com.raquo.airstream.state.Val
 import com.raquo.laminar.api.L.*
-import com.raquo.laminar.nodes.ReactiveElement.Base
 import com.raquo.laminar.nodes.ReactiveHtmlElement
-import jdk.jfr.consumer
-import models.Type
 import org.jpablo.typeexplorer.TextDocumentsWithSource
-import org.scalajs.dom.html.LI
-import scalapb.GeneratedMessage
-import util.Operators.*
 import widgets.{Icons, collapsable}
 import scala.meta.internal.semanticdb.{SymbolInformation, SymbolOccurrence, Synthetic, TextDocument}
 import scala.scalajs.js.URIUtils.encodeURIComponent

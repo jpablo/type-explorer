@@ -1,15 +1,10 @@
 package widgets
 
-import bootstrap.Accordion.{`accordion-flush`, accordion, open}
 import com.raquo.laminar.api.L.*
-import models.Type
 import com.raquo.airstream.core.EventStream
 import scala.meta.internal.semanticdb.{TextDocument, SymbolInformation, SymbolOccurrence, Synthetic}
-import org.jpablo.typeexplorer.TextDocumentsWithSource
-import scalapb.GeneratedMessage
 import org.scalajs.dom.html.LI
 import com.raquo.laminar.nodes.ReactiveHtmlElement
-import com.raquo.laminar.nodes.ReactiveElement.Base
 import com.raquo.airstream.core.Signal
 import scalajs.js.URIUtils.encodeURIComponent
 import org.scalajs.dom

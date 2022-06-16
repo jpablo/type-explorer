@@ -1,24 +1,5 @@
 package app.components.tabs.semanticDBTab
 
-import bootstrap.Accordion.{`accordion-flush`, accordion, open}
-import com.raquo.laminar.api.L.*
-import models.Type
-import com.raquo.airstream.core.EventStream
-
-import scala.meta.internal.semanticdb.{SymbolInformation, SymbolOccurrence, Synthetic, TextDocument}
-import org.jpablo.typeexplorer.TextDocumentsWithSource
-import scalapb.GeneratedMessage
-import org.scalajs.dom.html.LI
-import com.raquo.laminar.nodes.ReactiveHtmlElement
-import com.raquo.laminar.nodes.ReactiveElement.Base
-import com.raquo.airstream.core.Signal
-
-import scalajs.js.URIUtils.encodeURIComponent
-import widgets.collapsable
-
-import scala.collection.immutable
-
-
 type Name = String
 
 enum FileTree[+A]:
