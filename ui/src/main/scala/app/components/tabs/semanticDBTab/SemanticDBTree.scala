@@ -70,7 +70,7 @@ object SemanticDBTree:
         span(Icons.fileCode, a(href := "#" + encodeURIComponent(doc.uri), doc.uri)),
       $children =
         Signal.fromValue(doc).map(_.symbols.sortBy(_.symbol)).split(_.symbol)(renderSymbolInformation),
-      open = true
+      open = false
     )
 
   def renderSymbolInformation(id: String, initial: SymbolInformation, elem: Signal[SymbolInformation]) =
@@ -87,8 +87,7 @@ object SemanticDBTree:
         ),
       $children = elem.map(sym =>
         List(
-          li( "kind: "  + sym.kind ),
-          li( "symbol: "  + sym.symbol ),
+          li( "symbol: ", sym.symbol),
         )
       )
     )
