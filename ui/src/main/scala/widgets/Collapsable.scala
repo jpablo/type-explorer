@@ -51,3 +51,7 @@ object Icons:
 
   def fileBinary =
     i(cls := "bi bi-file-binary")
+
+  def fileCode =
+    i(cls := "bi bi-file-code")
+

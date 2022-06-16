@@ -54,7 +54,11 @@ object SemanticDBTree:
   def renderDocWithSource(name: String, docWithSource: TextDocumentsWithSource) =
     collapsable(
       branchLabel =
-        span(cls := "collapsable-leaf", Icons.fileBinary, a(href := "#" + docWithSource.semanticDbUri, name)),
+        span(
+          cls := "collapsable-leaf",
+          Icons.fileBinary,
+          a(href := "#" + docWithSource.semanticDbUri, name)
+        ),
       $children =
         Signal.fromValue(docWithSource.documents.map(renderTextDocument)),
       open = true
@@ -63,7 +67,7 @@ object SemanticDBTree:
   def renderTextDocument(doc: TextDocument) =
     collapsable(
       branchLabel =
-        span("uri: ", a(href := "#" + encodeURIComponent(doc.uri), doc.uri)),
+        span(Icons.fileCode, a(href := "#" + encodeURIComponent(doc.uri), doc.uri)),
       $children =
         Signal.fromValue(doc).map(_.symbols.sortBy(_.symbol)).split(_.symbol)(renderSymbolInformation),
       open = true
