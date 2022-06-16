@@ -1,8 +1,7 @@
 package app.components.tabs.semanticDBTab
 
 import app.components.tabs.semanticDBTab.FileTree.*
-import app.components.tabs.semanticDBTab.{SemanticDBStructureFlat, SemanticDBText}
-import bootstrap.Accordion.{`accordion-flush`, accordion, open}
+import app.components.tabs.semanticDBTab.SemanticDBText
 import com.raquo.airstream.core.{EventStream, Signal}
 import com.raquo.airstream.state.Val
 import com.raquo.laminar.api.L.*
@@ -15,8 +14,6 @@ import org.scalajs.dom.html.LI
 import scalapb.GeneratedMessage
 import util.Operators.*
 import widgets.{Icons, collapsable}
-
-import scala.compiletime.ops.int.ToString
 import scala.meta.internal.semanticdb.{SymbolInformation, SymbolOccurrence, Synthetic, TextDocument}
 import scala.scalajs.js.URIUtils.encodeURIComponent
 
@@ -27,31 +24,9 @@ object SemanticDBTree:
     for documentsWithSource <- $documents yield
       for fileTree <- FileTree.build(documentsWithSource)(_.semanticDbUri) yield
         fromFileTree(fileTree)(
-          renderBranch =
-            b =>
-              span(cls := "collapsable-branch-label", b),
-
-          renderLeaf =
-            (name, docWithSource: TextDocumentsWithSource) =>
-              collapsable(
-                branchLabel =
-                  span(cls := "collapsable-leaf", Icons.fileBinary, a(href := "#" + docWithSource.semanticDbUri, name)),
-
-                $children =
-                  Signal.fromValue {
-                    for doc <- docWithSource.documents yield
-                      collapsable(
-                        branchLabel = 
-                          span("uri: ", a(href := "#" + encodeURIComponent(doc.uri), doc.uri)),
-
-                        $children =
-                          Signal.fromValue(doc).map(_.symbols.sortBy(_.symbol)).split(_.symbol)(renderSymbolInformation),
-
-                        open = true
-                      )
-                  },
-                open = true
-              )
+          renderBranch = b =>
+            span(cls := "collapsable-branch-label", b),
+          renderLeaf = renderDocWithSource
         )
 
 
@@ -74,6 +49,25 @@ object SemanticDBTree:
       )
     case File(name, data) =>
       renderLeaf(name, data)
+
+
+  def renderDocWithSource(name: String, docWithSource: TextDocumentsWithSource) =
+    collapsable(
+      branchLabel =
+        span(cls := "collapsable-leaf", Icons.fileBinary, a(href := "#" + docWithSource.semanticDbUri, name)),
+      $children =
+        Signal.fromValue(docWithSource.documents.map(renderTextDocument)),
+      open = true
+    )
+
+  def renderTextDocument(doc: TextDocument) =
+    collapsable(
+      branchLabel =
+        span("uri: ", a(href := "#" + encodeURIComponent(doc.uri), doc.uri)),
+      $children =
+        Signal.fromValue(doc).map(_.symbols.sortBy(_.symbol)).split(_.symbol)(renderSymbolInformation),
+      open = true
+    )
 
   def renderSymbolInformation(id: String, initial: SymbolInformation, elem: Signal[SymbolInformation]) =
     collapsable(
