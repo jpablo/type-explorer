@@ -46,18 +46,20 @@ object WebApp extends ZIOAppDefault {
         .map(Response.text)
         .getOrElse(badRequest)
 
-//    case req @ Method.GET -> !! / "classes" =>
-//      (req |> getPath |> combinePaths)
-//        .map(ClassesList.scan)
+    case req @ Method.GET -> !! / "classes" =>
+      (req |> getPath |> combinePaths)
+        .map(ClassesList.scan)
 //        .map(_.asJson.toString)
-//        .map(Response.json)
-//        .getOrElse(badRequest)
+        .map(_ => "[]")
+        .map(Response.json)
+        .getOrElse(badRequest)
 
     case req @ Method.GET -> !! / "inheritance" =>
       (req |> getPath |> readTextDocuments)
         .map(toTextDocuments)
-        .map(PlantumlInheritance.fromTextDocuments)
-        .map(PlantumlInheritance.renderDiagram("laminar", _))
+        .map(ClassesList.fromTextDocuments)
+        .map(PlantumlInheritance.toDiagramString)
+        .map(PlantumlInheritance.renderDiagramString("laminar", _))
         .map(Response.text)
         .map(_.withContentType("image/svg+xml"))
         .getOrElse(badRequest)

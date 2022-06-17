@@ -77,13 +77,13 @@ a {
 
 /* ------------------ */
 
-.inheritance-container, .text-document-areas {
+.text-document-areas {
     display: grid;
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: 1fr 5fr;
     height: 100%
 }
 
-.semanticdb-document-container {
+.inheritance-container, .semanticdb-document-container {
     height: 100%;
     overflow: auto;
 }

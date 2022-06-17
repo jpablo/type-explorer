@@ -2,7 +2,7 @@ package app.components.tabs.semanticDBTab
 
 import bootstrap.Accordion.{`accordion-flush`, accordion, open}
 import com.raquo.laminar.api.L.*
-import models.Type
+import models.Namespace
 import com.raquo.airstream.core.EventStream
 import scala.meta.internal.semanticdb.{TextDocument, SymbolInformation, SymbolOccurrence, Synthetic}
 import org.jpablo.typeexplorer.TextDocumentsWithSource

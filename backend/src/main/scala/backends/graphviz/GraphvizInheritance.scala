@@ -3,7 +3,7 @@ package backends.graphviz
 import inheritance.{InheritanceDiagram, InheritanceExamples}
 import backends.graphviz.GraphvizInheritance.toGraph
 import guru.nidi.graphviz.attribute.Label
-import models.Type
+import models.Namespace
 import scalatags.Text
 import guru.nidi.graphviz.attribute.Rank.RankDir
 import guru.nidi.graphviz.model.{Graph, Link, LinkSource, LinkTarget, Node, PortNode}
@@ -19,9 +19,9 @@ import java.io.File
 object GraphvizInheritance:
 
   def toGraph(name: String, diagram: InheritanceDiagram): Graph =
-    val nodes: Map[Type, Node] =
-      diagram.types
-        .map(tpe => tpe -> toNode(tpe))
+    val nodes =
+      diagram.namespaces
+        .map(tpe => tpe.symbol -> toNode(tpe))
         .toMap
 
     graph(name)
@@ -35,7 +35,7 @@ object GraphvizInheritance:
         }*
       )
 
-  private def toNode(box: Type): Node =
+  private def toNode(box: Namespace): Node =
     import scalatags.Text.all.*
     import scala.language.implicitConversions
     // Graphviz specific attributes
@@ -47,17 +47,17 @@ object GraphvizInheritance:
       table(border := 0, cBorder := 0, cPadding := 0, cSpacing := 0, //style:="ROUNDED", bgColor := "LIGHTBLUE",
         th(
           td(
-            b(box.name))
+            b(box.displayName))
         ),
         for m <- box.methods yield
           tr(
             td(
-              m.name
+              m.displayName
             )
           )
       )
 
-    node(box.name).`with`(Label.html(t.toString))
+    node(box.displayName).`with`(Label.html(t.toString))
   end toNode
 
   type PortId = String

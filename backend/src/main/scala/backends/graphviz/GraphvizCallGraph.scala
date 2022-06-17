@@ -3,7 +3,7 @@ package backends.graphviz
 import backends.graphviz.GraphvizCallGraph.toGraph
 import callGraph.{CallGraph, CallGraphExamples}
 import guru.nidi.graphviz.attribute.Label
-import models.{Method, Type}
+import models.{Method, Namespace}
 import scalatags.Text
 import guru.nidi.graphviz.attribute.Rank.RankDir
 import guru.nidi.graphviz.model.{Graph, Link, LinkSource, LinkTarget, Node, PortNode}
@@ -36,21 +36,21 @@ object GraphvizCallGraph:
       .`with`(subGraphs*)
       .`with`(links*)
 
-  def toSubgraph (ns: Type): (Graph, Map[Method, Node]) =
+  def toSubgraph (ns: Namespace): (Graph, Map[Method, Node]) =
     val methods =
       ns.methods
         .map (m => m -> toNode (m))
         .toMap
     val g =
-      graph (ns.name)
+      graph (ns.displayName)
         .cluster
-        .graphAttr.`with`(Label.of(ns.name))
+        .graphAttr.`with`(Label.of(ns.displayName))
         .`with`(methods.values.toSeq*)
     (g, methods)
 
 
   private def toNode (box: Method): Node =
-    node (box.name)
+    node (box.displayName)
 
 end GraphvizCallGraph
 

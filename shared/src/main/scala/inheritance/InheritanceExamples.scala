@@ -4,25 +4,25 @@ import models.*
 
 object InheritanceExamples {
 
-  val baseObservable     = Type("BaseObservable", methods = List(Method("map"), Method("mapTo"), Method("flatMap")))
-  val observable         = Type("Observable")
-  val observer           = Type("Observer")
-  val source             = Type("Source", methods = List(Method("toObservable", Some(observable))))
-  val named              = Type("Named", methods = List(Method("toObserver", Some(observer))))
-  val sink               = Type("Sink")
-  val eventSource        = Type("EventSource")
-  val signalSource       = Type("SignalSource")
-  val eventBus           = Type("EventBus")
-  val `var`              = Type("Var")
-  val writeBus           = Type("WriteBus")
-  val writableObservable = Type("WritableObservable")
-  val eventStream        = Type("EventStream", methods = List(Method("filter"), Method("delay")))
-  val signal             = Type("Signal", methods = List(Method("now"), Method("compose")))
-  val writableSignal     = Type("WritableSignal")
-  val strictSignal       = Type("StrictSignal")
-  val `val`              = Type("Val")
+  val baseObservable     = Namespace(Symbol("BaseObservable"), "BaseObservable", kind = NamespaceKind.Class, methods = List(Method("map"), Method("mapTo"), Method("flatMap")))
+  val observable         = Namespace(Symbol("Observable"), "Observable")
+  val observer           = Namespace(Symbol("Observer"), "Observer")
+  val source             = Namespace(Symbol("Source"), "Source", methods = List(Method("toObservable", Some(observable))))
+  val named              = Namespace(Symbol("Named"), "Named", methods = List(Method("toObserver", Some(observer))))
+  val sink               = Namespace(Symbol("Sink"), "Sink")
+  val eventSource        = Namespace(Symbol("EventSource"), "EventSource")
+  val signalSource       = Namespace(Symbol("SignalSource"), "SignalSource")
+  val eventBus           = Namespace(Symbol("EventBus"), "EventBus")
+  val `var`              = Namespace(Symbol("Var"), "Var")
+  val writeBus           = Namespace(Symbol("WriteBus"), "WriteBus")
+  val writableObservable = Namespace(Symbol("WritableObservable"), "WritableObservable")
+  val eventStream        = Namespace(Symbol("EventStream"), "EventStream", methods = List(Method("filter"), Method("delay")))
+  val signal             = Namespace(Symbol("Signal"), "Signal", methods = List(Method("now"), Method("compose")))
+  val writableSignal     = Namespace(Symbol("WritableSignal"), "WritableSignal")
+  val strictSignal       = Namespace(Symbol("StrictSignal"), "StrictSignal")
+  val `val`              = Namespace(Symbol("Val"), "Val")
 
-  val pairs: List[(Type, Type)] =
+  val pairs: List[(Namespace, Namespace)] =
     List(
       baseObservable     -> source,
       baseObservable     -> named,
@@ -54,8 +54,8 @@ object InheritanceExamples {
 
   lazy val laminar =
     InheritanceDiagram(
-      pairs = pairs,
-      types = (pairs.map(_._1) ++ pairs.map(_._2)).distinct
+      pairs = pairs.map { case (a, b) => a.symbol -> b.symbol },
+      namespaces = (pairs.map(_._1) ++ pairs.map(_._2)).distinct
     )
 
 }

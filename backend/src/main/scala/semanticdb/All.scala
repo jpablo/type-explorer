@@ -6,7 +6,7 @@ import scala.meta.internal.semanticdb.{ClassSignature, MethodSignature, Scope, S
 import java.nio.file.Paths
 import java.net.URI
 import scala.meta.internal.semanticdb.SymbolInformation.Kind
-import models.{Method, Package, Type}
+import models.{Method, Package, Namespace}
 import scala.collection.mutable
 
 

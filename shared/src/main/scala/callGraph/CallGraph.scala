@@ -4,5 +4,5 @@ import models.*
 
 case class CallGraph(
   pairs: List[(Method, Method)],
-  namesSpaces: List[Type] = List.empty
+  namesSpaces: List[Namespace] = List.empty
 )

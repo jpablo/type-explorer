@@ -5,7 +5,7 @@ import com.raquo.laminar.api.L.*
 import org.jpablo.typeexplorer.{TextDocumentsWithSource, TextDocumentsWithSourceSeq}
 import io.laminext.fetch.*
 import scala.scalajs.js.typedarray.Int8Array
-import models.Type
+import models.Namespace
 import app.components.DiagramType
 
 

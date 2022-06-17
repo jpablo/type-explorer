@@ -3,7 +3,7 @@ package app.components
 import com.raquo.laminar.api.L.*
 import io.laminext.fetch.*
 import org.scalajs.dom
-import models.Type
+import models.Namespace
 import io.laminext.fetch.*
 import io.laminext.fetch.circe.*
 import scala.scalajs.js.typedarray.Int8Array

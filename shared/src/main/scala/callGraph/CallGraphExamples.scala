@@ -8,7 +8,8 @@ object CallGraphExamples {
   val getUserTasks         = Method("getUserTasks")
 
   val TaskAllocationController =
-    Type("TaskAllocationController",
+    Namespace(Symbol.empty, "TaskAllocationController",
+      kind = NamespaceKind.Class,
       methods = List(
         getUserTasks,
         getUserAssignedTasks
@@ -24,7 +25,8 @@ object CallGraphExamples {
   val getUserSuperRatingTaskUnits       = Method("getUserSuperRatingTaskUnits")
 
   val TaskAllocationServiceImpl =
-    Type("TaskAllocationServiceImpl",
+    Namespace(Symbol.empty, "TaskAllocationServiceImpl",
+      kind = NamespaceKind.Class,
       methods = List(
         getAssignedTaskUnitsToUser,
         getUserTaskUnitsByProjectId,
@@ -38,7 +40,8 @@ object CallGraphExamples {
 
   val updateMetricsSuperRatingStatus = Method("updateMetricsSuperRatingStatus")
   val MetricsServiceImpl =
-    Type("MetricsServiceImpl",
+    Namespace(Symbol.empty, "MetricsServiceImpl",
+      kind = NamespaceKind.Class,
       methods = List(
         updateMetricsSuperRatingStatus
       )
