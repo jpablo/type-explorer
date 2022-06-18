@@ -79,7 +79,7 @@ a {
 
 .text-document-areas {
     display: grid;
-    grid-template-columns: 1fr 5fr;
+    grid-template-columns: 0fr 5fr;
     height: 100%
 }
 

@@ -18,30 +18,31 @@ import models.*
 
 object PlantumlInheritance {
 
+  private def renderNamespace(ns: Namespace) =
+    val header = s""" class "${ns.displayName}" as ${ns.symbol}"""
+    val stereotype =  ns.kind match
+      case NamespaceKind.Object        => """ << (O, orchid) >>"""
+      case NamespaceKind.PackageObject => """ << (P, lightblue) >>"""
+      case NamespaceKind.Class         => ""
+      case other                       => s""" <<$other>>"""
+
+    val fields = ns.methods.map(renderField)
+    header + stereotype + fields.mkString(" {\n", "\n", "\n}\n")
+
+  private def renderField(m: Method) =
+    s"""  ${m.displayName} ${m.returnType.map(o => " : " + o.displayName).getOrElse("")}  \n' ${m.symbol} """
+
   def toDiagramString(diagram: InheritanceDiagram): String =
-    val declarations =
-      for case ns <- diagram.namespaces yield ns.kind match
-        case NamespaceKind.Object        => s""" class "${ns.displayName}" as ${ns.symbol} << (O, orchid) >>"""
-        case NamespaceKind.PackageObject => s""" class "${ns.displayName}" as ${ns.symbol} << (P, lightblue) >>"""
-        case NamespaceKind.Class         => s""" class "${ns.displayName}" as ${ns.symbol}"""
-        case other                       => s""" class "${ns.displayName}" as ${ns.symbol} <<$other>>}"""
+    val declarations = diagram.namespaces.map(renderNamespace)
 
     val inheritance =
       for (source, target) <- diagram.pairs yield
         s""""${target}" <|-- "${source}""""
 
-    val fields =
-      for
-        ns     <- diagram.namespaces
-        method <- ns.methods
-      yield
-        s""""${ns.symbol}" : "${method.displayName}"${method.returnType.map(o => " : " + o.displayName).getOrElse("")}"""
-
     s"""@startuml
        |set namespaceSeparator none
        |${declarations.distinct mkString "\n"}
        |${inheritance mkString "\n"}
-       |${fields mkString "\n"}
        |@enduml""".stripMargin
 
   def renderDiagramString(name: String, diagram: String) =

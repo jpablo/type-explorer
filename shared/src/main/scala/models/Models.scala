@@ -20,6 +20,7 @@ object Symbol:
 
   extension (s: Symbol)
     def toString: String = s
+
     def pkg: Package =
       Package(s.split("/").init.mkString("/"))
 
