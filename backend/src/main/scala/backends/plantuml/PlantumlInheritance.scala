@@ -21,22 +21,23 @@ object PlantumlInheritance:
 
   def toDiagramString(diagram: InheritanceDiagram): String =
 
-//    val tree: List[FileTree[Namespace]] =
-//      FileTree.build(diagram.namespaces)(_.pkg.map(_.name).getOrElse(""))
+    val nestedNamespaces =
+      FileTree.build(diagram.namespaces, ".") { ns =>
+        (ns, ns.displayName, ns.symbol.toString.split("/").init.toList)
+      }
 
     def renderTree(t: FileTree[Namespace]): String = t match
       case FileTree.Directory(name, contents) =>
         s"""
-           |namespace ${name} {
-           |  ${contents.map(renderTree)}
+           |namespace $name {
+           |  ${contents.map(renderTree) mkString "\n"}
            |}
            |""".stripMargin
-      case FileTree.File(name, ns) =>
-        println(name)
+      case FileTree.File(_, ns) =>
         renderNamespace(ns)
 
-    val declarations = diagram.namespaces.map(renderNamespace)
-//    val declarations = tree.map(renderTree)
+    val declarations =
+      nestedNamespaces.map(renderTree)
 
     val inheritance =
       for (source, target) <- diagram.pairs yield
@@ -60,11 +61,10 @@ object PlantumlInheritance:
   private def renderNamespace(ns: Namespace): String =
     val header = s""" class "${ns.displayName}" as ${ns.symbol}"""
     val stereotype = ns.kind match
-      case NamespaceKind.Object => """ << (O, orchid) >>"""
+      case NamespaceKind.Object        => """ << (O, orchid) >>"""
       case NamespaceKind.PackageObject => """ << (P, lightblue) >>"""
-      case NamespaceKind.Class => ""
-      case other => s""" <<$other>>"""
-
+      case NamespaceKind.Class         => ""
+      case other                       => s""" <<$other>>"""
     val fields = ns.methods.map(renderField)
     header + stereotype + fields.mkString(" {\n", "\n", "\n}\n")
 

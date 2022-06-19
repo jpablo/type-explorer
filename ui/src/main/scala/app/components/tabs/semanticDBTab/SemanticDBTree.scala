@@ -13,24 +13,16 @@ import scala.scalajs.js.URIUtils.encodeURIComponent
 
 object SemanticDBTree:
 
-//  segments = (path split splitBy).toList.filter(_.nonEmpty)
-//  segmentsWithRoot =
-//    if path startsWith splitBy
-//    then (splitBy + segments.head) :: segments.tail
-//    else segments
-
   def buildPath(doc: TextDocumentsWithSource) =
     val all = doc.semanticDbUri.split("/").toList.filter(_.nonEmpty)
     (doc, all.last, all.init)
 
   def buildTree($documents: EventStream[List[TextDocumentsWithSource]]): EventStream[List[HtmlElement]] =
     for documentsWithSource <- $documents yield
-
       for fileTree <- FileTree.build(documentsWithSource)(buildPath) yield
         fromFileTree(fileTree)(
-          renderBranch = b =>
-            span(cls := "collapsable-branch-label", b),
-          renderLeaf = renderDocWithSource
+          renderBranch = b => span(cls := "collapsable-branch-label", b),
+          renderLeaf   = renderDocWithSource
         )
 
 
