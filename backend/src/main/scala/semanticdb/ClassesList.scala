@@ -43,7 +43,6 @@ object ClassesList:
             symbol      = symbol,
             displayName = symbolInfo.displayName,
             kind        = nsKind,
-            pkg         = Some(symbol.pkg),
             methods     = methods.toList.sortBy(_.displayName)
           )
       yield
@@ -104,7 +103,6 @@ object ClassesList:
       Namespace(
         symbol = Symbol(symbol.symbol),
         displayName = symbol.displayName,
-        pkg = Some(Package(symbol.symbol.split("/").init.mkString("/"))),
         methods = methods
       )
     }

@@ -21,9 +21,6 @@ object Symbol:
   extension (s: Symbol)
     def toString: String = s
 
-    def pkg: Package =
-      Package(s.split("/").init.mkString("/"))
-
 case class Package(name: String)
 
 //object Package:
@@ -34,7 +31,6 @@ case class Namespace(
   symbol     : Symbol,
   displayName: String,
   kind       : NamespaceKind = NamespaceKind.Class,
-  pkg        : Option[Package] = None,
   methods    : List[Method] = List.empty
 )
 

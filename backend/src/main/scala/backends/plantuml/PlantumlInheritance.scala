@@ -59,7 +59,7 @@ object PlantumlInheritance:
     new String(os.toByteArray, Charset.forName("UTF-8"))
 
   private def renderNamespace(ns: Namespace): String =
-    val header = s""" class "${ns.displayName}" as ${ns.symbol}"""
+    val header = s"""class "${ns.displayName}" as ${ns.symbol}"""
     val stereotype = ns.kind match
       case NamespaceKind.Object        => """ << (O, orchid) >>"""
       case NamespaceKind.PackageObject => """ << (P, lightblue) >>"""
