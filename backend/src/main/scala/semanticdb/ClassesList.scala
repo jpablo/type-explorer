@@ -30,7 +30,7 @@ object ClassesList:
 
     val namespaces =
       for
-        (symbol, symbolInfo)   <- allSymbols
+        (symbol, symbolInfo) <- allSymbols
         signature    <- symbolInfo.signature.asNonEmpty.toSeq
         clsSignature <- signature match
           case cs: ClassSignature => List(cs)

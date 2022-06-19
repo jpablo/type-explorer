@@ -1,19 +1,32 @@
 package app.components.tabs.semanticDBTab
 
-import app.components.tabs.semanticDBTab.FileTree.*
+import fileTree.FileTree.*
 import com.raquo.laminar.api.L.*
 import com.raquo.laminar.nodes.ReactiveHtmlElement
+import fileTree.FileTree
 import org.jpablo.typeexplorer.TextDocumentsWithSource
 import widgets.{Icons, collapsable}
+
 import scala.meta.internal.semanticdb.{SymbolInformation, SymbolOccurrence, Synthetic, TextDocument}
 import scala.scalajs.js.URIUtils.encodeURIComponent
 
 
 object SemanticDBTree:
 
+//  segments = (path split splitBy).toList.filter(_.nonEmpty)
+//  segmentsWithRoot =
+//    if path startsWith splitBy
+//    then (splitBy + segments.head) :: segments.tail
+//    else segments
+
+  def buildPath(doc: TextDocumentsWithSource) =
+    val all = doc.semanticDbUri.split("/").toList.filter(_.nonEmpty)
+    (doc, all.last, all.init)
+
   def buildTree($documents: EventStream[List[TextDocumentsWithSource]]): EventStream[List[HtmlElement]] =
     for documentsWithSource <- $documents yield
-      for fileTree <- FileTree.build(documentsWithSource)(_.semanticDbUri) yield
+
+      for fileTree <- FileTree.build(documentsWithSource)(buildPath) yield
         fromFileTree(fileTree)(
           renderBranch = b =>
             span(cls := "collapsable-branch-label", b),

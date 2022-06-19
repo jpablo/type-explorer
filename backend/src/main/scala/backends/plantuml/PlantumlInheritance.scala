@@ -1,6 +1,7 @@
 package backends.plantuml
 
-import backends.plantuml.PlantumlInheritance.{toDiagramString, renderDiagramString}
+import backends.plantuml.PlantumlInheritance.{renderDiagramString, toDiagramString}
+import fileTree.FileTree
 import net.sourceforge.plantuml.FileFormat
 import net.sourceforge.plantuml.FileFormatOption
 import net.sourceforge.plantuml.SourceStringReader
@@ -16,24 +17,26 @@ import scala.meta.internal.semanticdb.{ClassSignature, MethodSignature, SymbolIn
 import scala.util.chaining.*
 import models.*
 
-object PlantumlInheritance {
-
-  private def renderNamespace(ns: Namespace) =
-    val header = s""" class "${ns.displayName}" as ${ns.symbol}"""
-    val stereotype =  ns.kind match
-      case NamespaceKind.Object        => """ << (O, orchid) >>"""
-      case NamespaceKind.PackageObject => """ << (P, lightblue) >>"""
-      case NamespaceKind.Class         => ""
-      case other                       => s""" <<$other>>"""
-
-    val fields = ns.methods.map(renderField)
-    header + stereotype + fields.mkString(" {\n", "\n", "\n}\n")
-
-  private def renderField(m: Method) =
-    s"""  ${m.displayName} ${m.returnType.map(o => " : " + o.displayName).getOrElse("")}  \n' ${m.symbol} """
+object PlantumlInheritance:
 
   def toDiagramString(diagram: InheritanceDiagram): String =
+
+//    val tree: List[FileTree[Namespace]] =
+//      FileTree.build(diagram.namespaces)(_.pkg.map(_.name).getOrElse(""))
+
+    def renderTree(t: FileTree[Namespace]): String = t match
+      case FileTree.Directory(name, contents) =>
+        s"""
+           |namespace ${name} {
+           |  ${contents.map(renderTree)}
+           |}
+           |""".stripMargin
+      case FileTree.File(name, ns) =>
+        println(name)
+        renderNamespace(ns)
+
     val declarations = diagram.namespaces.map(renderNamespace)
+//    val declarations = tree.map(renderTree)
 
     val inheritance =
       for (source, target) <- diagram.pairs yield
@@ -54,7 +57,20 @@ object PlantumlInheritance {
     // The XML is stored into svg
     new String(os.toByteArray, Charset.forName("UTF-8"))
 
-}
+  private def renderNamespace(ns: Namespace): String =
+    val header = s""" class "${ns.displayName}" as ${ns.symbol}"""
+    val stereotype = ns.kind match
+      case NamespaceKind.Object => """ << (O, orchid) >>"""
+      case NamespaceKind.PackageObject => """ << (P, lightblue) >>"""
+      case NamespaceKind.Class => ""
+      case other => s""" <<$other>>"""
+
+    val fields = ns.methods.map(renderField)
+    header + stereotype + fields.mkString(" {\n", "\n", "\n}\n")
+
+  private def renderField(m: Method): String =
+    s"""  ${m.displayName} ${m.returnType.map(o => " : " + o.displayName).getOrElse("")}  \n' ${m.symbol} """
+
 
 
 @main
