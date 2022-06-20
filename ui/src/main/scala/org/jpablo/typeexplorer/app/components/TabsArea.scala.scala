@@ -1,16 +1,16 @@
 package org.jpablo.typeexplorer.app.components
 
 import com.raquo.laminar.api.L.*
-import org.jpablo.typeexplorer.app.components.tabs.semanticDBTab.semanticDBTab
-import org.jpablo.typeexplorer.app.components.tabs.inheritanceTab.inheritanceTab
 import org.jpablo.typeexplorer.TextDocumentsWithSource
+import org.jpablo.typeexplorer.app.components.tabs.inheritanceTab.inheritanceTab
+import org.jpablo.typeexplorer.app.components.tabs.semanticDBTab.semanticDBTab
 import org.jpablo.typeexplorer.inheritance.InheritanceDiagram
 import org.scalajs.dom
 
 def tabsArea(
-  $documents: EventStream[List[TextDocumentsWithSource]],
-  $svgDiagram: EventStream[dom.Element],
-  $classes: EventStream[InheritanceDiagram]
+  $documents  : EventStream[List[TextDocumentsWithSource]],
+  $svgDiagram : EventStream[dom.Element],
+  $classes    : EventStream[InheritanceDiagram]
 ) =
   List(
     div(
@@ -53,7 +53,7 @@ def tabsArea(
           cls := "tab-pane fade show active",
           role := "tabpanel",
           tabIndex := 0,
-          inheritanceTab($documents, $svgDiagram)
+          inheritanceTab($documents, $svgDiagram, $classes)
         ),
         div(
           idAttr := "semanticdb-tab-pane",

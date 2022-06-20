@@ -27,7 +27,7 @@ def fetchDocuments(projectPath: Signal[String]): EventStream[List[TextDocumentsW
 def fetchClasses(projectPath: Signal[String]): EventStream[InheritanceDiagram] =
   for
     path     <- projectPath
-    response <- fetchBase("semanticdb?path=" + path).text
+    response <- fetchBase("classes?path=" + path).text
     classes  <- EventStream.fromTry {
       response.data
         .fromJson[InheritanceDiagram].left

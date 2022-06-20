@@ -4,9 +4,6 @@ import com.raquo.laminar.api.L.*
 import org.scalajs.dom
 import org.jpablo.typeexplorer.bootstrap.{dropdown, navbar}
 
-object AppHeader {
-
-}
 
 enum DiagramType:
   case Inheritance

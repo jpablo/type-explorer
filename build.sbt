@@ -77,7 +77,12 @@ lazy val shared =
       version := "0.1.0",
       libraryDependencies ++= Seq(
         "dev.zio" %%% "zio-prelude" % zioPreludeVersion,
-        "dev.zio" %%% "zio-json"    % zioJsonVersion
+        "dev.zio" %%% "zio-json"    % zioJsonVersion,
+        "org.scalameta"  %%% "scalameta" % scalametaVersion cross CrossVersion.for3Use2_13
+      ),
+      excludeDependencies ++= Seq(
+        "org.scala-lang.modules" %% "scala-collection-compat",
+        "org.scala-lang.modules" %% "scala-collection-compat_sjs1"
       ),
       Compile / semanticdbTargetRoot := typeExplorerRoot
     )
@@ -110,8 +115,8 @@ lazy val backend =
       // "com.softwaremill.quicklens" %% "quicklens" % "1.7.5",
       ),
       excludeDependencies ++= Seq(
-        "com.thesamet.scalapb"   % "scalapb-runtime_3",
-        "org.scala-lang.modules" % "scala-collection-compat_3",
+        "com.thesamet.scalapb"   %% "scalapb-runtime",
+        "org.scala-lang.modules" %% "scala-collection-compat"
       ),
       testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework"),
       Compile / semanticdbTargetRoot := typeExplorerRoot
@@ -147,14 +152,13 @@ lazy val ui =
         "org.scala-js"  %%% "scalajs-dom"       % "2.0.0",
         "com.raquo"     %%% "laminar"           % "0.14.2",
         "io.laminext"   %%% "fetch"             % "0.14.3",
-        "io.laminext"   %%% "fetch-circe"       % "0.14.3",
 
         "org.scalameta" %%% "scalameta"         % scalametaVersion cross CrossVersion.for3Use2_13
 
 //        "io.frontroute" %%% "frontroute" % "0.14.0"
       ),
       excludeDependencies ++= Seq(
-        "org.scala-lang.modules" % "scala-collection-compat_sjs1_3"
+        "org.scala-lang.modules" %% "scala-collection-compat_sjs1"
       ),
       testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework"),
 

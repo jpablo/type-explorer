@@ -1,6 +1,6 @@
 package org.jpablo.typeexplorer.backends.plantuml
 
-import PlantumlInheritance.{renderDiagramString, toDiagramString}
+import PlantumlInheritance.fromInheritanceDiagram
 import net.sourceforge.plantuml.FileFormat
 import net.sourceforge.plantuml.FileFormatOption
 import net.sourceforge.plantuml.SourceStringReader
@@ -14,36 +14,10 @@ import java.nio.file
 import scala.meta.internal.semanticdb.SymbolInformation.Kind
 import scala.meta.internal.semanticdb.{ClassSignature, MethodSignature, SymbolInformation, TextDocuments, Type, TypeRef, TypeSignature, ValueSignature}
 import scala.util.chaining.*
-import org.jpablo.typeexplorer.semanticdb.{All, ClassesList}
+import org.jpablo.typeexplorer.semanticdb.All
 
-object PlantumlInheritance:
-
-  def toDiagramString(diagram: InheritanceDiagram): String =
-
-    def renderTree(t: FileTree[Namespace]): String = t match
-      case FileTree.Directory(name, contents) =>
-        s"""
-           |namespace $name {
-           |  ${contents.map(renderTree) mkString "\n"}
-           |}
-           |""".stripMargin
-      case FileTree.File(_, ns) =>
-        renderNamespace(ns)
-
-    val declarations: List[String] =
-      diagram.toFileTree.map(renderTree)
-
-    val inheritance =
-      for (source, target) <- diagram.pairs yield
-        s""""${target}" <|-- "${source}""""
-
-    s"""@startuml
-       |set namespaceSeparator none
-       |${declarations.distinct mkString "\n"}
-       |${inheritance mkString "\n"}
-       |@enduml""".stripMargin
-
-  def renderDiagramString(name: String, diagram: String) =
+case class PlantUML(diagram: String):
+  def toSVG(name: String) =
     val reader = new SourceStringReader(diagram)
     val os = new ByteArrayOutputStream
     // Write the first image to "os"
@@ -51,6 +25,38 @@ object PlantumlInheritance:
     os.close()
     // The XML is stored into svg
     new String(os.toByteArray, Charset.forName("UTF-8"))
+
+
+
+object PlantumlInheritance:
+
+  def fromInheritanceDiagram(diagram: InheritanceDiagram): PlantUML =
+    val declarations =
+      diagram.toFileTree.map(renderTree)
+
+    val inheritance =
+      for (source, target) <- diagram.arrows yield
+        s""""${target}" <|-- "${source}""""
+
+    PlantUML(
+      s"""@startuml
+         |set namespaceSeparator none
+         |${declarations.distinct mkString "\n"}
+         |${inheritance mkString "\n"}
+         |@enduml""".stripMargin
+    )
+
+  // ----------------------------------------------------
+  private def renderTree(t: FileTree[Namespace]): String = t match
+    case FileTree.Directory(name, contents) =>
+      s"""
+         |namespace $name {
+         |  ${contents.map(renderTree) mkString "\n"}
+         |}
+         |""".stripMargin
+    case FileTree.File(_, ns) =>
+      renderNamespace(ns)
+
 
   private def renderNamespace(ns: Namespace): String =
     val header = s"""class "${ns.displayName}" as ${ns.symbol}"""
@@ -71,8 +77,8 @@ object PlantumlInheritance:
 def plantumlExample(): Unit = {
   val path = file.Paths.get("/Users/jpablo/proyectos/playground/type-explorer")
   val docs = TextDocuments(All.scan(path).flatMap(_._2.documents))
-  val diagram = ClassesList.fromTextDocuments(docs)
-  val diagramStr = PlantumlInheritance.toDiagramString(diagram)
+  val diagram = InheritanceDiagram.fromTextDocuments(docs)
+  val diagramStr = PlantumlInheritance.fromInheritanceDiagram(diagram)
   println(diagramStr)
 //  println("-------------------")
 //  var svg = renderDiagram("laminar", diagram)

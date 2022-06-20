@@ -1,8 +1,8 @@
 package org.jpablo.typeexplorer.webApp
 
 import org.jpablo.typeexplorer.backends.plantuml.PlantumlInheritance
-import org.jpablo.typeexplorer.inheritance.InheritanceExamples
-import org.jpablo.typeexplorer.semanticdb.{All, ClassesList}
+import org.jpablo.typeexplorer.inheritance.{InheritanceDiagram, InheritanceExamples}
+import org.jpablo.typeexplorer.semanticdb.All
 
 import java.net.URI
 import java.nio.file
@@ -28,8 +28,8 @@ object WebApp extends ZIOAppDefault:
   // ----------
   val app = Http.collect[Request] {
 
-    case req @ Method.GET -> !! / "org/jpablo/typeexplorer/semanticdb" =>
-      (req |> getPath |> readTextDocuments)
+    case req @ Method.GET -> !! / "semanticdb" =>
+      (req |> getPath |> readTextDocumentsWithSource)
         .map(_.toByteArray)
         .map(Chunk.fromArray)
         .map(HttpData.fromChunk)
@@ -37,31 +37,31 @@ object WebApp extends ZIOAppDefault:
         .getOrElse(badRequest)
 
     case req @ Method.GET -> !! / "semanticdb.json" =>
-      (req |> getPath |> readTextDocuments)
+      (req |> getPath |> readTextDocumentsWithSource)
         .map(write)
         .map(Response.json)
         .getOrElse(badRequest)
 
     case req @ Method.GET -> !! / "semanticdb.textproto" =>
-      (req |> getPath |> readTextDocuments)
+      (req |> getPath |> readTextDocumentsWithSource)
         .map(_.toProtoString)
         .map(Response.text)
         .getOrElse(badRequest)
 
     case req @ Method.GET -> !! / "classes" =>
-      (req |> getPath |> readTextDocuments)
-        .map(docs => toTextDocuments(docs))
-        .map(ClassesList.fromTextDocuments)
+      (req |> getPath |> readTextDocumentsWithSource)
+        .map(toTextDocuments)
+        .map(InheritanceDiagram.fromTextDocuments)
         .map(_.toJson)
         .map(Response.json)
         .getOrElse(badRequest)
 
     case req @ Method.GET -> !! / "inheritance" =>
-      (req |> getPath |> readTextDocuments)
+      (req |> getPath |> readTextDocumentsWithSource)
         .map(toTextDocuments)
-        .map(ClassesList.fromTextDocuments)
-        .map(PlantumlInheritance.toDiagramString)
-        .map(PlantumlInheritance.renderDiagramString("laminar", _))
+        .map(InheritanceDiagram.fromTextDocuments)
+        .map(PlantumlInheritance.fromInheritanceDiagram)
+        .map(_.toSVG("laminar"))
         .map(Response.text)
         .map(_.withContentType("image/svg+xml"))
         .getOrElse(badRequest)
@@ -81,7 +81,7 @@ object WebApp extends ZIOAppDefault:
   def toTextDocuments(docs: TextDocumentsWithSourceSeq): TextDocuments =
     docs.documentsWithSource.flatMap(_.documents) |> TextDocuments.apply
 
-  def readTextDocuments(path: Option[List[String]]): Option[TextDocumentsWithSourceSeq] =
+  def readTextDocumentsWithSource(path: Option[List[String]]): Option[TextDocumentsWithSourceSeq] =
     for p <- combinePaths(path) yield
       TextDocumentsWithSourceSeq(
         All.scan(p).map { case (path, d) =>

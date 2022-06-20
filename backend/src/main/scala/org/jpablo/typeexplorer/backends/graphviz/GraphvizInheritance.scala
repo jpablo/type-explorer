@@ -30,7 +30,7 @@ object GraphvizInheritance:
       .nodeAttr.`with`(Style.FILLED, Shape.RECT, Color.rgb("#b7c9e3").fill())
       .linkAttr.`with`(Arrow.EMPTY)
       .`with`(
-        diagram.pairs.map { case (source, target) =>
+        diagram.arrows.map { case (source, target) =>
           nodes(source) link to(nodes(target))
         }*
       )

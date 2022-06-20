@@ -55,7 +55,7 @@ object InheritanceExamples {
 
   lazy val laminar =
     InheritanceDiagram(
-      pairs = pairs.map { case (a, b) => a.symbol -> b.symbol },
+      arrows = pairs.map { case (a, b) => a.symbol -> b.symbol },
       namespaces = (pairs.map(_._1) ++ pairs.map(_._2)).distinct
     )
 
