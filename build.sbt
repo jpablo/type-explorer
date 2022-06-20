@@ -76,7 +76,8 @@ lazy val shared =
       name := "type-explorer-shared",
       version := "0.1.0",
       libraryDependencies ++= Seq(
-        "dev.zio" %%% "zio-prelude" % zioPreludeVersion
+        "dev.zio" %%% "zio-prelude" % zioPreludeVersion,
+        "dev.zio" %%% "zio-json"    % zioJsonVersion
       ),
       Compile / semanticdbTargetRoot := typeExplorerRoot
     )
@@ -151,6 +152,9 @@ lazy val ui =
         "org.scalameta" %%% "scalameta"         % scalametaVersion cross CrossVersion.for3Use2_13
 
 //        "io.frontroute" %%% "frontroute" % "0.14.0"
+      ),
+      excludeDependencies ++= Seq(
+        "org.scala-lang.modules" % "scala-collection-compat_sjs1_3"
       ),
       testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework"),
 

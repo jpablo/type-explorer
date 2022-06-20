@@ -1,23 +1,23 @@
 package webApp
 
+
 import backends.plantuml.PlantumlInheritance
 import inheritance.InheritanceExamples
-import org.jpablo.typeexplorer.{TextDocumentsWithSource, TextDocumentsWithSourceSeq}
-import zio.*
-import zhttp.http.*
-import zhttp.service.Server
-import semanticdb.{All, ClassesList}
-
-import scala.meta.internal.semanticdb.TextDocuments
 import java.net.URI
+import java.nio.file
+import org.jpablo.typeexplorer.{TextDocumentsWithSource, TextDocumentsWithSourceSeq}
 import org.json4s.*
 import org.json4s.native.Serialization
 import org.json4s.native.Serialization.{read, write}
+import scala.meta.internal.semanticdb.TextDocuments
+import semanticdb.{All, ClassesList}
+import util.Operators.*
+import zhttp.http.*
 import zhttp.http.Middleware.cors
 import zhttp.http.middleware.Cors.CorsConfig
-
-import java.nio.file
-import util.Operators.*
+import zhttp.service.Server
+import zio.*
+import zio.json.*
 
 object WebApp extends ZIOAppDefault {
 
@@ -47,10 +47,10 @@ object WebApp extends ZIOAppDefault {
         .getOrElse(badRequest)
 
     case req @ Method.GET -> !! / "classes" =>
-      (req |> getPath |> combinePaths)
-        .map(ClassesList.scan)
-//        .map(_.asJson.toString)
-        .map(_ => "[]")
+      (req |> getPath |> readTextDocuments)
+        .map(docs => toTextDocuments(docs))
+        .map(ClassesList.fromTextDocuments)
+        .map(_.toJson)
         .map(Response.json)
         .getOrElse(badRequest)
 

@@ -66,48 +66,6 @@ object ClassesList:
 
   end fromTextDocuments
 
-  def scan(p: Path): List[Namespace] =
-    val kinds = Set(Kind.OBJECT, Kind.CLASS, Kind.TRAIT)
-    val symbols =
-      collection.mutable.ArrayBuffer.empty[SymbolInformation]
-    // --- load all documents ----
-    semanticdb.Locator(p) { (_, textDocuments: TextDocuments) =>
-      for
-        document <- textDocuments.documents
-        symbol <- document.symbols
-//        k: Kind = symbol.kind
-//        if kinds contains ??? //symbol.kind
-      do
-        symbols += symbol
-    }
-    // --------------------------
-
-    symbols.toList.map { (symbol: SymbolInformation) =>
-      val symlinks =
-        for
-          sig <- symbol.signature.asNonEmpty.toList
-          scope <- sig match
-            case cs: ClassSignature => cs.declarations.toList
-            case _ => List.empty
-          symlink <- scope.symlinks
-        yield
-          symlink
-
-      val methods =
-        symlinks.map { fullName =>
-          val parts = fullName.split("""\.""")
-          val name = if parts.length > 1 then parts(1) else ""
-          Method(name)
-        }
-
-      Namespace(
-        symbol = Symbol(symbol.symbol),
-        displayName = symbol.displayName,
-        methods = methods
-      )
-    }
-  end scan
-
 end ClassesList
 
 

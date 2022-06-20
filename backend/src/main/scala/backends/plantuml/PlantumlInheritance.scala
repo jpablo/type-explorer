@@ -21,11 +21,6 @@ object PlantumlInheritance:
 
   def toDiagramString(diagram: InheritanceDiagram): String =
 
-    val nestedNamespaces =
-      FileTree.build(diagram.namespaces, ".") { ns =>
-        (ns, ns.displayName, ns.symbol.toString.split("/").init.toList)
-      }
-
     def renderTree(t: FileTree[Namespace]): String = t match
       case FileTree.Directory(name, contents) =>
         s"""
@@ -36,8 +31,8 @@ object PlantumlInheritance:
       case FileTree.File(_, ns) =>
         renderNamespace(ns)
 
-    val declarations =
-      nestedNamespaces.map(renderTree)
+    val declarations: List[String] =
+      diagram.toFileTree.map(renderTree)
 
     val inheritance =
       for (source, target) <- diagram.pairs yield
