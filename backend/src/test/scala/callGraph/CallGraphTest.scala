@@ -1,6 +1,6 @@
 package callGraph
 
-import semanticdb.SymbolRegistry
+import org.jpablo.typeexplorer.semanticdb.SymbolRegistry
 import zio.test.*
 import zio.test.Assertion.*
 
