@@ -2,8 +2,8 @@ package org.jpablo.typeexplorer.ui.app.client
 
 import com.raquo.laminar.api.L.*
 import io.laminext.fetch.*
-import org.jpablo.typeexplorer.inheritance.InheritanceDiagram
-import org.jpablo.typeexplorer.models.Namespace
+import org.jpablo.typeexplorer.shared.inheritance.InheritanceDiagram
+import org.jpablo.typeexplorer.shared.models.Namespace
 import org.jpablo.typeexplorer.ui.app.components.DiagramType
 import org.jpablo.typeexplorer.{TextDocumentsWithSource, TextDocumentsWithSourceSeq}
 import org.scalajs.dom

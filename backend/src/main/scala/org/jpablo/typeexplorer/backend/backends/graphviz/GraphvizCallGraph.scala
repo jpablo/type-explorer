@@ -10,8 +10,8 @@ import guru.nidi.graphviz.attribute.Records.*
 import guru.nidi.graphviz.attribute.{Arrow, Color, Rank, Records, Shape, Style}
 import guru.nidi.graphviz.engine.Format
 import guru.nidi.graphviz.engine.Graphviz
-import org.jpablo.typeexplorer.callGraph.{CallGraph, CallGraphExamples}
-import org.jpablo.typeexplorer.models.{Method, Namespace}
+import org.jpablo.typeexplorer.shared.callGraph.{CallGraph, CallGraphExamples}
+import org.jpablo.typeexplorer.shared.models.{Method, Namespace}
 
 import java.io.File
 

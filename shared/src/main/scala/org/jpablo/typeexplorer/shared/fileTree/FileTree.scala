@@ -1,4 +1,4 @@
-package org.jpablo.typeexplorer.fileTree
+package org.jpablo.typeexplorer.shared.fileTree
 
 import zio.prelude.NonEmptyList
 

@@ -1,6 +1,6 @@
 package org.jpablo.typeexplorer.backend.semanticdb
 
-import org.jpablo.typeexplorer.models.{Method, Namespace, Package}
+import org.jpablo.typeexplorer.shared.models.{Method, Namespace, Package}
 import java.nio.file.Path
 import scala.meta.internal.semanticdb
 import scala.meta.internal.semanticdb.{ClassSignature, MethodSignature, Scope, Signature, SymbolInformation, SymbolOccurrence, TextDocument, TextDocuments, TypeSignature, ValueSignature}

@@ -1,4 +1,4 @@
-package org.jpablo.typeexplorer.models
+package org.jpablo.typeexplorer.shared.models
 
 import zio.json.*
 

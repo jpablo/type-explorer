@@ -1,7 +1,7 @@
-package org.jpablo.typeexplorer.inheritance
+package org.jpablo.typeexplorer.shared.inheritance
 
-import org.jpablo.typeexplorer.models
-import org.jpablo.typeexplorer.models.{Method, Namespace, NamespaceKind, Symbol}
+import org.jpablo.typeexplorer.shared.models
+import org.jpablo.typeexplorer.shared.models.{Method, Namespace, NamespaceKind, Symbol}
 
 object InheritanceExamples {
 

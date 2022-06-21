@@ -10,8 +10,8 @@ import guru.nidi.graphviz.attribute.Records.*
 import guru.nidi.graphviz.attribute.{Arrow, Color, Rank, Records, Shape, Style}
 import guru.nidi.graphviz.engine.Format
 import guru.nidi.graphviz.engine.Graphviz
-import org.jpablo.typeexplorer.inheritance.{InheritanceDiagram, InheritanceExamples}
-import org.jpablo.typeexplorer.models.Namespace
+import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, InheritanceExamples}
+import org.jpablo.typeexplorer.shared.models.Namespace
 
 import java.io.File
 

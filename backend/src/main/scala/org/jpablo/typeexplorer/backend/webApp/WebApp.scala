@@ -2,7 +2,7 @@ package org.jpablo.typeexplorer.backend.webApp
 
 import org.jpablo.typeexplorer.backend.backends.plantuml.PlantumlInheritance
 import org.jpablo.typeexplorer.backend.semanticdb.All
-import org.jpablo.typeexplorer.inheritance.{InheritanceDiagram, InheritanceExamples}
+import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, InheritanceExamples}
 
 import java.net.URI
 import java.nio.file

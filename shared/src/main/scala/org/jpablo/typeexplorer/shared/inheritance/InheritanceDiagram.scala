@@ -1,11 +1,10 @@
-package org.jpablo.typeexplorer.inheritance
+package org.jpablo.typeexplorer.shared.inheritance
 
-import org.jpablo.typeexplorer.fileTree.FileTree
-import org.jpablo.typeexplorer.models.{Namespace, NamespaceKind, Symbol}
+import org.jpablo.typeexplorer.shared.fileTree.FileTree
 import zio.json.*
 import scala.meta.internal.semanticdb.SymbolInformation.Kind
 import scala.meta.internal.semanticdb.{ClassSignature, MethodSignature, Scope, Signature, SymbolInformation, SymbolOccurrence, TextDocument, TextDocuments, Type, TypeRef, TypeSignature, ValueSignature}
-import org.jpablo.typeexplorer.models.{Method, Namespace, NamespaceKind, Symbol}
+import org.jpablo.typeexplorer.shared.models.{Method, Namespace, NamespaceKind, Symbol}
 import scala.meta.internal.semanticdb
 
 case class InheritanceDiagram(
