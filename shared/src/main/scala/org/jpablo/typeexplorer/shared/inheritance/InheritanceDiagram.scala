@@ -61,7 +61,7 @@ object InheritanceDiagram:
 
     val arrows =
       for
-        (ns, parents) <- namespaces
+        (ns, parents) <- namespaces.toSeq
         parent        <- parents
         parentType    <- parent.asNonEmpty.toSeq
         parentSymbol  <- parentType match
@@ -72,10 +72,29 @@ object InheritanceDiagram:
 
     InheritanceDiagram(
       arrows     = arrows.toList,
-      namespaces = namespaces.keys.toList
+      namespaces = namespaces.keys.toList ++ missingSymbols(arrows.map(_._2).toList, allSymbols)
     )
 
   end fromTextDocuments
+
+  private def missingSymbols(parents: List[Symbol], allSymbols: Map[Symbol, SymbolInformation]) =
+    for
+      to <- parents.distinct if ! (allSymbols contains to)
+    yield
+      val last = to.toString.split("/").last
+      val kind =
+        if last.endsWith("#") then
+          NamespaceKind.Class
+        else if last.endsWith(".") then
+          NamespaceKind.Object
+        else
+          NamespaceKind.Unknown
+      Namespace(
+        symbol = to,
+        displayName = last.replace(".", "").replace("#", ""),
+        kind = kind
+      )
+
 
   private def translateKind(kind: Kind) = kind match
     case Kind.OBJECT         => NamespaceKind.Object
