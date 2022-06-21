@@ -12,7 +12,7 @@ def semanticDBTab($documents: EventStream[List[TextDocumentsWithSource]]) =
     div(
       cls := "structure",
       div(""), // TODO: add controls to expand / collapse all
-      children <-- SemanticDBTree.buildTree($documents)
+      children <-- semanticDBTree($documents)
     ),
     div(
       cls := "semanticdb-document-container",

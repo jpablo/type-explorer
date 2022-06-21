@@ -22,7 +22,7 @@ case class InheritanceDiagram(
 //      na -> nb
 //    }
 
-  lazy val toFileTree: List[FileTree[Namespace]] =
+  lazy val toFileTrees: List[FileTree[Namespace]] =
     FileTree.build(namespaces, ".") { ns =>
       (ns, ns.displayName, ns.symbol.toString.split("/").init.toList)
     }

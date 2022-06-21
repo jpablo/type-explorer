@@ -117,6 +117,7 @@ a {
 ul.collapsable-children {
     padding-left: 1.5em;
     list-style: none;
+    margin-bottom: 0;
 }
 
 ul.collapsable-children > li > .collapsable-wrapper {

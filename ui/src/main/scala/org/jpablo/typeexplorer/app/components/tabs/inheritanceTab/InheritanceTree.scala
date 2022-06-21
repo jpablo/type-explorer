@@ -3,14 +3,37 @@ package org.jpablo.typeexplorer.app.components.tabs.inheritanceTab
 import com.raquo.laminar.api.L.*
 import org.jpablo.typeexplorer.TextDocumentsWithSource
 import org.jpablo.typeexplorer.inheritance.InheritanceDiagram
+import org.jpablo.typeexplorer.fileTree.FileTree
+import org.jpablo.typeexplorer.models.{Namespace, NamespaceKind}
+import org.jpablo.typeexplorer.widgets.{collapsable2, collapsableTree}
 
 object InheritanceTree:
 
-  def buildTree($classes: EventStream[InheritanceDiagram]): EventStream[List[HtmlElement]] =
+  def build($classes: EventStream[InheritanceDiagram]): EventStream[List[HtmlElement]] =
     for diagram <- $classes yield
-      for ns <- diagram.namespaces.sortBy(_.displayName) yield
-        div(
-          ns.displayName
+      for fileTree <- diagram.toFileTrees yield
+        collapsableTree(fileTree)(
+          renderBranch = b => span(cls := "collapsable-branch-label", b),
+          renderLeaf = (_, ns) =>
+            div(
+              stereotype(ns),
+              span(" "),
+              ns.displayName + " (" + ns.symbol.toString + ")"
+            )
         )
+
+  private def stereotype(ns: Namespace) =
+    val elem =
+      ns.kind match
+        case NamespaceKind.Object        => span("O", backgroundColor := "orchid")
+        case NamespaceKind.PackageObject => span("P", backgroundColor := "lightblue")
+        case NamespaceKind.Class         => span("C", backgroundColor := "rgb(173, 209, 178)")
+        case other                       => span(other.toString)
+    elem.amend(
+      borderRadius := "8px",
+      paddingLeft  := "4px",
+      paddingRight := "4px",
+      fontWeight   := "bold"
+    )
 
 end InheritanceTree

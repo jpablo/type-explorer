@@ -11,13 +11,16 @@ import org.scalajs.dom
 
 def collapsable(branchLabel: HtmlElement, $children: Signal[Seq[HtmlElement]], open: Boolean = false) =
   val $open = Var(open)
-  val $managedChildren =
-    $open.signal
-      .combineWith($children)
-      .mapN((open, children) =>
-        if open then children.map(li(_)) else Seq.empty
-      )
+  renderCollapsable(branchLabel, $open, $open.signal.combineWith($children).mapN(showContents))
 
+def collapsable2(branchLabel: HtmlElement, contents: Seq[HtmlElement], open: Boolean = false) =
+  val $open = Var(open)
+  renderCollapsable(branchLabel, $open, $open.signal.map(open => showContents(open, contents)))
+
+private def showContents(open: Boolean, contents: Seq[HtmlElement]) =
+  if open then contents.map(li(_)) else Seq.empty
+
+private def renderCollapsable(branchLabel: HtmlElement, $open: Var[Boolean], $managedChildren: Signal[Seq[HtmlElement]]) =
   div(
     cls := "collapsable-wrapper",
     Icons.chevron(
@@ -31,7 +34,6 @@ def collapsable(branchLabel: HtmlElement, $children: Signal[Seq[HtmlElement]], o
       children <-- $managedChildren
     )
   )
-
 
 object Icons:
 

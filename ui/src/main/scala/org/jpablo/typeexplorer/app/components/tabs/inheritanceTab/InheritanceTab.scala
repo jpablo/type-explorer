@@ -17,7 +17,7 @@ def inheritanceTab(
   div(
     cls := "text-document-areas",
     div(cls := "structure",
-      children <-- InheritanceTree.buildTree($classes)
+      children <-- InheritanceTree.build($classes)
     ),
     div (
       cls := "inheritance-container",

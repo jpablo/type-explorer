@@ -17,7 +17,7 @@ import scala.util.chaining.*
 import org.jpablo.typeexplorer.semanticdb.All
 
 case class PlantUML(diagram: String):
-  def toSVG(name: String) =
+  def toSVG(name: String): String =
     val reader = new SourceStringReader(diagram)
     val os = new ByteArrayOutputStream
     // Write the first image to "os"
@@ -26,13 +26,11 @@ case class PlantUML(diagram: String):
     // The XML is stored into svg
     new String(os.toByteArray, Charset.forName("UTF-8"))
 
-
-
 object PlantumlInheritance:
 
   def fromInheritanceDiagram(diagram: InheritanceDiagram): PlantUML =
     val declarations =
-      diagram.toFileTree.map(renderTree)
+      diagram.toFileTrees.map(renderTree)
 
     val inheritance =
       for (source, target) <- diagram.arrows yield

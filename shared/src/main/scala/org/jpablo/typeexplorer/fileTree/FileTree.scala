@@ -39,7 +39,7 @@ object FileTree:
       for (groupName, pathsGroup) <- pathsGroups yield
         joinEmptyDirectories(groupName, fromPaths(pathsGroup, sep), sep)
 
-    branchNodes ++ leafNodes
+    branchNodes.sortBy(_.name) ++ leafNodes.sortBy(_.name)
 
 
   private def dropHeads[A](paths: List[NonEmptyPath[A]]): List[Path[A]] =
