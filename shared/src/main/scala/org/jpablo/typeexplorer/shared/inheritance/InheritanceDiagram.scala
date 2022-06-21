@@ -114,9 +114,12 @@ object InheritanceDiagram:
 
   private def missingMethodName(s: Symbol) =
     val str = s.toString
-    if str.endsWith("`<init>`().")
-    then "<init>"
-    else str
+    if str.endsWith("`<init>`().") then
+      "<init>"
+    else if str.endsWith("#main().") then
+      "main()"
+    else
+      str
 
 end InheritanceDiagram
 

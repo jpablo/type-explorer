@@ -25,7 +25,7 @@ object InheritanceTree:
           display := "inline",
           stereotype(ns),
           span(" "),
-          a(href := "#" + encodeURIComponent(ns.symbol.toString),  ns.displayName, title := ns.symbol.toString)
+          a(href := "#elem_" + encodeURIComponent(ns.symbol.toString),  ns.displayName, title := ns.symbol.toString)
         ),
       contents =
         ns.methods.map(m => a(m.displayName, title := m.symbol.toString))

@@ -9,8 +9,8 @@ object TopLevel {
 
   val $newDiagramType = new EventBus[DiagramType]
   val $projectPath    = Var[String]("/Users/jpablo/proyectos/playground/type-explorer")
-  var $documents      = fetchDocuments($projectPath.signal)
-  var $inheritance    = fetchSVGDiagram($projectPath.signal.map(path => (DiagramType.Inheritance, path)))
+  val $documents      = fetchDocuments($projectPath.signal)
+  val $inheritance    = fetchSVGDiagram($projectPath.signal.map(path => (DiagramType.Inheritance, path)))
   val $classes        = fetchClasses($projectPath.signal)
 
   def topLevel: Div =
