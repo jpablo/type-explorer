@@ -1,4 +1,4 @@
-package org.jpablo.typeexplorer.semanticdb
+package org.jpablo.typeexplorer.backend.semanticdb
 
 import org.jpablo.typeexplorer.models.{Method, Namespace, Package}
 import java.nio.file.Path

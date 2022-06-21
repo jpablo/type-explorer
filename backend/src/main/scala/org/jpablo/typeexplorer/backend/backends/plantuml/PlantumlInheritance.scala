@@ -1,9 +1,10 @@
-package org.jpablo.typeexplorer.backends.plantuml
+package org.jpablo.typeexplorer.backend.backends.plantuml
 
 import PlantumlInheritance.fromInheritanceDiagram
 import net.sourceforge.plantuml.FileFormat
 import net.sourceforge.plantuml.FileFormatOption
 import net.sourceforge.plantuml.SourceStringReader
+import org.jpablo.typeexplorer.backend.semanticdb.All
 import org.jpablo.typeexplorer.fileTree.FileTree
 import org.jpablo.typeexplorer.inheritance.{InheritanceDiagram, InheritanceExamples}
 import org.jpablo.typeexplorer.models.{Method, Namespace, NamespaceKind}
@@ -14,7 +15,6 @@ import java.nio.file
 import scala.meta.internal.semanticdb.SymbolInformation.Kind
 import scala.meta.internal.semanticdb.{ClassSignature, MethodSignature, SymbolInformation, TextDocuments, Type, TypeRef, TypeSignature, ValueSignature}
 import scala.util.chaining.*
-import org.jpablo.typeexplorer.semanticdb.All
 
 case class PlantUML(diagram: String):
   def toSVG(name: String): String =

@@ -1,4 +1,4 @@
-package org.jpablo.typeexplorer.semanticdb
+package org.jpablo.typeexplorer.backend.semanticdb
 
 import java.nio.file.Path
 import scala.meta.internal.semanticdb

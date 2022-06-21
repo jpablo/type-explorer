@@ -1,4 +1,4 @@
-package org.jpablo.typeexplorer.backends.graphviz
+package org.jpablo.typeexplorer.backend.backends.graphviz
 
 import GraphvizCallGraph.toGraph
 import guru.nidi.graphviz.attribute.Label

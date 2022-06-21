@@ -1,8 +1,8 @@
-package org.jpablo.typeexplorer.webApp
+package org.jpablo.typeexplorer.backend.webApp
 
-import org.jpablo.typeexplorer.backends.plantuml.PlantumlInheritance
+import org.jpablo.typeexplorer.backend.backends.plantuml.PlantumlInheritance
+import org.jpablo.typeexplorer.backend.semanticdb.All
 import org.jpablo.typeexplorer.inheritance.{InheritanceDiagram, InheritanceExamples}
-import org.jpablo.typeexplorer.semanticdb.All
 
 import java.net.URI
 import java.nio.file
