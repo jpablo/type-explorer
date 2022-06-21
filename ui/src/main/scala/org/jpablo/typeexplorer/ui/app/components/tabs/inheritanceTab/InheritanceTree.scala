@@ -25,10 +25,10 @@ object InheritanceTree:
           display := "inline",
           stereotype(ns),
           span(" "),
-          a(href := "#" + encodeURIComponent(ns.symbol.toString),  ns.displayName)
+          a(href := "#" + encodeURIComponent(ns.symbol.toString),  ns.displayName, title := ns.symbol.toString)
         ),
       contents =
-        ns.methods.map(m => div(m.displayName))
+        ns.methods.map(m => a(m.displayName, title := m.symbol.toString))
     )
 
   private def stereotype(ns: Namespace) =
