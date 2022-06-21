@@ -33,7 +33,8 @@ object InheritanceDiagram:
   def fromTextDocuments(textDocuments: TextDocuments): InheritanceDiagram =
     val allSymbols: Map[Symbol, SymbolInformation] =
       textDocuments.documents
-        .flatMap(_.symbols).distinct
+        .flatMap(_.symbols)
+        .distinct
         .sortBy(_.symbol)
         .map(s => Symbol(s.symbol) -> s)
         .toMap
@@ -47,7 +48,7 @@ object InheritanceDiagram:
           case _ =>  List.empty
         nsKind       = translateKind(symbolInfo.kind)
         declarations = clsSignature.declarations.map(_.symlinks.map(Symbol(_))).toSeq.flatten
-        methods      = for decl <- declarations yield Method(decl, allSymbols.get(decl).map(_.displayName).getOrElse(decl.toString), None)
+        methods      = declarations.map(method(allSymbols))
         namespace    =
           Namespace(
             symbol      = symbol,
@@ -84,6 +85,19 @@ object InheritanceDiagram:
     case Kind.TRAIT          => NamespaceKind.Trait
     case other               => NamespaceKind.Other(other.toString)
 
+
+  private def method(allSymbols: Map[Symbol, SymbolInformation])(decl: Symbol) =
+    Method(
+      symbol      = decl,
+      displayName = allSymbols.get(decl).map(_.displayName).getOrElse(missingMethodName(decl)),
+      returnType  = None
+    )
+
+  private def missingMethodName(s: Symbol) =
+    val str = s.toString
+    if str.endsWith("`<init>`().")
+    then "<init>"
+    else str
 
 end InheritanceDiagram
 
