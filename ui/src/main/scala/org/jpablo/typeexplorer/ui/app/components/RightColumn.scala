@@ -1,4 +1,4 @@
-package org.jpablo.typeexplorer.app.components
+package org.jpablo.typeexplorer.ui.app.components
 
 import com.raquo.laminar.api.L.*
 

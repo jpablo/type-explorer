@@ -1,9 +1,9 @@
-package org.jpablo.typeexplorer.app.components
+package org.jpablo.typeexplorer.ui.app.components
 
 import com.raquo.laminar.api.L.*
-import org.jpablo.typeexplorer.app.client.{fetchDocuments, fetchSVGDiagram, fetchClasses}
-import org.jpablo.typeexplorer.app.components.DiagramType
-import org.jpablo.typeexplorer.app.components.appFooter
+import org.jpablo.typeexplorer.ui.app.client.{fetchClasses, fetchDocuments, fetchSVGDiagram}
+import org.jpablo.typeexplorer.ui.app.components.appFooter
+import org.jpablo.typeexplorer.ui.app.components.tabs.tabsArea
 
 object TopLevel {
 

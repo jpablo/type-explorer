@@ -1,4 +1,4 @@
-package org.jpablo.typeexplorer.bootstrap
+package org.jpablo.typeexplorer.ui.bootstrap
 
 import com.raquo.laminar.api.L.{*, given}
 

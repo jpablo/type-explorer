@@ -1,4 +1,4 @@
-package org.jpablo.typeexplorer.app.components.tabs.semanticDBTab
+package org.jpablo.typeexplorer.ui.app.components.tabs.semanticDBTab
 
 import com.raquo.laminar.api.L.*
 import org.jpablo.typeexplorer.TextDocumentsWithSource

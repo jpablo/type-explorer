@@ -1,10 +1,10 @@
-package org.jpablo.typeexplorer.app.components
+package org.jpablo.typeexplorer.ui.app.components.tabs
 
 import com.raquo.laminar.api.L.*
 import org.jpablo.typeexplorer.TextDocumentsWithSource
-import org.jpablo.typeexplorer.app.components.tabs.inheritanceTab.inheritanceTab
-import org.jpablo.typeexplorer.app.components.tabs.semanticDBTab.semanticDBTab
 import org.jpablo.typeexplorer.inheritance.InheritanceDiagram
+import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.inheritanceTab
+import org.jpablo.typeexplorer.ui.app.components.tabs.semanticDBTab.semanticDBTab
 import org.scalajs.dom
 
 def tabsArea(

@@ -1,4 +1,4 @@
-package org.jpablo.typeexplorer.widgets
+package org.jpablo.typeexplorer.ui.widgets
 
 import com.raquo.laminar.api.L.*
 import com.raquo.airstream.core.EventStream

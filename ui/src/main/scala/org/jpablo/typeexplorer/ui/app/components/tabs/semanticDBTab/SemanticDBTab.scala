@@ -1,9 +1,9 @@
-package org.jpablo.typeexplorer.app.components.tabs.semanticDBTab
+package org.jpablo.typeexplorer.ui.app.components.tabs.semanticDBTab
 
 import com.raquo.laminar.api.L.*
 import com.raquo.airstream.core.EventStream
 import org.jpablo.typeexplorer.TextDocumentsWithSource
-import org.jpablo.typeexplorer.app.components.tabs.semanticDBTab.SemanticDBText
+import org.jpablo.typeexplorer.ui.app.components.tabs.semanticDBTab.SemanticDBText
 
 
 def semanticDBTab($documents: EventStream[List[TextDocumentsWithSource]]) =

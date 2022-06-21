@@ -1,12 +1,12 @@
-package org.jpablo.typeexplorer.app.components.tabs.semanticDBTab
+package org.jpablo.typeexplorer.ui.app.components.tabs.semanticDBTab
 
 import com.raquo.laminar.api.L.*
 import org.jpablo.typeexplorer.TextDocumentsWithSource
-import org.jpablo.typeexplorer.widgets.{Icons, collapsable, collapsable2, collapsableTree}
-import org.jpablo.typeexplorer.bootstrap.navbar
 import org.jpablo.typeexplorer.fileTree.FileTree
-import scalajs.js.URIUtils.encodeURIComponent
+import org.jpablo.typeexplorer.ui.bootstrap.navbar
+import org.jpablo.typeexplorer.ui.widgets.{Icons, collapsable, collapsable2, collapsableTree}
 import scala.meta.internal.semanticdb.{SymbolInformation, TextDocument}
+import scalajs.js.URIUtils.encodeURIComponent
 
 
 def semanticDBTree = SemanticDBTree.build

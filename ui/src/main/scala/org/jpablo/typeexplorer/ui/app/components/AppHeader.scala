@@ -1,8 +1,8 @@
-package org.jpablo.typeexplorer.app.components
+package org.jpablo.typeexplorer.ui.app.components
 
 import com.raquo.laminar.api.L.*
 import org.scalajs.dom
-import org.jpablo.typeexplorer.bootstrap.{dropdown, navbar}
+import org.jpablo.typeexplorer.ui.bootstrap.{dropdown, navbar}
 
 
 enum DiagramType:

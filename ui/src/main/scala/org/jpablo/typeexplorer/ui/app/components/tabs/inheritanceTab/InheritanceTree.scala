@@ -1,11 +1,11 @@
-package org.jpablo.typeexplorer.app.components.tabs.inheritanceTab
+package org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab
 
 import com.raquo.laminar.api.L.*
 import org.jpablo.typeexplorer.TextDocumentsWithSource
 import org.jpablo.typeexplorer.inheritance.InheritanceDiagram
 import org.jpablo.typeexplorer.fileTree.FileTree
 import org.jpablo.typeexplorer.models.{Namespace, NamespaceKind}
-import org.jpablo.typeexplorer.widgets.{collapsable2, collapsableTree}
+import org.jpablo.typeexplorer.ui.widgets.collapsableTree
 
 object InheritanceTree:
 
