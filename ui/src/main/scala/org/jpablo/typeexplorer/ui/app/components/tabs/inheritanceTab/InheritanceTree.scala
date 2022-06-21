@@ -5,7 +5,8 @@ import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
 import org.jpablo.typeexplorer.shared.fileTree.FileTree
 import org.jpablo.typeexplorer.shared.inheritance.InheritanceDiagram
 import org.jpablo.typeexplorer.shared.models.{Namespace, NamespaceKind}
-import org.jpablo.typeexplorer.ui.widgets.collapsableTree
+import org.jpablo.typeexplorer.ui.widgets.{collapsableTree, collapsable2}
+import scalajs.js.URIUtils.encodeURIComponent
 
 object InheritanceTree:
 
@@ -14,13 +15,21 @@ object InheritanceTree:
       for fileTree <- diagram.toFileTrees yield
         collapsableTree(fileTree)(
           renderBranch = b => span(cls := "collapsable-branch-label", b),
-          renderLeaf = (_, ns) =>
-            div(
-              stereotype(ns),
-              span(" "),
-              ns.displayName + " (" + ns.symbol.toString + ")"
-            )
+          renderLeaf = renderNamespace
         )
+
+  private def renderNamespace(name: String, ns: Namespace) =
+    collapsable2(
+      branchLabel =
+        div(
+          display := "inline",
+          stereotype(ns),
+          span(" "),
+          a(href := "#" + encodeURIComponent(ns.symbol.toString),  ns.displayName)
+        ),
+      contents =
+        ns.methods.map(m => div(m.displayName))
+    )
 
   private def stereotype(ns: Namespace) =
     val elem =
