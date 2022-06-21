@@ -1,4 +1,4 @@
-package callGraph
+package org.jpablo.typeexplorer.backend.backends.graphviz
 
 import org.jpablo.typeexplorer.backend.semanticdb.SymbolRegistry
 import zio.test.*

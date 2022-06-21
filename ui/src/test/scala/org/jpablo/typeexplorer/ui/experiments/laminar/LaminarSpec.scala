@@ -1,4 +1,4 @@
-package laminar
+package org.jpablo.typeexplorer.ui.experiments.laminar
 
 import zio.test.*
 import zio.test.Assertion.*

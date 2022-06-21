@@ -1,4 +1,4 @@
-package fixtures
+package org.jpablo.typeexplorer.ui.experiments.fixtures
 
 import com.raquo.airstream.ownership.{Subscription, Owner}
 

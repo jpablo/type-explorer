@@ -1,16 +1,17 @@
-package airflow
+package org.jpablo.typeexplorer.ui.experiments.airflow
 
 import com.raquo.airstream.core.{EventStream, Observer, Signal}
 import com.raquo.airstream.ownership.Subscription
 import com.raquo.airstream.eventbus.{EventBus, WriteBus}
 import com.raquo.airstream.ownership.{Owner, Subscription}
 import com.raquo.airstream.timing.PeriodicEventStream
+import org.jpablo.typeexplorer.ui.experiments.fixtures.TestableOwner
 import zio.test.*
 import zio.test.Assertion.*
 
 import scala.concurrent.Future
 import concurrent.ExecutionContext.Implicits.global
-import fixtures.TestableOwner
+
 
 object AirFlowSpec extends ZIOSpecDefault {
 
@@ -32,7 +33,7 @@ object AirFlowSpec extends ZIOSpecDefault {
       val futureStream: EventStream[Int] = EventStream.fromFuture(Future(1))
 
       // avoid
-      val seqStream: EventStream[Int] = EventStream.fromSeq(List(1,2,3))
+      val seqStream: EventStream[Int] = EventStream.fromSeq(List(1, 2, 3))
 
       val periodicStream: PeriodicEventStream[Int] = EventStream.periodic(100)
 
@@ -82,4 +83,3 @@ object AirFlowSpec extends ZIOSpecDefault {
     }
   )
 }
-
