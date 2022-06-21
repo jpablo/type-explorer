@@ -6,7 +6,7 @@ import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, Inheritan
 
 import java.net.URI
 import java.nio.file
-import org.jpablo.typeexplorer.{TextDocumentsWithSource, TextDocumentsWithSourceSeq}
+import org.jpablo.typeexplorer.protos.{TextDocumentsWithSource, TextDocumentsWithSourceSeq}
 import org.json4s.*
 import org.json4s.native.Serialization
 import org.json4s.native.Serialization.{read, write}

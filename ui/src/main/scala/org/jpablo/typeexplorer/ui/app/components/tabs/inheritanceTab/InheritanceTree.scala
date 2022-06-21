@@ -1,7 +1,7 @@
 package org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab
 
 import com.raquo.laminar.api.L.*
-import org.jpablo.typeexplorer.TextDocumentsWithSource
+import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
 import org.jpablo.typeexplorer.shared.fileTree.FileTree
 import org.jpablo.typeexplorer.shared.inheritance.InheritanceDiagram
 import org.jpablo.typeexplorer.shared.models.{Namespace, NamespaceKind}

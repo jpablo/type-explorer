@@ -2,7 +2,7 @@ package org.jpablo.typeexplorer.ui.app.components.tabs.semanticDBTab
 
 import com.raquo.laminar.api.L.*
 import com.raquo.airstream.core.EventStream
-import org.jpablo.typeexplorer.TextDocumentsWithSource
+import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
 import org.jpablo.typeexplorer.ui.app.components.tabs.semanticDBTab.SemanticDBText
 
 

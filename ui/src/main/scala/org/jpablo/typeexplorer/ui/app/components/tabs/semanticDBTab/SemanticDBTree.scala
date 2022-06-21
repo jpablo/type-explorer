@@ -1,7 +1,7 @@
 package org.jpablo.typeexplorer.ui.app.components.tabs.semanticDBTab
 
 import com.raquo.laminar.api.L.*
-import org.jpablo.typeexplorer.TextDocumentsWithSource
+import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
 import org.jpablo.typeexplorer.shared.fileTree.FileTree
 import org.jpablo.typeexplorer.ui.bootstrap.navbar
 import org.jpablo.typeexplorer.ui.widgets.{Icons, collapsable, collapsable2, collapsableTree}

@@ -1,7 +1,7 @@
 package org.jpablo.typeexplorer.ui.app.components.tabs.semanticDBTab
 
 import com.raquo.laminar.api.L.*
-import org.jpablo.typeexplorer.TextDocumentsWithSource
+import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
 import scalapb.GeneratedMessage
 
 import scalajs.js.URIUtils.encodeURIComponent

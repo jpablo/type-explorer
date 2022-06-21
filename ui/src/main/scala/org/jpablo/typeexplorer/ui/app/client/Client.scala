@@ -5,7 +5,7 @@ import io.laminext.fetch.*
 import org.jpablo.typeexplorer.shared.inheritance.InheritanceDiagram
 import org.jpablo.typeexplorer.shared.models.Namespace
 import org.jpablo.typeexplorer.ui.app.components.DiagramType
-import org.jpablo.typeexplorer.{TextDocumentsWithSource, TextDocumentsWithSourceSeq}
+import org.jpablo.typeexplorer.protos.{TextDocumentsWithSource, TextDocumentsWithSourceSeq}
 import org.scalajs.dom
 import scala.scalajs.js.typedarray.Int8Array
 import zio.json.*
