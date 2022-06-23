@@ -3,7 +3,6 @@ import org.scalajs.linker.interface.ModuleSplitStyle
 val scala3Version     = "3.1.2"
 val zioVersion        = "2.0.0-RC6"
 val zioJsonVersion    = "0.3.0-RC8"
-val circeVersion      = "0.14.2"
 val zioPreludeVersion = "1.0.0-RC14"
 val scalametaVersion  = "4.5.9"
 val zioHttpVersion    = "2.0.0-RC8+1-6d179026-SNAPSHOT"
