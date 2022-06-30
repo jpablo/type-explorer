@@ -8,7 +8,8 @@ import org.jpablo.typeexplorer.ui.app.components.tabs.tabsArea
 object TopLevel {
 
   val $newDiagramType = new EventBus[DiagramType]
-  val $projectPath    = Var[String]("/Users/jpablo/proyectos/playground/type-explorer")
+  val $selectedUri    = new EventBus[String]
+  val $projectPath    = Var[String]("/Users/adiaz/development/type-explorer")
   val $documents      = fetchDocuments($projectPath.signal)
   val $inheritance    = fetchSVGDiagram($projectPath.signal.map(path => (DiagramType.Inheritance, path)))
   val $classes        = fetchClasses($projectPath.signal)
@@ -20,7 +21,8 @@ object TopLevel {
       tabsArea(
         $documents,
         $inheritance,
-        $classes
+        $classes,
+        $selectedUri
       ),
       appFooter
     )

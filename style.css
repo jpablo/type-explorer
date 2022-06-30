@@ -79,8 +79,15 @@ a {
 
 .text-document-areas {
     display: grid;
-    grid-template-columns: 1fr 5fr;
     height: 100%
+}
+
+#classes-tab-pane > .text-document-areas{
+  grid-template-columns: 1fr 3fr 0fr;
+}
+
+#semanticdb-tab-pane > .text-document-areas{
+  grid-template-columns: 1fr 1fr 1fr;
 }
 
 .inheritance-container, .semanticdb-document-container {
@@ -117,7 +124,6 @@ a {
 ul.collapsable-children {
     padding-left: 1.5em;
     list-style: none;
-    margin-bottom: 0;
 }
 
 ul.collapsable-children > li > .collapsable-wrapper {
