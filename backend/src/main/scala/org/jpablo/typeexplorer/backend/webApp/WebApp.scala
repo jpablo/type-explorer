@@ -6,6 +6,7 @@ import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, Inheritan
 
 import java.net.URI
 import java.nio.file
+import scala.util.Using
 import org.jpablo.typeexplorer.protos.{TextDocumentsWithSource, TextDocumentsWithSourceSeq}
 import org.json4s.*
 import org.json4s.native.Serialization
@@ -66,6 +67,12 @@ object WebApp extends ZIOAppDefault:
         .map(_.withContentType("image/svg+xml"))
         .getOrElse(badRequest)
 
+    case req @ Method.GET -> !! / "source" =>
+      (req |> getPath |> readSource)
+        .map(Response.text)
+        .map(_.withContentType("text/plain"))
+        .getOrElse(badRequest)
+
   } @@ cors(corsConfig)
 
   val run =
@@ -89,6 +96,14 @@ object WebApp extends ZIOAppDefault:
         }
       )
 
+  def readSource(paths: Option[List[String]]): Option[String] =
+    for
+      path <- paths.toList.flatten.headOption
+    yield
+      Using.resource(scala.io.Source.fromFile(path)) { bufferedSource =>
+        bufferedSource.getLines().mkString("\n")
+      }
+
   def combinePaths(path: Option[List[String]]): Option[file.Path] =
     for case h :: t <- path if h.nonEmpty yield
       file.Paths.get(h, t*)
@@ -101,4 +116,3 @@ object WebApp extends ZIOAppDefault:
 
   lazy val badRequest =
     Response.status(Status.BadRequest)
-

@@ -10,7 +10,8 @@ import org.scalajs.dom
 def tabsArea(
   $documents  : EventStream[List[TextDocumentsWithSource]],
   $svgDiagram : EventStream[dom.Element],
-  $classes    : EventStream[InheritanceDiagram]
+  $classes    : EventStream[InheritanceDiagram],
+  $selectedUri: EventBus[String]
 ) =
   List(
     div(
@@ -60,7 +61,7 @@ def tabsArea(
           cls := "tab-pane fade",
           role := "tabpanel",
           tabIndex := 0,
-          semanticDBTab($documents)
+          semanticDBTab($documents, $selectedUri)
         )
       )
     )

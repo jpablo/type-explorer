@@ -13,12 +13,12 @@ def semanticDBTree = SemanticDBTree.build
 
 object SemanticDBTree:
 
-  def build($documents: EventStream[List[TextDocumentsWithSource]]): EventStream[List[HtmlElement]] =
+  def build($documents: EventStream[List[TextDocumentsWithSource]], $selectedUri: EventBus[String]): EventStream[List[HtmlElement]] =
     for documentsWithSource <- $documents yield
       for fileTree <- FileTree.build(documentsWithSource)(buildPath) yield
         collapsableTree(fileTree)(
           renderBranch = b => span(cls := "collapsable-branch-label", b),
-          renderLeaf = renderDocWithSource
+          renderLeaf = renderDocWithSource($selectedUri)
         )
 
   private def buildPath(doc: TextDocumentsWithSource) =
@@ -26,7 +26,7 @@ object SemanticDBTree:
     (doc, all.last, all.init)
 
 
-  private def renderDocWithSource(name: String, docWithSource: TextDocumentsWithSource) =
+  private def renderDocWithSource($selectedUri: EventBus[String])(name: String, docWithSource: TextDocumentsWithSource) =
     collapsable2(
       branchLabel =
         span(
@@ -34,14 +34,21 @@ object SemanticDBTree:
           Icons.fileBinary,
           a(href := "#" + docWithSource.semanticDbUri, name)
         ),
-      contents = docWithSource.documents.map(renderTextDocument),
+      contents = docWithSource.documents.map(renderTextDocument($selectedUri)),
       open = true
     )
 
-  private def renderTextDocument(doc: TextDocument) =
+  private def renderTextDocument($selectedUri: EventBus[String])(doc: TextDocument) =
     collapsable(
       branchLabel =
-        span(Icons.fileCode, a(href := "#" + encodeURIComponent(doc.uri), doc.uri)),
+        span(
+          Icons.fileCode,
+          a(
+            href := "#" + encodeURIComponent(doc.uri),
+            doc.uri,
+            onClick.mapTo(doc.uri) --> $selectedUri
+        )
+        ),
       $children =
         Signal.fromValue(doc).map(_.symbols.sortBy(_.symbol)).split(_.symbol)(renderSymbolInformation),
       open = false
