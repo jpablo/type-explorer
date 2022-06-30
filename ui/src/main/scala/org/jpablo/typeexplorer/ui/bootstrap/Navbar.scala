@@ -2,8 +2,9 @@ package org.jpablo.typeexplorer.ui.bootstrap
 
 import com.raquo.laminar.api.L.*
 import org.scalajs.dom
+import io.laminext.core.*
 
-def navbar(id: String, brand: String, projectPath: Var[String], items: Div*): Element =
+def navbar(id: String, brand: String, projectPath: StoredString, items: Div*): Element =
   val onEnterPress = onKeyPress.filter(_.keyCode == dom.ext.KeyCode.Enter)
   div(
     idAttr := id,
@@ -26,7 +27,7 @@ def navbar(id: String, brand: String, projectPath: Var[String], items: Div*): El
             input (
               cls := "form-control me-2",
               tpe := "search",
-              onEnterPress.preventDefault.mapToValue --> projectPath
+              onEnterPress.preventDefault.mapToValue --> projectPath.set
             ),
             button (cls := "btn btn-outline-success", tpe := "button", "go")
           ),

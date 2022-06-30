@@ -17,11 +17,17 @@ def fetchBase(path: String): FetchEventStreamBuilder =
 
 def fetchDocuments(projectPath: Signal[String]): EventStream[List[TextDocumentsWithSource]] =
   for
+    // Checar si la ruta es vacía
     path <- projectPath
-    response <- fetchBase("semanticdb?path=" + path).arrayBuffer
+    // mandar esto a un if en otro for comprehension
+    lst <- 
+      if path.isEmpty then EventStream.fromValue(List.empty) 
+      else 
+        for response <- fetchBase("semanticdb?path=" + path).arrayBuffer yield
+          val ia = Int8Array(response.data, 0, length = response.data.byteLength)
+          TextDocumentsWithSourceSeq.parseFrom(ia.toArray).documentsWithSource.toList.sortBy(_.semanticDbUri)
   yield
-    val ia = Int8Array(response.data, 0, length = response.data.byteLength)
-    TextDocumentsWithSourceSeq.parseFrom(ia.toArray).documentsWithSource.toList.sortBy(_.semanticDbUri)
+      lst
 
 
 def fetchClasses(projectPath: Signal[String]): EventStream[InheritanceDiagram] =

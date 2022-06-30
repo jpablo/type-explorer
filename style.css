@@ -90,7 +90,7 @@ a {
   grid-template-columns: 1fr 1fr 1fr;
 }
 
-.inheritance-container, .semanticdb-document-container {
+.inheritance-container, .semanticdb-document-container, .semanticdb-source-container {
     height: 100%;
     overflow: auto;
 }

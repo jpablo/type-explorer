@@ -3,6 +3,7 @@ package org.jpablo.typeexplorer.ui.app.components
 import com.raquo.laminar.api.L.*
 import org.scalajs.dom
 import org.jpablo.typeexplorer.ui.bootstrap.{dropdown, navbar}
+import io.laminext.core.*
 
 
 enum DiagramType:
@@ -11,7 +12,7 @@ enum DiagramType:
 
 import DiagramType.*
 
-def appHeader(selection: EventBus[DiagramType], projectPath: Var[String]) =
+def appHeader(selection: EventBus[DiagramType], projectPath: StoredString) =
   div(
     idAttr := "te-header",
     navbar (
@@ -25,4 +26,3 @@ def appHeader(selection: EventBus[DiagramType], projectPath: Var[String]) =
       )
     )
   )
-
