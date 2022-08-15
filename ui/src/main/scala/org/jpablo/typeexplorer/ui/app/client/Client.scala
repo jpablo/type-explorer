@@ -17,17 +17,17 @@ def fetchBase(path: String): FetchEventStreamBuilder =
 
 def fetchDocuments(projectPath: Signal[String]): EventStream[List[TextDocumentsWithSource]] =
   for
-    // Checar si la ruta es vacía
+  // Checar si la ruta es vacía
     path <- projectPath
     // mandar esto a un if en otro for comprehension
-    lst <- 
-      if path.isEmpty then EventStream.fromValue(List.empty) 
-      else 
+    lst <-
+      if path.isEmpty then EventStream.fromValue(List.empty)
+      else
         for response <- fetchBase("semanticdb?path=" + path).arrayBuffer yield
           val ia = Int8Array(response.data, 0, length = response.data.byteLength)
           TextDocumentsWithSourceSeq.parseFrom(ia.toArray).documentsWithSource.toList.sortBy(_.semanticDbUri)
   yield
-      lst
+    lst
 
 
 def fetchClasses(projectPath: Signal[String]): EventStream[InheritanceDiagram] =
@@ -47,16 +47,19 @@ def fetchSVGDiagram(diagram: Signal[(DiagramType, String)]): EventStream[dom.Ele
   val parser = dom.DOMParser()
   for
     (diagramType, path) <- diagram
-    fetchEventStreamBuilder = diagramType match
-      case DiagramType.Inheritance => fetchBase("inheritance?path=" + path)
-      case DiagramType.CallGraph => fetchBase("call-graph?path=" + path)
-    fetchResponse <- fetchEventStreamBuilder.text
-    doc = parser.parseFromString(
-      fetchResponse.data,
-      dom.MIMEType.`image/svg+xml`
-    )
+    doc <- if path.isEmpty
+    then
+      EventStream.fromValue(div().ref)
+    else
+      val fetchEventStreamBuilder = diagramType match
+        case DiagramType.Inheritance => fetchBase("inheritance?path=" + path)
+        case DiagramType.CallGraph   => fetchBase("call-graph?path=" + path)
+
+      fetchEventStreamBuilder.text.map { fetchResponse =>
+        parser.parseFromString(fetchResponse.data, dom.MIMEType.`image/svg+xml`).documentElement
+      }
 //      errorNode = doc.querySelector("parsererror")
-  yield doc.documentElement
+  yield doc
 
 def fetchSourceCode(path: String): EventStream[String] =
   for

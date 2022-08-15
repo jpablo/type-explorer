@@ -11,8 +11,8 @@ val zioHttpVersion    = "2.0.0-RC8+1-6d179026-SNAPSHOT"
 // 1. Use the project's base path instead
 // 2. Maybe create a plugin to correctly set semanticdbTargetRoot for each subproject?
 
-//val typeExplorerScalaDbRoot = "/Users/jpablo/proyectos/playground/type-explorer/.type-explorer/meta"
-val typeExplorerScalaDbRoot = "/Users/adiaz/development/type-explorer/.type-explorer/meta"
+val typeExplorerScalaDbRoot = "/Users/jpablo/proyectos/playground/type-explorer/.type-explorer/meta"
+//val typeExplorerScalaDbRoot = "/Users/adiaz/development/type-explorer/.type-explorer/meta"
 val typeExplorerRoot = file(typeExplorerScalaDbRoot)
 
 

@@ -46,3 +46,6 @@ bin/
 
 #general
 *.class
+
+#app
+.type-explorer/
