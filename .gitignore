@@ -49,3 +49,4 @@ bin/
 
 #app
 .type-explorer/
+*.semanticdb
