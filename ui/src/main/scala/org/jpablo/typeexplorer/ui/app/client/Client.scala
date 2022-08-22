@@ -61,8 +61,9 @@ def fetchSVGDiagram(diagram: Signal[(DiagramType, String)]): EventStream[dom.Ele
 //      errorNode = doc.querySelector("parsererror")
   yield doc
 
-def fetchSourceCode(path: String): EventStream[String] =
+def fetchSourceCode($projectPath: Signal[String])(path: String): EventStream[String] =
   for
-    response <- fetchBase("source?path=/" + path).text
+    projectPath <- $projectPath
+    response    <- fetchBase(s"source?path=$projectPath/$path").text
   yield
     response.data

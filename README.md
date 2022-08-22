@@ -34,7 +34,7 @@ $ npm install
 From `sbt`:
 
 ```
-backend/runMain webApp.WebApp
+backend/runMain org.jpablo.typeexplorer.backend.webApp.WebApp
 ```
 
 ### Running the UI

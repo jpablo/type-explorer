@@ -8,6 +8,7 @@ import org.jpablo.typeexplorer.ui.app.components.tabs.semanticDBTab.semanticDBTa
 import org.scalajs.dom
 
 def tabsArea(
+  $projectPath : Signal[String], 
   $documents  : EventStream[List[TextDocumentsWithSource]],
   $svgDiagram : EventStream[dom.Element],
   $classes    : EventStream[InheritanceDiagram],
@@ -61,7 +62,7 @@ def tabsArea(
           cls := "tab-pane fade",
           role := "tabpanel",
           tabIndex := 0,
-          semanticDBTab($documents, $selectedUri)
+          semanticDBTab($projectPath, $documents, $selectedUri)
         )
       )
     )

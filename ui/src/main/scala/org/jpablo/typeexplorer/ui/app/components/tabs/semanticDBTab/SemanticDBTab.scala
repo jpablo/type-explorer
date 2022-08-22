@@ -7,7 +7,7 @@ import org.jpablo.typeexplorer.ui.app.client.fetchSourceCode
 import org.jpablo.typeexplorer.ui.app.components.tabs.semanticDBTab.{SemanticDBText, SemanticDBTree}
 
 
-def semanticDBTab($documents: EventStream[List[TextDocumentsWithSource]], $selectedUri: EventBus[String]) =
+    def semanticDBTab($projectPath: Signal[String], $documents: EventStream[List[TextDocumentsWithSource]], $selectedUri: EventBus[String]) =
   div(
     cls := "text-document-areas",
     div(
@@ -23,6 +23,6 @@ def semanticDBTab($documents: EventStream[List[TextDocumentsWithSource]], $selec
     ),
     div(
       cls := "semanticdb-source-container",
-      sourceCodeTab($selectedUri.events.flatMap(fetchSourceCode))
+      sourceCodeTab($selectedUri.events.flatMap(fetchSourceCode($projectPath)))
     )
   )
