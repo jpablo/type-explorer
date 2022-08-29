@@ -27,7 +27,8 @@ def navbar(id: String, brand: String, projectPath: StoredString, items: Div*): E
             input (
               cls := "form-control me-2",
               tpe := "search",
-              onEnterPress.preventDefault.mapToValue --> projectPath.set
+              onEnterPress.preventDefault.mapToValue --> projectPath.set,
+              value <-- projectPath.signal
             ),
             button (cls := "btn btn-outline-success", tpe := "button", "go")
           ),
