@@ -3,6 +3,7 @@ package org.jpablo.typeexplorer.backend.webApp
 import org.jpablo.typeexplorer.backend.backends.plantuml.PlantumlInheritance
 import org.jpablo.typeexplorer.backend.semanticdb.All
 import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, InheritanceExamples}
+import org.jpablo.typeexplorer.shared.models
 
 import java.net.URI
 import java.nio.file
@@ -61,6 +62,7 @@ object WebApp extends ZIOAppDefault:
       (req |> getPath |> readTextDocumentsWithSource)
         .map(toTextDocuments)
         .map(InheritanceDiagram.fromTextDocuments)
+        .map(_.filterSymbol(getParam(req, "symbol").toList.flatten.map(models.Symbol.apply)))
         .map(PlantumlInheritance.fromInheritanceDiagram)
         .map(_.toSVG("laminar"))
         .map(Response.text)
@@ -109,7 +111,10 @@ object WebApp extends ZIOAppDefault:
       file.Paths.get(h, t*)
 
   def getPath(req: Request) =
-    req.url.queryParams.get("path")
+    getParam(req, "path")
+
+  def getParam(req: Request, name: String) =
+    req.url.queryParams.get(name)
 
   lazy val corsConfig =
     CorsConfig(allowedOrigins = _ => true)

@@ -26,7 +26,20 @@ case class InheritanceDiagram(
       (ns, ns.displayName, ns.symbol.toString.split("/").init.toList)
     }
 
+
+  def filterSymbol(symbols: List[Symbol]): InheritanceDiagram =
+    InheritanceDiagram(
+      List.empty,
+      namespaces.filter(ns => symbols.contains(ns.symbol))
+    )
+    
+
+end InheritanceDiagram
+
+
+
 object InheritanceDiagram:
+
   given JsonEncoder[InheritanceDiagram] = DeriveJsonEncoder.gen
   given JsonDecoder[InheritanceDiagram] = DeriveJsonDecoder.gen
 

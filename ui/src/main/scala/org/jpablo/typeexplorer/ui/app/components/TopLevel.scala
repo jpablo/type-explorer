@@ -15,9 +15,6 @@ object TopLevel {
   val $inheritance    = fetchSVGDiagram($projectPath.signal.map(path => (DiagramType.Inheritance, path)))
   val $classes        = fetchClasses($projectPath.signal)
 
-  // val $fullProjectPath =
-  //   $selectedUri.events.toSignal("").flatMap(uri => $projectPath.signal.map(p => p + uri))
-
   def topLevel: Div =
     div(
       idAttr := "te-toplevel",
