@@ -110,7 +110,7 @@ object WebApp extends ZIOAppDefault:
     for case h :: t <- path if h.nonEmpty yield
       file.Paths.get(h, t*)
 
-  def getPath(req: Request) =
+  def getPath(req: Request): Option[List[String]] =
     getParam(req, "path")
 
   def getParam(req: Request, name: String) =

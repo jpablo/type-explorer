@@ -7,6 +7,10 @@ import scala.meta.internal.semanticdb.{ClassSignature, MethodSignature, Scope, S
 import org.jpablo.typeexplorer.shared.models.{Method, Namespace, NamespaceKind, Symbol}
 import scala.meta.internal.semanticdb
 
+
+enum Related:
+  case Parents, Children, Both, None
+
 case class InheritanceDiagram(
   arrows    : List[(Symbol, Symbol)],
   namespaces: List[Namespace] = List.empty,
@@ -27,7 +31,7 @@ case class InheritanceDiagram(
     }
 
 
-  def filterSymbol(symbols: List[Symbol]): InheritanceDiagram =
+  def filterSymbol(symbols: List[Symbol], related: Related = Related.None): InheritanceDiagram =
     InheritanceDiagram(
       List.empty,
       namespaces.filter(ns => symbols.contains(ns.symbol))
