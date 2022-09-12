@@ -62,7 +62,7 @@ object WebApp extends ZIOAppDefault:
       (req |> getPath |> readTextDocumentsWithSource)
         .map(toTextDocuments)
         .map(InheritanceDiagram.fromTextDocuments)
-        .map(_.filterSymbol(getParam(req, "symbol").toList.flatten.map(models.Symbol.apply)))
+        .map(_.filterSymbols(getParam(req, "symbol").toList.flatten.map(models.Symbol.apply).map(s => (s, Set.empty))))
         .map(PlantumlInheritance.fromInheritanceDiagram)
         .map(_.toSVG("laminar"))
         .map(Response.text)

@@ -6,10 +6,13 @@ import scala.meta.internal.semanticdb.SymbolInformation.Kind
 import scala.meta.internal.semanticdb.{ClassSignature, MethodSignature, Scope, Signature, SymbolInformation, SymbolOccurrence, TextDocument, TextDocuments, Type, TypeRef, TypeSignature, ValueSignature}
 import org.jpablo.typeexplorer.shared.models.{Method, Namespace, NamespaceKind, Symbol}
 import scala.meta.internal.semanticdb
+import java.util.jar.Attributes.Name
 
 
 enum Related:
-  case Parents, Children, Both, None
+  case Parents, Children
+
+import Related.*
 
 case class InheritanceDiagram(
   arrows    : List[(Symbol, Symbol)],
@@ -31,18 +34,22 @@ case class InheritanceDiagram(
     }
 
 
-  def filterSymbol(symbols: List[Symbol], related: Related = Related.None): InheritanceDiagram =
+  def filterSymbols(symbols: List[(Symbol, Set[Related])]): InheritanceDiagram =
     InheritanceDiagram(
       List.empty,
-      namespaces.filter(ns => symbols.contains(ns.symbol))
+      namespaces.filter(ns => symbols.filter(_._2.isEmpty).map(_._1).contains(ns.symbol))
     )
-    
 
 end InheritanceDiagram
 
 
 
 object InheritanceDiagram:
+  // def filterSymbol(operation: (Symbol, Set[Related])): List[Namespace] =
+  //   val (sym, ops) = operation
+  //   ops match 
+  //     case 
+
 
   given JsonEncoder[InheritanceDiagram] = DeriveJsonEncoder.gen
   given JsonDecoder[InheritanceDiagram] = DeriveJsonDecoder.gen
