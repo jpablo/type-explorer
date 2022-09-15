@@ -35,10 +35,23 @@ case class InheritanceDiagram(
 
 
   def filterSymbols(symbols: List[(Symbol, Set[Related])]): InheritanceDiagram =
-    InheritanceDiagram(
-      List.empty,
-      namespaces.filter(ns => symbols.filter(_._2.isEmpty).map(_._1).contains(ns.symbol))
-    )
+    def toPredicate(symbol: Symbol, relation: Related)(candidate: Symbol): Boolean = 
+      relation match 
+        case Parents => !arrows.filter(a => a._1 == symbol && a._2 == candidate).isEmpty
+        case Children => !arrows.filter(a => a._2 == symbol && a._1 == candidate).isEmpty
+        
+    val predicates = 
+      for
+        (symbol, rels) <- symbols
+        preds = rels.foldLeft(List((candidate: Symbol) => candidate == symbol))((list, rel) => toPredicate(symbol, rel) :: list)
+        pred <- preds
+      yield 
+        pred
+    
+    def predOr(left: Symbol => Boolean, right: Symbol => Boolean): Symbol => Boolean = symbol => left(symbol) || right(symbol)
+    val predicate = predicates.foldLeft((_: Symbol) => false)(predOr)
+
+    InheritanceDiagram(List.empty, namespaces.filter(ns => predicate(ns.symbol)))
 
 end InheritanceDiagram
 
