@@ -76,15 +76,20 @@ lazy val shared =
       name := "type-explorer-shared",
       version := "0.1.0",
       libraryDependencies ++= Seq(
-        "dev.zio" %%% "zio-prelude" % zioPreludeVersion,
-        "dev.zio" %%% "zio-json"    % zioJsonVersion,
+        "dev.zio" %%% "zio-prelude"       % zioPreludeVersion,
+        "dev.zio" %%% "zio-json"          % zioJsonVersion,
+        "dev.zio" %%% "zio-test"          % zioVersion % "test",
+        "dev.zio" %%% "zio-test-sbt"      % zioVersion % "test",
+        "dev.zio" %%% "zio-test-magnolia" % zioVersion % "test",
+
         "org.scalameta"  %%% "scalameta" % scalametaVersion cross CrossVersion.for3Use2_13
       ),
       excludeDependencies ++= Seq(
         "org.scala-lang.modules" %% "scala-collection-compat",
         "org.scala-lang.modules" %% "scala-collection-compat_sjs1"
       ),
-       Compile / semanticdbTargetRoot := projectPath.value
+      testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework"),
+      Compile / semanticdbTargetRoot := projectPath.value
     )
     .jsSettings(
       scalaJSUseMainModuleInitializer := false

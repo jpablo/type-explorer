@@ -14,6 +14,12 @@ enum Related:
 
 import Related.*
 
+/**
+  * A simplified representation of entities and subtype relationships
+  *
+  * @param arrows An pair `(sym1, sym2)` means that `sym1` is a subtype of `sym2`
+  * @param namespaces Classes, Objects, Traits, etc
+  */
 case class InheritanceDiagram(
   arrows    : List[(Symbol, Symbol)],
   namespaces: List[Namespace] = List.empty,
@@ -33,39 +39,38 @@ case class InheritanceDiagram(
       (ns, ns.displayName, ns.symbol.toString.split("/").init.toList)
     }
 
+  def ++ (other: InheritanceDiagram): InheritanceDiagram = 
+    InheritanceDiagram(
+      arrows = (arrows ++ other.arrows).distinct, 
+      namespaces = (namespaces ++ other.namespaces).distinct
+    )
 
-  def filterSymbols(symbols: List[(Symbol, Set[Related])]): InheritanceDiagram =
+  def filterSymbol(symbol: Symbol, related: Set[Related]): InheritanceDiagram =
     def toPredicate(symbol: Symbol, relation: Related)(candidate: Symbol): Boolean = 
       relation match 
-        case Parents => !arrows.filter(a => a._1 == symbol && a._2 == candidate).isEmpty
-        case Children => !arrows.filter(a => a._2 == symbol && a._1 == candidate).isEmpty
-        
-    val predicates = 
-      for
-        (symbol, rels) <- symbols
-        preds = rels.foldLeft(List((candidate: Symbol) => candidate == symbol))((list, rel) => toPredicate(symbol, rel) :: list)
-        pred <- preds
-      yield 
-        pred
-    
-    def predOr(left: Symbol => Boolean, right: Symbol => Boolean): Symbol => Boolean = symbol => left(symbol) || right(symbol)
-    val predicate = predicates.foldLeft((_: Symbol) => false)(predOr)
+        case Parents  => arrows.exists(_ == (symbol, candidate))
+        case Children => arrows.exists(_ == (candidate, symbol))
+    val predicate = 
+      related.foldLeft((_: Symbol) == symbol)((acc, rel) => sym => toPredicate(symbol, rel)(sym) || acc(sym))
 
     InheritanceDiagram(List.empty, namespaces.filter(ns => predicate(ns.symbol)))
+
+
+  def filterSymbols(symbols: List[(Symbol, Set[Related])]): InheritanceDiagram =
+      symbols.map(filterSymbol).foldLeft(InheritanceDiagram.empty)( _ ++ _)
+    
 
 end InheritanceDiagram
 
 
 
 object InheritanceDiagram:
-  // def filterSymbol(operation: (Symbol, Set[Related])): List[Namespace] =
-  //   val (sym, ops) = operation
-  //   ops match 
-  //     case 
-
 
   given JsonEncoder[InheritanceDiagram] = DeriveJsonEncoder.gen
   given JsonDecoder[InheritanceDiagram] = DeriveJsonDecoder.gen
+
+  def empty = 
+      InheritanceDiagram(List.empty)
 
   def fromTextDocuments(textDocuments: TextDocuments): InheritanceDiagram =
     val allSymbols: Map[Symbol, SymbolInformation] =

@@ -2,7 +2,7 @@ package org.jpablo.typeexplorer.backend.webApp
 
 import org.jpablo.typeexplorer.backend.backends.plantuml.PlantumlInheritance
 import org.jpablo.typeexplorer.backend.semanticdb.All
-import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, InheritanceExamples}
+import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, InheritanceExamples, Related}
 import org.jpablo.typeexplorer.shared.models
 
 import java.net.URI
@@ -59,10 +59,16 @@ object WebApp extends ZIOAppDefault:
         .getOrElse(badRequest)
 
     case req @ Method.GET -> !! / "inheritance" =>
+      val related = getParam(req, "related").toSet.flatten.map(Related.valueOf)
+      val symbols = getParam(req, "symbol")
+      .toList.flatten
+      .map(models.Symbol.apply)
+      .map(s => (s, related))
+
       (req |> getPath |> readTextDocumentsWithSource)
         .map(toTextDocuments)
         .map(InheritanceDiagram.fromTextDocuments)
-        .map(_.filterSymbols(getParam(req, "symbol").toList.flatten.map(models.Symbol.apply).map(s => (s, Set.empty))))
+        .map(_.filterSymbols(symbols))
         .map(PlantumlInheritance.fromInheritanceDiagram)
         .map(_.toSVG("laminar"))
         .map(Response.text)
