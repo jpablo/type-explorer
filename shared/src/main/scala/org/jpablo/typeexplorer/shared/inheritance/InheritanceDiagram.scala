@@ -29,25 +29,25 @@ case class InheritanceDiagram(
 
   def findParents(symbols: List[Symbol]): List[Arrow] =
 
-    val directParents: Map[Symbol, List[Symbol]] = 
+    val allDirectParents: Map[Symbol, List[Symbol]] = 
       arrows.groupBy(_._1).transform((_, ss) => ss.map(_._2))
 
-    def go(symbol: Symbol, visited: Set[Symbol]): (List[Arrow], Set[Symbol]) =
-      val parents0  = directParents.getOrElse(symbol, List.empty)
-      val arrows0   = parents0.map(p => symbol -> p)
-      val visited0  = visited + symbol // always non empty
-      parents0
-        .filterNot(visited.contains)
-        .foldLeft((arrows0, visited0)) { case ((arrows, visited), p) =>
-          val (arrows1, visited1) = go(p, visited)
-          (arrows1 ++ arrows, visited1 ++ visited)
-        }
-    
-    val (result, _) = 
-      symbols.foldLeft((List.empty[Arrow], Set.empty[Symbol])) { case ((arrows, visited), symbol) =>
+    def combine: ((List[Arrow], Set[Symbol]), Symbol) => (List[Arrow], Set[Symbol]) = { 
+      case ((arrows, visited), symbol) =>
         val (newArrows, newVisited) = go(symbol, visited) 
         (newArrows ++ arrows, newVisited ++ visited)
       }
+
+    def go(symbol: Symbol, visited: Set[Symbol]): (List[Arrow], Set[Symbol]) =
+      val directParents  = allDirectParents.getOrElse(symbol, List.empty)
+      val directArrows   = directParents.map(p => symbol -> p)
+      val visited1       = visited + symbol // always non empty
+      directParents
+        .filterNot(visited.contains)
+        .foldLeft((directArrows, visited1))(combine)
+    
+    val (result, _) = 
+      symbols.foldLeft((List.empty[Arrow], Set.empty[Symbol]))(combine)
     result
 
 

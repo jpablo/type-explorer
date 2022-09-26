@@ -1,6 +1,6 @@
 import org.scalajs.linker.interface.ModuleSplitStyle
 
-val scala3Version     = "3.1.2"
+val scala3Version     = "3.2.0"
 val zioVersion        = "2.0.0-RC6"
 val zioJsonVersion    = "0.3.0-RC8"
 val zioPreludeVersion = "1.0.0-RC14"
@@ -21,7 +21,7 @@ Global / onChangedBuildSource := ReloadOnSourceChanges
 ThisBuild / resolvers += "Sonatype OSS Snapshots" at "https://s01.oss.sonatype.org/content/repositories/snapshots"
 ThisBuild / organization := "net.jpablo"
 ThisBuild / scalaVersion := scala3Version
-ThisBuild / semanticdbEnabled := true
+// ThisBuild / semanticdbEnabled := true
 ThisBuild / semanticdbVersion := scalametaVersion
 ThisBuild / scalacOptions ++= // Scala 3.x options
   Seq(
