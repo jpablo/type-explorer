@@ -4,7 +4,6 @@ import zio.test.*
 import zio.test.Assertion.*
 
 import org.jpablo.typeexplorer.shared.models
-import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram}
 
 object InheritanceDiagramSpec extends ZIOSpecDefault {
 
@@ -13,6 +12,7 @@ object InheritanceDiagramSpec extends ZIOSpecDefault {
   def makeClass (name: String) = 
     models.Namespace(models.Symbol(name), name, models.NamespaceKind.Class)
 
+  val base0  = makeClass("base0")
   val base1  = makeClass("base1")
   val base2  = makeClass("base2")
   val classA = makeClass("classA")
@@ -22,6 +22,8 @@ object InheritanceDiagramSpec extends ZIOSpecDefault {
 
   val diagram = InheritanceDiagram(
     arrows = List(
+      base1.symbol  -> base0.symbol,
+      base2.symbol  -> base0.symbol,
       classA.symbol -> base1.symbol,
       classA.symbol -> base2.symbol,
       classB.symbol -> classA.symbol,
@@ -31,24 +33,31 @@ object InheritanceDiagramSpec extends ZIOSpecDefault {
   )
 
   def spec = suite("Related symbols spec")(
-    test("No related symbols") {
+    test("Find all parents") {
       val filtered = 
-        diagram.filterSymbols(List(base1.symbol -> Set.empty, base2.symbol -> Set.empty))
+        diagram.findParents(List(classB.symbol, classC.symbol))
 
       val expected = 
-        InheritanceDiagram(arrows = List.empty, List(base1, base2))  
+        List(
+          base1.symbol  -> base0.symbol,
+          base2.symbol  -> base0.symbol,
+          classA.symbol -> base1.symbol,
+          classA.symbol -> base2.symbol,
+          classB.symbol -> classA.symbol,
+          classC.symbol -> classA.symbol,
+        )
 
-      assertTrue(filtered == expected)
+      assertTrue(filtered.toSet == expected.toSet)
     },
-    test("Parents") {
-      val filtered = 
-        diagram.filterSymbols(List(classA.symbol -> Set(Related.Parents)))
+    // test("Parents") {
+    //   val filtered = 
+    //     diagram.filterSymbols(List(classA.symbol -> Set(Related.Parents)))
 
-      val expected = 
-        InheritanceDiagram(arrows = List.empty, List(base1, base2, classA))  
+    //   val expected = 
+    //     InheritanceDiagram(arrows = List.empty, List(base1, base2, classA))  
 
-      assertTrue(filtered == expected)
-    }
+    //   assertTrue(filtered == expected)
+    // }
   )
 }
 

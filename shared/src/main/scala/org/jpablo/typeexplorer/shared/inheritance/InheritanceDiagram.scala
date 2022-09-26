@@ -14,6 +14,8 @@ enum Related:
 
 import Related.*
 
+type Arrow = (Symbol, Symbol)
+
 /**
   * A simplified representation of entities and subtype relationships
   *
@@ -21,18 +23,33 @@ import Related.*
   * @param namespaces Classes, Objects, Traits, etc
   */
 case class InheritanceDiagram(
-  arrows    : List[(Symbol, Symbol)],
+  arrows    : List[Arrow],
   namespaces: List[Namespace] = List.empty,
 ):
-//  lazy val bySymbol: Map[Symbol, Namespace] =
-//    namespaces.groupMapReduce(_.symbol)(identity)((a,_) => a)
-//
-//  lazy val pairsFull: List[(Namespace, Namespace)] =
-//    pairs.map { case (a: Symbol, b: Symbol) =>
-//      val na = bySymbol.getOrElse(a, Namespace(a, a.toString, NamespaceKind.Unknown))
-//      val nb = bySymbol.getOrElse(b, Namespace(b, b.toString, NamespaceKind.Unknown))
-//      na -> nb
-//    }
+
+  def findParents(symbols: List[Symbol]): List[Arrow] =
+
+    val directParents: Map[Symbol, List[Symbol]] = 
+      arrows.groupBy(_._1).transform((_, ss) => ss.map(_._2))
+
+    def go(symbol: Symbol, visited: Set[Symbol]): (List[Arrow], Set[Symbol]) =
+      val parents0  = directParents.getOrElse(symbol, List.empty)
+      val arrows0   = parents0.map(p => symbol -> p)
+      val visited0  = visited + symbol // always non empty
+      parents0
+        .filterNot(visited.contains)
+        .foldLeft((arrows0, visited0)) { case ((arrows, visited), p) =>
+          val (arrows1, visited1) = go(p, visited)
+          (arrows1 ++ arrows, visited1 ++ visited)
+        }
+    
+    val (result, _) = 
+      symbols.foldLeft((List.empty[Arrow], Set.empty[Symbol])) { case ((arrows, visited), symbol) =>
+        val (newArrows, newVisited) = go(symbol, visited) 
+        (newArrows ++ arrows, newVisited ++ visited)
+      }
+    result
+
 
   lazy val toFileTrees: List[FileTree[Namespace]] =
     FileTree.build(namespaces, ".") { ns =>
