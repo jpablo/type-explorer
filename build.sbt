@@ -28,7 +28,8 @@ ThisBuild / scalacOptions ++= // Scala 3.x options
     "-Ykind-projector:underscores",
     "-Ysafe-init",
     "-language:implicitConversions",
-    "-source:future"
+    "-source:future",
+    "-deprecation"
   )
 
 lazy val protos =

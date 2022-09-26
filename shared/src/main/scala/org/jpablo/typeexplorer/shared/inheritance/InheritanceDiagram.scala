@@ -29,26 +29,21 @@ case class InheritanceDiagram(
 
   def findParents(symbols: List[Symbol]): List[Arrow] =
 
-    val allDirectParents: Map[Symbol, List[Symbol]] = 
+    val allDirectParents: Map[Symbol, List[Symbol]] =
       arrows.groupBy(_._1).transform((_, ss) => ss.map(_._2))
 
-    def combine: ((List[Arrow], Set[Symbol]), Symbol) => (List[Arrow], Set[Symbol]) = { 
-      case ((arrows, visited), symbol) =>
-        val (newArrows, newVisited) = go(symbol, visited) 
-        (newArrows ++ arrows, newVisited ++ visited)
-      }
-
-    def go(symbol: Symbol, visited: Set[Symbol]): (List[Arrow], Set[Symbol]) =
-      val directParents  = allDirectParents.getOrElse(symbol, List.empty)
-      val directArrows   = directParents.map(p => symbol -> p)
-      val visited1       = visited + symbol // always non empty
+    def go(symbols: List[Symbol], visited: Set[Symbol]): (List[Arrow], Set[Symbol]) =
+      val directParents  = symbols.flatMap(symbol => allDirectParents.getOrElse(symbol, List.empty))
+      val directArrows   = symbols.flatMap(symbol => directParents.map(p => symbol -> p))
+      val visited1       = visited ++ symbols.toSet // always non empty
       directParents
         .filterNot(visited.contains)
-        .foldLeft((directArrows, visited1))(combine)
-    
-    val (result, _) = 
-      symbols.foldLeft((List.empty[Arrow], Set.empty[Symbol]))(combine)
-    result
+        .foldLeft((directArrows, visited1)) { case ((arrows, visited), symbol) =>
+          val (newArrows, newVisited) = go(List(symbol), visited)
+          (newArrows ++ arrows, newVisited ++ visited)
+        }
+
+    go(symbols, Set.empty)._1
 
 
   lazy val toFileTrees: List[FileTree[Namespace]] =
@@ -56,26 +51,26 @@ case class InheritanceDiagram(
       (ns, ns.displayName, ns.symbol.toString.split("/").init.toList)
     }
 
-  def ++ (other: InheritanceDiagram): InheritanceDiagram = 
+  def ++ (other: InheritanceDiagram): InheritanceDiagram =
     InheritanceDiagram(
-      arrows = (arrows ++ other.arrows).distinct, 
+      arrows = (arrows ++ other.arrows).distinct,
       namespaces = (namespaces ++ other.namespaces).distinct
     )
 
   def filterSymbol(symbol: Symbol, related: Set[Related]): InheritanceDiagram =
-    def toPredicate(symbol: Symbol, relation: Related)(candidate: Symbol): Boolean = 
-      relation match 
+    def toPredicate(symbol: Symbol, relation: Related)(candidate: Symbol): Boolean =
+      relation match
         case Parents  => arrows.exists(_ == (symbol, candidate))
         case Children => arrows.exists(_ == (candidate, symbol))
-    val predicate = 
+    val predicate =
       related.foldLeft((_: Symbol) == symbol)((acc, rel) => sym => toPredicate(symbol, rel)(sym) || acc(sym))
 
     InheritanceDiagram(List.empty, namespaces.filter(ns => predicate(ns.symbol)))
 
 
   def filterSymbols(symbols: List[(Symbol, Set[Related])]): InheritanceDiagram =
-      symbols.map(filterSymbol).foldLeft(InheritanceDiagram.empty)( _ ++ _)
-    
+    symbols.map(filterSymbol).foldLeft(InheritanceDiagram.empty)( _ ++ _)
+
 
 end InheritanceDiagram
 
@@ -86,8 +81,8 @@ object InheritanceDiagram:
   given JsonEncoder[InheritanceDiagram] = DeriveJsonEncoder.gen
   given JsonDecoder[InheritanceDiagram] = DeriveJsonDecoder.gen
 
-  def empty = 
-      InheritanceDiagram(List.empty)
+  // In Scala 3.2 the type annotation is needed (TODO: report bug)
+  val empty: InheritanceDiagram = new InheritanceDiagram(List.empty)
 
   def fromTextDocuments(textDocuments: TextDocuments): InheritanceDiagram =
     val allSymbols: Map[Symbol, SymbolInformation] =
