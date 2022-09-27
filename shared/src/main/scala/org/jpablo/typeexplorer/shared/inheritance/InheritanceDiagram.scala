@@ -32,18 +32,34 @@ case class InheritanceDiagram(
     val allDirectParents: Map[Symbol, List[Symbol]] =
       arrows.groupBy(_._1).transform((_, ss) => ss.map(_._2))
 
-    def go(symbols: List[Symbol], visited: Set[Symbol]): (List[Arrow], Set[Symbol]) =
-      val directParents  = symbols.flatMap(symbol => allDirectParents.getOrElse(symbol, List.empty))
-      val directArrows   = symbols.flatMap(symbol => directParents.map(p => symbol -> p))
-      val visited1       = visited ++ symbols.toSet // always non empty
-      directParents
-        .filterNot(visited.contains)
-        .foldLeft((directArrows, visited1)) { case ((arrows, visited), symbol) =>
-          val (newArrows, newVisited) = go(List(symbol), visited)
-          (newArrows ++ arrows, newVisited ++ visited)
+    //                                                                                    (newArrows  , newVisited  )
+    def go(symbols: List[Symbol], pending: List[(List[Symbol], List[Arrow])], visited: Set[Symbol], acc: (List[Arrow], Set[Symbol])): (List[Arrow], Set[Symbol]) =
+      // prepare input to rec step
+      val visited1 = visited ++ symbols.toSet
+
+      val groups = 
+        symbols.map { symbol =>
+          val symParents = allDirectParents.getOrElse(symbol, List.empty)
+          val symArrows = symParents.map(p => symbol -> p)
+          (symParents, symArrows)
         }
 
-    go(symbols, Set.empty)._1
+      groups match
+        case Nil =>
+          pending match
+            case Nil => acc
+            case (symParents, symArrows) :: pending =>
+              val (newArrows, newVisited) = acc
+              val newAcc = (newArrows ++ symArrows, newVisited ++ visited1)
+              go(symParents.filterNot(visited1.contains), pending, visited1, newAcc)
+
+        case (symParents, symArrows) :: pending1 =>
+          // merge
+          val (newArrows, newVisited) = acc
+          val newAcc = (newArrows ++ symArrows, newVisited ++ visited1)
+          go(symParents.filterNot(visited1.contains), pending1 ++ pending, visited1, newAcc)
+
+    go(symbols, List.empty, Set.empty, (List.empty, Set.empty))._1
 
 
   lazy val toFileTrees: List[FileTree[Namespace]] =
@@ -60,8 +76,8 @@ case class InheritanceDiagram(
   def filterSymbol(symbol: Symbol, related: Set[Related]): InheritanceDiagram =
     def toPredicate(symbol: Symbol, relation: Related)(candidate: Symbol): Boolean =
       relation match
-        case Parents  => arrows.exists(_ == (symbol, candidate))
-        case Children => arrows.exists(_ == (candidate, symbol))
+        case Parents  => arrows.contains((symbol, candidate))
+        case Children => arrows.contains((candidate, symbol))
     val predicate =
       related.foldLeft((_: Symbol) == symbol)((acc, rel) => sym => toPredicate(symbol, rel)(sym) || acc(sym))
 

@@ -33,6 +33,22 @@ object InheritanceDiagramSpec extends ZIOSpecDefault {
   )
 
   def spec = suite("Related symbols spec")(
+    test("Find all parents - simple case") {
+      val filtered = 
+        diagram.findParents(List(base1.symbol, base2.symbol))
+
+      val expected = 
+        List(
+          base1.symbol  -> base0.symbol,
+          base2.symbol  -> base0.symbol,
+          // classA.symbol -> base1.symbol,
+          // classA.symbol -> base2.symbol,
+          // classB.symbol -> classA.symbol,
+          // classC.symbol -> classA.symbol,
+        )
+
+      assertTrue(filtered.toSet == expected.toSet)
+    },
     test("Find all parents") {
       val filtered = 
         diagram.findParents(List(classB.symbol, classC.symbol))
@@ -49,6 +65,7 @@ object InheritanceDiagramSpec extends ZIOSpecDefault {
 
       assertTrue(filtered.toSet == expected.toSet)
     },
+    
     // test("Parents") {
     //   val filtered = 
     //     diagram.filterSymbols(List(classA.symbol -> Set(Related.Parents)))
