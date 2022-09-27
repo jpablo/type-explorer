@@ -56,34 +56,33 @@ case class InheritanceDiagram(
       * symbols -> pending -> acc
       */
     @tailrec
-    def go(symbols: Chunk[Symbol], pending: Chunk[SymbolGroup], visited: Set[Symbol], acc: SymbolGroup, related: Related): SymbolGroup =
+    def go(symbols: Chunk[Symbol], pending: Chunk[SymbolGroup], visited: Set[Symbol], acc: Chunk[Arrow], related: Related): SymbolGroup =
       // first collect all directly related symbols + arrows.
       val newGroups: Chunk[SymbolGroup] =
         for symbol <- symbols yield
           val newSymbols = if related == Parents then directParents(symbol) else directChildren(symbol)
-          val arrows = Chunk.fromIterable(newSymbols.map(s => if related == Parents then symbol -> s else s -> symbol))
-          (newSymbols.toSet, arrows)
+          val newArrows  = Chunk.fromIterable(newSymbols.map(s => if related == Parents then symbol -> s else s -> symbol))
+          (newSymbols.toSet, newArrows)
 
       // combine newly discovered groups with existing groups
       val allGroups = newGroups ++ pending
 
       if allGroups.isEmpty then
-        acc
+        (visited, acc)
       else
         val (newSymbols, newArrows) = allGroups.head
-        val (accVisited, accArrows) = acc
-        val newVisited = visited ++ symbols.toSet
+        val allVisited = visited ++ symbols.toSet
         go(
-          symbols = Chunk.fromIterable(newSymbols -- newVisited),
+          symbols = Chunk.fromIterable(newSymbols -- allVisited),
           pending = allGroups.tail,
-          visited = newVisited,
-          acc     = (accVisited ++ newVisited, accArrows ++ newArrows),
+          visited = allVisited,
+          acc     = acc ++ newArrows,
           related = related
         )
     end go
 
     val (foundSymbols, arrows) = 
-      go(Chunk.fromIterable(symbols), Chunk.empty, Set.empty, (Set.empty, Chunk.empty), related)
+      go(Chunk.fromIterable(symbols), Chunk.empty, Set.empty, Chunk.empty, related)
 
     InheritanceDiagram(arrows.toList, namespaces.filter(ns => foundSymbols.contains(ns.symbol)))
 
