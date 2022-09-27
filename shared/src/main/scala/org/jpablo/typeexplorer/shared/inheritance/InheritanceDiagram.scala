@@ -2,11 +2,15 @@ package org.jpablo.typeexplorer.shared.inheritance
 
 import org.jpablo.typeexplorer.shared.fileTree.FileTree
 import zio.json.*
+import zio.Chunk
+
 import scala.meta.internal.semanticdb.SymbolInformation.Kind
 import scala.meta.internal.semanticdb.{ClassSignature, MethodSignature, Scope, Signature, SymbolInformation, SymbolOccurrence, TextDocument, TextDocuments, Type, TypeRef, TypeSignature, ValueSignature}
 import org.jpablo.typeexplorer.shared.models.{Method, Namespace, NamespaceKind, Symbol}
+
 import scala.meta.internal.semanticdb
 import java.util.jar.Attributes.Name
+import scala.annotation.tailrec
 
 
 enum Related:
@@ -29,30 +33,41 @@ case class InheritanceDiagram(
 
   def findParents(symbols: List[Symbol]): List[Arrow] =
 
-    val allDirectParents: Map[Symbol, List[Symbol]] =
-      arrows.groupBy(_._1).transform((_, ss) => ss.map(_._2))
+    val directParents: Map[Symbol, List[Symbol]] =
+      arrows.groupBy(_._1)
+      .transform((_, ss) => ss.map(_._2))
+      .withDefaultValue(List.empty)
 
-    def go(symbols: List[Symbol], pending: List[(List[Symbol], List[Arrow])], visited: Set[Symbol], acc: (Set[Symbol], List[Arrow])): (Set[Symbol], List[Arrow]) =
-      val visited1 = visited ++ symbols.toSet
+    // Symbols with out-arrows
+    type SymbolGroup = (Set[Symbol], Chunk[Arrow])
 
-      val newGroups = 
-        symbols.map { symbol =>
-          val parents = allDirectParents.getOrElse(symbol, List.empty)
-          (parents, parents.map(p => symbol -> p))
-        }
+    /**
+      * symbols -> pending -> acc
+      */
+    @tailrec
+    def go(symbols: Chunk[Symbol], pending: Chunk[SymbolGroup], visited: Set[Symbol], acc: SymbolGroup): SymbolGroup =
+      val newGroups: Chunk[SymbolGroup] =
+        for symbol <- symbols yield
+          val parents = directParents(symbol)
+          (parents.toSet, Chunk.fromIterable(parents.map(p => symbol -> p)))
 
-      (newGroups ++ pending) match
-        case Nil => acc
-        case (parents, arrows) :: pending1 =>
-          val (newVisited, newArrows) = acc
-          go(
-            symbols = parents.filterNot(visited1.contains), 
-            pending = pending1, 
-            visited = visited1, 
-            acc     = (newVisited ++ visited1, newArrows ++ arrows)
-          )
+      val allGroups = newGroups ++ pending
 
-    go(symbols, List.empty, Set.empty, (Set.empty, List.empty))._2
+      if allGroups.isEmpty then
+        acc
+      else
+        val (newParents, newArrows) = allGroups.head
+        val (accVisited, accArrows) = acc
+        val newVisited = visited ++ symbols.toSet
+        val newPending = allGroups.tail
+        go(
+          symbols = Chunk.fromIterable(newParents -- newVisited),
+          pending = newPending,
+          visited = newVisited,
+          acc     = (accVisited ++ newVisited, accArrows ++ newArrows)
+        )
+
+    go(Chunk.fromIterable(symbols), Chunk.empty, Set.empty, (Set.empty, Chunk.empty))._2.toList
 
 
   lazy val toFileTrees: List[FileTree[Namespace]] =
