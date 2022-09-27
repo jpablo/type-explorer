@@ -28,7 +28,7 @@ object GraphvizCallGraph:
 
     val links =
       for (source, target) <- diagram.pairs yield
-        combinedNodes (source) link to (combinedNodes (target))
+        combinedNodes (source) `link` to (combinedNodes (target))
 
     graph (name)
       .directed

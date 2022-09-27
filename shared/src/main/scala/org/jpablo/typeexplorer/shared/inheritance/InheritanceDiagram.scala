@@ -23,7 +23,7 @@ type Arrow = (Symbol, Symbol)
 /**
   * A simplified representation of entities and subtype relationships
   *
-  * @param arrows An pair `(sym1, sym2)` means that `sym1` is a subtype of `sym2`
+  * @param arrows A pair `(sym1, sym2)` means that `sym1` is a subtype of `sym2`
   * @param namespaces Classes, Objects, Traits, etc
   */
 case class InheritanceDiagram(
@@ -31,43 +31,61 @@ case class InheritanceDiagram(
   namespaces: List[Namespace] = List.empty,
 ):
 
-  def findParents(symbols: List[Symbol]): List[Arrow] =
+  lazy val directParents: Map[Symbol, List[Symbol]] =
+    arrows.groupBy(_._1)
+    .transform((_, ss) => ss.map(_._2))
+    .withDefaultValue(List.empty)
 
-    val directParents: Map[Symbol, List[Symbol]] =
-      arrows.groupBy(_._1)
-      .transform((_, ss) => ss.map(_._2))
-      .withDefaultValue(List.empty)
+  lazy val directChildren: Map[Symbol, List[Symbol]] =
+    arrows.groupBy(_._2)
+    .transform((_, ss) => ss.map(_._1))
+    .withDefaultValue(List.empty)
 
-    // Symbols with out-arrows
+  /**
+    * Follow all arrows related to the given symbols.
+    */
+  def findRelated(symbols: List[Symbol], related: Related): InheritanceDiagram =
+    /**
+      * Symbols with out or in-arrows. A group refers to the symbols directly related to a given symbol.
+      * - out-arrows correspond to parents (supertypes)
+      * - in-arrows correspond to children (subtypes)
+      */
     type SymbolGroup = (Set[Symbol], Chunk[Arrow])
 
     /**
       * symbols -> pending -> acc
       */
     @tailrec
-    def go(symbols: Chunk[Symbol], pending: Chunk[SymbolGroup], visited: Set[Symbol], acc: SymbolGroup): SymbolGroup =
+    def go(symbols: Chunk[Symbol], pending: Chunk[SymbolGroup], visited: Set[Symbol], acc: SymbolGroup, related: Related): SymbolGroup =
+      // first collect all directly related symbols + arrows.
       val newGroups: Chunk[SymbolGroup] =
+        val parentRequested = related == Parents
         for symbol <- symbols yield
-          val parents = directParents(symbol)
-          (parents.toSet, Chunk.fromIterable(parents.map(p => symbol -> p)))
+          val newSymbols = if parentRequested then directParents(symbol) else directChildren(symbol)
+          val arrows  = Chunk.fromIterable(newSymbols.map(s => if parentRequested then symbol -> s else s -> symbol))
+          (newSymbols.toSet, arrows)
 
+      // combine newly discovered groups with existing groups
       val allGroups = newGroups ++ pending
 
       if allGroups.isEmpty then
         acc
       else
-        val (newParents, newArrows) = allGroups.head
+        val (newSymbols, newArrows) = allGroups.head
         val (accVisited, accArrows) = acc
         val newVisited = visited ++ symbols.toSet
-        val newPending = allGroups.tail
         go(
-          symbols = Chunk.fromIterable(newParents -- newVisited),
-          pending = newPending,
+          symbols = Chunk.fromIterable(newSymbols -- newVisited),
+          pending = allGroups.tail,
           visited = newVisited,
-          acc     = (accVisited ++ newVisited, accArrows ++ newArrows)
+          acc     = (accVisited ++ newVisited, accArrows ++ newArrows),
+          related = related
         )
 
-    go(Chunk.fromIterable(symbols), Chunk.empty, Set.empty, (Set.empty, Chunk.empty))._2.toList
+    val (foundSymbols, arrows) = 
+      go(Chunk.fromIterable(symbols), Chunk.empty, Set.empty, (Set.empty, Chunk.empty), related)
+
+    InheritanceDiagram(arrows.toList, namespaces.filter(ns => foundSymbols.contains(ns.symbol)))
 
 
   lazy val toFileTrees: List[FileTree[Namespace]] =
@@ -81,15 +99,14 @@ case class InheritanceDiagram(
       namespaces = (namespaces ++ other.namespaces).distinct
     )
 
-  def filterSymbol(symbol: Symbol, related: Set[Related]): InheritanceDiagram =
-    def toPredicate(symbol: Symbol, relation: Related)(candidate: Symbol): Boolean =
-      relation match
-        case Parents  => arrows.contains((symbol, candidate))
-        case Children => arrows.contains((candidate, symbol))
-    val predicate =
-      related.foldLeft((_: Symbol) == symbol)((acc, rel) => sym => toPredicate(symbol, rel)(sym) || acc(sym))
-
-    InheritanceDiagram(List.empty, namespaces.filter(ns => predicate(ns.symbol)))
+  def filterSymbol(symbol: Symbol, related: Set[Related]): InheritanceDiagram = related.toList match
+    case Nil =>
+      InheritanceDiagram(List.empty, namespaces.filter(_.symbol == symbol))
+    case r :: Nil =>
+      findRelated(List(symbol), r)
+    case r1 :: r2 :: Nil => 
+      findRelated(List(symbol), r1) ++ findRelated(List(symbol), r2)
+    case _ => throw new Exception("Error found")
 
 
   def filterSymbols(symbols: List[(Symbol, Set[Related])]): InheritanceDiagram =

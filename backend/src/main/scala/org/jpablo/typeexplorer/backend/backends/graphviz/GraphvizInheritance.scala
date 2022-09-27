@@ -31,7 +31,7 @@ object GraphvizInheritance:
       .linkAttr.`with`(Arrow.EMPTY)
       .`with`(
         diagram.arrows.map { case (source, target) =>
-          nodes(source) link to(nodes(target))
+          nodes(source) `link` to(nodes(target))
         }*
       )
 

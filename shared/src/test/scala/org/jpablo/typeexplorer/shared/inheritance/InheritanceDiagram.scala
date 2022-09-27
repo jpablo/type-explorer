@@ -35,46 +35,47 @@ object InheritanceDiagramSpec extends ZIOSpecDefault {
   def spec = suite("Related symbols spec")(
     test("Find all parents - simple case") {
       val filtered = 
-        diagram.findParents(List(base1.symbol, base2.symbol))
+        diagram.findRelated(List(base1.symbol, base2.symbol), Related.Parents)
 
       val expected = 
         List(
           base1.symbol  -> base0.symbol,
           base2.symbol  -> base0.symbol,
-          // classA.symbol -> base1.symbol,
-          // classA.symbol -> base2.symbol,
-          // classB.symbol -> classA.symbol,
-          // classC.symbol -> classA.symbol,
         )
 
-      assertTrue(filtered.toSet == expected.toSet)
+      assertTrue(filtered.arrows.toSet == expected.toSet)
     },
     test("Find all parents") {
       val filtered = 
-        diagram.findParents(List(classB.symbol, classC.symbol))
+        diagram.findRelated(List(classB.symbol, classC.symbol), Related.Parents)
+
+      val expected = diagram.arrows
+
+      assertTrue(filtered.arrows.toSet == expected.toSet)
+    },
+
+    test("Find all children - simple case") {
+      val filtered = 
+        diagram.findRelated(List(classA.symbol), Related.Children)
 
       val expected = 
         List(
-          base1.symbol  -> base0.symbol,
-          base2.symbol  -> base0.symbol,
-          classA.symbol -> base1.symbol,
-          classA.symbol -> base2.symbol,
           classB.symbol -> classA.symbol,
           classC.symbol -> classA.symbol,
         )
 
-      assertTrue(filtered.toSet == expected.toSet)
+      assertTrue(filtered.arrows.toSet == expected.toSet)      
     },
-    
-    // test("Parents") {
-    //   val filtered = 
-    //     diagram.filterSymbols(List(classA.symbol -> Set(Related.Parents)))
 
-    //   val expected = 
-    //     InheritanceDiagram(arrows = List.empty, List(base1, base2, classA))  
+    test("Find all children") {
+      val filtered = 
+        diagram.findRelated(List(base0.symbol), Related.Children)
 
-    //   assertTrue(filtered == expected)
-    // }
+      val expected = diagram.arrows
+
+      assertTrue(filtered.arrows.toSet == expected.toSet)      
+    }
+
   )
 }
 
