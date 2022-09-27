@@ -59,10 +59,9 @@ case class InheritanceDiagram(
     def go(symbols: Chunk[Symbol], pending: Chunk[SymbolGroup], visited: Set[Symbol], acc: SymbolGroup, related: Related): SymbolGroup =
       // first collect all directly related symbols + arrows.
       val newGroups: Chunk[SymbolGroup] =
-        val parentRequested = related == Parents
         for symbol <- symbols yield
-          val newSymbols = if parentRequested then directParents(symbol) else directChildren(symbol)
-          val arrows  = Chunk.fromIterable(newSymbols.map(s => if parentRequested then symbol -> s else s -> symbol))
+          val newSymbols = if related == Parents then directParents(symbol) else directChildren(symbol)
+          val arrows = Chunk.fromIterable(newSymbols.map(s => if related == Parents then symbol -> s else s -> symbol))
           (newSymbols.toSet, arrows)
 
       // combine newly discovered groups with existing groups
@@ -81,6 +80,7 @@ case class InheritanceDiagram(
           acc     = (accVisited ++ newVisited, accArrows ++ newArrows),
           related = related
         )
+    end go
 
     val (foundSymbols, arrows) = 
       go(Chunk.fromIterable(symbols), Chunk.empty, Set.empty, (Set.empty, Chunk.empty), related)
