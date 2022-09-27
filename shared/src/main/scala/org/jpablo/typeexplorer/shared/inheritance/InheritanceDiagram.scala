@@ -32,34 +32,27 @@ case class InheritanceDiagram(
     val allDirectParents: Map[Symbol, List[Symbol]] =
       arrows.groupBy(_._1).transform((_, ss) => ss.map(_._2))
 
-    //                                                                                    (newArrows  , newVisited  )
-    def go(symbols: List[Symbol], pending: List[(List[Symbol], List[Arrow])], visited: Set[Symbol], acc: (List[Arrow], Set[Symbol])): (List[Arrow], Set[Symbol]) =
-      // prepare input to rec step
+    def go(symbols: List[Symbol], pending: List[(List[Symbol], List[Arrow])], visited: Set[Symbol], acc: (Set[Symbol], List[Arrow])): (Set[Symbol], List[Arrow]) =
       val visited1 = visited ++ symbols.toSet
 
-      val groups = 
+      val newGroups = 
         symbols.map { symbol =>
-          val symParents = allDirectParents.getOrElse(symbol, List.empty)
-          val symArrows = symParents.map(p => symbol -> p)
-          (symParents, symArrows)
+          val parents = allDirectParents.getOrElse(symbol, List.empty)
+          (parents, parents.map(p => symbol -> p))
         }
 
-      groups match
-        case Nil =>
-          pending match
-            case Nil => acc
-            case (symParents, symArrows) :: pending =>
-              val (newArrows, newVisited) = acc
-              val newAcc = (newArrows ++ symArrows, newVisited ++ visited1)
-              go(symParents.filterNot(visited1.contains), pending, visited1, newAcc)
+      (newGroups ++ pending) match
+        case Nil => acc
+        case (parents, arrows) :: pending1 =>
+          val (newVisited, newArrows) = acc
+          go(
+            symbols = parents.filterNot(visited1.contains), 
+            pending = pending1, 
+            visited = visited1, 
+            acc     = (newVisited ++ visited1, newArrows ++ arrows)
+          )
 
-        case (symParents, symArrows) :: pending1 =>
-          // merge
-          val (newArrows, newVisited) = acc
-          val newAcc = (newArrows ++ symArrows, newVisited ++ visited1)
-          go(symParents.filterNot(visited1.contains), pending1 ++ pending, visited1, newAcc)
-
-    go(symbols, List.empty, Set.empty, (List.empty, Set.empty))._1
+    go(symbols, List.empty, Set.empty, (Set.empty, List.empty))._2
 
 
   lazy val toFileTrees: List[FileTree[Namespace]] =
