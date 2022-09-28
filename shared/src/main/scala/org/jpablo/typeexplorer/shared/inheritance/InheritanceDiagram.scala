@@ -31,59 +31,53 @@ case class InheritanceDiagram(
   namespaces: List[Namespace] = List.empty,
 ):
 
-  lazy val directParents: Map[Symbol, List[Symbol]] =
+  lazy val directParents: Symbol => List[Symbol] =
     arrows.groupBy(_._1)
     .transform((_, ss) => ss.map(_._2))
     .withDefaultValue(List.empty)
 
-  lazy val directChildren: Map[Symbol, List[Symbol]] =
+  lazy val directChildren: Symbol => List[Symbol] =
     arrows.groupBy(_._2)
     .transform((_, ss) => ss.map(_._1))
     .withDefaultValue(List.empty)
 
+  def directRelatives(related: Related): Symbol => List[Symbol] =
+    if related == Parents then directParents else directChildren
+
   /**
-    * Follow all arrows related to the given symbols.
+    * Follow all arrows related to the given symbol.
     */
-  def findRelated(symbols: List[Symbol], related: Related): InheritanceDiagram =
-    /**
-      * Symbols with out or in-arrows. A group refers to the symbols directly related to a given symbol.
-      * - out-arrows correspond to parents (supertypes)
-      * - in-arrows correspond to children (subtypes)
-      */
-    type SymbolGroup = (Set[Symbol], Chunk[Arrow])
-
-    /**
-      * symbols -> pending -> acc
-      */
+  def findRelated(symbol: Symbol, related: Related): InheritanceDiagram =
     @tailrec
-    def go(symbols: Chunk[Symbol], pending: Chunk[SymbolGroup], visited: Set[Symbol], acc: Chunk[Arrow], related: Related): SymbolGroup =
-      // first collect all directly related symbols + arrows.
-      val newGroups: Chunk[SymbolGroup] =
-        for symbol <- symbols yield
-          val newSymbols = if related == Parents then directParents(symbol) else directChildren(symbol)
-          val newArrows  = Chunk.fromIterable(newSymbols.map(s => if related == Parents then symbol -> s else s -> symbol))
-          (newSymbols.toSet, newArrows)
+    def go(symbol: Symbol, related: Related, pending: Set[Symbol], visited: Set[Symbol], arrows: Chunk[Arrow]): (Set[Symbol], Chunk[Arrow]) =
+      assume(!pending.contains(symbol))
+      assume(!visited.contains(symbol))
+      assume(pending.intersect(visited).isEmpty)
 
-      // combine newly discovered groups with existing groups
-      val allGroups = newGroups ++ pending
+      val newSymbols = directRelatives(related)(symbol).toSet
+      assert(!newSymbols.contains(symbol))
+      // Note: Arrows can come from previously visited symbols, so we collect them before removing visited symbols below
+      val newArrows = Chunk.from(newSymbols.map(s => if related == Parents then symbol -> s else s -> symbol))
+      val pending1 = pending ++ (newSymbols -- visited)
+      assert(!pending1.contains(symbol))
+      val visited1 = visited + symbol
+      val arrows1  = arrows ++ newArrows
 
-      if allGroups.isEmpty then
-        (visited, acc)
+      if pending1.isEmpty then
+        (visited1, arrows1)
       else
-        val (newSymbols, newArrows) = allGroups.head
-        val allVisited = visited ++ symbols.toSet
         go(
-          symbols = Chunk.fromIterable(newSymbols -- allVisited),
-          pending = allGroups.tail,
-          visited = allVisited,
-          acc     = acc ++ newArrows,
-          related = related
+          symbol  = pending1.head,
+          related = related,
+          pending = pending1.tail,
+          visited = visited1,
+          arrows  = arrows1
         )
-    end go
 
     val (foundSymbols, arrows) = 
-      go(Chunk.fromIterable(symbols), Chunk.empty, Set.empty, Chunk.empty, related)
-
+      go(symbol, related, Set.empty, Set.empty, Chunk.empty)
+    
+    assert(foundSymbols contains symbol)
     InheritanceDiagram(arrows.toList, namespaces.filter(ns => foundSymbols.contains(ns.symbol)))
 
 
@@ -102,9 +96,9 @@ case class InheritanceDiagram(
     case Nil =>
       InheritanceDiagram(List.empty, namespaces.filter(_.symbol == symbol))
     case r :: Nil =>
-      findRelated(List(symbol), r)
+      findRelated(symbol, r)
     case r1 :: r2 :: Nil => 
-      findRelated(List(symbol), r1) ++ findRelated(List(symbol), r2)
+      findRelated(symbol, r1) ++ findRelated(symbol, r2)
     case _ => throw new Exception("Error found")
 
 

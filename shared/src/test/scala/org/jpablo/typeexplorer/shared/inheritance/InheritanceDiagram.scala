@@ -29,51 +29,58 @@ object InheritanceDiagramSpec extends ZIOSpecDefault {
       classB.symbol -> classA.symbol,
       classC.symbol -> classA.symbol,
     ),
-    List(base1, base2, classA, classB, classC)
+    List(base0, base1, base2, classA, classB, classC)
   )
 
   def spec = suite("Related symbols spec")(
     test("Find all parents - simple case") {
+      val related = Set(Related.Parents)
       val filtered = 
-        diagram.findRelated(List(base1.symbol, base2.symbol), Related.Parents)
+        diagram.filterSymbols(List(base1.symbol -> related, base2.symbol -> related))
 
       val expected = 
-        List(
-          base1.symbol  -> base0.symbol,
-          base2.symbol  -> base0.symbol,
+        InheritanceDiagram(
+          arrows = List(base1.symbol -> base0.symbol, base2.symbol -> base0.symbol),
+          namespaces = List(base0, base1, base2)
         )
-
-      assertTrue(filtered.arrows.toSet == expected.toSet)
+      assertTrue(filtered.arrows.toSet == expected.arrows.toSet)
+      assertTrue(filtered.namespaces.toSet == expected.namespaces.toSet)
     },
+
     test("Find all parents") {
+      val related = Set(Related.Parents)
       val filtered = 
-        diagram.findRelated(List(classB.symbol, classC.symbol), Related.Parents)
+        diagram.filterSymbols(List(classB.symbol -> related, classC.symbol -> related))
 
-      val expected = diagram.arrows
+      val expected = diagram
 
-      assertTrue(filtered.arrows.toSet == expected.toSet)
+      assertTrue(filtered.arrows.toSet == expected.arrows.toSet)
+      assertTrue(filtered.namespaces.toSet == expected.namespaces.toSet)
     },
 
     test("Find all children - simple case") {
+      val related = Set(Related.Children)
       val filtered = 
-        diagram.findRelated(List(classA.symbol), Related.Children)
+        diagram.filterSymbols(List(classA.symbol -> related))
 
       val expected = 
-        List(
-          classB.symbol -> classA.symbol,
-          classC.symbol -> classA.symbol,
+        InheritanceDiagram(
+          arrows = List(classB.symbol -> classA.symbol, classC.symbol -> classA.symbol),
+          namespaces = List(classA, classB, classC)
         )
-
-      assertTrue(filtered.arrows.toSet == expected.toSet)      
+      assertTrue(filtered.arrows.toSet == expected.arrows.toSet)
+      assertTrue(filtered.namespaces.toSet == expected.namespaces.toSet)
     },
 
     test("Find all children") {
+      val related = Set(Related.Children)
       val filtered = 
-        diagram.findRelated(List(base0.symbol), Related.Children)
+        diagram.filterSymbols(List(base0.symbol -> related))
 
-      val expected = diagram.arrows
+      val expected = diagram
 
-      assertTrue(filtered.arrows.toSet == expected.toSet)      
+      assertTrue(filtered.arrows.toSet == expected.arrows.toSet)
+      assertTrue(filtered.namespaces.toSet == expected.namespaces.toSet)
     }
 
   )
