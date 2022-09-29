@@ -17,13 +17,10 @@ type Arrow = (Symbol, Symbol)
 type Pred = Symbol => Boolean
 
 enum Related:
-  case Parents, Children //
-  case Arbitrary(p: Pred)
+  case Parents, Children
 
 import Related.*
 
-
-// 
 
 
 /**
