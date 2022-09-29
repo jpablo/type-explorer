@@ -12,13 +12,19 @@ import scala.meta.internal.semanticdb
 import java.util.jar.Attributes.Name
 import scala.annotation.tailrec
 
+type Arrow = (Symbol, Symbol)
+
+type Pred = Symbol => Boolean
 
 enum Related:
-  case Parents, Children
+  case Parents, Children //
+  case Arbitrary(p: Pred)
 
 import Related.*
 
-type Arrow = (Symbol, Symbol)
+
+// 
+
 
 /**
   * A simplified representation of entities and subtype relationships
@@ -27,21 +33,24 @@ type Arrow = (Symbol, Symbol)
   * @param namespaces Classes, Objects, Traits, etc
   */
 case class InheritanceDiagram(
-  arrows    : List[Arrow],
-  namespaces: List[Namespace] = List.empty,
+  arrows    : Set[Arrow],
+  namespaces: Set[Namespace] = Set.empty,
 ):
 
-  lazy val directParents: Symbol => List[Symbol] =
+  lazy val directParents: Symbol => Set[Symbol] =
     arrows.groupBy(_._1)
     .transform((_, ss) => ss.map(_._2))
-    .withDefaultValue(List.empty)
+    .withDefaultValue(Set.empty)
 
-  lazy val directChildren: Symbol => List[Symbol] =
+  lazy val directChildren: Symbol => Set[Symbol] =
     arrows.groupBy(_._2)
     .transform((_, ss) => ss.map(_._1))
-    .withDefaultValue(List.empty)
+    .withDefaultValue(Set.empty)
 
-  def directRelatives(related: Related): Symbol => List[Symbol] =
+  lazy val nsBySymbol: Map[Symbol, Namespace] =
+    namespaces.groupMapReduce(_.symbol)(identity)((_, b) => b)
+
+  def directRelatives(related: Related): Symbol => Set[Symbol] =
     if related == Parents then directParents else directChildren
 
   /**
@@ -78,23 +87,80 @@ case class InheritanceDiagram(
       go(symbol, related, Set.empty, Set.empty, Chunk.empty)
     
     assert(foundSymbols contains symbol)
-    InheritanceDiagram(arrows.toList, namespaces.filter(ns => foundSymbols.contains(ns.symbol)))
+    InheritanceDiagram(arrows.toSet, namespaces.filter(ns => foundSymbols.contains(ns.symbol)))
+
+  // ---------------------------------------------
+
+  /**
+    * Creates a diagram containing the given symbols and the arrows between them
+    *
+    */
+  def subdiagram(symbols: Set[Symbol]): InheritanceDiagram =
+    val foundSymbols = nsBySymbol.keySet.intersect(symbols)
+    val foundNS      = foundSymbols.map(nsBySymbol)
+    val foundArrows  =
+      for
+        arrow @ (a, b) <- arrows
+        if (foundSymbols contains a) && (foundSymbols contains b)
+      yield
+        arrow
+    InheritanceDiagram(foundArrows, foundNS)
+
+  // Note: doesn't handle loops.
+  // How efficient is this compared to the tail rec version below?
+  def unfold(symbol: Symbol, related: Symbol => Set[Symbol]): Set[Symbol] =
+    Set.unfold(Set(symbol)) { ss => 
+      val ss2 = ss.flatMap(related)
+      if ss2.isEmpty then None else Some((ss2, ss2))
+    }.flatten
+
+  // 
+  def allRelated(s: Symbol, r: Symbol => Set[Symbol]): InheritanceDiagram =
+    subdiagram(unfold(s, r) + s)
+
+  // Note: doesn't handle loops.
+  def allRelatedTR(symbol: Symbol, related: Symbol => Set[Symbol]): InheritanceDiagram =
+    
+    @tailrec
+    def go(symbols: Set[Symbol], acc: Set[Symbol]): Set[Symbol] =
+      val newParents = symbols.flatMap(related)
+      val acc1 = acc ++ symbols
+      if newParents.isEmpty then
+        acc1
+      else
+        go(newParents, acc1)
+
+    subdiagram(go(Set(symbol), Set.empty))
+
+  def allParents(symbol: Symbol): InheritanceDiagram =
+    allRelated(symbol, directParents)
+
+  def allChildren(symbol: Symbol): InheritanceDiagram =
+    allRelated(symbol, directChildren)
+
+  // def parents(symbol: Symbol): InheritanceDiagram =
+  //   subdiagram(directParents(symbol) + symbol)
+
+  def subdiagramWith(pred: Pred): InheritanceDiagram =
+    subdiagram(namespaces.map(_.symbol).filter(pred))
+
+  // ---------------------------------------------
 
 
   lazy val toFileTrees: List[FileTree[Namespace]] =
-    FileTree.build(namespaces, ".") { ns =>
+    FileTree.build(namespaces.toList, ".") { ns =>
       (ns, ns.displayName, ns.symbol.toString.split("/").init.toList)
     }
 
   def ++ (other: InheritanceDiagram): InheritanceDiagram =
     InheritanceDiagram(
-      arrows = (arrows ++ other.arrows).distinct,
-      namespaces = (namespaces ++ other.namespaces).distinct
+      arrows = arrows ++ other.arrows,
+      namespaces = namespaces ++ other.namespaces
     )
 
   def filterSymbol(symbol: Symbol, related: Set[Related]): InheritanceDiagram = related.toList match
     case Nil =>
-      InheritanceDiagram(List.empty, namespaces.filter(_.symbol == symbol))
+      InheritanceDiagram(Set.empty, namespaces.filter(_.symbol == symbol))
     case r :: Nil =>
       findRelated(symbol, r)
     case r1 :: r2 :: Nil => 
@@ -116,7 +182,7 @@ object InheritanceDiagram:
   given JsonDecoder[InheritanceDiagram] = DeriveJsonDecoder.gen
 
   // In Scala 3.2 the type annotation is needed (TODO: report bug)
-  val empty: InheritanceDiagram = new InheritanceDiagram(List.empty)
+  val empty: InheritanceDiagram = new InheritanceDiagram(Set.empty)
 
   def fromTextDocuments(textDocuments: TextDocuments): InheritanceDiagram =
     val allSymbols: Map[Symbol, SymbolInformation] =
@@ -159,8 +225,8 @@ object InheritanceDiagram:
         ns.symbol -> parentSymbol
 
     InheritanceDiagram(
-      arrows     = arrows.toList,
-      namespaces = namespaces.keys.toList ++ missingSymbols(arrows.map(_._2).toList, allSymbols)
+      arrows     = arrows.toSet,
+      namespaces = namespaces.keys.toSet ++ missingSymbols(arrows.map(_._2).toList, allSymbols)
     )
 
   end fromTextDocuments
