@@ -61,6 +61,7 @@ object PlantumlInheritance:
     val stereotype = ns.kind match
       case NamespaceKind.Object        => """ << (O, orchid) >>"""
       case NamespaceKind.PackageObject => """ << (P, lightblue) >>"""
+      case NamespaceKind.Trait         => """ << (T, pink) >>"""
       case NamespaceKind.Class         => ""
       case other                       => s""" <<$other>>"""
     val fields = ns.methods.map(renderField)

@@ -49,6 +49,7 @@ object InheritanceTree:
         case NamespaceKind.Object        => span("O", backgroundColor := "orchid")
         case NamespaceKind.PackageObject => span("P", backgroundColor := "lightblue")
         case NamespaceKind.Class         => span("C", backgroundColor := "rgb(173, 209, 178)")
+        case NamespaceKind.Trait         => span("T", backgroundColor := "pink")
         case other                       => span(other.toString)
     elem.amend(
       borderRadius := "8px",
