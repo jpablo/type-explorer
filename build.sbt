@@ -156,8 +156,8 @@ lazy val ui =
         "dev.zio"       %%% "zio-test-magnolia" % zioVersion % "test",
 
         "org.scala-js"  %%% "scalajs-dom"       % "2.0.0",
-        "com.raquo"     %%% "laminar"           % "0.14.2",
-        "io.laminext"   %%% "fetch"             % "0.14.3",
+        "com.raquo"     %%% "laminar"           % "0.14.5",
+        "io.laminext"   %%% "fetch"             % "0.14.4",
 
         "org.scalameta" %%% "scalameta"         % scalametaVersion cross CrossVersion.for3Use2_13
 

@@ -13,6 +13,7 @@ import zio.json.*
 import org.jpablo.typeexplorer.ui.app.Path
 import org.jpablo.typeexplorer.shared.models
 import org.jpablo.typeexplorer.shared.inheritance.Related
+import concurrent.ExecutionContext.Implicits.global
 
 def fetchBase(path: String): FetchEventStreamBuilder =
   Fetch.get(s"http://localhost:8090/$path")

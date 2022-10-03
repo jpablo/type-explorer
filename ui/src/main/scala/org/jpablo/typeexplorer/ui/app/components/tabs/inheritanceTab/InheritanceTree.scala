@@ -14,10 +14,10 @@ import com.raquo.laminar.nodes.ReactiveHtmlElement
 object InheritanceTree:
 
   def build(
-    $classes: EventStream[InheritanceDiagram],
+    $diagrams: EventStream[InheritanceDiagram],
     $selecteSymbol: EventBus[models.Symbol]
   ): EventStream[List[HtmlElement]] =
-    for diagram <- $classes yield
+    for diagram <- $diagrams yield
       for fileTree <- diagram.toFileTrees yield
         collapsableTree(fileTree)(
           renderBranch = b => span(cls := "collapsable-branch-label", b),

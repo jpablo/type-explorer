@@ -164,6 +164,8 @@ case class InheritanceDiagram(
       findRelated(symbol, r1) ++ findRelated(symbol, r2)
     case _ => throw new Exception("Error found")
 
+  def filterBySymbols(str: String): InheritanceDiagram =
+    subdiagram(namespaces.map(_.symbol).filter(_.toString.toLowerCase.contains(str.toLowerCase)))
 
   def filterSymbols(symbols: List[(Symbol, Set[Related])]): InheritanceDiagram =
     symbols.map(filterSymbol).foldLeft(InheritanceDiagram.empty)( _ ++ _)
