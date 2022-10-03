@@ -5,6 +5,8 @@ import org.jpablo.typeexplorer.ui.app.client.{fetchClasses, fetchDocuments, fetc
 import org.jpablo.typeexplorer.ui.app.components.appFooter
 import org.jpablo.typeexplorer.ui.app.components.tabs.tabsArea
 import io.laminext.syntax.core.*
+import org.jpablo.typeexplorer.shared.models
+import org.jpablo.typeexplorer.shared.inheritance.Related
 
 object TopLevel {
 
@@ -12,8 +14,10 @@ object TopLevel {
   val $selectedUri    = new EventBus[String]
   val $projectPath    = storedString("projectPath", initial = "")
   val $documents      = fetchDocuments($projectPath.signal)
-  val $inheritance    = fetchSVGDiagram($projectPath.signal.map(path => (DiagramType.Inheritance, path)))
+  val $inheritance    = $selectedUri.events.flatMap(p => fetchSVGDiagram($projectPath.signal)(models.Symbol(p), Related.Parents))
   val $classes        = fetchClasses($projectPath.signal)
+
+
 
   def topLevel: Div =
     div(

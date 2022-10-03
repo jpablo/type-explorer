@@ -13,12 +13,13 @@ def svgToLaminar(svg: dom.Element) =
 def inheritanceTab(
   $documents  : EventStream[List[TextDocumentsWithSource]],
   $svgDiagram : EventStream[dom.Element],
-  $classes    : EventStream[InheritanceDiagram]
+  $classes    : EventStream[InheritanceDiagram],
+  $selectedUri: EventBus[String]
 ) =
   div(
     cls := "text-document-areas",
     div(cls := "structure",
-      children <-- InheritanceTree.build($classes)
+      children <-- InheritanceTree.build($classes, $selectedUri)
     ),
     div (
       cls := "inheritance-container",

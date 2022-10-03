@@ -7,31 +7,42 @@ import org.jpablo.typeexplorer.shared.inheritance.InheritanceDiagram
 import org.jpablo.typeexplorer.shared.models.{Namespace, NamespaceKind}
 import org.jpablo.typeexplorer.ui.widgets.{collapsableTree, collapsable2}
 import scalajs.js.URIUtils.encodeURIComponent
+import org.scalajs.dom.html
+import com.raquo.laminar.nodes.ReactiveHtmlElement
 
 object InheritanceTree:
 
-  def build($classes: EventStream[InheritanceDiagram]): EventStream[List[HtmlElement]] =
+  def build(
+    $classes: EventStream[InheritanceDiagram],
+    $selectedUri: EventBus[String]
+  ): EventStream[List[HtmlElement]] =
     for diagram <- $classes yield
       for fileTree <- diagram.toFileTrees yield
         collapsableTree(fileTree)(
           renderBranch = b => span(cls := "collapsable-branch-label", b),
-          renderLeaf = renderNamespace
+          renderLeaf = renderNamespace($selectedUri)
         )
 
-  private def renderNamespace(name: String, ns: Namespace) =
+  private def renderNamespace($selectedUri: EventBus[String])(name: String, ns: Namespace) =
+    val uri = encodeURIComponent(ns.symbol.toString)
     collapsable2(
       branchLabel =
         div(
           display := "inline",
           stereotype(ns),
           span(" "),
-          a(href := "#elem_" + encodeURIComponent(ns.symbol.toString),  ns.displayName, title := ns.symbol.toString)
+          a(
+            href := "#elem_" + uri,
+            ns.displayName, 
+            title := ns.symbol.toString,
+            onClick.mapTo(uri) --> $selectedUri
+          )
         ),
       contents =
         ns.methods.map(m => a(m.displayName, title := m.symbol.toString))
     )
 
-  private def stereotype(ns: Namespace) =
+  private def stereotype(ns: Namespace): ReactiveHtmlElement[html.Span] =
     val elem =
       ns.kind match
         case NamespaceKind.Object        => span("O", backgroundColor := "orchid")

@@ -9,6 +9,9 @@ import org.jpablo.typeexplorer.protos.{TextDocumentsWithSource, TextDocumentsWit
 import org.scalajs.dom
 import scala.scalajs.js.typedarray.Int8Array
 import zio.json.*
+import java.nio.file.Path
+import org.jpablo.typeexplorer.shared.models
+import org.jpablo.typeexplorer.shared.inheritance.Related
 
 
 def fetchBase(path: String): FetchEventStreamBuilder =
@@ -43,11 +46,27 @@ def fetchClasses(projectPath: Signal[String]): EventStream[InheritanceDiagram] =
   yield
     classes
 
-def fetchSVGDiagram(diagram: Signal[(DiagramType, String)]): EventStream[dom.Element] =
+// def fetchSVGDiagram(diagram: Signal[(Path, models.Symbol, Related)]): EventStream[dom.Element] =
+def fetchSVGDiagram($projectPath: Signal[String])(relatedSymbol: (models.Symbol, Related)): EventStream[dom.Element] =
+  val parser = dom.DOMParser()
+  for
+    projectPath <- $projectPath
+    (symbol, related) = relatedSymbol
+    doc <- 
+      if projectPath.isEmpty then 
+        EventStream.fromValue(div().ref)
+      else
+        fetchBase(s"inheritance?path=$projectPath&symbol=$symbol&related=$related").text.map { fetchResponse =>
+          parser.parseFromString(fetchResponse.data, dom.MIMEType.`image/svg+xml`).documentElement
+        }
+  yield 
+    doc
+
+def fetchCallGraphSVGDiagram(diagram: Signal[(DiagramType, Path)]): EventStream[dom.Element] =
   val parser = dom.DOMParser()
   for
     (diagramType, path) <- diagram
-    doc <- if path.isEmpty
+    doc <- if path.toString.isEmpty
     then
       EventStream.fromValue(div().ref)
     else

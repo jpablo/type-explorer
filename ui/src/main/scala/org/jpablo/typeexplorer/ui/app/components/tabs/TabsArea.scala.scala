@@ -55,7 +55,7 @@ def tabsArea(
           cls := "tab-pane fade show active",
           role := "tabpanel",
           tabIndex := 0,
-          inheritanceTab($documents, $svgDiagram, $classes)
+          inheritanceTab($documents, $svgDiagram, $classes, $selectedUri)
         ),
         div(
           idAttr := "semanticdb-tab-pane",
