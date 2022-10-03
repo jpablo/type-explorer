@@ -2,6 +2,7 @@ package org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab
 
 import com.raquo.laminar.api.L.*
 import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
+import org.jpablo.typeexplorer.shared.models
 import org.jpablo.typeexplorer.shared.fileTree.FileTree
 import org.jpablo.typeexplorer.shared.inheritance.InheritanceDiagram
 import org.jpablo.typeexplorer.shared.models.{Namespace, NamespaceKind}
@@ -14,16 +15,16 @@ object InheritanceTree:
 
   def build(
     $classes: EventStream[InheritanceDiagram],
-    $selectedUri: EventBus[String]
+    $selecteSymbol: EventBus[models.Symbol]
   ): EventStream[List[HtmlElement]] =
     for diagram <- $classes yield
       for fileTree <- diagram.toFileTrees yield
         collapsableTree(fileTree)(
           renderBranch = b => span(cls := "collapsable-branch-label", b),
-          renderLeaf = renderNamespace($selectedUri)
+          renderLeaf = renderNamespace($selecteSymbol)
         )
 
-  private def renderNamespace($selectedUri: EventBus[String])(name: String, ns: Namespace) =
+  private def renderNamespace($selecteSymbol: EventBus[models.Symbol])(name: String, ns: Namespace) =
     val uri = encodeURIComponent(ns.symbol.toString)
     collapsable2(
       branchLabel =
@@ -35,7 +36,7 @@ object InheritanceTree:
             href := "#elem_" + uri,
             ns.displayName, 
             title := ns.symbol.toString,
-            onClick.mapTo(uri) --> $selectedUri
+            onClick.mapTo(ns.symbol) --> $selecteSymbol
           )
         ),
       contents =

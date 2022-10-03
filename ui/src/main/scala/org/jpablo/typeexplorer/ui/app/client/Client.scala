@@ -7,24 +7,24 @@ import org.jpablo.typeexplorer.shared.models.Namespace
 import org.jpablo.typeexplorer.ui.app.components.DiagramType
 import org.jpablo.typeexplorer.protos.{TextDocumentsWithSource, TextDocumentsWithSourceSeq}
 import org.scalajs.dom
+import scalajs.js.URIUtils.encodeURIComponent
 import scala.scalajs.js.typedarray.Int8Array
 import zio.json.*
-import java.nio.file.Path
+import org.jpablo.typeexplorer.ui.app.Path
 import org.jpablo.typeexplorer.shared.models
 import org.jpablo.typeexplorer.shared.inheritance.Related
-
 
 def fetchBase(path: String): FetchEventStreamBuilder =
   Fetch.get(s"http://localhost:8090/$path")
 
 
-def fetchDocuments(projectPath: Signal[String]): EventStream[List[TextDocumentsWithSource]] =
+def fetchDocuments(projectPath: Signal[Path]): EventStream[List[TextDocumentsWithSource]] =
   for
   // Checar si la ruta es vacía
     path <- projectPath
     // mandar esto a un if en otro for comprehension
     lst <-
-      if path.isEmpty then EventStream.fromValue(List.empty)
+      if path.toString.isEmpty then EventStream.fromValue(List.empty)
       else
         for response <- fetchBase("semanticdb?path=" + path).arrayBuffer yield
           val ia = Int8Array(response.data, 0, length = response.data.byteLength)
@@ -33,7 +33,7 @@ def fetchDocuments(projectPath: Signal[String]): EventStream[List[TextDocumentsW
     lst
 
 
-def fetchClasses(projectPath: Signal[String]): EventStream[InheritanceDiagram] =
+def fetchClasses(projectPath: Signal[Path]): EventStream[InheritanceDiagram] =
   for
     path     <- projectPath
     response <- fetchBase("classes?path=" + path).text
@@ -46,17 +46,16 @@ def fetchClasses(projectPath: Signal[String]): EventStream[InheritanceDiagram] =
   yield
     classes
 
-// def fetchSVGDiagram(diagram: Signal[(Path, models.Symbol, Related)]): EventStream[dom.Element] =
-def fetchSVGDiagram($projectPath: Signal[String])(relatedSymbol: (models.Symbol, Related)): EventStream[dom.Element] =
+def fetchInheritanceSVGDiagram($projectPath: Signal[Path])(relatedSymbol: (models.Symbol, Related)): EventStream[dom.Element] =
   val parser = dom.DOMParser()
   for
     projectPath <- $projectPath
     (symbol, related) = relatedSymbol
     doc <- 
-      if projectPath.isEmpty then 
+      if projectPath.toString.isEmpty then 
         EventStream.fromValue(div().ref)
       else
-        fetchBase(s"inheritance?path=$projectPath&symbol=$symbol&related=$related").text.map { fetchResponse =>
+        fetchBase(s"inheritance?path=$projectPath&symbol=${encodeURIComponent(symbol.toString)}&related=$related").text.map { fetchResponse =>
           parser.parseFromString(fetchResponse.data, dom.MIMEType.`image/svg+xml`).documentElement
         }
   yield 
@@ -80,9 +79,9 @@ def fetchCallGraphSVGDiagram(diagram: Signal[(DiagramType, Path)]): EventStream[
 //      errorNode = doc.querySelector("parsererror")
   yield doc
 
-def fetchSourceCode($projectPath: Signal[String])(path: String): EventStream[String] =
+def fetchSourceCode($projectPath: Signal[Path])(selectedPath: Path): EventStream[String] =
   for
     projectPath <- $projectPath
-    response    <- fetchBase(s"source?path=$projectPath/$path").text
+    response    <- fetchBase(s"source?path=$projectPath/$selectedPath").text
   yield
     response.data

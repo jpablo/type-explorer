@@ -5,9 +5,14 @@ import com.raquo.airstream.core.EventStream
 import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
 import org.jpablo.typeexplorer.ui.app.client.fetchSourceCode
 import org.jpablo.typeexplorer.ui.app.components.tabs.semanticDBTab.{SemanticDBText, SemanticDBTree}
+import org.jpablo.typeexplorer.ui.app.Path
+import org.jpablo.typeexplorer.shared.models
 
-
-def semanticDBTab($projectPath: Signal[String], $documents: EventStream[List[TextDocumentsWithSource]], $selectedUri: EventBus[String]) =
+def semanticDBTab(
+  $projectPath: Signal[Path], 
+  $documents: EventStream[List[TextDocumentsWithSource]], 
+  $selectedUri: EventBus[Path]
+) =
   div(
     cls := "text-document-areas",
     div(

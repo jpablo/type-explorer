@@ -1,33 +1,37 @@
 package org.jpablo.typeexplorer.ui.app.components
 
 import com.raquo.laminar.api.L.*
-import org.jpablo.typeexplorer.ui.app.client.{fetchClasses, fetchDocuments, fetchSVGDiagram}
+import org.jpablo.typeexplorer.ui.app.client.{fetchClasses, fetchDocuments, fetchInheritanceSVGDiagram}
 import org.jpablo.typeexplorer.ui.app.components.appFooter
 import org.jpablo.typeexplorer.ui.app.components.tabs.tabsArea
 import io.laminext.syntax.core.*
 import org.jpablo.typeexplorer.shared.models
 import org.jpablo.typeexplorer.shared.inheritance.Related
+import org.jpablo.typeexplorer.ui.app.Path
 
 object TopLevel {
 
-  val $newDiagramType = new EventBus[DiagramType]
-  val $selectedUri    = new EventBus[String]
-  val $projectPath    = storedString("projectPath", initial = "")
-  val $documents      = fetchDocuments($projectPath.signal)
-  val $inheritance    = $selectedUri.events.flatMap(p => fetchSVGDiagram($projectPath.signal)(models.Symbol(p), Related.Parents))
-  val $classes        = fetchClasses($projectPath.signal)
+  val $newDiagramType = EventBus[DiagramType]
+  val $selectedUri    = EventBus[Path]
+  val $selectedSymbol = EventBus[models.Symbol]
+  val projectPath     = storedString("projectPath", initial = "")
+  val $projectPath    = projectPath.signal.map(Path.apply)
+  val $documents      = fetchDocuments($projectPath)
+  val $inheritance    = $selectedSymbol.events.flatMap(s => fetchInheritanceSVGDiagram($projectPath)(s, Related.Parents))
+  val $classes        = fetchClasses($projectPath)
 
 
 
   def topLevel: Div =
     div(
       idAttr := "te-toplevel",
-      appHeader($newDiagramType, $projectPath),
+      appHeader($newDiagramType, projectPath),
       tabsArea(
-        $projectPath.signal,
+        $projectPath,
         $documents,
         $inheritance,
         $classes,
+        $selectedSymbol,
         $selectedUri
       ),
       appFooter

@@ -7,13 +7,14 @@ import org.jpablo.typeexplorer.ui.bootstrap.navbar
 import org.jpablo.typeexplorer.ui.widgets.{Icons, collapsable, collapsable2, collapsableTree}
 import scala.meta.internal.semanticdb.{SymbolInformation, TextDocument}
 import scalajs.js.URIUtils.encodeURIComponent
-
+import org.jpablo.typeexplorer.shared.models
+import org.jpablo.typeexplorer.ui.app.Path
 
 def semanticDBTree = SemanticDBTree.build
 
 object SemanticDBTree:
 
-  def build($documents: EventStream[List[TextDocumentsWithSource]], $selectedUri: EventBus[String]): EventStream[List[HtmlElement]] =
+  def build($documents: EventStream[List[TextDocumentsWithSource]], $selectedUri: EventBus[Path]): EventStream[List[HtmlElement]] =
     for documentsWithSource <- $documents yield
       for fileTree <- FileTree.build(documentsWithSource)(buildPath) yield
         collapsableTree(fileTree)(
@@ -26,7 +27,7 @@ object SemanticDBTree:
     (doc, all.last, all.init)
 
 
-  private def renderDocWithSource($selectedUri: EventBus[String])(name: String, docWithSource: TextDocumentsWithSource) =
+  private def renderDocWithSource($selectedUri: EventBus[Path])(name: String, docWithSource: TextDocumentsWithSource) =
     collapsable2(
       branchLabel =
         span(
@@ -38,7 +39,7 @@ object SemanticDBTree:
       open = true
     )
 
-  private def renderTextDocument($selectedUri: EventBus[String])(doc: TextDocument) =
+  private def renderTextDocument($selectedUri: EventBus[Path])(doc: TextDocument) =
     collapsable(
       branchLabel =
         span(
@@ -46,7 +47,7 @@ object SemanticDBTree:
           a(
             href := "#" + encodeURIComponent(doc.uri),
             doc.uri,
-            onClick.mapTo(doc.uri) --> $selectedUri
+            onClick.mapTo(Path(doc.uri)) --> $selectedUri
         )
         ),
       $children =
