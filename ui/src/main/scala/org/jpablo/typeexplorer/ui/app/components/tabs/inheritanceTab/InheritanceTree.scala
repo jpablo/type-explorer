@@ -15,16 +15,16 @@ object InheritanceTree:
 
   def build(
     $diagrams: EventStream[InheritanceDiagram],
-    $selecteSymbol: EventBus[models.Symbol]
+    $selectedSymbol: EventBus[models.Symbol]
   ): EventStream[List[HtmlElement]] =
     for diagram <- $diagrams yield
       for fileTree <- diagram.toFileTrees yield
         collapsableTree(fileTree)(
           renderBranch = b => span(cls := "collapsable-branch-label", b),
-          renderLeaf = renderNamespace($selecteSymbol)
+          renderLeaf = renderNamespace($selectedSymbol)
         )
 
-  private def renderNamespace($selecteSymbol: EventBus[models.Symbol])(name: String, ns: Namespace) =
+  private def renderNamespace($selectedSymbol: EventBus[models.Symbol])(name: String, ns: Namespace) =
     val uri = encodeURIComponent(ns.symbol.toString)
     collapsable2(
       branchLabel =
@@ -32,12 +32,9 @@ object InheritanceTree:
           display := "inline",
           stereotype(ns),
           span(" "),
-          a(
-            href := "#elem_" + uri,
-            ns.displayName, 
-            title := ns.symbol.toString,
-            onClick.mapTo(ns.symbol) --> $selecteSymbol
-          )
+          a(href := "#elem_" + uri, title := ns.symbol.toString, ns.displayName),
+          span(" "),
+          input(cls := "form-check-input mt-0", tpe := "checkbox", onClick.mapTo(ns.symbol) --> $selectedSymbol),
         ),
       contents =
         ns.methods.map(m => a(m.displayName, title := m.symbol.toString))

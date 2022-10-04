@@ -47,16 +47,20 @@ def fetchClasses(projectPath: Signal[Path]): EventStream[InheritanceDiagram] =
   yield
     classes
 
-def fetchInheritanceSVGDiagram($projectPath: Signal[Path])(relatedSymbol: (models.Symbol, Related)): EventStream[dom.Element] =
+def fetchInheritanceSVGDiagram($projectPath: Signal[Path])(symbols: Set[models.Symbol], related: Option[Related] = None): EventStream[dom.Element] =
   val parser = dom.DOMParser()
   for
     projectPath <- $projectPath
-    (symbol, related) = relatedSymbol
     doc <- 
       if projectPath.toString.isEmpty then 
         EventStream.fromValue(div().ref)
       else
-        fetchBase(s"inheritance?path=$projectPath&symbol=${encodeURIComponent(symbol.toString)}&related=$related").text.map { fetchResponse =>
+        val queryString = List(
+          s"path=$projectPath",
+          related.map(r => s"related=$r").getOrElse(""),
+          symbols.map(s => s"symbol=${encodeURIComponent(s.toString)}").mkString("&")
+        )
+        fetchBase(s"inheritance?" + queryString.mkString("&")).text.map { fetchResponse =>
           parser.parseFromString(fetchResponse.data, dom.MIMEType.`image/svg+xml`).documentElement
         }
   yield 

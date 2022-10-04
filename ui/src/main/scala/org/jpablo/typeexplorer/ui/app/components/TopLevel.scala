@@ -17,9 +17,10 @@ object TopLevel {
   val projectPath     = storedString("projectPath", initial = "")
   val $projectPath    = projectPath.signal.map(Path.apply)
   val $documents      = fetchDocuments($projectPath)
-  val $inheritance    = $selectedSymbol.events.flatMap(s => fetchInheritanceSVGDiagram($projectPath)(s, Related.Parents))
   val $classes        = fetchClasses($projectPath)
-
+  val $inheritance    = $selectedSymbol.events
+    .foldLeft(Set.empty[models.Symbol])((ss, s) => if ss contains s then ss - s else ss + s)
+    .flatMap(ss => fetchInheritanceSVGDiagram($projectPath)(ss, None))
 
 
   def topLevel: Div =

@@ -135,6 +135,19 @@ object InheritanceDiagramSpec extends ZIOSpecDefault {
       val expected = diagram
 
       assertTrue(filtered == expected)
+    },
+
+    test("Find specific") {
+      val related = Set.empty[Related]
+      val filtered = 
+        diagram.filterSymbols(List(base0.symbol -> related, base1.symbol -> related, base2.symbol -> related))
+
+      val expected = InheritanceDiagram(
+          arrows = Set(base1.symbol -> base0.symbol, base2.symbol -> base0.symbol),
+          namespaces = Set(base0, base1, base2)
+      )
+
+      assertTrue(filtered == expected)
     }
 
   )
