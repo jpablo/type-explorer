@@ -17,6 +17,7 @@ import org.jpablo.typeexplorer.shared.models
 import org.jpablo.typeexplorer.shared.models
 import com.raquo.airstream.eventbus.WriteBus
 import com.raquo.airstream.state.StrictSignal
+import org.jpablo.typeexplorer.ui.app.SelectedSymbol
 
 def svgToLaminar(svg: dom.Element) =
   new ChildNode[dom.Element] { val ref = svg }
@@ -24,12 +25,12 @@ def svgToLaminar(svg: dom.Element) =
 def inheritanceTab(
   $svgDiagram    : EventStream[dom.Element],
   $diagrams      : EventStream[InheritanceDiagram],
-  $selectedSymbol: EventBus[models.Symbol]
+  selectedSymbol : SelectedSymbol
 ) =
   val $filter = Var("")
   val $filteredDiagrams = 
     $diagrams.toSignal(InheritanceDiagram.empty)
-      .combineWith($filter)
+      .combineWith($filter.signal)
       .changes
       .map((event, w) => if w.isBlank then event else event.filterBySymbols(w))
 
@@ -47,7 +48,7 @@ def inheritanceTab(
           )
         ),
       ),
-      children <-- InheritanceTree.build($filteredDiagrams, $selectedSymbol)
+      children <-- InheritanceTree.build($filteredDiagrams, selectedSymbol)
     ),
     div (
       cls := "inheritance-container",

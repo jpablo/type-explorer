@@ -10,21 +10,22 @@ import org.jpablo.typeexplorer.ui.widgets.{collapsableTree, collapsable2}
 import scalajs.js.URIUtils.encodeURIComponent
 import org.scalajs.dom.html
 import com.raquo.laminar.nodes.ReactiveHtmlElement
+import org.jpablo.typeexplorer.ui.app.SelectedSymbol
 
 object InheritanceTree:
 
   def build(
     $diagrams: EventStream[InheritanceDiagram],
-    $selectedSymbol: EventBus[models.Symbol]
+    selectedSymbol: SelectedSymbol
   ): EventStream[List[HtmlElement]] =
     for diagram <- $diagrams yield
       for fileTree <- diagram.toFileTrees yield
         collapsableTree(fileTree)(
           renderBranch = b => span(cls := "collapsable-branch-label", b),
-          renderLeaf = renderNamespace($selectedSymbol)
+          renderLeaf = renderNamespace(selectedSymbol)
         )
 
-  private def renderNamespace($selectedSymbol: EventBus[models.Symbol])(name: String, ns: Namespace) =
+  private def renderNamespace(selectedSymbol: SelectedSymbol)(name: String, ns: Namespace) =
     val uri = encodeURIComponent(ns.symbol.toString)
     collapsable2(
       branchLabel =
@@ -34,7 +35,11 @@ object InheritanceTree:
           span(" "),
           a(href := "#elem_" + uri, title := ns.symbol.toString, ns.displayName),
           span(" "),
-          input(cls := "form-check-input mt-0", tpe := "checkbox", onClick.mapTo(ns.symbol) --> $selectedSymbol),
+          input(cls := "form-check-input mt-0", tpe := "checkbox", onClick.mapTo(ns.symbol) --> selectedSymbol.current),
+          span(" "),
+          input(cls := "form-check-input mt-0", tpe := "checkbox", onClick.mapTo(ns.symbol) --> selectedSymbol.parents),
+          span(" "),
+          input(cls := "form-check-input mt-0", tpe := "checkbox", onClick.mapTo(ns.symbol) --> selectedSymbol.children),
         ),
       contents =
         ns.methods.map(m => a(m.displayName, title := m.symbol.toString))

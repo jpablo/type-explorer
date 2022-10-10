@@ -1,22 +1,27 @@
 package org.jpablo.typeexplorer.ui.app.client
 
 import com.raquo.laminar.api.L.*
-import io.laminext.fetch.*
-import org.jpablo.typeexplorer.shared.inheritance.InheritanceDiagram
-import org.jpablo.typeexplorer.shared.models.Namespace
-import org.jpablo.typeexplorer.ui.app.components.DiagramType
-import org.jpablo.typeexplorer.protos.{TextDocumentsWithSource, TextDocumentsWithSourceSeq}
-import org.scalajs.dom
-import scalajs.js.URIUtils.encodeURIComponent
-import scala.scalajs.js.typedarray.Int8Array
-import zio.json.*
-import org.jpablo.typeexplorer.ui.app.Path
-import org.jpablo.typeexplorer.shared.models
-import org.jpablo.typeexplorer.shared.inheritance.Related
 import concurrent.ExecutionContext.Implicits.global
+import io.laminext.fetch.*
+import org.scalajs.dom
+import scala.scalajs.js.typedarray.Int8Array
+import scalajs.js.URIUtils.encodeURIComponent
+import zio.json.*
+
+import org.jpablo.typeexplorer.protos.{TextDocumentsWithSource, TextDocumentsWithSourceSeq}
+import org.jpablo.typeexplorer.shared.inheritance.InheritanceDiagram
+import org.jpablo.typeexplorer.shared.inheritance.Related
+import org.jpablo.typeexplorer.shared.models
+import org.jpablo.typeexplorer.shared.models.Namespace
+import org.jpablo.typeexplorer.shared.webApp.InheritanceReq
+import org.jpablo.typeexplorer.ui.app.components.DiagramType
+import org.jpablo.typeexplorer.ui.app.Path
+
+
+val basePath = "http://localhost:8090/" 
 
 def fetchBase(path: String): FetchEventStreamBuilder =
-  Fetch.get(s"http://localhost:8090/$path")
+  Fetch.get(basePath + path)
 
 
 def fetchDocuments(projectPath: Signal[Path]): EventStream[List[TextDocumentsWithSource]] =
@@ -47,24 +52,16 @@ def fetchClasses(projectPath: Signal[Path]): EventStream[InheritanceDiagram] =
   yield
     classes
 
-def fetchInheritanceSVGDiagram($projectPath: Signal[Path])(symbols: Set[models.Symbol], related: Option[Related] = None): EventStream[dom.Element] =
+def fetchInheritanceSVGDiagram(projectPath: Path, symbols: Set[(models.Symbol, Set[Related])]): EventStream[dom.Element] =
   val parser = dom.DOMParser()
-  for
-    projectPath <- $projectPath
-    doc <- 
-      if projectPath.toString.isEmpty then 
-        EventStream.fromValue(div().ref)
-      else
-        val queryString = List(
-          s"path=$projectPath",
-          related.map(r => s"related=$r").getOrElse(""),
-          symbols.map(s => s"symbol=${encodeURIComponent(s.toString)}").mkString("&")
-        )
-        fetchBase(s"inheritance?" + queryString.mkString("&")).text.map { fetchResponse =>
-          parser.parseFromString(fetchResponse.data, dom.MIMEType.`image/svg+xml`).documentElement
-        }
-  yield 
-    doc
+  if projectPath.toString.isEmpty then 
+    EventStream.fromValue(div().ref)
+  else
+    val body = InheritanceReq(List(projectPath.toString), symbols)
+    val req  = Fetch.post(basePath + "inheritance", body.toJson)
+    req.text.map { fetchResponse =>
+      parser.parseFromString(fetchResponse.data, dom.MIMEType.`image/svg+xml`).documentElement
+    }
 
 def fetchCallGraphSVGDiagram(diagram: Signal[(DiagramType, Path)]): EventStream[dom.Element] =
   val parser = dom.DOMParser()

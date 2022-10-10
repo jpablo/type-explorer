@@ -103,6 +103,7 @@ lazy val backend =
     .settings(
       name := "type-explorer-backend",
       version := "0.1.0",
+      mainClass in reStart := Some("org.jpablo.typeexplorer.backend.webApp.WebApp"),
       libraryDependencies ++= Seq(
       "dev.zio"                  %% "zio"               % zioVersion,
       "dev.zio"                  %% "zio-json"          % zioJsonVersion,

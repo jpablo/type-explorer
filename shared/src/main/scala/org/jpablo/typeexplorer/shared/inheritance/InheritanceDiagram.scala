@@ -19,6 +19,11 @@ type Pred = Symbol => Boolean
 enum Related:
   case Parents, Children
 
+object Related:
+  given JsonEncoder[Related] = JsonEncoder[String].contramap(_.toString)
+  given JsonDecoder[Related] = JsonDecoder[String].map(Related.valueOf)
+
+
 import Related.*
 
 
@@ -164,7 +169,7 @@ case class InheritanceDiagram(
       findRelated(symbol, r1) ++ findRelated(symbol, r2)
     case _ => throw new Exception("Error found")
 
-  def filterSymbols(symbols: List[(Symbol, Set[Related])]): InheritanceDiagram =
+  def filterSymbols(symbols: Set[(Symbol, Set[Related])]): InheritanceDiagram =
     val initial = subdiagram(symbols.map(_._1).toSet)
     initial ++ symbols.map(filterSymbol).foldLeft(InheritanceDiagram.empty)( _ ++ _)
 

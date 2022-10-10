@@ -4,6 +4,8 @@ import org.jpablo.typeexplorer.backend.backends.plantuml.PlantumlInheritance
 import org.jpablo.typeexplorer.backend.semanticdb.All
 import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, InheritanceExamples, Related}
 import org.jpablo.typeexplorer.shared.models
+import org.jpablo.typeexplorer.shared.webApp.InheritanceReq
+import org.jpablo.typeexplorer.shared.utils.*
 
 import java.net.URI
 import java.nio.file
@@ -21,6 +23,8 @@ import zhttp.service.Server
 import zio.*
 import zio.json.*
 import zio.prelude.AnySyntax
+import org.jpablo.typeexplorer.backend.backends.plantuml.PlantUML
+import org.jpablo.typeexplorer.shared.models
 
 
 object WebApp extends ZIOAppDefault:
@@ -28,7 +32,27 @@ object WebApp extends ZIOAppDefault:
   // ----------
   // endpoints
   // ----------
-  val app = Http.collect[Request] {
+  val appZ = Http.collectZIO[Request] {
+    case req @ Method.POST -> !! / "inheritance" =>
+
+      def reqToDiagram(ireq: InheritanceReq) : Option[PlantUML] =
+        for
+          docs <- readTextDocumentsWithSource(Some(ireq.paths))
+          diagram = InheritanceDiagram.fromTextDocuments <|: toTextDocuments <|: docs
+          puml = PlantumlInheritance.fromInheritanceDiagram <|: diagram.filterSymbols <|: ireq.symbols
+        yield 
+          puml
+
+      for
+        body <- req.bodyAsString
+        ireq <- ZIO.from(body.fromJson[InheritanceReq]).mapError(Throwable(_))
+        puml <- ZIO.from(reqToDiagram(ireq)).mapError(_ => Throwable("No path provided"))
+      yield
+        Response.text(puml.toSVG("laminar")).withContentType("image/svg+xml")
+  } @@ cors(corsConfig)
+
+
+  val app: Http[Any, Nothing, Request, Response] = Http.collect[Request] {
 
     case req @ Method.GET -> !! / "semanticdb" =>
       (req |> getPath |> readTextDocumentsWithSource)
@@ -58,23 +82,6 @@ object WebApp extends ZIOAppDefault:
         .map(Response.json)
         .getOrElse(badRequest)
 
-    case req @ Method.GET -> !! / "inheritance" =>
-      val related = getParam(req, "related").toSet.flatten.map(Related.valueOf)
-      val symbols = getParam(req, "symbol")
-      .toList.flatten
-      .map(models.Symbol.apply)
-      .map(s => (s, related))
-
-      (req |> getPath |> readTextDocumentsWithSource)
-        .map(toTextDocuments)
-        .map(InheritanceDiagram.fromTextDocuments)
-        .map(_.filterSymbols(symbols))
-        .map(PlantumlInheritance.fromInheritanceDiagram)
-        .map(_.toSVG("laminar"))
-        .map(Response.text)
-        .map(_.withContentType("image/svg+xml"))
-        .getOrElse(badRequest)
-
     case req @ Method.GET -> !! / "source" =>
       (req |> getPath |> readSource)
         .map(Response.text)
@@ -84,7 +91,7 @@ object WebApp extends ZIOAppDefault:
   } @@ cors(corsConfig)
 
   val run =
-    Server.start(8090, app)
+    Server.start(8090, appZ ++ app)
 
   // -----------------
   // helper functions
@@ -94,7 +101,7 @@ object WebApp extends ZIOAppDefault:
     Serialization.formats(NoTypeHints)
 
   def toTextDocuments(docs: TextDocumentsWithSourceSeq): TextDocuments =
-    docs.documentsWithSource.flatMap(_.documents) |> TextDocuments.apply
+    TextDocuments.apply <|: docs.documentsWithSource.flatMap(_.documents)
 
   def readTextDocumentsWithSource(path: Option[List[String]]): Option[TextDocumentsWithSourceSeq] =
     for p <- combinePaths(path) yield
@@ -121,6 +128,7 @@ object WebApp extends ZIOAppDefault:
 
   def getParam(req: Request, name: String) =
     req.url.queryParams.get(name)
+
 
   lazy val corsConfig =
     CorsConfig(allowedOrigins = _ => true)

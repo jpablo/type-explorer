@@ -93,7 +93,7 @@ object InheritanceDiagramSpec extends ZIOSpecDefault {
     test("Find all parents - simple case") {
       val related = Set(Related.Parents)
       val filtered = 
-        diagram.filterSymbols(List(base1.symbol -> related, base2.symbol -> related))
+        diagram.filterSymbols(Set(base1.symbol -> related, base2.symbol -> related))
       
       val filtered2 = diagram.allParents(base1.symbol)
 
@@ -108,7 +108,7 @@ object InheritanceDiagramSpec extends ZIOSpecDefault {
     test("Find all parents") {
       val related = Set(Related.Parents)
       val filtered = 
-        diagram.filterSymbols(List(classB.symbol -> related, classC.symbol -> related))
+        diagram.filterSymbols(Set(classB.symbol -> related, classC.symbol -> related))
       val expected = diagram
 
       assertTrue(filtered == expected)
@@ -117,7 +117,7 @@ object InheritanceDiagramSpec extends ZIOSpecDefault {
     test("Find all children - simple case") {
       val related = Set(Related.Children)
       val filtered = 
-        diagram.filterSymbols(List(classA.symbol -> related))
+        diagram.filterSymbols(Set(classA.symbol -> related))
 
       val expected = 
         InheritanceDiagram(
@@ -130,7 +130,7 @@ object InheritanceDiagramSpec extends ZIOSpecDefault {
     test("Find all children") {
       val related = Set(Related.Children)
       val filtered = 
-        diagram.filterSymbols(List(base0.symbol -> related))
+        diagram.filterSymbols(Set(base0.symbol -> related))
 
       val expected = diagram
 
@@ -140,7 +140,7 @@ object InheritanceDiagramSpec extends ZIOSpecDefault {
     test("Find specific") {
       val related = Set.empty[Related]
       val filtered = 
-        diagram.filterSymbols(List(base0.symbol -> related, base1.symbol -> related, base2.symbol -> related))
+        diagram.filterSymbols(Set(base0.symbol -> related, base1.symbol -> related, base2.symbol -> related))
 
       val expected = InheritanceDiagram(
           arrows = Set(base1.symbol -> base0.symbol, base2.symbol -> base0.symbol),

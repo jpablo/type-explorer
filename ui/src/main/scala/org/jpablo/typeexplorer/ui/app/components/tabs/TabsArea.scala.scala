@@ -8,13 +8,14 @@ import org.jpablo.typeexplorer.ui.app.components.tabs.semanticDBTab.semanticDBTa
 import org.scalajs.dom
 import org.jpablo.typeexplorer.ui.app.Path
 import org.jpablo.typeexplorer.shared.models
+import org.jpablo.typeexplorer.ui.app.SelectedSymbol
 
 def tabsArea(
   $projectPath    : Signal[Path], 
   $documents      : EventStream[List[TextDocumentsWithSource]],
   $svgDiagram     : EventStream[dom.Element],
   $classes        : EventStream[InheritanceDiagram],
-  $selectedSymbol : EventBus[models.Symbol],
+  selectedSymbol  : SelectedSymbol,
   $selectedUri    : EventBus[Path]
 ) =
   List(
@@ -58,7 +59,7 @@ def tabsArea(
           cls := "tab-pane fade show active",
           role := "tabpanel",
           tabIndex := 0,
-          inheritanceTab($svgDiagram, $classes, $selectedSymbol)
+          inheritanceTab($svgDiagram, $classes, selectedSymbol)
         ),
         div(
           idAttr := "semanticdb-tab-pane",
