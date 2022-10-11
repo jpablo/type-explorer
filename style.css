@@ -78,18 +78,42 @@ a {
 
 /* ------------------ */
 
-.text-document-areas {
-    display: grid;
-    height: 100%
+.structure {
+  height: 100%;
+  overflow: auto;
+  padding: 5px;
 }
 
-#semanticdb-tab-pane, #classes-tab-pane {
+#semanticdb-tab-pane, #inheritance-tab-pane {
   height: 100%;
 }
 
+.text-document-areas {
+    display: grid;
+    height: 100%;
+}
 
-#classes-tab-pane > .text-document-areas {
-  grid-template-columns: 1fr 4fr 0fr;
+#inheritance-tab-pane > .text-document-areas {
+  grid-template-columns: 1fr 4fr;
+  grid-template-rows: 4em auto;
+}
+
+#inheritance-tab-pane > .text-document-areas > .inheritance-tree-search {
+  grid-column: 1;
+  grid-row: 1;
+  padding: 5px;
+}
+
+#inheritance-tab-pane > .text-document-areas > .structure {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+#inheritance-tab-pane > .text-document-areas > .inheritance-container {
+  grid-column: 2;
+  grid-row: 1 / 3;
+  border-left: 1px solid lightgray;
+  padding: 5px;
 }
 
 #semanticdb-tab-pane > .text-document-areas {
@@ -101,12 +125,6 @@ a {
     overflow: auto;
 }
 
-.structure {
-    height: 100%;
-    overflow: auto;
-    border-right: 1px solid lightgray;
-    padding: 5px;
-}
 
 .card {
     margin: 5px;

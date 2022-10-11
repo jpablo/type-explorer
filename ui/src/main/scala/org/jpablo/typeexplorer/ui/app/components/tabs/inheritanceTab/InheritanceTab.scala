@@ -34,23 +34,22 @@ def inheritanceTab(
       .changes
       .map((event, w) => if w.isBlank then event else event.filterBySymbols(w))
 
-  div(
-    cls := "text-document-areas",
+  div( cls := "text-document-areas",
 
-    div(cls := "structure",
-      form(cls := "",
-        input(
-          cls := "form-control input-sm",
-          tpe := "search",
-          placeholder := "filter",
-          controlled(value <-- $filter, onInput.mapToValue --> $filter)
-        ),
+    form(cls := "inheritance-tree-search",
+      input(
+        cls := "form-control input-sm",
+        tpe := "search",
+        placeholder := "filter",
+        controlled(value <-- $filter, onInput.mapToValue --> $filter)
       ),
+    ),
+    
+    div( cls := "structure",
       children <-- InheritanceTree.build($filteredDiagrams, selectedSymbol)
     ),
     
-    div(
-      cls := "inheritance-container",
+    div( cls := "inheritance-container",
       div(child <-- $svgDiagram.map(svgToLaminar))
     )
   )

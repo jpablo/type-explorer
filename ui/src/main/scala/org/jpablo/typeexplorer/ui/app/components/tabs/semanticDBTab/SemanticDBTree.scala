@@ -10,8 +10,6 @@ import scalajs.js.URIUtils.encodeURIComponent
 import org.jpablo.typeexplorer.shared.models
 import org.jpablo.typeexplorer.ui.app.Path
 
-def semanticDBTree = SemanticDBTree.build
-
 object SemanticDBTree:
 
   def build($documents: EventStream[List[TextDocumentsWithSource]], $selectedUri: EventBus[Path]): EventStream[List[HtmlElement]] =

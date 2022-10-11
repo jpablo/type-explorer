@@ -30,7 +30,7 @@ def tabsArea(
           button(
             cls := "nav-link active",
             dataAttr("bs-toggle") := "tab",
-            dataAttr("bs-target") := "#classes-tab-pane",
+            dataAttr("bs-target") := "#inheritance-tab-pane",
             tpe := "button",
             role := "tab",
             "Inheritance"
@@ -55,7 +55,7 @@ def tabsArea(
       div(
         cls := "tab-content",
         div(
-          idAttr := "classes-tab-pane",
+          idAttr := "inheritance-tab-pane",
           cls := "tab-pane fade show active",
           role := "tabpanel",
           tabIndex := 0,
