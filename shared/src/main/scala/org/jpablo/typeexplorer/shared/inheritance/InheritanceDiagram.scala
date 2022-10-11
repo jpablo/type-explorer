@@ -30,7 +30,7 @@ import Related.*
 
 /** A simplified representation of entities and subtype relationships
   *
-  * @param arrows A pair `(sym1, sym2)` means that `sym1` is a subtype of `sym2`
+  * @param arrows A pair `(a, b)` means that `a` is a subtype of `b`
   * @param namespaces Classes, Objects, Traits, etc
   */
 case class InheritanceDiagram(
@@ -94,6 +94,7 @@ case class InheritanceDiagram(
 
   // ---------------------------------------------
 
+
   /** Creates a diagram containing the given symbols and the arrows between them.
     */
   def subdiagram(symbols: Set[Symbol]): InheritanceDiagram =
@@ -108,7 +109,7 @@ case class InheritanceDiagram(
     InheritanceDiagram(foundArrows, foundNS)
 
   // Note: doesn't handle loops.
-  // How efficient is this compared to the tail rec version below?
+  // How efficient is this compared to the tail rec version above?
   def unfold(symbol: Symbol, related: Symbol => Set[Symbol]): Set[Symbol] =
     Set.unfold(Set(symbol)) { ss => 
       val ss2 = ss.flatMap(related)
@@ -177,7 +178,7 @@ object InheritanceDiagram:
   given JsonEncoder[InheritanceDiagram] = DeriveJsonEncoder.gen
   given JsonDecoder[InheritanceDiagram] = DeriveJsonDecoder.gen
 
-  // In Scala 3.2 the type annotation is needed (TODO: report bug)
+  // In Scala 3.2 the type annotation is needed.
   val empty: InheritanceDiagram = new InheritanceDiagram(Set.empty)
 
   def fromTextDocuments(textDocuments: TextDocuments): InheritanceDiagram =

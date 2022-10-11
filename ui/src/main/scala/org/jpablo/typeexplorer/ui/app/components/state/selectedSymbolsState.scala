@@ -11,9 +11,11 @@ import org.jpablo.typeexplorer.shared.models.Symbol
 import com.raquo.airstream.core.EventStream
 
 
-case class SelectedSymbol(
+case class SelectedSymbols(
   symbols: Var[Map[Symbol, Selection]] = Var(Map.empty)
-)
+):
+  lazy val signal = symbols.signal
+  def updater[A]  = symbols.updater[A]
 
 case class Selection(
   current : Boolean = false,
@@ -21,6 +23,9 @@ case class Selection(
   children: Boolean = false,
 ):
   def allEmpty = !current && !parents && !children
+
+object Selection:
+  def empty = Selection()
 
 case class State2(
   symbols: Map[Symbol, Selection] = Map.empty

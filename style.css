@@ -51,6 +51,7 @@ a {
 }
 
 /*---- cards --- */
+
 .card-uri {
     background-color: lightgray;
 }
@@ -82,11 +83,16 @@ a {
     height: 100%
 }
 
-#classes-tab-pane > .text-document-areas{
-  grid-template-columns: 1fr 3fr 0fr;
+#semanticdb-tab-pane, #classes-tab-pane {
+  height: 100%;
 }
 
-#semanticdb-tab-pane > .text-document-areas{
+
+#classes-tab-pane > .text-document-areas {
+  grid-template-columns: 1fr 4fr 0fr;
+}
+
+#semanticdb-tab-pane > .text-document-areas {
   grid-template-columns: 1fr 1fr 1fr;
 }
 
@@ -95,20 +101,11 @@ a {
     overflow: auto;
 }
 
-.text-document {
-}
-
-
 .structure {
     height: 100%;
     overflow: auto;
-}
-
-.symbol-information-container {
-}
-
-#semanticdb-tab-pane {
-    height: 100%;
+    border-right: 1px solid lightgray;
+    padding: 5px;
 }
 
 .card {

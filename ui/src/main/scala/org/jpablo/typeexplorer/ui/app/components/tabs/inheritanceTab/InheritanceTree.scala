@@ -14,37 +14,42 @@ import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
 import org.jpablo.typeexplorer.shared.fileTree.FileTree
 import org.jpablo.typeexplorer.shared.inheritance.InheritanceDiagram
 import org.jpablo.typeexplorer.shared.models.{Namespace, NamespaceKind, Symbol}
-import org.jpablo.typeexplorer.ui.app.components.state.SelectedSymbol
+import org.jpablo.typeexplorer.ui.app.components.state.SelectedSymbols
 import org.jpablo.typeexplorer.ui.app.components.state.Selection
 import org.jpablo.typeexplorer.ui.widgets.{collapsableTree, collapsable2}
 
 object InheritanceTree:
 
-  def build(
-    $diagrams: EventStream[InheritanceDiagram],
-    selectedSymbol: SelectedSymbol
-  ): EventStream[List[HtmlElement]] =
-    for diagram <- $diagrams yield
+  /** Builds a collapasable tree based on the given inheritance diagram.
+    * 
+    * @param $diagram The diagram
+    * @param selectedSymbols The checked status of each symbol
+    * @return A List of trees, one for each top level package name in the diagram: e.g. ["com..., ", "java.io..."]
+    */
+  def build($diagram: EventStream[InheritanceDiagram], selectedSymbols: SelectedSymbols): EventStream[List[HtmlElement]] =
+    for diagram <- $diagram yield
       for fileTree <- diagram.toFileTrees yield
         collapsableTree(fileTree)(
           renderBranch = b => span(cls := "collapsable-branch-label", b),
-          renderLeaf = renderNamespace(selectedSymbol)
+          renderLeaf = renderNamespace(selectedSymbols)
         )
 
-  private def renderNamespace(selectedSymbol: SelectedSymbol)(name: String, ns: Namespace) =
+  private def renderNamespace(selectedSymbols: SelectedSymbols)(name: String, ns: Namespace) =
     val uri = encodeURIComponent(ns.symbol.toString)
     val modifySelection = modifyLens[Selection]
     val $selection = 
-      selectedSymbol.symbols.signal.map(_.getOrElse(ns.symbol, Selection()))
+      selectedSymbols.signal.map(_.getOrElse(ns.symbol, Selection.empty))
 
     def controlledCheckbox(field: Selection => Boolean, modifyField: PathLazyModify[Selection, Boolean]) = 
-      input(cls := "form-check-input mt-0", tpe := "checkbox", 
+      input(
+        cls := "form-check-input mt-0", 
+        tpe := "checkbox", 
         controlled(
           checked <-- $selection.map(field), 
           onClick.mapToChecked --> 
-            selectedSymbol.symbols.updater[Boolean] { (symbols, b) =>
+            selectedSymbols.updater[Boolean] { (symbols, b) =>
               val selection = 
-                modifyField.setTo(b)(symbols.getOrElse(ns.symbol, Selection()))
+                modifyField.setTo(b)(symbols.getOrElse(ns.symbol, Selection.empty))
               if selection.allEmpty then
                 symbols - ns.symbol
               else
@@ -52,7 +57,7 @@ object InheritanceTree:
           }
         )
       )
-
+      
     collapsable2(
       branchLabel =
         div(
@@ -71,6 +76,9 @@ object InheritanceTree:
         ns.methods.map(m => a(m.displayName, title := m.symbol.toString))
     )
 
+  /** The "stereotype" is an element indicating which kind of namespace we have:
+    * an Object, a Class, etc.
+    */
   private def stereotype(ns: Namespace): ReactiveHtmlElement[html.Span] =
     val elem =
       ns.kind match

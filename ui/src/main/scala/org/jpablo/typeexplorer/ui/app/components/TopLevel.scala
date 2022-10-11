@@ -8,15 +8,14 @@ import io.laminext.syntax.core.*
 import org.jpablo.typeexplorer.shared.models
 import org.jpablo.typeexplorer.shared.inheritance.Related
 import org.jpablo.typeexplorer.ui.app.Path
-import org.jpablo.typeexplorer.ui.app.components.state.{SelectedSymbol, selectedSymbolToDiagram}
+import org.jpablo.typeexplorer.ui.app.components.state.{SelectedSymbols, selectedSymbolToDiagram}
 import com.raquo.airstream.core.EventStream
 import org.scalajs.dom
 
-object TopLevel {
-
+object TopLevel:
   val $newDiagramType = EventBus[DiagramType]
   val $selectedUri    = EventBus[Path]
-  val selectedSymbol  = SelectedSymbol()
+  val selectedSymbol  = SelectedSymbols()
   val projectPath     = storedString("projectPath", initial = "")
   val $projectPath    = projectPath.signal.map(Path.apply)
   val $documents      = fetchDocuments($projectPath)
@@ -28,14 +27,12 @@ object TopLevel {
       idAttr := "te-toplevel",
       appHeader($newDiagramType, projectPath),
       tabsArea(
-        $projectPath    = $projectPath,
-        $documents      = $documents,
-        $svgDiagram     = $inheritance,
-        $classes        = $classes,
-        selectedSymbol  = selectedSymbol,
-        $selectedUri    = $selectedUri
+        $projectPath,
+        $documents,
+        $inheritance,
+        $classes,
+        selectedSymbol,
+        $selectedUri
       ),
       appFooter
     )
-
-}

@@ -15,17 +15,20 @@ def semanticDBTab(
 ) =
   div(
     cls := "text-document-areas",
+
     div(
       cls := "structure",
       div(""), // TODO: add controls to expand / collapse all
       children <-- semanticDBTree($documents, $selectedUri)
     ),
+
     div(
       cls := "semanticdb-document-container",
       ol(
         children <-- $documents.split(_.semanticDbUri)(SemanticDBText.renderTextDocumentsWithSource)
       )
     ),
+    
     div(
       cls := "semanticdb-source-container",
       sourceCodeTab($selectedUri.events.flatMap(fetchSourceCode($projectPath)))
