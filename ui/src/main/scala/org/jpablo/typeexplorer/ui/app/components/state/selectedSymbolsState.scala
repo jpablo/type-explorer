@@ -8,45 +8,40 @@ import org.jpablo.typeexplorer.ui.app.toggle
 import org.jpablo.typeexplorer.ui.app.*
 import org.jpablo.typeexplorer.ui.app.client.fetchInheritanceSVGDiagram
 import org.jpablo.typeexplorer.shared.models.Symbol
+import com.raquo.airstream.core.EventStream
 
-enum Selected { case current, parents, children }
 
 case class SelectedSymbol(
-  current : EventBus[Symbol] = EventBus(),
-  parents : EventBus[Symbol] = EventBus(),
-  children: EventBus[Symbol] = EventBus(),
-):
-  lazy val merged = 
-    EventStream.merge(
-      current.events.map (_ -> Selected.current),
-      parents.events.map (_ -> Selected.parents),
-      children.events.map(_ -> Selected.children)
-    )
+  symbols: Var[Map[Symbol, Selection]] = Var(Map.empty)
+)
 
-
-case class State(
-  symbols: Map[Symbol, Set[Related]] = Map.empty.withDefaultValue(Set.empty)
+case class Selection(
+  current : Boolean = false,
+  parents : Boolean = false,
+  children: Boolean = false,
 ):
-  def update(s: Symbol, r: Related): State =
-    State(symbols + (s -> symbols(s).toggle(r)))
+  def allEmpty = !current && !parents && !children
+
+case class State2(
+  symbols: Map[Symbol, Selection] = Map.empty
+)
+
+def selectedSymbolToDiagram(selected: Signal[Map[Symbol, Selection]], $projectPath: Signal[Path]): EventStream[dom.Element] =
+  val requestBody =
+    selected.changes.map { symbols =>
+      symbols.transform { (symbol, selection) => selection match
+        case Selection(true, false, false) => Set.empty
+        case Selection(_   , true , false) => Set(Related.Parents)
+        case Selection(_   , false, true ) => Set(Related.Children)
+        case Selection(_   , true , true ) => Set(Related.Parents, Related.Children)
+        case _                             => throw Exception(s"Defect: symbol ${symbol} without selection found")
+      }.toSet
+    }
   
-  def toggle(s: Symbol): State =
-    State(if symbols contains s then symbols - s else symbols + (s -> Set.empty))
-    
-
-def selectedSymbolToDiagram(selected: SelectedSymbol, $projectPath: Signal[Path]): EventStream[dom.Element] =
-  val state =
-    selected.merged
-      .foldLeft(State()) { case (state @ State(symbols), (s, tpe)) => 
-        tpe match
-          case Selected.current  => state.toggle(s)
-          case Selected.parents  => state.update(s, Related.Parents)
-          case Selected.children => state.update(s, Related.Children)
-      }    
-
   $projectPath
-    .combineWith(state.map(_.symbols.toSet))
+    .combineWith(requestBody.toSignal(Set.empty))
     .changes
     .flatMap(fetchInheritanceSVGDiagram)
+
   
 

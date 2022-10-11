@@ -1,11 +1,11 @@
 import org.scalajs.linker.interface.ModuleSplitStyle
 
 val scala3Version     = "3.2.0"
-val zioVersion        = "2.0.0-RC6"
-val zioJsonVersion    = "0.3.0-RC8"
-val zioPreludeVersion = "1.0.0-RC14"
 val scalametaVersion  = "4.5.9"
 val zioHttpVersion    = "2.0.0-RC8+1-6d179026-SNAPSHOT"
+val zioJsonVersion    = "0.3.0-RC8"
+val zioPreludeVersion = "1.0.0-RC14"
+val zioVersion        = "2.0.0-RC6"
 
 // TODO:
 // - Maybe create a plugin to correctly set semanticdbTargetRoot for each subproject?
@@ -159,6 +159,8 @@ lazy val ui =
         "org.scala-js"  %%% "scalajs-dom"       % "2.0.0",
         "com.raquo"     %%% "laminar"           % "0.14.5",
         "io.laminext"   %%% "fetch"             % "0.14.4",
+
+        "com.softwaremill.quicklens" %%% "quicklens" % "1.9.0",
 
         "org.scalameta" %%% "scalameta"         % scalametaVersion cross CrossVersion.for3Use2_13
 

@@ -1,16 +1,22 @@
 package org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab
 
+import com.raquo.airstream.core.EventStream
+import com.raquo.airstream.core.Observer
+import com.raquo.airstream.core.Signal
+import com.raquo.airstream.eventbus.EventBus
 import com.raquo.laminar.api.L.*
+import com.raquo.laminar.nodes.ReactiveHtmlElement
+import com.softwaremill.quicklens.*
+import org.scalajs.dom.html
+import scalajs.js.URIUtils.encodeURIComponent
+
 import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
-import org.jpablo.typeexplorer.shared.models
 import org.jpablo.typeexplorer.shared.fileTree.FileTree
 import org.jpablo.typeexplorer.shared.inheritance.InheritanceDiagram
-import org.jpablo.typeexplorer.shared.models.{Namespace, NamespaceKind}
-import org.jpablo.typeexplorer.ui.widgets.{collapsableTree, collapsable2}
-import scalajs.js.URIUtils.encodeURIComponent
-import org.scalajs.dom.html
-import com.raquo.laminar.nodes.ReactiveHtmlElement
+import org.jpablo.typeexplorer.shared.models.{Namespace, NamespaceKind, Symbol}
 import org.jpablo.typeexplorer.ui.app.components.state.SelectedSymbol
+import org.jpablo.typeexplorer.ui.app.components.state.Selection
+import org.jpablo.typeexplorer.ui.widgets.{collapsableTree, collapsable2}
 
 object InheritanceTree:
 
@@ -27,6 +33,26 @@ object InheritanceTree:
 
   private def renderNamespace(selectedSymbol: SelectedSymbol)(name: String, ns: Namespace) =
     val uri = encodeURIComponent(ns.symbol.toString)
+    val modifySelection = modifyLens[Selection]
+    val $selection = 
+      selectedSymbol.symbols.signal.map(_.getOrElse(ns.symbol, Selection()))
+
+    def controlledCheckbox(field: Selection => Boolean, modifyField: PathLazyModify[Selection, Boolean]) = 
+      input(cls := "form-check-input mt-0", tpe := "checkbox", 
+        controlled(
+          checked <-- $selection.map(field), 
+          onClick.mapToChecked --> 
+            selectedSymbol.symbols.updater[Boolean] { (symbols, b) =>
+              val selection = 
+                modifyField.setTo(b)(symbols.getOrElse(ns.symbol, Selection()))
+              if selection.allEmpty then
+                symbols - ns.symbol
+              else
+                symbols + (ns.symbol -> selection)
+          }
+        )
+      )
+
     collapsable2(
       branchLabel =
         div(
@@ -35,11 +61,11 @@ object InheritanceTree:
           span(" "),
           a(href := "#elem_" + uri, title := ns.symbol.toString, ns.displayName),
           span(" "),
-          input(cls := "form-check-input mt-0", tpe := "checkbox", onClick.mapTo(ns.symbol) --> selectedSymbol.current),
+          controlledCheckbox(_.current, modifySelection(_.current)),
           span(" "),
-          input(cls := "form-check-input mt-0", tpe := "checkbox", onClick.mapTo(ns.symbol) --> selectedSymbol.parents),
+          controlledCheckbox(_.parents, modifySelection(_.parents)),
           span(" "),
-          input(cls := "form-check-input mt-0", tpe := "checkbox", onClick.mapTo(ns.symbol) --> selectedSymbol.children),
+          controlledCheckbox(_.children, modifySelection(_.children)),
         ),
       contents =
         ns.methods.map(m => a(m.displayName, title := m.symbol.toString))

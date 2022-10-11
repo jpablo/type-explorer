@@ -26,12 +26,11 @@ def fetchBase(path: String): FetchEventStreamBuilder =
 
 def fetchDocuments(projectPath: Signal[Path]): EventStream[List[TextDocumentsWithSource]] =
   for
-  // Checar si la ruta es vacía
     path <- projectPath
-    // mandar esto a un if en otro for comprehension
     lst <-
-      if path.toString.isEmpty then EventStream.fromValue(List.empty)
-      else
+      if path.toString.isEmpty then
+        EventStream.fromValue(List.empty)
+      else 
         for response <- fetchBase("semanticdb?path=" + path).arrayBuffer yield
           val ia = Int8Array(response.data, 0, length = response.data.byteLength)
           TextDocumentsWithSourceSeq.parseFrom(ia.toArray).documentsWithSource.toList.sortBy(_.semanticDbUri)

@@ -1,14 +1,4 @@
-# Scala.js with sbt, Vite, Laminar and Chart.js
-
-https://github.com/sjrd/scalajs-sbt-vite-laminar-chartjs-example
-
-This is an example of putting together:
-
-* [Scala.js](https://www.scala-js.org/)
-* [sbt](https://www.scala-sbt.org/)
-* [Vite](https://vitejs.dev/)
-* [Laminar](https://laminar.dev/)
-* [Chart.js](https://www.chartjs.org/), statically typed with [ScalablyTyped](https://scalablytyped.org/)
+# Type Explorer
 
 ## Install
 
@@ -53,7 +43,7 @@ In the first one, start `sbt` and, within, continuously build the Scala.js proje
 ```
 $ sbt
 ...
-> ~ fastLinkJS
+> ~ ui/fastLinkJS
 ...
 ```
 
