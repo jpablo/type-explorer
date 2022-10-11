@@ -10,7 +10,7 @@ import org.jpablo.typeexplorer.ui.widgets.{collapsableTree, collapsable2}
 import scalajs.js.URIUtils.encodeURIComponent
 import org.scalajs.dom.html
 import com.raquo.laminar.nodes.ReactiveHtmlElement
-import org.jpablo.typeexplorer.ui.app.SelectedSymbol
+import org.jpablo.typeexplorer.ui.app.components.state.SelectedSymbol
 
 object InheritanceTree:
 

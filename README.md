@@ -33,6 +33,14 @@ $ npm install
 
 From `sbt`:
 
+Auto-reloading:
+
+```
+ ~ backend/reStart
+```
+
+Or manually just once:
+
 ```
 backend/runMain org.jpablo.typeexplorer.backend.webApp.WebApp
 ```
@@ -45,7 +53,7 @@ In the first one, start `sbt` and, within, continuously build the Scala.js proje
 ```
 $ sbt
 ...
-> ~fastLinkJS
+> ~ fastLinkJS
 ...
 ```
 

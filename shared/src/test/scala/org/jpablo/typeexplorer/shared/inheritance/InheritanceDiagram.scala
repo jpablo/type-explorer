@@ -9,7 +9,7 @@ object InheritanceDiagramSpec extends ZIOSpecDefault {
 
   // sbt> testOnly org.jpablo.typeexplorer.shared.inheritance.*
 
-  def makeClass (name: String) = 
+  def makeClass(name: String) = 
     models.Namespace(models.Symbol(name), name, models.NamespaceKind.Class)
 
   val base0  = makeClass("base0")
@@ -19,6 +19,29 @@ object InheritanceDiagramSpec extends ZIOSpecDefault {
   val classB = makeClass("classB")
   val classC = makeClass("classC")
 
+  /*   
+          ┌─────┐         
+          │base0│
+          └─────┘         
+             ▲           
+     ┌───────┴──────┐    
+     │              │    
+  ┌───────┐      ┌───────┐
+  │ base1 │      │ base2 │
+  └───────┘      └───────┘
+      ▲              ▲    
+      └───────┬──────┘    
+              │           
+          ┌──────┐        
+          │classA│        
+          └──────┘        
+              ▲           
+        ┌─────┴─────┐     
+        │           │     
+    ┌──────┐    ┌──────┐  
+    │classB│    │classC│  
+    └──────┘    └──────┘    
+   */
 
   val diagram = InheritanceDiagram(
     arrows = Set(
@@ -115,9 +138,8 @@ object InheritanceDiagramSpec extends ZIOSpecDefault {
     },
 
     test("Find all children - simple case") {
-      val related = Set(Related.Children)
       val filtered = 
-        diagram.filterSymbols(Set(classA.symbol -> related))
+        diagram.filterSymbols(Set(classA.symbol -> Set(Related.Children)))
 
       val expected = 
         InheritanceDiagram(
@@ -140,7 +162,13 @@ object InheritanceDiagramSpec extends ZIOSpecDefault {
     test("Find specific") {
       val related = Set.empty[Related]
       val filtered = 
-        diagram.filterSymbols(Set(base0.symbol -> related, base1.symbol -> related, base2.symbol -> related))
+        diagram.filterSymbols(
+          Set(
+            base0.symbol -> related, 
+            base1.symbol -> related, 
+            base2.symbol -> related
+          )
+        )
 
       val expected = InheritanceDiagram(
           arrows = Set(base1.symbol -> base0.symbol, base2.symbol -> base0.symbol),
@@ -148,7 +176,23 @@ object InheritanceDiagramSpec extends ZIOSpecDefault {
       )
 
       assertTrue(filtered == expected)
+    },
+
+    test("Include all arrows") {
+      val filtered = 
+        diagram.filterSymbols(
+          Set(
+            base1.symbol -> Set(Related.Parents), 
+            base2.symbol -> Set(), 
+          )
+        )
+      val expected = InheritanceDiagram(
+          arrows = Set(base1.symbol -> base0.symbol, base2.symbol -> base0.symbol),
+          namespaces = Set(base0, base1, base2)
+      )
+      assertTrue(filtered == expected)
     }
+
 
   )
 }

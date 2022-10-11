@@ -15,7 +15,6 @@ import java.nio.file
 import scala.meta.internal.semanticdb.SymbolInformation.Kind
 import scala.meta.internal.semanticdb.{ClassSignature, MethodSignature, SymbolInformation, TextDocuments, Type, TypeRef, TypeSignature, ValueSignature}
 import scala.util.chaining.*
-import org.jpablo.typeexplorer.shared.models.NamespaceKind
 
 case class PlantUML(diagram: String):
   def toSVG(name: String): String =

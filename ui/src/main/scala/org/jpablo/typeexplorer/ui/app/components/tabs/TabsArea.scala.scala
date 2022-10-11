@@ -8,7 +8,7 @@ import org.jpablo.typeexplorer.ui.app.components.tabs.semanticDBTab.semanticDBTa
 import org.scalajs.dom
 import org.jpablo.typeexplorer.ui.app.Path
 import org.jpablo.typeexplorer.shared.models
-import org.jpablo.typeexplorer.ui.app.SelectedSymbol
+import org.jpablo.typeexplorer.ui.app.components.state.SelectedSymbol
 
 def tabsArea(
   $projectPath    : Signal[Path], 

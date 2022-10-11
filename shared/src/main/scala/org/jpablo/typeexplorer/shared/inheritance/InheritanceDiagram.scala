@@ -28,8 +28,7 @@ import Related.*
 
 
 
-/**
-  * A simplified representation of entities and subtype relationships
+/** A simplified representation of entities and subtype relationships
   *
   * @param arrows A pair `(sym1, sym2)` means that `sym1` is a subtype of `sym2`
   * @param namespaces Classes, Objects, Traits, etc
@@ -38,6 +37,8 @@ case class InheritanceDiagram(
   arrows    : Set[Arrow],
   namespaces: Set[Namespace] = Set.empty,
 ):
+  lazy val symbols =
+    namespaces.map(_.symbol)
 
   lazy val directParents: Symbol => Set[Symbol] =
     arrows.groupBy(_._1)
@@ -55,47 +56,45 @@ case class InheritanceDiagram(
   def directRelatives(related: Related): Symbol => Set[Symbol] =
     if related == Parents then directParents else directChildren
 
-  /**
-    * Follow all arrows related to the given symbol.
-    */
-  def findRelated(symbol: Symbol, related: Related): InheritanceDiagram =
-    @tailrec
-    def go(symbol: Symbol, related: Related, pending: Set[Symbol], visited: Set[Symbol], arrows: Chunk[Arrow]): (Set[Symbol], Chunk[Arrow]) =
-      assume(!pending.contains(symbol))
-      assume(!visited.contains(symbol))
-      assume(pending.intersect(visited).isEmpty)
+  // /**
+  //   * Follow all arrows related to the given symbol.
+  //   */
+  // def findRelated1(symbol: Symbol, related: Related): InheritanceDiagram =
+  //   @tailrec
+  //   def go(symbol: Symbol, related: Related, pending: Set[Symbol], visited: Set[Symbol], arrows: Chunk[Arrow]): (Set[Symbol], Chunk[Arrow]) =
+  //     assume(!pending.contains(symbol))
+  //     assume(!visited.contains(symbol))
+  //     assume(pending.intersect(visited).isEmpty)
 
-      val newSymbols = directRelatives(related)(symbol).toSet
-      assert(!newSymbols.contains(symbol))
-      // Note: Arrows can come from previously visited symbols, so we collect them before removing visited symbols below
-      val newArrows = Chunk.from(newSymbols.map(s => if related == Parents then symbol -> s else s -> symbol))
-      val pending1 = pending ++ (newSymbols -- visited)
-      assert(!pending1.contains(symbol))
-      val visited1 = visited + symbol
-      val arrows1  = arrows ++ newArrows
+  //     val newSymbols = directRelatives(related)(symbol).toSet
+  //     assert(!newSymbols.contains(symbol))
+  //     // Note: Arrows can come from previously visited symbols, so we collect them before removing visited symbols below
+  //     val newArrows = Chunk.from(newSymbols.map(s => if related == Parents then symbol -> s else s -> symbol))
+  //     val pending1 = pending ++ (newSymbols -- visited)
+  //     assert(!pending1.contains(symbol))
+  //     val visited1 = visited + symbol
+  //     val arrows1  = arrows ++ newArrows
 
-      if pending1.isEmpty then
-        (visited1, arrows1)
-      else
-        go(
-          symbol  = pending1.head,
-          related = related,
-          pending = pending1.tail,
-          visited = visited1,
-          arrows  = arrows1
-        )
+  //     if pending1.isEmpty then
+  //       (visited1, arrows1)
+  //     else
+  //       go(
+  //         symbol  = pending1.head,
+  //         related = related,
+  //         pending = pending1.tail,
+  //         visited = visited1,
+  //         arrows  = arrows1
+  //       )
 
-    val (foundSymbols, arrows) = 
-      go(symbol, related, Set.empty, Set.empty, Chunk.empty)
+  //   val (foundSymbols, arrows) = 
+  //     go(symbol, related, Set.empty, Set.empty, Chunk.empty)
     
-    assert(foundSymbols contains symbol)
-    InheritanceDiagram(arrows.toSet, namespaces.filter(ns => foundSymbols.contains(ns.symbol)))
+  //   assert(foundSymbols contains symbol)
+  //   InheritanceDiagram(arrows.toSet, namespaces.filter(ns => foundSymbols.contains(ns.symbol)))
 
   // ---------------------------------------------
 
-  /**
-    * Creates a diagram containing the given symbols and the arrows between them
-    *
+  /** Creates a diagram containing the given symbols and the arrows between them.
     */
   def subdiagram(symbols: Set[Symbol]): InheritanceDiagram =
     val foundSymbols = nsBySymbol.keySet.intersect(symbols)
@@ -116,23 +115,9 @@ case class InheritanceDiagram(
       if ss2.isEmpty then None else Some((ss2, ss2))
     }.flatten
 
-  // 
+  
   def allRelated(s: Symbol, r: Symbol => Set[Symbol]): InheritanceDiagram =
     subdiagram(unfold(s, r) + s)
-
-  // Note: doesn't handle loops.
-  def allRelatedTR(symbol: Symbol, related: Symbol => Set[Symbol]): InheritanceDiagram =
-    
-    @tailrec
-    def go(symbols: Set[Symbol], acc: Set[Symbol]): Set[Symbol] =
-      val newParents = symbols.flatMap(related)
-      val acc1 = acc ++ symbols
-      if newParents.isEmpty then
-        acc1
-      else
-        go(newParents, acc1)
-
-    subdiagram(go(Set(symbol), Set.empty))
 
   def allParents(symbol: Symbol): InheritanceDiagram =
     allRelated(symbol, directParents)
@@ -140,42 +125,47 @@ case class InheritanceDiagram(
   def allChildren(symbol: Symbol): InheritanceDiagram =
     allRelated(symbol, directChildren)
 
-  // def parents(symbol: Symbol): InheritanceDiagram =
-  //   subdiagram(directParents(symbol) + symbol)
-
-  def subdiagramWith(pred: Pred): InheritanceDiagram =
-    subdiagram(namespaces.map(_.symbol).filter(pred))
-
-  // ---------------------------------------------
-
 
   lazy val toFileTrees: List[FileTree[Namespace]] =
     FileTree.build(namespaces.toList, ".") { ns =>
       (ns, ns.displayName, ns.symbol.toString.split("/").init.toList)
     }
 
+  /** Combines the diagram on the left with the diagram on the right.
+    * No new arrows are introduce beyond those present in both diagrams.
+    */
   def ++ (other: InheritanceDiagram): InheritanceDiagram =
     InheritanceDiagram(
       arrows = arrows ++ other.arrows,
       namespaces = namespaces ++ other.namespaces
     )
 
-  def filterSymbol(symbol: Symbol, related: Set[Related]): InheritanceDiagram = related.toList match
-    case Nil =>
-      InheritanceDiagram(Set.empty, namespaces.filter(_.symbol == symbol))
-    case r :: Nil =>
-      findRelated(symbol, r)
-    case r1 :: r2 :: Nil => 
-      findRelated(symbol, r1) ++ findRelated(symbol, r2)
-    case _ => throw new Exception("Error found")
+  /** Creates a new subdiagram with all related symbols.
+    *
+    * @param symbol
+    * @param related If empty only `symbol` will be used.
+    * @return
+    */
+  def findRelated(symbol: Symbol, related: Set[Related]): InheritanceDiagram =
+    related.foldLeft(subdiagram(Set(symbol))) { case (acc, r) => 
+      val d = r match
+        case Parents => allParents(symbol)
+        case Children => allChildren(symbol)
+      acc ++ d        
+    }
 
+  /** Creates a new subdiagram with all related symbols.
+    */
   def filterSymbols(symbols: Set[(Symbol, Set[Related])]): InheritanceDiagram =
-    val initial = subdiagram(symbols.map(_._1).toSet)
-    initial ++ symbols.map(filterSymbol).foldLeft(InheritanceDiagram.empty)( _ ++ _)
+    val initial = subdiagram(symbols.map(_._1))
+    val disjoint = symbols.map(findRelated).foldLeft(initial)( _ ++ _)
+    subdiagram(disjoint.symbols)
 
 
+  /** Creates a new subdiagram with all the symbols containing the given String.
+    */
   def filterBySymbols(str: String): InheritanceDiagram =
-    subdiagram(namespaces.map(_.symbol).filter(_.toString.toLowerCase.contains(str.toLowerCase)))
+    subdiagram(symbols.filter(_.toString.toLowerCase.contains(str.toLowerCase)))
 
 
 end InheritanceDiagram

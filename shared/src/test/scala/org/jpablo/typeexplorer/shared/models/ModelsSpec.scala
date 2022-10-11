@@ -27,14 +27,13 @@ object ModelsSpec extends ZIOSpecDefault {
           ]
       }      
       """
-      val ir = json.fromJson[InheritanceReq]
 
       val expected = InheritanceReq(
         List("/Users/jpablo/GitHub/Airstream"),
         Set(models.Symbol("com%2Fraquo%2Fairstream%2Fcore%2FWritableEventStream%23") -> Set(Parents, Children))
       )
 
-      assertTrue(ir == Right(expected))
+      assertTrue(json.fromJson[InheritanceReq] == Right(expected))
     }
   )
 

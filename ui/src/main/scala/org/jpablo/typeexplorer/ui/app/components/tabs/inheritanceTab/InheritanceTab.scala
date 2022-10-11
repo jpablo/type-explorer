@@ -17,7 +17,7 @@ import org.jpablo.typeexplorer.shared.models
 import org.jpablo.typeexplorer.shared.models
 import com.raquo.airstream.eventbus.WriteBus
 import com.raquo.airstream.state.StrictSignal
-import org.jpablo.typeexplorer.ui.app.SelectedSymbol
+import org.jpablo.typeexplorer.ui.app.components.state.SelectedSymbol
 
 def svgToLaminar(svg: dom.Element) =
   new ChildNode[dom.Element] { val ref = svg }

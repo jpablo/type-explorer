@@ -7,7 +7,8 @@ import org.jpablo.typeexplorer.ui.app.components.tabs.tabsArea
 import io.laminext.syntax.core.*
 import org.jpablo.typeexplorer.shared.models
 import org.jpablo.typeexplorer.shared.inheritance.Related
-import org.jpablo.typeexplorer.ui.app.{Path, SelectedSymbol, selectedSymbolToDiagram}
+import org.jpablo.typeexplorer.ui.app.Path
+import org.jpablo.typeexplorer.ui.app.components.state.{SelectedSymbol, selectedSymbolToDiagram}
 import com.raquo.airstream.core.EventStream
 import org.scalajs.dom
 

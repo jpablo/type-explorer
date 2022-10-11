@@ -11,7 +11,7 @@ import zio.json.*
 import org.jpablo.typeexplorer.protos.{TextDocumentsWithSource, TextDocumentsWithSourceSeq}
 import org.jpablo.typeexplorer.shared.inheritance.InheritanceDiagram
 import org.jpablo.typeexplorer.shared.inheritance.Related
-import org.jpablo.typeexplorer.shared.models
+import org.jpablo.typeexplorer.shared.models.Symbol
 import org.jpablo.typeexplorer.shared.models.Namespace
 import org.jpablo.typeexplorer.shared.webApp.InheritanceReq
 import org.jpablo.typeexplorer.ui.app.components.DiagramType
@@ -52,7 +52,7 @@ def fetchClasses(projectPath: Signal[Path]): EventStream[InheritanceDiagram] =
   yield
     classes
 
-def fetchInheritanceSVGDiagram(projectPath: Path, symbols: Set[(models.Symbol, Set[Related])]): EventStream[dom.Element] =
+def fetchInheritanceSVGDiagram(projectPath: Path, symbols: Set[(Symbol, Set[Related])]): EventStream[dom.Element] =
   val parser = dom.DOMParser()
   if projectPath.toString.isEmpty then 
     EventStream.fromValue(div().ref)
