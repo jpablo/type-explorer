@@ -20,11 +20,9 @@ opaque type Symbol = String
 object Symbol:
   def apply(value: String): Symbol = value
   def empty: Symbol = ""
+  extension (s: Symbol) def toString: String = s
   given JsonEncoder[Symbol] = JsonEncoder.string
   given JsonDecoder[Symbol] = JsonDecoder.string
-
-  extension (s: Symbol)
-    def toString: String = s
 
 
 case class Package(name: String)
@@ -43,6 +41,7 @@ object Namespace:
 
 
 case class Method(symbol: Symbol, displayName: String, returnType: Option[Namespace])
+
 
 object Method:
   def apply(name: String, returnType: Option[Namespace] = None): Method =

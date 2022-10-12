@@ -14,6 +14,9 @@ import DiagramType.*
 
 def appHeader(selection: EventBus[DiagramType], projectPath: StoredString) =
   val onEnterPress = onKeyPress.filter(_.keyCode == dom.ext.KeyCode.Enter)
+  val onEscapePress = onKeyDown.filter(_.keyCode == dom.ext.KeyCode.Escape)
+  val editBasePath = Var(false)
+
   div(
     idAttr := "te-header",
     navbar(
@@ -23,19 +26,49 @@ def appHeader(selection: EventBus[DiagramType], projectPath: StoredString) =
 
       li(cls := "nav-item", span(cls := "nav-link", b("base path:"))),
 
-      li(cls := "nav-item", a(cls := "nav-link", href := "#", child.text <-- projectPath.signal) ),
-
       li(cls := "nav-item", 
-        form (cls := "d-flex me-2",
-          input (
-            cls := "form-control me-2",
-            tpe := "search",
-            onEnterPress.preventDefault.mapToValue --> projectPath.set,
-            value <-- projectPath.signal
-          ),
-          button (cls := "btn btn-outline-success", tpe := "button", "go")
-        ),
+        children <-- editBasePath.signal.map { edit =>
+          val searchInput = 
+            input(
+              cls := "form-control me-2",
+              tpe := "search",
+              onMountFocus,
+              onEnterPress.preventDefault.mapToValue --> { v => 
+                projectPath.set(v)
+                editBasePath.set(false)
+              },
+              onEscapePress.mapTo(false) --> editBasePath,
+              value <-- projectPath.signal
+            )
+
+          if edit then 
+            List(
+              form(
+                cls := "d-flex me-2",
+                searchInput,
+                button(
+                  cls := "btn btn-sm btn-outline-success", 
+                  tpe := "button", 
+                  onClick.mapTo(false) --> { b => 
+                    projectPath.set(searchInput.ref.value)
+                    editBasePath.set(b)
+                  },
+                  "Ok"
+                )
+              )
+            )
+          else
+            List(
+              a(
+                cls := "nav-link base-path", 
+                href := "#", 
+                child.text <-- projectPath.signal,
+                onClick.mapTo(true) --> editBasePath
+              )
+            )
+        }
       ),
+    ),
       // li (cls := "nav-item",
       //   dropdown (
       //     label = "Diagram",
@@ -44,5 +77,4 @@ def appHeader(selection: EventBus[DiagramType], projectPath: StoredString) =
       //   )
       // )
 
-    )
   )

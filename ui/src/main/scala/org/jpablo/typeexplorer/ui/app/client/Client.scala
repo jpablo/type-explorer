@@ -9,10 +9,8 @@ import scalajs.js.URIUtils.encodeURIComponent
 import zio.json.*
 
 import org.jpablo.typeexplorer.protos.{TextDocumentsWithSource, TextDocumentsWithSourceSeq}
-import org.jpablo.typeexplorer.shared.inheritance.InheritanceDiagram
-import org.jpablo.typeexplorer.shared.inheritance.Related
-import org.jpablo.typeexplorer.shared.models.Symbol
-import org.jpablo.typeexplorer.shared.models.Namespace
+import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, Related}
+import org.jpablo.typeexplorer.shared.models.{Symbol, Namespace}
 import org.jpablo.typeexplorer.shared.webApp.InheritanceReq
 import org.jpablo.typeexplorer.ui.app.components.DiagramType
 import org.jpablo.typeexplorer.ui.app.Path
@@ -24,9 +22,9 @@ def fetchBase(path: String): FetchEventStreamBuilder =
   Fetch.get(basePath + path)
 
 
-def fetchDocuments(projectPath: Signal[Path]): EventStream[List[TextDocumentsWithSource]] =
+def fetchDocuments($projectPath: Signal[Path]): EventStream[List[TextDocumentsWithSource]] =
   for
-    path <- projectPath
+    path <- $projectPath
     lst <-
       if path.toString.isEmpty then
         EventStream.fromValue(List.empty)
@@ -38,9 +36,9 @@ def fetchDocuments(projectPath: Signal[Path]): EventStream[List[TextDocumentsWit
     lst
 
 
-def fetchClasses(projectPath: Signal[Path]): EventStream[InheritanceDiagram] =
+def fetchClasses($projectPath: Signal[Path]): EventStream[InheritanceDiagram] =
   for
-    path     <- projectPath
+    path     <- $projectPath
     response <- fetchBase("classes?path=" + path).text
     classes  <- EventStream.fromTry {
       response.data
@@ -62,10 +60,10 @@ def fetchInheritanceSVGDiagram(projectPath: Path, symbols: Set[(Symbol, Set[Rela
       parser.parseFromString(fetchResponse.data, dom.MIMEType.`image/svg+xml`).documentElement
     }
 
-def fetchCallGraphSVGDiagram(diagram: Signal[(DiagramType, Path)]): EventStream[dom.Element] =
+def fetchCallGraphSVGDiagram($diagram: Signal[(DiagramType, Path)]): EventStream[dom.Element] =
   val parser = dom.DOMParser()
   for
-    (diagramType, path) <- diagram
+    (diagramType, path) <- $diagram
     doc <- if path.toString.isEmpty
     then
       EventStream.fromValue(div().ref)

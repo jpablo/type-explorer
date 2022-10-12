@@ -133,7 +133,7 @@ case class InheritanceDiagram(
     }
 
   /** Combines the diagram on the left with the diagram on the right.
-    * No new arrows are introduce beyond those present in both diagrams.
+    * No new arrows are introduced beyond those present in both diagrams.
     */
   def ++ (other: InheritanceDiagram): InheritanceDiagram =
     InheritanceDiagram(
@@ -159,7 +159,7 @@ case class InheritanceDiagram(
     */
   def filterSymbols(symbols: Set[(Symbol, Set[Related])]): InheritanceDiagram =
     val initial = subdiagram(symbols.map(_._1))
-    val disjoint = symbols.map(findRelated).foldLeft(initial)( _ ++ _)
+    val disjoint = symbols.map(findRelated).foldLeft(initial)(_ ++ _)
     subdiagram(disjoint.symbols)
 
 
