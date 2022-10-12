@@ -13,21 +13,21 @@ import com.raquo.airstream.core.EventStream
 import org.scalajs.dom
 
 object TopLevel:
-  val $newDiagramType = EventBus[DiagramType]
-  val $selectedUri    = EventBus[Path]
-  val selectedSymbol  = SelectedSymbols()
-  val projectPath     = storedString("projectPath", initial = "")
-  val $projectPath    = projectPath.signal.map(Path.apply)
-  val $documents      = fetchDocuments($projectPath)
-  val $classes        = fetchClasses($projectPath)
-  val $inheritance    = 
-    selectedSymbolToDiagram(
-      selectedSymbol.symbols.signal, 
-      selectedSymbol.options.signal, 
-      $projectPath
-    )
-
   def topLevel: Div =
+    val $newDiagramType = EventBus[DiagramType]
+    val $selectedUri    = EventBus[Path]
+    val selectedSymbol  = SelectedSymbols()
+    val projectPath     = storedString("projectPath", initial = "")
+    val $projectPath    = projectPath.signal.map(Path.apply)
+    val $documents      = fetchDocuments($projectPath)
+    val $classes        = fetchClasses($projectPath)
+    val $inheritance    = 
+      selectedSymbolToDiagram(
+        selectedSymbol.symbols.signal, 
+        selectedSymbol.options.signal, 
+        $projectPath
+      )
+
     div(
       idAttr := "te-toplevel",
       appHeader($newDiagramType, projectPath),

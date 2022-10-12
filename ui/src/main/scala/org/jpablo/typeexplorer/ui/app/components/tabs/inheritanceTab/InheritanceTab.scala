@@ -73,8 +73,8 @@ def inheritanceTab(
           controlledCheckbox("fields-checkbox-1", "fields", _.fields, modifySelection(_.fields)),
           controlledCheckbox("fields-checkbox-2", "signatures", _.signatures, modifySelection(_.signatures)),
           
-          button( tpe := "button", cls := "btn btn-outline-secondary", "fit"),
-          button( tpe := "button", cls := "btn btn-outline-secondary", "zoom")
+          button( tpe := "button", cls := "btn btn-outline-secondary", disabled := true, "fit"),
+          button( tpe := "button", cls := "btn btn-outline-secondary", disabled := true, "zoom")
         )
       )
     ),

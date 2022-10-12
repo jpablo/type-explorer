@@ -28,6 +28,7 @@ object PlantumlInheritance:
     )
 
   // ----------------------------------------------------
+  
   private def renderTree(options: Options): FileTree[Namespace] => String =
     case FileTree.Directory(name, contents) =>
       s"""
@@ -47,11 +48,21 @@ object PlantumlInheritance:
       case NamespaceKind.Trait         => """ << (T, pink) >>"""
       case NamespaceKind.Class         => ""
       case other                       => s""" <<$other>>"""
-    val fields = if options.fields then ns.methods.map(renderField).mkString(" {\n", "\n", "\n}\n") else ""
+    val fields = 
+      if options.fields then 
+        if options.signatures then
+          ns.methods.map(renderField(0)).mkString(" {\n", "\n", "\n}\n") 
+        else
+          ns.methods
+          .groupBy(_.displayName)
+          .map((_, ms) => renderField(ms.length)(ms.head)).mkString(" {\n", "\n", "\n}\n") 
+      else 
+        ""
     header + stereotype + fields
 
-  private def renderField(m: Method): String =
-    s"""  ${m.displayName} ${m.returnType.map(o => " : " + o.displayName).getOrElse("")}  \n' ${m.symbol} """
+  private def renderField(count: Int)(m: Method): String =
+    val countStr = if count > 1 then s"($count)" else ""
+    s"""  ${m.displayName}$countStr ${m.returnType.map(o => " : " + o.displayName).getOrElse("")}  \n' ${m.symbol} """
 
 
 
