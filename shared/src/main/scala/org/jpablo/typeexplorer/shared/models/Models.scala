@@ -12,8 +12,7 @@ enum NamespaceKind:
   case Other(name: String)
 
 object NamespaceKind:
-  given JsonEncoder[NamespaceKind] = DeriveJsonEncoder.gen
-  given JsonDecoder[NamespaceKind] = DeriveJsonDecoder.gen
+  given JsonCodec[NamespaceKind] = DeriveJsonCodec.gen
 
 opaque type Symbol = String
 
@@ -21,8 +20,7 @@ object Symbol:
   def apply(value: String): Symbol = value
   def empty: Symbol = ""
   extension (s: Symbol) def toString: String = s
-  given JsonEncoder[Symbol] = JsonEncoder.string
-  given JsonDecoder[Symbol] = JsonDecoder.string
+  given JsonCodec[Symbol] = JsonCodec.string
 
 
 case class Package(name: String)
@@ -36,8 +34,7 @@ case class Namespace(
 )
 
 object Namespace:
-  given JsonEncoder[Namespace] = DeriveJsonEncoder.gen
-  given JsonDecoder[Namespace] = DeriveJsonDecoder.gen
+  given JsonCodec[Namespace] = DeriveJsonCodec.gen
 
 
 case class Method(symbol: Symbol, displayName: String, returnType: Option[Namespace])
@@ -47,6 +44,5 @@ object Method:
   def apply(name: String, returnType: Option[Namespace] = None): Method =
     Method(Symbol(name), name, returnType)
 
-  given JsonEncoder[Method] = DeriveJsonEncoder.gen
-  given JsonDecoder[Method] = DeriveJsonDecoder.gen
+  given JsonCodec[Method] = DeriveJsonCodec.gen
 

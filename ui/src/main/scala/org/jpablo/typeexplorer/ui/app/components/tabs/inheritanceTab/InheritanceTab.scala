@@ -1,41 +1,51 @@
 package org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab
 
-import com.raquo.laminar.api.L.*
-import com.raquo.laminar.nodes.ChildNode
-import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
-import org.jpablo.typeexplorer.shared.inheritance.InheritanceDiagram
-import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.InheritanceTree
-import org.scalajs.dom
 
-import org.jpablo.typeexplorer.shared.models
-import com.raquo.airstream.core.EventStream
-import com.raquo.airstream.core.Signal
-import org.jpablo.typeexplorer.shared.models
-import org.jpablo.typeexplorer.shared.models
-import com.raquo.airstream.core.Observer
-import org.jpablo.typeexplorer.shared.models
-import org.jpablo.typeexplorer.shared.models
+import com.raquo.airstream.core.{Signal, EventStream, Observer}
 import com.raquo.airstream.eventbus.WriteBus
 import com.raquo.airstream.state.StrictSignal
-import org.jpablo.typeexplorer.ui.app.components.state.SelectedSymbols
 import com.raquo.domtypes.generic.codecs.StringAsIsCodec
+import com.raquo.laminar.api.L.*
+import com.raquo.laminar.nodes.ChildNode
+import com.softwaremill.quicklens.*
+import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
+import org.jpablo.typeexplorer.shared.inheritance.InheritanceDiagram
+import org.jpablo.typeexplorer.shared.inheritance.PlantumlInheritance.Options
+import org.jpablo.typeexplorer.ui.app.components.state.SelectedSymbols
+import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.InheritanceTree
+import org.scalajs.dom
 
 def svgToLaminar(svg: dom.Element) =
   new ChildNode[dom.Element] { val ref = svg }
 
+
 def inheritanceTab(
   $svgDiagram    : EventStream[dom.Element],
   $diagrams      : EventStream[InheritanceDiagram],
-  selectedSymbol : SelectedSymbols
+  selectedSymbol : SelectedSymbols,
 ) =
   val autocomplete = customProp("autocomplete", StringAsIsCodec)
   val $filter = Var("")
+  val modifySelection = modifyLens[Options]
   val $filteredDiagrams = 
     $diagrams.toSignal(InheritanceDiagram.empty)
       .combineWith($filter.signal)
       .changes
       .map((event, w) => if w.isBlank then event else event.filterBySymbols(w))
 
+
+  def controlledCheckbox(id: String, labelStr: String, field: Options => Boolean, modifyField: PathLazyModify[Options, Boolean]) =
+    List(
+      input( tpe := "checkbox", cls := "btn-check", idAttr := id, autocomplete := "off",
+        controlled(
+          checked <-- selectedSymbol.options.signal.map(field),
+          onClick.mapToChecked --> selectedSymbol.options.updater[Boolean]((options, b) => modifyField.setTo(b)(options))
+        )
+      ),
+      label(cls := "btn btn-outline-primary", forId := id, labelStr)
+    )
+
+  // -------------- render --------------------------------
   div( cls := "text-document-areas",
 
     form(cls := "inheritance-tree-search",
@@ -60,12 +70,9 @@ def inheritanceTab(
           cls := "btn-group btn-group-sm me-2",
           role := "group",
           // ariaLabel := "First group",
-          input( tpe := "checkbox", cls := "btn-check", idAttr := "1", autocomplete := "off"),
-          label( cls := "btn btn-outline-primary", forId := "1", "fields"),
+          controlledCheckbox("fields-checkbox-1", "fields", _.fields, modifySelection(_.fields)),
+          controlledCheckbox("fields-checkbox-2", "signatures", _.signatures, modifySelection(_.signatures)),
           
-          input( tpe := "checkbox", cls := "btn-check", idAttr := "2", autocomplete := "off"),
-          label( cls := "btn btn-outline-primary", forId := "2", "signatures"),
-
           button( tpe := "button", cls := "btn btn-outline-secondary", "fit"),
           button( tpe := "button", cls := "btn btn-outline-secondary", "zoom")
         )

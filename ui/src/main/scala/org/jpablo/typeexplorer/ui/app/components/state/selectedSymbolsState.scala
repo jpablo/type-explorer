@@ -9,10 +9,12 @@ import org.jpablo.typeexplorer.ui.app.*
 import org.jpablo.typeexplorer.ui.app.client.fetchInheritanceSVGDiagram
 import org.jpablo.typeexplorer.shared.models.Symbol
 import com.raquo.airstream.core.EventStream
+import org.jpablo.typeexplorer.shared.inheritance.PlantumlInheritance.Options
 
 
 case class SelectedSymbols(
-  symbols: Var[Map[Symbol, Selection]] = Var(Map.empty)
+  symbols: Var[Map[Symbol, Selection]] = Var(Map.empty),
+  options: Var[Options] = Var(Options())
 ):
   lazy val signal = symbols.signal
   def updater[A]  = symbols.updater[A]
@@ -31,9 +33,13 @@ case class State2(
   symbols: Map[Symbol, Selection] = Map.empty
 )
 
-def selectedSymbolToDiagram(selected: Signal[Map[Symbol, Selection]], $projectPath: Signal[Path]): EventStream[dom.Element] =
-  val requestBody =
-    selected.changes.map { symbols =>
+def selectedSymbolToDiagram(
+  $selected    : Signal[Map[Symbol, Selection]], 
+  $options     : Signal[Options],
+  $projectPath : Signal[Path]
+): EventStream[dom.Element] =
+  val $requestBody =
+    $selected.changes.map { symbols =>
       symbols.transform { (symbol, selection) => selection match
         case Selection(true, false, false) => Set.empty
         case Selection(_   , true , false) => Set(Related.Parents)
@@ -44,7 +50,7 @@ def selectedSymbolToDiagram(selected: Signal[Map[Symbol, Selection]], $projectPa
     }
   
   $projectPath
-    .combineWith(requestBody.toSignal(Set.empty))
+    .combineWith($requestBody.toSignal(Set.empty), $options)
     .changes
     .flatMap(fetchInheritanceSVGDiagram)
 

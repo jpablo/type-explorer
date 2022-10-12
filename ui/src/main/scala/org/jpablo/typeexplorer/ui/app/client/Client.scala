@@ -14,7 +14,7 @@ import org.jpablo.typeexplorer.shared.models.{Symbol, Namespace}
 import org.jpablo.typeexplorer.shared.webApp.InheritanceReq
 import org.jpablo.typeexplorer.ui.app.components.DiagramType
 import org.jpablo.typeexplorer.ui.app.Path
-
+import org.jpablo.typeexplorer.shared.inheritance.PlantumlInheritance.Options
 
 val basePath = "http://localhost:8090/" 
 
@@ -49,12 +49,12 @@ def fetchClasses($projectPath: Signal[Path]): EventStream[InheritanceDiagram] =
   yield
     classes
 
-def fetchInheritanceSVGDiagram(projectPath: Path, symbols: Set[(Symbol, Set[Related])]): EventStream[dom.Element] =
+def fetchInheritanceSVGDiagram(projectPath: Path, symbols: Set[(Symbol, Set[Related])], options: Options): EventStream[dom.Element] =
   val parser = dom.DOMParser()
   if projectPath.toString.isEmpty then 
     EventStream.fromValue(div().ref)
   else
-    val body = InheritanceReq(List(projectPath.toString), symbols)
+    val body = InheritanceReq(List(projectPath.toString), symbols, InheritanceReq.Config(options.fields, options.signatures))
     val req  = Fetch.post(basePath + "inheritance", body.toJson)
     req.text.map { fetchResponse =>
       parser.parseFromString(fetchResponse.data, dom.MIMEType.`image/svg+xml`).documentElement

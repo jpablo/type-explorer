@@ -2,10 +2,10 @@ import org.scalajs.linker.interface.ModuleSplitStyle
 
 val scala3Version     = "3.2.0"
 val scalametaVersion  = "4.5.9"
-val zioHttpVersion    = "2.0.0-RC8+1-6d179026-SNAPSHOT"
-val zioJsonVersion    = "0.3.0-RC8"
-val zioPreludeVersion = "1.0.0-RC14"
-val zioVersion        = "2.0.0-RC6"
+val zioHttpVersion    = "2.0.0-RC11+9-b95c109e-SNAPSHOT"
+val zioJsonVersion    = "0.3.0"
+val zioPreludeVersion = "1.0.0-RC16"
+val zioVersion        = "2.0.2"
 
 // TODO:
 // - Maybe create a plugin to correctly set semanticdbTargetRoot for each subproject?
@@ -29,7 +29,7 @@ ThisBuild / scalacOptions ++= // Scala 3.x options
     "-Ysafe-init",
     "-language:implicitConversions",
     "-source:future",
-    "-deprecation"
+    "-deprecation",
   )
 
 lazy val protos =
@@ -120,6 +120,7 @@ lazy val backend =
       "com.lihaoyi"              %% "scalatags"         % "0.11.1"         cross CrossVersion.for3Use2_13,
       "org.scalameta"            %% "scalameta"         % scalametaVersion cross CrossVersion.for3Use2_13,
       // "com.softwaremill.quicklens" %% "quicklens" % "1.7.5",
+       "io.github.arainko"       %% "ducktape"          % "0.1.0-RC2"
       ),
       excludeDependencies ++= Seq(
         "com.thesamet.scalapb"   %% "scalapb-runtime",
@@ -167,7 +168,7 @@ lazy val ui =
 
         "com.softwaremill.quicklens" %%% "quicklens" % "1.9.0",
 
-        "org.scalameta" %%% "scalameta"         % scalametaVersion cross CrossVersion.for3Use2_13
+        "org.scalameta" %%% "scalameta"         % scalametaVersion cross CrossVersion.for3Use2_13,
 
 //        "io.frontroute" %%% "frontroute" % "0.14.0"
       ),

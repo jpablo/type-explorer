@@ -20,7 +20,12 @@ object TopLevel:
   val $projectPath    = projectPath.signal.map(Path.apply)
   val $documents      = fetchDocuments($projectPath)
   val $classes        = fetchClasses($projectPath)
-  val $inheritance    = selectedSymbolToDiagram(selectedSymbol.symbols.signal, $projectPath)
+  val $inheritance    = 
+    selectedSymbolToDiagram(
+      selectedSymbol.symbols.signal, 
+      selectedSymbol.options.signal, 
+      $projectPath
+    )
 
   def topLevel: Div =
     div(

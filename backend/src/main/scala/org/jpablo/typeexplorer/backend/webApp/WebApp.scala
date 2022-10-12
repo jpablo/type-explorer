@@ -1,6 +1,5 @@
 package org.jpablo.typeexplorer.backend.webApp
 
-import org.jpablo.typeexplorer.backend.backends.plantuml.PlantumlInheritance
 import org.jpablo.typeexplorer.backend.semanticdb.All
 import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, InheritanceExamples, Related}
 import org.jpablo.typeexplorer.shared.models
@@ -23,9 +22,10 @@ import zhttp.service.Server
 import zio.*
 import zio.json.*
 import zio.prelude.AnySyntax
-import org.jpablo.typeexplorer.backend.backends.plantuml.PlantUML
+import org.jpablo.typeexplorer.shared.inheritance.{PlantUML, PlantumlInheritance}
 import org.jpablo.typeexplorer.shared.models
-
+import io.github.arainko.ducktape.*
+import org.jpablo.typeexplorer.backend.backends.plantuml.toSVG
 
 object WebApp extends ZIOAppDefault:
 
@@ -38,13 +38,14 @@ object WebApp extends ZIOAppDefault:
       def reqToDiagram(ireq: InheritanceReq) : Option[PlantUML] =
         for
           docs <- readTextDocumentsWithSource(Some(ireq.paths))
-          diagram = InheritanceDiagram.fromTextDocuments <|: toTextDocuments <|: docs
-          puml = PlantumlInheritance.fromInheritanceDiagram <|: diagram.filterSymbols <|: ireq.symbols
+          diagram = InheritanceDiagram.fromTextDocuments(toTextDocuments(docs))
+          opts = ireq.options.to[PlantumlInheritance.Options]
+          puml = PlantumlInheritance.fromInheritanceDiagram(diagram.filterSymbols(ireq.symbols), opts)
         yield 
           puml
 
       for
-        body <- req.bodyAsString
+        body <- req.body.asString
         ireq <- ZIO.from(body.fromJson[InheritanceReq]).mapError(Throwable(_))
         puml <- ZIO.from(reqToDiagram(ireq)).mapError(_ => Throwable("No path provided"))
       yield
@@ -57,9 +58,7 @@ object WebApp extends ZIOAppDefault:
     case req @ Method.GET -> !! / "semanticdb" =>
       (req |> getPath |> readTextDocumentsWithSource)
         .map(_.toByteArray)
-        .map(Chunk.fromArray)
-        .map(HttpData.fromChunk)
-        .map(d => Response(data = d))
+        .map(arr => Response(body = Body.fromChunk(Chunk.fromArray(arr))))
         .getOrElse(badRequest)
 
     case req @ Method.GET -> !! / "semanticdb.json" =>

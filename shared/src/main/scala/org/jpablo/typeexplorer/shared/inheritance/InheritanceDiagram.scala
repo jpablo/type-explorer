@@ -20,8 +20,8 @@ enum Related:
   case Parents, Children
 
 object Related:
-  given JsonEncoder[Related] = JsonEncoder[String].contramap(_.toString)
-  given JsonDecoder[Related] = JsonDecoder[String].map(Related.valueOf)
+  given JsonCodec[Related] = 
+    JsonCodec(JsonEncoder[String].contramap(_.toString), JsonDecoder[String].map(Related.valueOf))
 
 
 import Related.*
@@ -175,8 +175,7 @@ end InheritanceDiagram
 
 object InheritanceDiagram:
 
-  given JsonEncoder[InheritanceDiagram] = DeriveJsonEncoder.gen
-  given JsonDecoder[InheritanceDiagram] = DeriveJsonDecoder.gen
+  given JsonCodec[InheritanceDiagram] = DeriveJsonCodec.gen
 
   // In Scala 3.2 the type annotation is needed.
   val empty: InheritanceDiagram = new InheritanceDiagram(Set.empty)

@@ -16,6 +16,7 @@ object ModelsSpec extends ZIOSpecDefault {
       assertTrue(Parents.toJson == """"Parents"""") &&
       assertTrue(Children.toJson == """"Children"""")
     },
+
     test("Serialize InheritanceReq") {
       val json = """
       {
@@ -23,15 +24,39 @@ object ModelsSpec extends ZIOSpecDefault {
             "/Users/jpablo/GitHub/Airstream"
           ],
           "symbols": [
-            ["com%2Fraquo%2Fairstream%2Fcore%2FWritableEventStream%23", ["Parents", "Children"]]
+            ["com/raquo/airstream/core/EventStream#", ["Parents", "Children"]]
+          ],
+          "options": {
+              "fields": false,
+              "signatures": false
+          }
+      }      
+      """
+      val expected = 
+        InheritanceReq(
+          List("/Users/jpablo/GitHub/Airstream"),
+          Set(models.Symbol("com/raquo/airstream/core/EventStream#") -> Set(Parents, Children))
+        )
+
+      assertTrue(json.fromJson[InheritanceReq] == Right(expected))
+    },
+
+    test("Serialize InheritanceReq without options") {
+      val json = """
+      {
+          "paths": [
+            "/Users/jpablo/GitHub/Airstream"
+          ],
+          "symbols": [
+            ["com/raquo/airstream/core/EventStream#", ["Parents", "Children"]]
           ]
       }      
       """
-
-      val expected = InheritanceReq(
-        List("/Users/jpablo/GitHub/Airstream"),
-        Set(models.Symbol("com%2Fraquo%2Fairstream%2Fcore%2FWritableEventStream%23") -> Set(Parents, Children))
-      )
+      val expected = 
+        InheritanceReq(
+          List("/Users/jpablo/GitHub/Airstream"),
+          Set(models.Symbol("com/raquo/airstream/core/EventStream#") -> Set(Parents, Children))
+        )
 
       assertTrue(json.fromJson[InheritanceReq] == Right(expected))
     }
