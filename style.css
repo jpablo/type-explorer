@@ -11,6 +11,14 @@ a {
     text-decoration: none;
 }
 
+.hide {
+  display: none;
+}
+
+.show-inline {
+  display: inline;
+}
+
 #app {
     height: 100vh;
 }
@@ -34,6 +42,7 @@ a {
 
 
 /* -------- tabs ------------- */
+
 .te-tabs-container {
     flex: 1;
     grid-area: te-tabs-container;
@@ -95,13 +104,18 @@ a {
 
 #inheritance-tab-pane > .text-document-areas {
   grid-template-columns: 1fr 4fr;
-  grid-template-rows: 4em auto;
+  grid-template-rows: 2em auto;
 }
 
 #inheritance-tab-pane > .text-document-areas > .inheritance-tree-search {
   grid-column: 1;
   grid-row: 1;
   padding: 5px;
+}
+
+.inheritance-tree-search > input {
+  font-size: x-small;
+  padding: 2px 5px;
 }
 
 #inheritance-tab-pane > .text-document-areas > .structure {
@@ -115,6 +129,15 @@ a {
   border-left: 1px solid lightgray;
   padding: 5px;
 }
+
+#inheritance-tab-pane .inheritance-namespace-selection:hover {
+  display: inline;
+}
+
+#inheritance-tab-pane .inheritance-namespace-symbol:hover + div {
+  display: inline;
+}
+/* --------------    */
 
 #semanticdb-tab-pane > .text-document-areas {
   grid-template-columns: 1fr 1fr 1fr;

@@ -9,6 +9,7 @@ import com.raquo.laminar.nodes.ReactiveHtmlElement
 import com.softwaremill.quicklens.*
 import org.scalajs.dom.html
 import scalajs.js.URIUtils.encodeURIComponent
+import scalajs.js
 
 import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
 import org.jpablo.typeexplorer.shared.fileTree.FileTree
@@ -40,10 +41,16 @@ object InheritanceTree:
     val $selection = 
       selectedSymbols.signal.map(_.getOrElse(ns.symbol, Selection.empty))
 
-    def controlledCheckbox(field: Selection => Boolean, modifyField: PathLazyModify[Selection, Boolean]) = 
+    def controlledCheckbox(field: Selection => Boolean, modifyField: PathLazyModify[Selection, Boolean], title: String) = 
       input(
         cls := "form-check-input mt-0", 
         tpe := "checkbox", 
+        dataAttr("bs-toggle")  := "tooltip",
+        dataAttr("bs-trigger") := "hover",
+        dataAttr("bs-title")   := title,
+        onMountCallback(ctx => 
+          js.Dynamic.newInstance(js.Dynamic.global.bootstrap.Tooltip)(ctx.thisNode.ref)
+        ),
         controlled(
           checked <-- $selection.map(field), 
           onClick.mapToChecked --> 
@@ -58,19 +65,22 @@ object InheritanceTree:
         )
       )
       
+    val $isSelected = $selection.map(!_.allEmpty)
     collapsable2(
       branchLabel =
         div(
           display := "inline",
           stereotype(ns),
           span(" "),
-          a(href := "#elem_" + uri, title := ns.symbol.toString, ns.displayName),
-          span(" "),
-          controlledCheckbox(_.current, modifySelection(_.current)),
-          span(" "),
-          controlledCheckbox(_.parents, modifySelection(_.parents)),
-          span(" "),
-          controlledCheckbox(_.children, modifySelection(_.children)),
+          a(cls := "inheritance-namespace-symbol", href := "#elem_" + uri, title := ns.symbol.toString, ns.displayName),
+          div( cls := "inheritance-namespace-selection hide", cls.toggle("show-inline", "hide") <-- $isSelected,
+            span(" "),
+            controlledCheckbox(_.current, modifySelection(_.current), "current"),
+            span(" "),
+            controlledCheckbox(_.parents, modifySelection(_.parents), "parents"),
+            span(" "),
+            controlledCheckbox(_.children, modifySelection(_.children), "children"),
+          )
         ),
       contents =
         ns.methods.map(m => a(m.displayName, title := m.symbol.toString))

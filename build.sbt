@@ -103,7 +103,7 @@ lazy val backend =
     .settings(
       name := "type-explorer-backend",
       version := "0.1.0",
-      mainClass in reStart := Some("org.jpablo.typeexplorer.backend.webApp.WebApp"),
+      reStart / mainClass := Some("org.jpablo.typeexplorer.backend.webApp.WebApp"),
       libraryDependencies ++= Seq(
       "dev.zio"                  %% "zio"               % zioVersion,
       "dev.zio"                  %% "zio-json"          % zioJsonVersion,
@@ -138,6 +138,7 @@ lazy val ui =
     .in(file("ui"))
     .dependsOn(shared.js, protos.js)
     .enablePlugins(ScalaJSPlugin)
+    // .enablePlugins(ScalablyTypedConverterPlugin)
     .settings(
       scalaJSUseMainModuleInitializer := true,
       scalaJSLinkerConfig ~= {
@@ -149,6 +150,10 @@ lazy val ui =
         //scala.sys.process.Process(List("npm", "install", "--silent", "--no-audit", "--no-fund"), baseDirectory.value).!
         baseDirectory.value
       },
+
+      // Compile / npmDependencies ++= Seq(
+      //   "@types/bootstrap" -> "5.2.2"
+      // ),
 
       libraryDependencies ++= Seq(
         "dev.zio"       %%% "zio"               % zioVersion,
