@@ -38,7 +38,7 @@ def inheritanceTab(
 
     form(cls := "inheritance-tree-search",
       input(
-        cls := "form-control input-sm",
+        cls := "form-control form-control-sm",
         tpe := "search",
         placeholder := "filter",
         controlled(value <-- $filter, onInput.mapToValue --> $filter)
