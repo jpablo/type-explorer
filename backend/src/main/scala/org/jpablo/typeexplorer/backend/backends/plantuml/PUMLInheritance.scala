@@ -10,17 +10,29 @@ import java.io.ByteArrayOutputStream
 import java.nio.charset.Charset
 import java.nio.file
 import scala.meta.internal.semanticdb.{TextDocuments, TypeSignature}
+import scala.util.Using
+import zio.*
+import scala.util.Try
+import zio.ZIO.ZIOConstructor
 
+
+type SvgText = String
 
 extension (puml: PlantUML)
-  def toSVG(name: String): String =
-    val reader = new SourceStringReader(puml.diagram)
-    val os = new ByteArrayOutputStream
-    // Write the first image to "os"
-    val desc: String = reader.generateImage(os, new FileFormatOption(FileFormat.SVG))
-    os.close()
-    // The XML is stored into svg
-    new String(os.toByteArray, Charset.forName("UTF-8"))
+  def toSVG(name: String): Task[String] =
+    for
+      reader <- ZIO.from(SourceStringReader(puml.diagram))
+      createStream = ZIO.succeed(new ByteArrayOutputStream)
+      svg <-
+        ZIO.acquireReleaseWith(createStream)(os => ZIO.succeed(os.close)) { os => 
+          ZIO.attemptBlocking {
+            reader.outputImage(os, FileFormatOption(FileFormat.SVG))
+            os.toString(Charset.defaultCharset())
+          }
+        }
+    yield
+      svg
+
 
 
 @main

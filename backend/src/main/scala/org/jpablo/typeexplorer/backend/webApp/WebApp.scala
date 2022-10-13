@@ -35,9 +35,9 @@ object WebApp extends ZIOAppDefault:
   val appZ = Http.collectZIO[Request] {
     case req @ Method.POST -> !! / "inheritance" =>
 
-      def reqToDiagram(ireq: InheritanceReq) : Option[PlantUML] =
+      def reqToDiagram(ireq: InheritanceReq) =
         for
-          docs <- readTextDocumentsWithSource(Some(ireq.paths))
+          docs <- ZIO.from(readTextDocumentsWithSource(Some(ireq.paths))).mapError(_ => Throwable("No path provided"))
           diagram = InheritanceDiagram.fromTextDocuments(toTextDocuments(docs))
           opts = ireq.options.to[PlantumlInheritance.Options]
           puml = PlantumlInheritance.fromInheritanceDiagram(diagram.filterSymbols(ireq.symbols), opts)
@@ -47,9 +47,10 @@ object WebApp extends ZIOAppDefault:
       for
         body <- req.body.asString
         ireq <- ZIO.from(body.fromJson[InheritanceReq]).mapError(Throwable(_))
-        puml <- ZIO.from(reqToDiagram(ireq)).mapError(_ => Throwable("No path provided"))
+        puml <- reqToDiagram(ireq)
+        svgText <- puml.toSVG("laminar")
       yield
-        Response.text(puml.toSVG("laminar")).withContentType("image/svg+xml")
+        Response.text(svgText).withContentType("image/svg+xml")
   } @@ cors(corsConfig)
 
 
