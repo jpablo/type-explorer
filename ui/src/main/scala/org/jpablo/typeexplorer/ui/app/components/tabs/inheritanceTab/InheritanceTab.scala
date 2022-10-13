@@ -70,7 +70,7 @@ def inheritanceTab(
           cls := "btn-group btn-group-sm me-2",
           role := "group",
           // ariaLabel := "First group",
-          controlledCheckbox("fields-checkbox-1", "fields", _.fields, modifySelection(_.fields)),
+          controlledCheckbox("fields-checkbox-1", "fields",     _.fields,     modifySelection(_.fields)),
           controlledCheckbox("fields-checkbox-2", "signatures", _.signatures, modifySelection(_.signatures)),
           
           button( tpe := "button", cls := "btn btn-outline-secondary", disabled := true, "fit"),

@@ -4,6 +4,7 @@ import com.raquo.laminar.api.L.*
 import org.scalajs.dom
 import org.jpablo.typeexplorer.ui.bootstrap.{dropdown, navbar}
 import io.laminext.core.*
+import io.laminext.syntax.core.*
 
 
 enum DiagramType:
@@ -13,10 +14,23 @@ enum DiagramType:
 import DiagramType.*
 
 def appHeader(selection: EventBus[DiagramType], projectPath: StoredString) =
-  val onEnterPress = onKeyPress.filter(_.keyCode == dom.ext.KeyCode.Enter)
+  val onEnterPress  = onKeyPress.filter(_.keyCode == dom.ext.KeyCode.Enter)
   val onEscapePress = onKeyDown.filter(_.keyCode == dom.ext.KeyCode.Escape)
-  val editBasePath = Var(false)
-
+  val editBasePath  = Var(false)
+  // a() --[a:onClick ==> editBasePath = true]--> input() --[input:onEnterPress|onEscapePress ==> editBasePath = false]--> a()
+  val searchInput = 
+    input(
+      cls := "form-control me-2",
+      tpe := "search",
+      onMountFocus,
+      value <-- projectPath.signal,
+      onEnterPress.preventDefault.mapToValue --> { v => 
+        projectPath.set(v)
+        editBasePath.set(false)
+      },
+      onEscapePress.mapTo(false) --> editBasePath,
+    )
+  // ------- render -------
   div(
     idAttr := "te-header",
     navbar(
@@ -27,45 +41,29 @@ def appHeader(selection: EventBus[DiagramType], projectPath: StoredString) =
       li(cls := "nav-item", span(cls := "nav-link", b("base path:"))),
 
       li(cls := "nav-item", 
-        children <-- editBasePath.signal.map { edit =>
-          val searchInput = 
-            input(
-              cls := "form-control me-2",
-              tpe := "search",
-              onMountFocus,
-              onEnterPress.preventDefault.mapToValue --> { v => 
-                projectPath.set(v)
-                editBasePath.set(false)
+        editBasePath.signal.childWhenTrue {
+          form(
+            cls := "d-flex me-2",
+            searchInput,
+            button(
+              cls := "btn btn-sm btn-outline-success", 
+              tpe := "button", 
+              onClick.mapTo(false) --> { b => 
+                projectPath.set(searchInput.ref.value)
+                editBasePath.set(b)
               },
-              onEscapePress.mapTo(false) --> editBasePath,
-              value <-- projectPath.signal
+              "Ok"
             )
+          )
+        },
 
-          if edit then 
-            List(
-              form(
-                cls := "d-flex me-2",
-                searchInput,
-                button(
-                  cls := "btn btn-sm btn-outline-success", 
-                  tpe := "button", 
-                  onClick.mapTo(false) --> { b => 
-                    projectPath.set(searchInput.ref.value)
-                    editBasePath.set(b)
-                  },
-                  "Ok"
-                )
-              )
-            )
-          else
-            List(
-              a(
-                cls := "nav-link base-path", 
-                href := "#", 
-                child.text <-- projectPath.signal,
-                onClick.mapTo(true) --> editBasePath
-              )
-            )
+        editBasePath.signal.childWhenFalse {
+          a(
+            cls := "nav-link base-path", 
+            href := "#", 
+            child.text <-- projectPath.signal,
+            onClick.mapTo(true) --> editBasePath
+          )
         }
       ),
     ),

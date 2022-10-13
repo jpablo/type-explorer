@@ -1,20 +1,23 @@
 package org.jpablo.typeexplorer.backend.webApp
 
+import org.jpablo.typeexplorer.backend.backends.plantuml.toSVG
 import org.jpablo.typeexplorer.backend.semanticdb.All
 import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, InheritanceExamples, Related}
+import org.jpablo.typeexplorer.shared.inheritance.{PlantUML, PlantumlInheritance}
 import org.jpablo.typeexplorer.shared.models
-import org.jpablo.typeexplorer.shared.webApp.InheritanceReq
+import org.jpablo.typeexplorer.shared.models
 import org.jpablo.typeexplorer.shared.utils.*
+import org.jpablo.typeexplorer.shared.webApp.InheritanceReq
 
+import io.github.arainko.ducktape.*
 import java.net.URI
 import java.nio.file
-import scala.util.Using
 import org.jpablo.typeexplorer.protos.{TextDocumentsWithSource, TextDocumentsWithSourceSeq}
 import org.json4s.*
 import org.json4s.native.Serialization
 import org.json4s.native.Serialization.{read, write}
-
 import scala.meta.internal.semanticdb.TextDocuments
+import scala.util.Using
 import zhttp.http.*
 import zhttp.http.Middleware.cors
 import zhttp.http.middleware.Cors.CorsConfig
@@ -22,10 +25,8 @@ import zhttp.service.Server
 import zio.*
 import zio.json.*
 import zio.prelude.AnySyntax
-import org.jpablo.typeexplorer.shared.inheritance.{PlantUML, PlantumlInheritance}
-import org.jpablo.typeexplorer.shared.models
-import io.github.arainko.ducktape.*
-import org.jpablo.typeexplorer.backend.backends.plantuml.toSVG
+import zio.ZIO.ZIOConstructor
+
 
 object WebApp extends ZIOAppDefault:
 
@@ -35,9 +36,9 @@ object WebApp extends ZIOAppDefault:
   val appZ = Http.collectZIO[Request] {
     case req @ Method.POST -> !! / "inheritance" =>
 
-      def reqToDiagram(ireq: InheritanceReq) =
+      def reqToDiagram(ireq: InheritanceReq): Task[PlantUML] =
         for
-          docs <- ZIO.from(readTextDocumentsWithSource(Some(ireq.paths))).mapError(_ => Throwable("No path provided"))
+          docs <- toTask(readTextDocumentsWithSource(Some(ireq.paths)), error = "No path provided")
           diagram = InheritanceDiagram.fromTextDocuments(toTextDocuments(docs))
           opts = ireq.options.to[PlantumlInheritance.Options]
           puml = PlantumlInheritance.fromInheritanceDiagram(diagram.filterSymbols(ireq.symbols), opts)
@@ -46,7 +47,7 @@ object WebApp extends ZIOAppDefault:
 
       for
         body <- req.body.asString
-        ireq <- ZIO.from(body.fromJson[InheritanceReq]).mapError(Throwable(_))
+        ireq <- toTask(body.fromJson[InheritanceReq])
         puml <- reqToDiagram(ireq)
         svgText <- puml.toSVG("laminar")
       yield
@@ -129,6 +130,8 @@ object WebApp extends ZIOAppDefault:
   def getParam(req: Request, name: String) =
     req.url.queryParams.get(name)
 
+  def toTask[A](a: => A, error: String = "")(using ZIOConstructor[Nothing, Any, A], Trace) =
+    ZIO.from(a).mapError(e => Throwable(if error.isEmpty then e.toString else error))
 
   lazy val corsConfig =
     CorsConfig(allowedOrigins = _ => true)

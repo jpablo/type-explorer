@@ -9,19 +9,15 @@ val zioVersion        = "2.0.2"
 
 // TODO:
 // - Maybe create a plugin to correctly set semanticdbTargetRoot for each subproject?
-lazy val projectPath = settingKey[File]("bla bla")
-
-Global / projectPath := (ThisBuild / baseDirectory).value / ".type-explorer/meta"
-
-//Compile / semanticdbTargetRoot := projectPath.value
-
+lazy val projectPath = settingKey[File]("projectPath")
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
-
+Global / projectPath := (ThisBuild / baseDirectory).value / ".type-explorer/meta"
+//Compile / semanticdbTargetRoot := projectPath.value
+// ThisBuild / semanticdbEnabled := true
 ThisBuild / resolvers += "Sonatype OSS Snapshots" at "https://s01.oss.sonatype.org/content/repositories/snapshots"
 ThisBuild / organization := "net.jpablo"
 ThisBuild / scalaVersion := scala3Version
-// ThisBuild / semanticdbEnabled := true
 ThisBuild / semanticdbVersion := scalametaVersion
 ThisBuild / scalacOptions ++= // Scala 3.x options
   Seq(
@@ -58,6 +54,19 @@ lazy val protos =
       scalaJSUseMainModuleInitializer := false
     )
 
+val sharedSettings = Seq(
+  libraryDependencies ++= Seq(
+    "dev.zio" %%% "zio-prelude"       % zioPreludeVersion,
+    "dev.zio" %%% "zio-json"          % zioJsonVersion,
+    "dev.zio" %%% "zio-test"          % zioVersion % "test",
+    "dev.zio" %%% "zio-test-sbt"      % zioVersion % "test",
+    "dev.zio" %%% "zio-test-magnolia" % zioVersion % "test",
+    "com.softwaremill.quicklens" %%% "quicklens" % "1.9.0",
+    "org.scalameta"              %%% "scalameta" % scalametaVersion cross CrossVersion.for3Use2_13
+  ),
+  testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework"),
+)
+
 /**
   * The configuration
   *   {{{ .crossType(CrossType.Pure).in(file("shared")) }}}
@@ -76,22 +85,13 @@ lazy val shared =
     .settings(
       name := "type-explorer-shared",
       version := "0.1.0",
-      libraryDependencies ++= Seq(
-        "dev.zio" %%% "zio-prelude"       % zioPreludeVersion,
-        "dev.zio" %%% "zio-json"          % zioJsonVersion,
-        "dev.zio" %%% "zio-test"          % zioVersion % "test",
-        "dev.zio" %%% "zio-test-sbt"      % zioVersion % "test",
-        "dev.zio" %%% "zio-test-magnolia" % zioVersion % "test",
-
-        "org.scalameta"  %%% "scalameta" % scalametaVersion cross CrossVersion.for3Use2_13
-      ),
       excludeDependencies ++= Seq(
         "org.scala-lang.modules" %% "scala-collection-compat",
         "org.scala-lang.modules" %% "scala-collection-compat_sjs1"
       ),
-      testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework"),
       Compile / semanticdbTargetRoot := projectPath.value
     )
+    .settings(sharedSettings)
     .jsSettings(
       scalaJSUseMainModuleInitializer := false
     )
@@ -105,30 +105,20 @@ lazy val backend =
       version := "0.1.0",
       reStart / mainClass := Some("org.jpablo.typeexplorer.backend.webApp.WebApp"),
       libraryDependencies ++= Seq(
-      "dev.zio"                  %% "zio"               % zioVersion,
-      "dev.zio"                  %% "zio-json"          % zioJsonVersion,
-      "dev.zio"                  %% "zio-test"          % zioVersion % "test",
-      "dev.zio"                  %% "zio-test-sbt"      % zioVersion % "test",
-      "dev.zio"                  %% "zio-test-magnolia" % zioVersion % "test",
-
       "io.d11"                   %% "zhttp"             % zioHttpVersion,
       "org.json4s"               %% "json4s-native"     % "4.0.5",
-
       "guru.nidi"                %  "graphviz-java"     % "0.18.1",
       "net.sourceforge.plantuml" %  "plantuml"          % "1.2022.5",
-
-      "com.lihaoyi"              %% "scalatags"         % "0.11.1"         cross CrossVersion.for3Use2_13,
-      "org.scalameta"            %% "scalameta"         % scalametaVersion cross CrossVersion.for3Use2_13,
-      // "com.softwaremill.quicklens" %% "quicklens" % "1.7.5",
+      "com.lihaoyi"              %% "scalatags"         % "0.11.1" cross CrossVersion.for3Use2_13,
        "io.github.arainko"       %% "ducktape"          % "0.1.0-RC2"
       ),
       excludeDependencies ++= Seq(
         "com.thesamet.scalapb"   %% "scalapb-runtime",
         "org.scala-lang.modules" %% "scala-collection-compat"
       ),
-      testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework"),
       Compile / semanticdbTargetRoot := projectPath.value
     )
+    .settings(sharedSettings)
 
 val publicDev = taskKey[String]("output directory for `npm run dev`")
 val publicProd = taskKey[String]("output directory for `npm run build`")
@@ -146,42 +136,26 @@ lazy val ui =
         _.withModuleKind(ModuleKind.ESModule)
           .withModuleSplitStyle(ModuleSplitStyle.SmallModulesFor(List("testvite")))
       },
-
       externalNpm := {
         //scala.sys.process.Process(List("npm", "install", "--silent", "--no-audit", "--no-fund"), baseDirectory.value).!
         baseDirectory.value
       },
-
       // Compile / npmDependencies ++= Seq(
       //   "@types/bootstrap" -> "5.2.2"
       // ),
-
       libraryDependencies ++= Seq(
-        "dev.zio"       %%% "zio"               % zioVersion,
-        "dev.zio"       %%% "zio-test"          % zioVersion % "test",
-        "dev.zio"       %%% "zio-test-sbt"      % zioVersion % "test",
-        "dev.zio"       %%% "zio-test-magnolia" % zioVersion % "test",
-
         "org.scala-js"  %%% "scalajs-dom"       % "2.0.0",
         "com.raquo"     %%% "laminar"           % "0.14.5",
         "io.laminext"   %%% "fetch"             % "0.14.4",
-
-        "com.softwaremill.quicklens" %%% "quicklens" % "1.9.0",
-
-        "org.scalameta" %%% "scalameta"         % scalametaVersion cross CrossVersion.for3Use2_13,
-
-//        "io.frontroute" %%% "frontroute" % "0.14.0"
       ),
       excludeDependencies ++= Seq(
         "org.scala-lang.modules" %% "scala-collection-compat_sjs1"
       ),
-      testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework"),
-
       publicDev := linkerOutputDirectory((Compile / fastLinkJS).value).getAbsolutePath,
       publicProd := linkerOutputDirectory((Compile / fullLinkJS).value).getAbsolutePath,
-
        Compile / semanticdbTargetRoot := projectPath.value
     )
+    .settings(sharedSettings)
 
 def linkerOutputDirectory(v: Attributed[org.scalajs.linker.interface.Report]): File =
   v.get(scalaJSLinkerOutputDirectory.key).getOrElse {
