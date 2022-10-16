@@ -19,7 +19,7 @@ def svgToLaminar(svg: dom.Element) =
   new ChildNode[dom.Element] { val ref = svg }
 
 
-def inheritanceTab(
+def InheritanceTab(
   $svgDiagram    : EventStream[dom.Element],
   $diagrams      : EventStream[InheritanceDiagram],
   selectedSymbol : SelectedSymbols,
@@ -34,7 +34,7 @@ def inheritanceTab(
       .map((event, w) => if w.isBlank then event else event.filterBySymbols(w))
 
 
-  def controlledCheckbox(id: String, labelStr: String, field: Options => Boolean, modifyField: PathLazyModify[Options, Boolean]) =
+  def ControlledCheckbox(id: String, labelStr: String, field: Options => Boolean, modifyField: PathLazyModify[Options, Boolean]) =
     List(
       input( tpe := "checkbox", cls := "btn-check", idAttr := id, autocomplete := "off",
         controlled(
@@ -70,8 +70,8 @@ def inheritanceTab(
           cls := "btn-group btn-group-sm me-2",
           role := "group",
           // ariaLabel := "First group",
-          controlledCheckbox("fields-checkbox-1", "fields",     _.fields,     modifySelection(_.fields)),
-          controlledCheckbox("fields-checkbox-2", "signatures", _.signatures, modifySelection(_.signatures)),
+          ControlledCheckbox("fields-checkbox-1", "fields",     _.fields,     modifySelection(_.fields)),
+          ControlledCheckbox("fields-checkbox-2", "signatures", _.signatures, modifySelection(_.signatures)),
           
           button( tpe := "button", cls := "btn btn-outline-secondary", disabled := true, "fit"),
           button( tpe := "button", cls := "btn btn-outline-secondary", disabled := true, "zoom")

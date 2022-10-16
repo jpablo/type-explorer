@@ -5,7 +5,7 @@ import scala.meta.internal.semanticdb.{TextDocument, SymbolInformation, SymbolOc
 
 import com.raquo.airstream.core.EventStream
 
-def sourceCodeTab($sourceCode: EventStream[String], position: Option[SymbolOccurrence] = None) =
+def SourceCodeTab($sourceCode: EventStream[String], position: Option[SymbolOccurrence] = None) =
   div(
     pre(
       child.text <-- $sourceCode

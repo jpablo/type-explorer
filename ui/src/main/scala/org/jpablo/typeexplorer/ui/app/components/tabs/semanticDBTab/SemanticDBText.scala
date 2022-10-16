@@ -10,8 +10,7 @@ import scala.meta.internal.semanticdb.TextDocument
 
 object SemanticDBText:
 
-
-  def renderTextDocumentsWithSource(textDoc: TextDocumentsWithSource) =
+  def apply(textDoc: TextDocumentsWithSource) =
     div(
       idAttr := textDoc.semanticDbUri,
       cls := "semanticdb-document",

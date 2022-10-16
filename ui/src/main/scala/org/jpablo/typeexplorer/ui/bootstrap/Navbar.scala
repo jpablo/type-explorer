@@ -7,7 +7,7 @@ import com.raquo.domtypes.generic.codecs.StringAsIsCodec
 import com.raquo.domtypes.generic.codecs.BooleanAsAttrPresenceCodec
 import com.raquo.domtypes.generic.codecs.BooleanAsIsCodec
 
-def navbar(id: String, brand: String, projectPath: StoredString, items: Li*): Element =
+def Navbar(id: String, brand: String, projectPath: StoredString, items: Li*): Element =
   div(
     idAttr := id,
     nav(

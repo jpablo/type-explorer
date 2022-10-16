@@ -2,12 +2,12 @@ package org.jpablo.typeexplorer.ui.bootstrap
 
 import com.raquo.laminar.api.L.*
 
-object Accordion {
+object Accordion:
 
   val `accordion-flush` = "accordion-flush"
   val open = "open"
 
-  def accordion[S](
+  def apply[S](
     section         : EventStream[List[S]],
     sectionId       : S => String,
     sectionHeader   : S => String,
@@ -48,5 +48,4 @@ object Accordion {
         )
       )
     )
-}
 

@@ -7,6 +7,6 @@ import org.scalajs.dom.document
 
 object MainJS {
   def main(args: Array[String]): Unit =
-    render(document.querySelector("#app"), TopLevel.topLevel)
+    render(document.querySelector("#app"), TopLevel)
 
 }

@@ -8,7 +8,7 @@ import org.jpablo.typeexplorer.ui.app.components.tabs.semanticDBTab.{SemanticDBT
 import org.jpablo.typeexplorer.ui.app.Path
 import org.jpablo.typeexplorer.shared.models
 
-def semanticDBTab(
+def SemanticDBTab(
   $projectPath: Signal[Path], 
   $documents: EventStream[List[TextDocumentsWithSource]], 
   $selectedUri: EventBus[Path]
@@ -20,7 +20,7 @@ def semanticDBTab(
     div(
       cls := "structure",
       div(""), // TODO: add controls to expand / collapse all
-      children <-- SemanticDBTree.build($documents, $selectedUri, $selectedSemanticDb)
+      children <-- SemanticDBTree($documents, $selectedUri, $selectedSemanticDb)
     ),
 
     div(
@@ -29,7 +29,7 @@ def semanticDBTab(
         $selectedSemanticDb.events.combineWith($documents).map { (path, documents) =>
           documents.find(_.semanticDbUri == path.toString) match
             case Some(document) => 
-              SemanticDBText.renderTextDocumentsWithSource(document)
+              SemanticDBText(document)
             case None =>
               li(s"Document not found: $path")
         }
@@ -37,6 +37,6 @@ def semanticDBTab(
 
     div(
       cls := "semanticdb-source-container",
-      sourceCodeTab($selectedUri.events.flatMap(fetchSourceCode($projectPath)))
+      SourceCodeTab($selectedUri.events.flatMap(fetchSourceCode($projectPath)))
     )
   )

@@ -2,7 +2,7 @@ package org.jpablo.typeexplorer.ui.app.components
 
 import com.raquo.laminar.api.L.*
 import org.scalajs.dom
-import org.jpablo.typeexplorer.ui.bootstrap.{dropdown, navbar}
+import org.jpablo.typeexplorer.ui.bootstrap.{Dropdown, Navbar}
 import io.laminext.core.*
 import io.laminext.syntax.core.*
 
@@ -13,7 +13,7 @@ enum DiagramType:
 
 import DiagramType.*
 
-def appHeader(selection: EventBus[DiagramType], projectPath: StoredString) =
+def AppHeader(selection: EventBus[DiagramType], projectPath: StoredString) =
   val onEnterPress  = onKeyPress.filter(_.keyCode == dom.ext.KeyCode.Enter)
   val onEscapePress = onKeyDown.filter(_.keyCode == dom.ext.KeyCode.Escape)
   val editBasePath  = Var(false)
@@ -33,7 +33,7 @@ def appHeader(selection: EventBus[DiagramType], projectPath: StoredString) =
   // ------- render -------
   div(
     idAttr := "te-header",
-    navbar(
+    Navbar(
       id    = "te-header-content",
       brand = "Type Explorer",
       projectPath = projectPath,
@@ -68,7 +68,7 @@ def appHeader(selection: EventBus[DiagramType], projectPath: StoredString) =
       ),
     ),
       // li (cls := "nav-item",
-      //   dropdown (
+      //   Dropdown (
       //     label = "Diagram",
       //     elements = List(Inheritance, CallGraph),
       //     selection = selection

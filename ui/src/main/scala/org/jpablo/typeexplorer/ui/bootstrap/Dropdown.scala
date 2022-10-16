@@ -2,7 +2,7 @@ package org.jpablo.typeexplorer.ui.bootstrap
 
 import com.raquo.laminar.api.L.{*, given}
 
-def dropdown[A](label: String, elements: List[A], selection: EventBus[A]): Div =
+def Dropdown[A](label: String, elements: List[A], selection: EventBus[A]): Div =
   div (cls := "dropdown",
     button (
       cls := "btn btn-primary dropdown-toggle",
