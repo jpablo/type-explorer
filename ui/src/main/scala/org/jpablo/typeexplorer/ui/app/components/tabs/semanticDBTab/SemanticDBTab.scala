@@ -13,20 +13,26 @@ def semanticDBTab(
   $documents: EventStream[List[TextDocumentsWithSource]], 
   $selectedUri: EventBus[Path]
 ) =
+  val $selectedSemanticDb = EventBus[Path]
   div(
     cls := "text-document-areas",
 
     div(
       cls := "structure",
       div(""), // TODO: add controls to expand / collapse all
-      children <-- SemanticDBTree.build($documents, $selectedUri)
+      children <-- SemanticDBTree.build($documents, $selectedUri, $selectedSemanticDb)
     ),
 
     div(
       cls := "semanticdb-document-container",
-      ol(
-        children <-- $documents.split(_.semanticDbUri)(SemanticDBText.renderTextDocumentsWithSource)
-      )
+      child <--
+        $selectedSemanticDb.events.combineWith($documents).map { (path, documents) =>
+          documents.find(_.semanticDbUri == path.toString) match
+            case Some(document) => 
+              SemanticDBText.renderTextDocumentsWithSource(document)
+            case None =>
+              li(s"Document not found: $path")
+        }
     ),
 
     div(

@@ -12,12 +12,12 @@ import org.jpablo.typeexplorer.ui.app.Path
 
 object SemanticDBTree:
 
-  def build($documents: EventStream[List[TextDocumentsWithSource]], $selectedUri: EventBus[Path]): EventStream[List[HtmlElement]] =
+  def build($documents: EventStream[List[TextDocumentsWithSource]], $selectedUri: EventBus[Path], $selectedSemanticDb: EventBus[Path]): EventStream[List[HtmlElement]] =
     for documentsWithSource <- $documents yield
       for fileTree <- FileTree.build(documentsWithSource)(buildPath) yield
         collapsableTree(fileTree)(
           renderBranch = b => span(cls := "collapsable-branch-label", b),
-          renderLeaf = renderDocWithSource($selectedUri)
+          renderLeaf = renderDocWithSource($selectedUri, $selectedSemanticDb)
         )
 
   private def buildPath(doc: TextDocumentsWithSource) =
@@ -25,13 +25,17 @@ object SemanticDBTree:
     (doc, all.last, all.init)
 
 
-  private def renderDocWithSource($selectedUri: EventBus[Path])(name: String, docWithSource: TextDocumentsWithSource) =
+  private def renderDocWithSource($selectedUri: EventBus[Path], $selectedSemanticDb: EventBus[Path])(name: String, docWithSource: TextDocumentsWithSource) =
     collapsable2(
       branchLabel =
         span(
           cls := "collapsable-leaf",
           Icons.fileBinary,
-          a(href := "#" + docWithSource.semanticDbUri, name)
+          a(
+            href := "#" + docWithSource.semanticDbUri, 
+            onClick.preventDefault.mapTo(Path(docWithSource.semanticDbUri)) --> $selectedSemanticDb,
+            name
+          )
         ),
       contents = docWithSource.documents.map(renderTextDocument($selectedUri)),
       open = true
@@ -45,7 +49,7 @@ object SemanticDBTree:
           a(
             href := "#" + encodeURIComponent(doc.uri),
             doc.uri,
-            onClick.mapTo(Path(doc.uri)) --> $selectedUri
+            onClick.preventDefault.mapTo(Path(doc.uri)) --> $selectedUri
         )
         ),
       $children =

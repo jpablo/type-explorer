@@ -9,6 +9,7 @@ import org.scalajs.dom
 import org.jpablo.typeexplorer.ui.app.Path
 import org.jpablo.typeexplorer.shared.models
 import org.jpablo.typeexplorer.ui.app.components.state.SelectedSymbols
+import com.raquo.laminar.nodes.ReactiveHtmlElement
 
 def tabsArea(
   $projectPath    : Signal[Path], 
@@ -18,57 +19,58 @@ def tabsArea(
   selectedSymbol  : SelectedSymbols,
   $selectedUri    : EventBus[Path]
 ) =
+  val inheritance = Tab(false, "inheritance-tab-pane")
+  val semanticDB  = Tab(true, "semanticdb-tab-pane")
   List(
+    // Tab headers
     div(
       idAttr := "te-tabs-header",
       ul(
         cls := "nav nav-tabs",
         role := "tablist",
-        li(
-          cls := "nav-item",
-          role := "presentation",
-          button(
-            cls := "nav-link active",
-            dataAttr("bs-toggle") := "tab",
-            dataAttr("bs-target") := "#inheritance-tab-pane",
-            tpe := "button",
-            role := "tab",
-            "Inheritance"
-          )
-        ),
-        li(
-          cls := "nav-item",
-          a(
-            cls := "nav-link",
-            href := "#",
-            dataAttr("bs-toggle") := "tab",
-            dataAttr("bs-target") := "#semanticdb-tab-pane",
-            tpe := "button",
-            role := "tab",
-            "SemanticDB"
-          )
-        )
+
+        inheritance.header("Inheritance"),
+        semanticDB.header("SemanticDB"),
       )
     ),
+    
+    // Tab bodies
     div(
       cls := "te-tabs-container",
       div(
         cls := "tab-content",
-        div(
-          idAttr := "inheritance-tab-pane",
-          cls := "tab-pane fade show active",
-          role := "tabpanel",
-          tabIndex := 0,
-          inheritanceTab($inheritance, $classes, selectedSymbol)
-        ),
-        div(
-          idAttr := "semanticdb-tab-pane",
-          cls := "tab-pane fade",
-          role := "tabpanel",
-          tabIndex := 0,
-          semanticDBTab($projectPath, $documents, $selectedUri)
-        )
+        inheritance.body(0, inheritanceTab($inheritance, $classes, selectedSymbol)),
+        semanticDB.body(1, semanticDBTab($projectPath, $documents, $selectedUri)),
       )
     )
   )
   
+
+class Tab(active: Boolean, target: String):
+  def header(title: String) =
+    li(
+      cls := "nav-item",
+      role := "presentation",
+      button(
+        cls := "nav-link",
+        cls := (if active then "active" else ""),
+        dataAttr("bs-toggle") := "tab",
+        dataAttr("bs-target") := "#" + target,
+        tpe := "button",
+        role := "tab",
+        title
+      )
+    )
+  
+  def body(index: Int, content: ReactiveHtmlElement[dom.html.Element]) =
+    div(
+      idAttr := target,
+      cls := "tab-pane fade",
+      cls := (if active then "show active" else ""),
+      role := "tabpanel",
+      tabIndex := index,
+      content
+    )
+
+
+

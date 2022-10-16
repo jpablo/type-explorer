@@ -11,51 +11,46 @@ import scala.meta.internal.semanticdb.TextDocument
 object SemanticDBText:
 
 
-  def renderTextDocumentsWithSource(id: String, initial: TextDocumentsWithSource, elem: EventStream[TextDocumentsWithSource]) =
-    li(
-      idAttr := id,
+  def renderTextDocumentsWithSource(textDoc: TextDocumentsWithSource) =
+    div(
+      idAttr := textDoc.semanticDbUri,
       cls := "semanticdb-document",
-      b(
-        child.text <-- elem.map(_.semanticDbUri)
-      ),
-      hr(),
+      b(textDoc.semanticDbUri),
       div(
         cls := "text-document-container",
-        children <-- elem.map(_.documents).split(_.uri)(renderTextDocument)
+        textDoc.documents.map(renderTextDocument)
       )
     )
 
-  def renderTextDocument(id: String, initial: TextDocument, elem: EventStream[TextDocument]) =
+  private def renderTextDocument(doc: TextDocument) =
     div(
-      idAttr := id,
+      idAttr := doc.uri,
       cls := "text-document",
-      textCard("", "card-uri", elem.map(d => s"uri: ${d.uri}")),
+      textCard("", "card-uri",  s"uri: ${doc.uri}"),
       div(
         cls := "symbol-information-container",
-        children <-- elem.map(_.symbols.sortBy(_.symbol)).split(si => encodeURIComponent(si.symbol))(renderGeneratedMessage("card-symbol-information"))
+        doc.symbols.sortBy(_.symbol).map(si => renderGeneratedMessage(encodeURIComponent(si.symbol), "card-symbol-information", si))
       ),
       div(
         cls := "occurrences-container",
-        children <-- elem.map(_.occurrences).split(_.symbol)(renderGeneratedMessage("card-occurrence"))
+        doc.occurrences.map(oc => renderGeneratedMessage(encodeURIComponent(oc.symbol), "card-occurrence", oc)),
       ),
       div(
         cls := "synthetics-container",
-        children <-- elem.map(_.synthetics).split(_.range.map(_.toProtoString).getOrElse(""))(renderGeneratedMessage("card-synthetic"))
+        doc.synthetics.map(syn => renderGeneratedMessage(syn.range.map(_.toProtoString).getOrElse(""), "card-synthetic", syn)),
       )
     )
 
-  def renderGeneratedMessage(className: String)(id: String, initial: GeneratedMessage, elem: EventStream[GeneratedMessage]) =
-    textCard(id, className, elem.map(_.toProtoString))
+  private def renderGeneratedMessage(id: String, className: String, msg: GeneratedMessage) =
+    textCard(id, className, msg.toProtoString)
 
-  def textCard(id: String, className: String, $text: EventStream[String]) =
+  private def textCard(id: String, className: String, text: String) =
     div(
       idAttr := id,
       cls := ("card", className),
       div(
         cls := "card-body",
-        pre(
-          child.text <-- $text
-        )
+        pre(text)
       )
     )
 

@@ -169,5 +169,24 @@ lazy val root =
     .aggregate(protos.js, protos.jvm, backend, ui, shared.js, shared.jvm)
     .settings(
       name := "type-explorer",
-      version := "0.1.0"
+      version := "0.1.0",
+      welcomeMessage,
     )
+
+
+def welcomeMessage = onLoadMessage := {
+  import scala.Console
+
+  def header(text: String): String = s"${Console.RED}$text${Console.RESET}"
+
+  def item(text: String): String = s"${Console.GREEN}> ${Console.CYAN}$text${Console.RESET}"
+
+  def subItem(text: String): String = s"  ${Console.YELLOW}> ${Console.CYAN}$text${Console.RESET}"
+
+  s"""|${header(s"Type Explorer ${version.value}")}
+      |
+      |Useful sbt tasks:
+      |${item("~ backend/reStart")} - start backend server
+      |${item("~ ui/fastLinkJS")} - compile ui 
+      """.stripMargin
+}
