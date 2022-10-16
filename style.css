@@ -65,12 +65,17 @@ a {
 
 /*---- cards --- */
 
+.card-body {
+  background-color: #f6f2f0;
+  padding: 5px;
+}
+
 .card-uri {
-    background-color: lightgray;
+    /* background-color: lightgray; */
 }
 
 .card-symbol-information {
-    background-color: lightblue;
+    /* background-color: lightblue; */
 }
 
 .card-uri pre,
@@ -82,11 +87,11 @@ a {
 }
 
 .card-occurrence {
-    background-color: lightgoldenrodyellow;
+    /* background-color: lightgoldenrodyellow; */
 }
 
 .card-synthetic {
-    background-color: lightpink;
+    /* background-color: lightpink; */
 }
 
 /* ------------------ */
@@ -161,9 +166,22 @@ a {
     overflow: auto;
 }
 
+.semanticdb-source-container {
+  padding: 5px;
+  border-left: 1px solid lightgray;
+}
+
+.semanticdb-document-container {
+  border-left: 1px solid lightgray;
+}
+
+.semanticdb-document-file {
+  padding: 10px;
+}
 
 .card {
     margin: 5px;
+    border: none !important;
 }
 
 /* ----- collapsable --------- */

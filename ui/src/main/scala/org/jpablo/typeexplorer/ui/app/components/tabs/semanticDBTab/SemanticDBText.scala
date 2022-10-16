@@ -3,7 +3,7 @@ package org.jpablo.typeexplorer.ui.app.components.tabs.semanticDBTab
 import com.raquo.laminar.api.L.*
 import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
 import scalapb.GeneratedMessage
-
+import scalajs.js
 import scalajs.js.URIUtils.encodeURIComponent
 import scala.meta.internal.semanticdb.TextDocument
 
@@ -14,7 +14,7 @@ object SemanticDBText:
     div(
       idAttr := textDoc.semanticDbUri,
       cls := "semanticdb-document",
-      b(textDoc.semanticDbUri),
+      h4(cls := "semanticdb-document-file", textDoc.semanticDbUri),
       div(
         cls := "text-document-container",
         textDoc.documents.map(renderTextDocument)
@@ -49,7 +49,15 @@ object SemanticDBText:
       cls := ("card", className),
       div(
         cls := "card-body",
-        pre(text)
+        pre(
+          code(
+            cls := "language-protobuf",
+            onMountCallback { ctx => 
+              js.Dynamic.global.Prism.highlightElement(ctx.thisNode.ref)
+            },
+            text
+          )
+        )
       )
     )
 

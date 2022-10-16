@@ -129,25 +129,25 @@ lazy val ui =
     .in(file("ui"))
     .dependsOn(shared.js, protos.js)
     .enablePlugins(ScalaJSPlugin)
-    // .enablePlugins(ScalablyTypedConverterPlugin)
+    .enablePlugins(ScalablyTypedConverterExternalNpmPlugin)
     .settings(
       scalaJSUseMainModuleInitializer := true,
       scalaJSLinkerConfig ~= {
         _.withModuleKind(ModuleKind.ESModule)
-          .withModuleSplitStyle(ModuleSplitStyle.SmallModulesFor(List("testvite")))
+          .withModuleSplitStyle(ModuleSplitStyle.SmallModulesFor(List("org.jpablo.typeexplorer.ui")))
       },
       externalNpm := {
         //scala.sys.process.Process(List("npm", "install", "--silent", "--no-audit", "--no-fund"), baseDirectory.value).!
-        baseDirectory.value
+        baseDirectory.value / ".."
       },
       // Compile / npmDependencies ++= Seq(
       //   "@types/bootstrap" -> "5.2.2"
       // ),
       libraryDependencies ++= Seq(
-        "org.scala-js"  %%% "scalajs-dom"       % "2.0.0",
+        "org.scala-js"  %%% "scalajs-dom"       % "2.2.0",
         "com.raquo"     %%% "laminar"           % "0.14.5",
         "io.laminext"   %%% "fetch"             % "0.14.4",
-      ),
+      ), 
       excludeDependencies ++= Seq(
         "org.scala-lang.modules" %% "scala-collection-compat_sjs1"
       ),
