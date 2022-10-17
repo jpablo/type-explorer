@@ -13,7 +13,11 @@ import org.jpablo.typeexplorer.shared.inheritance.InheritanceDiagram
 import org.jpablo.typeexplorer.shared.inheritance.PlantumlInheritance.Options
 import org.jpablo.typeexplorer.ui.app.components.state.SelectedSymbols
 import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.InheritanceTree
+import org.jpablo.typeexplorer.ui.app.console
 import org.scalajs.dom
+import org.scalajs.dom.EventTarget
+import com.raquo.domtypes.jsdom.defs.events.TypedTargetMouseEvent
+
 
 def svgToLaminar(svg: dom.Element) =
   new ChildNode[dom.Element] { val ref = svg }
@@ -80,6 +84,44 @@ def InheritanceTab(
     ),
 
     div( cls := "inheritance-container",
-      div(child <-- $svgDiagram.map(svgToLaminar))
+      div(
+        child <-- $svgDiagram.map(svgToLaminar),
+        onClick --> { e => 
+          (e.target +: parents(e.target))
+            .takeWhile(_.isInstanceOf[dom.SVGElement])
+            .find(isNamespace)
+            .map(NameSpaceElement.apply)
+            .foreach(_.selectToggle)
+            // TODO: emit event to update selected symbols
+        }
+      )
     )
   )
+
+def parents(e: dom.Element) = 
+  LazyList.unfold(e)(e => Option(e.parentNode.asInstanceOf[dom.Element]).map(e => (e, e)))
+
+def isDiagramElement(e: dom.Element)(prefix: String) = 
+  e.tagName == "g" && e.hasAttribute("id") && e.getAttribute("id").startsWith(prefix)
+
+def isNamespace(e: dom.Element) = isDiagramElement(e)("elem_")
+def isPackage(e: dom.Element) = isDiagramElement(e)("cluster_")
+
+extension (e: dom.Element)
+  def fill = e.getAttribute("fill") 
+  def fill_=(c: String) = e.setAttribute("fill", c) 
+
+case class NameSpaceElement(ref: dom.Element):
+  val selectedFill = "red"
+  val defaultFill = "#F1F1F1"
+
+  lazy val id = ref.id.stripPrefix("elem_")
+  lazy val symbol = Symbol(id)
+  def box = 
+    ref.getElementsByTagName("rect")
+    .find(_.getAttribute("id") == id)
+
+  def selectToggle =
+    for box <- box do
+      box.fill = 
+        if box.fill == defaultFill then selectedFill else defaultFill
