@@ -30,6 +30,7 @@ const replacementForPublic = isDev()
   : printSbtTask("publicProd");
 
 export default defineConfig({
+  build: { sourcemap: true },
   resolve: {
     alias: [
       {

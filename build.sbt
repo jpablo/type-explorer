@@ -135,6 +135,7 @@ lazy val ui =
       scalaJSLinkerConfig ~= {
         _.withModuleKind(ModuleKind.ESModule)
           .withModuleSplitStyle(ModuleSplitStyle.SmallModulesFor(List("org.jpablo.typeexplorer.ui")))
+          .withSourceMap(true)
       },
       externalNpm := {
         //scala.sys.process.Process(List("npm", "install", "--silent", "--no-audit", "--no-fund"), baseDirectory.value).!

@@ -7,7 +7,6 @@ import zio.Chunk
 import scala.meta.internal.semanticdb.SymbolInformation.Kind
 import scala.meta.internal.semanticdb.{ClassSignature, MethodSignature, Scope, Signature, SymbolInformation, SymbolOccurrence, TextDocument, TextDocuments, Type, TypeRef, TypeSignature, ValueSignature}
 import org.jpablo.typeexplorer.shared.models.{Method, Namespace, NamespaceKind, Symbol}
-
 import scala.meta.internal.semanticdb
 import java.util.jar.Attributes.Name
 import scala.annotation.tailrec
@@ -175,6 +174,14 @@ end InheritanceDiagram
 
 object InheritanceDiagram:
 
+  // TODO: make this configurable
+  val excluded = 
+    Set(
+      "scala/AnyRef#",
+      "scala/AnyVal#",
+      "java/io/Serializable#"
+    )
+
   given JsonCodec[InheritanceDiagram] = DeriveJsonCodec.gen
 
   // In Scala 3.2 the type annotation is needed.
@@ -185,6 +192,7 @@ object InheritanceDiagram:
       textDocuments.documents
         .flatMap(_.symbols)
         .distinct
+        .filterNot(si => excluded.contains(si.symbol))
         .sortBy(_.symbol)
         .map(s => Symbol(s.symbol) -> s)
         .toMap
@@ -196,6 +204,7 @@ object InheritanceDiagram:
         clsSignature <- signature match
           case cs: ClassSignature => List(cs)
           case _ =>  List.empty
+        if !symbol.toString.startsWith("local")
         nsKind       = translateKind(symbolInfo.kind)
         declarations = clsSignature.declarations.map(_.symlinks.map(Symbol(_))).toSeq.flatten
         methods      = declarations.map(method(allSymbols))
@@ -217,6 +226,7 @@ object InheritanceDiagram:
         parentSymbol  <- parentType match
           case tr: TypeRef => List(Symbol(tr.symbol))
           case _ => List.empty
+        if !excluded.contains(parentSymbol.toString)
       yield
         ns.symbol -> parentSymbol
 
@@ -273,15 +283,3 @@ object InheritanceDiagram:
 
 end InheritanceDiagram
 
-
-//@main
-//def testScanClasses(): Unit =
-//  import java.net.URI
-//  import java.nio.file.Path
-//  import java.nio.file.Paths
-//  import org.jpablo.typeexplorer.semanticdb.All
-//
-//  val paths = Paths.get(URI("file:///Users/jpablo/proyectos/playground/type-explorer/.type-explorer/"))
-//  val textDocuments = TextDocuments(All.scan(paths).flatMap(_._2.documents))
-//  val diagram = InheritanceDiagram.fromTextDocuments(textDocuments)
-//  diagram.namespaces.foreach(println)

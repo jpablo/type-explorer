@@ -41,6 +41,15 @@ object InheritanceTree:
     val $selection = 
       selectedSymbols.symbols.signal.map(_.getOrElse(ns.symbol, Selection.empty))
 
+    def symbolsUpdater(modifyField: PathLazyModify[Selection, Boolean]) =
+      selectedSymbols.symbols.updater[Boolean] { (symbols, b) =>
+        val selection = modifyField.setTo(b)(symbols.getOrElse(ns.symbol, Selection.empty))
+        if selection.allEmpty then
+          symbols - ns.symbol
+        else
+          symbols + (ns.symbol -> selection)
+      }      
+
     def controlledCheckbox(field: Selection => Boolean, modifyField: PathLazyModify[Selection, Boolean], title: String) = 
       input(
         cls := "form-check-input mt-0", 
@@ -53,15 +62,7 @@ object InheritanceTree:
         ),
         controlled(
           checked <-- $selection.map(field), 
-          onClick.mapToChecked --> 
-            selectedSymbols.symbols.updater[Boolean] { (symbols, b) =>
-              val selection = 
-                modifyField.setTo(b)(symbols.getOrElse(ns.symbol, Selection.empty))
-              if selection.allEmpty then
-                symbols - ns.symbol
-              else
-                symbols + (ns.symbol -> selection)
-          }
+          onClick.mapToChecked --> symbolsUpdater(modifyField)
         )
       )
       
@@ -72,7 +73,9 @@ object InheritanceTree:
           display := "inline",
           stereotype(ns),
           span(" "),
-          a(cls := "inheritance-namespace-symbol", href := "#elem_" + uri, title := ns.symbol.toString, ns.displayName),
+          a(cls := "inheritance-namespace-symbol", href := "#elem_" + uri, title := ns.symbol.toString, ns.displayName,
+            onClick.mapTo(true) --> symbolsUpdater(modifySelection(_.current))
+          ),
           div( cls := "inheritance-namespace-selection hide", cls.toggle("show-inline", "hide") <-- $isSelected,
             span(" "),
             controlledCheckbox(_.current, modifySelection(_.current), "current"),

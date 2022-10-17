@@ -19,8 +19,8 @@ def TabsArea(
   $classes        : EventStream[InheritanceDiagram],
   selectedSymbol  : SelectedSymbols,
 ) =
-  val inheritance = Tab(false, "inheritance-tab-pane")
-  val semanticDB  = Tab(true, "semanticdb-tab-pane")
+  val inheritance = Tab(true, "inheritance-tab-pane")
+  val semanticDB  = Tab(false, "semanticdb-tab-pane")
   List(
     // Tab headers
     div(
