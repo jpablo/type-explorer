@@ -18,7 +18,6 @@ def TabsArea(
   $inheritance    : EventStream[dom.Element],
   $classes        : EventStream[InheritanceDiagram],
   selectedSymbol  : SelectedSymbols,
-  $selectedUri    : EventBus[Path]
 ) =
   val inheritance = Tab(false, "inheritance-tab-pane")
   val semanticDB  = Tab(true, "semanticdb-tab-pane")
@@ -41,7 +40,7 @@ def TabsArea(
       div(
         cls := "tab-content",
         inheritance.body(0, InheritanceTab($inheritance, $classes, selectedSymbol)),
-        semanticDB.body(1, SemanticDBTab($projectPath, $documents, $selectedUri)),
+        semanticDB.body(1, SemanticDBTab($projectPath, $documents)),
       )
     )
   )

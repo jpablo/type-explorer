@@ -9,34 +9,43 @@ import org.jpablo.typeexplorer.ui.app.Path
 import org.jpablo.typeexplorer.shared.models
 
 def SemanticDBTab(
-  $projectPath: Signal[Path], 
+  $projectPath: Signal[Path],   
   $documents: EventStream[List[TextDocumentsWithSource]], 
-  $selectedUri: EventBus[Path]
 ) =
   val $selectedSemanticDb = EventBus[Path]
+
+  val $selectedDocument = 
+    $selectedSemanticDb.events.combineWith($documents)
+      .map { (path, documents) => 
+        path -> documents.find(_.semanticDbUri == path.toString)
+      }
+
+  val $sourceCode = 
+    $selectedDocument
+      .collect { case (path, Some(documentsWithSource)) => documentsWithSource.documents.headOption }
+      .collect { case Some(doc) => Path(doc.uri) }
+      .flatMap(fetchSourceCode($projectPath))
+
   div(
     cls := "text-document-areas",
 
     div(
       cls := "structure",
       div(""), // TODO: add controls to expand / collapse all
-      children <-- SemanticDBTree($documents, $selectedUri, $selectedSemanticDb)
+      children <-- SemanticDBTree($documents, $selectedSemanticDb)
     ),
 
     div(
       cls := "semanticdb-document-container",
       child <--
-        $selectedSemanticDb.events.combineWith($documents).map { (path, documents) =>
-          documents.find(_.semanticDbUri == path.toString) match
-            case Some(document) => 
-              SemanticDBText(document)
-            case None =>
-              li(s"Document not found: $path")
+        $selectedDocument.map {
+          case (_, Some(document)) => SemanticDBText(document)
+          case (path, None) => li(s"Document not found: $path")
         }
     ),
 
     div(
       cls := "semanticdb-source-container",
-      SourceCodeTab($selectedUri.events.flatMap(fetchSourceCode($projectPath)))
+      SourceCodeTab($sourceCode)
     )
   )

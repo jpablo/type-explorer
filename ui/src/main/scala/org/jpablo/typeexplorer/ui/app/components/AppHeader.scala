@@ -13,7 +13,7 @@ enum DiagramType:
 
 import DiagramType.*
 
-def AppHeader(selection: EventBus[DiagramType], projectPath: StoredString) =
+def AppHeader(diagramType: EventBus[DiagramType], projectPath: StoredString) =
   val onEnterPress  = onKeyPress.filter(_.keyCode == dom.ext.KeyCode.Enter)
   val onEscapePress = onKeyDown.filter(_.keyCode == dom.ext.KeyCode.Escape)
   val editBasePath  = Var(false)
@@ -23,11 +23,13 @@ def AppHeader(selection: EventBus[DiagramType], projectPath: StoredString) =
       cls := "form-control me-2",
       tpe := "search",
       onMountFocus,
-      value <-- projectPath.signal,
-      onEnterPress.preventDefault.mapToValue --> { v => 
-        projectPath.set(v)
-        editBasePath.set(false)
-      },
+      controlled(
+        value <-- projectPath.signal,
+        onEnterPress.preventDefault.mapToValue --> { v => 
+          projectPath.set(v)
+          editBasePath.set(false)
+        }
+      ),
       onEscapePress.mapTo(false) --> editBasePath,
     )
   // ------- render -------

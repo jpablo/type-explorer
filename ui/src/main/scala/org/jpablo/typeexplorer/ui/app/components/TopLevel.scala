@@ -7,35 +7,27 @@ import io.laminext.syntax.core.*
 import org.jpablo.typeexplorer.shared.models
 import org.jpablo.typeexplorer.shared.inheritance.Related
 import org.jpablo.typeexplorer.ui.app.Path
-import org.jpablo.typeexplorer.ui.app.components.state.{SelectedSymbols, selectedSymbolToDiagram}
+import org.jpablo.typeexplorer.ui.app.components.state.{SelectedSymbols, AppState}
 import com.raquo.airstream.core.EventStream
 import org.scalajs.dom
 
 def TopLevel: Div =
   val $newDiagramType = EventBus[DiagramType]
   val $selectedUri    = EventBus[Path]
-  val selectedSymbol  = SelectedSymbols()
-  val projectPath     = storedString("projectPath", initial = "")
-  val $projectPath    = projectPath.signal.map(Path.apply)
-  val $documents      = fetchDocuments($projectPath)
-  val $classes        = fetchClasses($projectPath)
-  val $inheritance    = 
-    selectedSymbolToDiagram(
-      selectedSymbol.symbols.signal, 
-      selectedSymbol.options.signal, 
-      $projectPath
-    )
+  val appState        = AppState()
+  val $documents      = fetchDocuments(appState.$projectPath)
+  val $classes        = fetchClasses(appState.$projectPath)
+  val $inheritance    = appState.svgInheritanceDiagram(appState.$projectPath)
 
   div(
     idAttr := "te-toplevel",
-    AppHeader($newDiagramType, projectPath),
+    AppHeader($newDiagramType, appState.projectPath),
     TabsArea(
-      $projectPath,
+      appState.$projectPath,
       $documents,
       $inheritance,
       $classes,
-      selectedSymbol,
-      $selectedUri
+      appState.selectedSymbols
     ),
     AppFooter
   )

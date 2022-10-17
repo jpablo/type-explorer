@@ -11,12 +11,12 @@ import org.jpablo.typeexplorer.ui.app.Path
 
 object SemanticDBTree:
 
-  def apply($documents: EventStream[List[TextDocumentsWithSource]], $selectedUri: EventBus[Path], $selectedSemanticDb: EventBus[Path]): EventStream[List[HtmlElement]] =
+  def apply($documents: EventStream[List[TextDocumentsWithSource]], $selectedSemanticDb: EventBus[Path]): EventStream[List[HtmlElement]] =
     for documentsWithSource <- $documents yield
       for fileTree <- FileTree.build(documentsWithSource)(buildPath) yield
         collapsableTree(fileTree)(
           renderBranch = b => span(cls := "collapsable-branch-label", b),
-          renderLeaf = renderDocWithSource($selectedUri, $selectedSemanticDb)
+          renderLeaf = renderDocWithSource($selectedSemanticDb)
         )
 
   private def buildPath(doc: TextDocumentsWithSource) =
@@ -24,7 +24,7 @@ object SemanticDBTree:
     (doc, all.last, all.init)
 
 
-  private def renderDocWithSource($selectedUri: EventBus[Path], $selectedSemanticDb: EventBus[Path])(name: String, docWithSource: TextDocumentsWithSource) =
+  private def renderDocWithSource($selectedSemanticDb: EventBus[Path])(name: String, docWithSource: TextDocumentsWithSource) =
     collapsable2(
       branchLabel =
         span(
@@ -36,20 +36,16 @@ object SemanticDBTree:
             name
           )
         ),
-      contents = docWithSource.documents.map(renderTextDocument($selectedUri)),
+      contents = docWithSource.documents.map(renderTextDocument),
       open = true
     )
 
-  private def renderTextDocument($selectedUri: EventBus[Path])(doc: TextDocument) =
+  private def renderTextDocument(doc: TextDocument) =
     collapsable(
       branchLabel =
         span(
           Icons.fileCode,
-          a(
-            href := "#" + encodeURIComponent(doc.uri),
-            doc.uri,
-            onClick.preventDefault.mapTo(Path(doc.uri)) --> $selectedUri
-        )
+          doc.uri
         ),
       $children =
         Signal.fromValue(doc).map(_.symbols.sortBy(_.symbol)).split(_.symbol)(renderSymbolInformation),

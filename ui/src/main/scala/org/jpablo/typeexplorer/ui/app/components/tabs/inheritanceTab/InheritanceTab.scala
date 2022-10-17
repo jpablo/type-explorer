@@ -21,14 +21,14 @@ def svgToLaminar(svg: dom.Element) =
 
 def InheritanceTab(
   $svgDiagram    : EventStream[dom.Element],
-  $diagrams      : EventStream[InheritanceDiagram],
+  $diagram       : EventStream[InheritanceDiagram],
   selectedSymbol : SelectedSymbols,
 ) =
   val autocomplete = customProp("autocomplete", StringAsIsCodec)
   val $filter = Var("")
   val modifySelection = modifyLens[Options]
   val $filteredDiagrams = 
-    $diagrams.toSignal(InheritanceDiagram.empty)
+    $diagram.toSignal(InheritanceDiagram.empty)
       .combineWith($filter.signal)
       .changes
       .map((event, w) => if w.isBlank then event else event.filterBySymbols(w))
