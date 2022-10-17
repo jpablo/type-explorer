@@ -17,7 +17,7 @@ def TopLevel: Div =
   val appState        = AppState()
   val $documents      = fetchDocuments(appState.$projectPath)
   val $classes        = fetchClasses(appState.$projectPath)
-  val $inheritance    = appState.svgInheritanceDiagram(appState.$projectPath)
+  val $inheritance    = appState.$inheritanceSelection.flatMap(fetchInheritanceSVGDiagram)
 
   div(
     idAttr := "te-toplevel",

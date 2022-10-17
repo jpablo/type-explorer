@@ -23,13 +23,11 @@ def AppHeader(diagramType: EventBus[DiagramType], projectPath: StoredString) =
       cls := "form-control me-2",
       tpe := "search",
       onMountFocus,
-      controlled(
-        value <-- projectPath.signal,
-        onEnterPress.preventDefault.mapToValue --> { v => 
-          projectPath.set(v)
-          editBasePath.set(false)
-        }
-      ),
+      value <-- projectPath.signal,
+      onEnterPress.preventDefault.mapToValue --> { v => 
+        projectPath.set(v)
+        editBasePath.set(false)
+      },
       onEscapePress.mapTo(false) --> editBasePath,
     )
   // ------- render -------
@@ -38,7 +36,6 @@ def AppHeader(diagramType: EventBus[DiagramType], projectPath: StoredString) =
     Navbar(
       id    = "te-header-content",
       brand = "Type Explorer",
-      projectPath = projectPath,
 
       li(cls := "nav-item", span(cls := "nav-link", b("base path:"))),
 

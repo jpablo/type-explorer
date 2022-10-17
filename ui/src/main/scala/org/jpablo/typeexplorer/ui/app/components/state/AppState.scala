@@ -12,15 +12,24 @@ import com.raquo.airstream.core.EventStream
 import org.jpablo.typeexplorer.shared.inheritance.PlantumlInheritance.Options
 import org.jpablo.typeexplorer.ui.app.client.{fetchClasses, fetchDocuments, fetchInheritanceSVGDiagram}
 import io.laminext.core.StoredString
+import com.raquo.airstream.core.Signal
+import app.tulz.tuplez.Composition.Aux
 
 
 case class AppState(
   selectedSymbols: SelectedSymbols = SelectedSymbols(),
   projectPath: StoredString = storedString("projectPath", initial = "")
 ):
-  val $projectPath = projectPath.signal.map(Path.apply)
+  val $projectPath: Signal[Path] = 
+    projectPath.signal.map(Path.apply)
 
-  def svgInheritanceDiagram($projectPath : Signal[Path]): EventStream[dom.Element] =
+  /**
+    * A selection consists of:
+    * - the basePath (aka project Path)
+    * - the selected symbol with its "related" configuration (i.e. parents, children, etc)
+    * - diagram options
+    */
+  def $inheritanceSelection: EventStream[(Path, Set[(Symbol, Set[Related])], Options)] =
     val $requestBody =
       selectedSymbols.symbols.signal.changes.map { symbols =>
         symbols.transform { (symbol, selection) => selection match
@@ -34,15 +43,13 @@ case class AppState(
     $projectPath
       .combineWith($requestBody.toSignal(Set.empty), selectedSymbols.options.signal)
       .changes
-      .flatMap(fetchInheritanceSVGDiagram)
+      
 
 
 case class SelectedSymbols(
   symbols: Var[Map[Symbol, Selection]] = Var(Map.empty),
   options: Var[Options] = Var(Options())
-):
-  lazy val signal = symbols.signal
-  def updater[A]  = symbols.updater[A]
+)
 
 case class Selection(
   current : Boolean = false,

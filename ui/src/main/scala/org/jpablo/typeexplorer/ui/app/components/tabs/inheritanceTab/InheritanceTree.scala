@@ -39,7 +39,7 @@ object InheritanceTree:
     val uri = encodeURIComponent(ns.symbol.toString)
     val modifySelection = modifyLens[Selection]
     val $selection = 
-      selectedSymbols.signal.map(_.getOrElse(ns.symbol, Selection.empty))
+      selectedSymbols.symbols.signal.map(_.getOrElse(ns.symbol, Selection.empty))
 
     def controlledCheckbox(field: Selection => Boolean, modifyField: PathLazyModify[Selection, Boolean], title: String) = 
       input(
@@ -54,7 +54,7 @@ object InheritanceTree:
         controlled(
           checked <-- $selection.map(field), 
           onClick.mapToChecked --> 
-            selectedSymbols.updater[Boolean] { (symbols, b) =>
+            selectedSymbols.symbols.updater[Boolean] { (symbols, b) =>
               val selection = 
                 modifyField.setTo(b)(symbols.getOrElse(ns.symbol, Selection.empty))
               if selection.allEmpty then
