@@ -3,6 +3,7 @@ package org.jpablo.typeexplorer.ui.bootstrap
 import com.raquo.laminar.api.L.*
 import com.raquo.laminar.nodes.ReactiveHtmlElement
 
+
 def Checkbox(mods: Modifier[ReactiveHtmlElement.Base]*): Input =
   input(tpe := "checkbox", cls := "btn-check", mods)
 
@@ -13,6 +14,6 @@ def Label(forIdAttr: String, mods: Modifier[ReactiveHtmlElement.Base]*): Label =
 def Search(mods: Modifier[ReactiveHtmlElement.Base]*): Input =
   input(tpe := "search", cls := "form-control", mods)
 
-// extension (elem: Input)
-//   def sm: Input = 
-//     elem.amend(cls := "form-control-sm")  
+
+// Note: extension method Search.small is defined together with Button.small for Scala technical reasons 
+// (in file ExtensionMethods.scala)

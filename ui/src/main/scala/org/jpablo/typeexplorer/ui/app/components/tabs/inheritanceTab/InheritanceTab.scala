@@ -59,7 +59,7 @@ def InheritanceTab(
       Search(
         placeholder := "filter",
         controlled(value <-- $filter, onInput.mapToValue --> $filter)
-      ) //.sm,
+      ).small,
     ),
     
     div( cls := "structure",
@@ -78,7 +78,7 @@ def InheritanceTab(
           
           Button(disabled := true, "fit").outlineSecondary,
           Button(disabled := true, "zoom").outlineSecondary
-        ).sm
+        ).small
       )
     ),
 

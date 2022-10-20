@@ -49,7 +49,7 @@ def AppHeader(diagramType: EventBus[DiagramType], projectPath: StoredString) =
                 editBasePath.set(b)
               },
               "Ok"
-            ).sm.outlineSuccess
+            ).small.outlineSuccess
           )
         },
 
