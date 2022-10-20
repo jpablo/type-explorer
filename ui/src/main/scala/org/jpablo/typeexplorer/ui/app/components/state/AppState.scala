@@ -14,6 +14,7 @@ import org.jpablo.typeexplorer.ui.app.client.{fetchClasses, fetchDocuments, fetc
 import io.laminext.core.StoredString
 import com.raquo.airstream.core.Signal
 import app.tulz.tuplez.Composition.Aux
+import zio.prelude.fx.ZPure
 
 
 case class AppState(
@@ -44,6 +45,10 @@ case class AppState(
     $projectPath
       .combineWith($requestBody.toSignal(Set.empty), selectedSymbols.options.signal)
       .changes
+
+object AppState:
+  val projectPath = ZPure.service[Unit, StoredString]
+  val $diagramSelection = ZPure.service[Unit, Var[Set[Symbol]]]
       
 
 
