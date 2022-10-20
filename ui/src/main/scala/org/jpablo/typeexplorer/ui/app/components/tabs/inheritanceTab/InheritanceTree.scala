@@ -17,6 +17,10 @@ import org.jpablo.typeexplorer.shared.models.{Namespace, NamespaceKind, Symbol}
 import org.jpablo.typeexplorer.ui.app.components.state.SelectedSymbols
 import org.jpablo.typeexplorer.ui.app.components.state.Selection
 import org.jpablo.typeexplorer.ui.widgets.{collapsableTree, collapsable2}
+import zio.prelude.fx.ZPure
+import com.raquo.laminar.nodes.ReactiveHtmlElement
+import zio.ZEnvironment.apply
+import zio.ZEnvironment
 
 object InheritanceTree:
 
@@ -26,67 +30,75 @@ object InheritanceTree:
     * @param selectedSymbols The checked status of each symbol
     * @return A List of trees, one for each top level package name in the diagram: e.g. ["com..., ", "java.io..."]
     */
-  def build($diagram: EventStream[InheritanceDiagram], selectedSymbols: SelectedSymbols): EventStream[List[HtmlElement]] =
-    for diagram <- $diagram yield
-      for fileTree <- diagram.toFileTrees yield
-        collapsableTree(fileTree)(
-          renderBranch = b => span(cls := "collapsable-branch-label", b),
-          renderLeaf = renderNamespace(selectedSymbols)
-        )
-
-  private def renderNamespace(selectedSymbols: SelectedSymbols)(name: String, ns: Namespace) =
-    val uri = encodeURIComponent(ns.symbol.toString)
-    val modifySelection = modifyLens[Selection]
-    val $selection = 
-      selectedSymbols.symbols.signal.map(_.getOrElse(ns.symbol, Selection.empty))
-
-    def symbolsUpdater(modifyField: PathLazyModify[Selection, Boolean]) =
-      selectedSymbols.symbols.updater[Boolean] { (symbols, b) =>
-        val selection = modifyField.setTo(b)(symbols.getOrElse(ns.symbol, Selection.empty))
-        if selection.allEmpty then
-          symbols - ns.symbol
-        else
-          symbols + (ns.symbol -> selection)
-      }      
-
-    def controlledCheckbox(field: Selection => Boolean, modifyField: PathLazyModify[Selection, Boolean], title: String) = 
-      input(
-        cls := "form-check-input mt-0", 
-        tpe := "checkbox", 
-        dataAttr("bs-toggle")  := "tooltip",
-        dataAttr("bs-trigger") := "hover",
-        dataAttr("bs-title")   := title,
-        onMountCallback(ctx => 
-          js.Dynamic.newInstance(js.Dynamic.global.bootstrap.Tooltip)(ctx.thisNode.ref)
-        ),
-        controlled(
-          checked <-- $selection.map(field), 
-          onClick.mapToChecked --> symbolsUpdater(modifyField)
-        )
-      )
-      
-    val $isSelected = $selection.map(!_.allEmpty)
-    collapsable2(
-      branchLabel =
-        div(
-          display := "inline",
-          stereotype(ns),
-          span(" "),
-          a(cls := "inheritance-namespace-symbol", href := "#elem_" + uri, title := ns.symbol.toString, ns.displayName,
-            onClick.mapTo(true) --> symbolsUpdater(modifySelection(_.current))
-          ),
-          div( cls := "inheritance-namespace-selection hide", cls.toggle("show-inline", "hide") <-- $isSelected,
-            span(" "),
-            controlledCheckbox(_.current, modifySelection(_.current), "current"),
-            span(" "),
-            controlledCheckbox(_.parents, modifySelection(_.parents), "parents"),
-            span(" "),
-            controlledCheckbox(_.children, modifySelection(_.children), "children"),
+  def build =
+    for
+      $diagram <- ZPure.service[Unit, EventStream[InheritanceDiagram]]
+      renderNamespace <- renderNamespaceZ
+    yield
+      for diagram <- $diagram yield
+        for fileTree <- diagram.toFileTrees yield
+          collapsableTree(fileTree)(
+            renderBranch = b => span(cls := "collapsable-branch-label", b),
+            renderLeaf = renderNamespace
           )
-        ),
-      contents =
-        ns.methods.map(m => a(m.displayName, title := m.symbol.toString))
-    )
+
+  private def renderNamespaceZ =
+    for
+      selectedSymbols <- ZPure.service[Unit, SelectedSymbols]
+    yield
+      (name: String, ns: Namespace) =>
+        val uri = encodeURIComponent(ns.symbol.toString)
+        val modifySelection = modifyLens[Selection]
+        val $selection = 
+          selectedSymbols.symbols.signal.map(_.getOrElse(ns.symbol, Selection.empty))
+
+        def symbolsUpdater(modifyField: PathLazyModify[Selection, Boolean]) =
+          selectedSymbols.symbols.updater[Boolean] { (symbols, b) =>
+            val selection = modifyField.setTo(b)(symbols.getOrElse(ns.symbol, Selection.empty))
+            if selection.allEmpty then
+              symbols - ns.symbol
+            else
+              symbols + (ns.symbol -> selection)
+          }      
+
+        def controlledCheckbox(field: Selection => Boolean, modifyField: PathLazyModify[Selection, Boolean], title: String) = 
+          input(
+            cls := "form-check-input mt-0", 
+            tpe := "checkbox", 
+            dataAttr("bs-toggle")  := "tooltip",
+            dataAttr("bs-trigger") := "hover",
+            dataAttr("bs-title")   := title,
+            onMountCallback(ctx => 
+              js.Dynamic.newInstance(js.Dynamic.global.bootstrap.Tooltip)(ctx.thisNode.ref)
+            ),
+            controlled(
+              checked <-- $selection.map(field), 
+              onClick.mapToChecked --> symbolsUpdater(modifyField)
+            )
+          )
+          
+        val $isSelected = $selection.map(!_.allEmpty)
+        collapsable2(
+          branchLabel =
+            div(
+              display := "inline",
+              stereotype(ns),
+              span(" "),
+              a(cls := "inheritance-namespace-symbol", href := "#elem_" + uri, title := ns.symbol.toString, ns.displayName,
+                onClick.mapTo(true) --> symbolsUpdater(modifySelection(_.current))
+              ),
+              div( cls := "inheritance-namespace-selection hide", cls.toggle("show-inline", "hide") <-- $isSelected,
+                span(" "),
+                controlledCheckbox(_.current, modifySelection(_.current), "current"),
+                span(" "),
+                controlledCheckbox(_.parents, modifySelection(_.parents), "parents"),
+                span(" "),
+                controlledCheckbox(_.children, modifySelection(_.children), "children"),
+              )
+            ),
+          contents =
+            ns.methods.map(m => a(m.displayName, title := m.symbol.toString))
+        )
 
   /** The "stereotype" is an element indicating which kind of namespace we have:
     * an Object, a Class, etc.
