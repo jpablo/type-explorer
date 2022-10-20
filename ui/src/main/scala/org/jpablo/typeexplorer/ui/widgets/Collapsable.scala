@@ -4,7 +4,6 @@ import com.raquo.laminar.api.L.*
 import com.raquo.airstream.core.EventStream
 import scala.meta.internal.semanticdb.{TextDocument, SymbolInformation, SymbolOccurrence, Synthetic}
 import org.scalajs.dom.html.LI
-import com.raquo.laminar.nodes.ReactiveHtmlElement
 import com.raquo.airstream.core.Signal
 import scalajs.js.URIUtils.encodeURIComponent
 import org.scalajs.dom
@@ -39,7 +38,7 @@ object Icons:
 
   def chevron(
     $open: Signal[Boolean],
-    mods: Modifier[ReactiveHtmlElement[dom.html.Anchor]]*
+    mods: Modifier[Anchor]*
   ) =
     a(
       cls := "bi",

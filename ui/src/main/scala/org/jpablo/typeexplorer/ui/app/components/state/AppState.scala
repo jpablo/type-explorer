@@ -18,7 +18,8 @@ import app.tulz.tuplez.Composition.Aux
 
 case class AppState(
   selectedSymbols: SelectedSymbols = SelectedSymbols(),
-  projectPath: StoredString = storedString("projectPath", initial = "")
+  projectPath: StoredString = storedString("projectPath", initial = ""),
+  $diagramSelection: Var[Set[Symbol]] = Var(Set.empty)
 ):
   val $projectPath: Signal[Path] = 
     projectPath.signal.map(Path.apply)

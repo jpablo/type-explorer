@@ -1,11 +1,19 @@
 package org.jpablo.typeexplorer.ui.bootstrap
 
 import com.raquo.laminar.api.L.*
-import com.raquo.laminar.nodes.ReactiveHtmlElement
 import org.scalajs.dom
+import com.raquo.laminar.nodes.ReactiveHtmlElement
 
-class Tab(active: Boolean, target: String):
-  def header(title: String) =
+
+def NavTabs(mods: Modifier[ReactiveHtmlElement.Base]*) =
+  ul(cls := "nav nav-tabs", role := "tablist", mods)
+
+def TabContent(mods: Modifier[ReactiveHtmlElement.Base]*) =
+  div(cls := "tab-content", mods)
+
+
+class Tab(target: String, active: Boolean = false):
+  def NavItem(title: String) =
     li(
       cls := "nav-item",
       role := "presentation",
@@ -20,7 +28,7 @@ class Tab(active: Boolean, target: String):
       )
     )
   
-  def body(index: Int, content: ReactiveHtmlElement[dom.html.Element]) =
+  def Pane(index: Int, content: Element) =
     div(
       idAttr := target,
       cls := "tab-pane fade",

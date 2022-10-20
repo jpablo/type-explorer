@@ -5,7 +5,6 @@ import com.raquo.airstream.core.Observer
 import com.raquo.airstream.core.Signal
 import com.raquo.airstream.eventbus.EventBus
 import com.raquo.laminar.api.L.*
-import com.raquo.laminar.nodes.ReactiveHtmlElement
 import com.softwaremill.quicklens.*
 import org.scalajs.dom.html
 import scalajs.js.URIUtils.encodeURIComponent
@@ -92,7 +91,7 @@ object InheritanceTree:
   /** The "stereotype" is an element indicating which kind of namespace we have:
     * an Object, a Class, etc.
     */
-  private def stereotype(ns: Namespace): ReactiveHtmlElement[html.Span] =
+  private def stereotype(ns: Namespace): Span =
     val elem =
       ns.kind match
         case NamespaceKind.Object        => span("O", backgroundColor := "orchid")

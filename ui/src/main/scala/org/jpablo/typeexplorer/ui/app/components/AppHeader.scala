@@ -2,7 +2,7 @@ package org.jpablo.typeexplorer.ui.app.components
 
 import com.raquo.laminar.api.L.*
 import org.scalajs.dom
-import org.jpablo.typeexplorer.ui.bootstrap.{Dropdown, Navbar}
+import org.jpablo.typeexplorer.ui.bootstrap.*
 import io.laminext.core.*
 import io.laminext.syntax.core.*
 
@@ -19,9 +19,8 @@ def AppHeader(diagramType: EventBus[DiagramType], projectPath: StoredString) =
   val editBasePath  = Var(false)
   // a() --[a:onClick ==> editBasePath = true]--> input() --[input:onEnterPress|onEscapePress ==> editBasePath = false]--> a()
   val searchInput = 
-    input(
-      cls := "form-control me-2",
-      tpe := "search",
+    Search(
+      cls := "me-2",
       onMountFocus,
       value <-- projectPath.signal,
       onEnterPress.preventDefault.mapToValue --> { v => 
@@ -37,22 +36,20 @@ def AppHeader(diagramType: EventBus[DiagramType], projectPath: StoredString) =
       id    = "te-header-content",
       brand = "Type Explorer",
 
-      li(cls := "nav-item", span(cls := "nav-link", b("base path:"))),
+      NavItem(span(cls := "nav-link", b("base path:"))),
 
-      li(cls := "nav-item", 
+      NavItem(
         editBasePath.signal.childWhenTrue {
           form(
             cls := "d-flex me-2",
             searchInput,
-            button(
-              cls := "btn btn-sm btn-outline-success", 
-              tpe := "button", 
+            Button(
               onClick.mapTo(false) --> { b => 
                 projectPath.set(searchInput.ref.value)
                 editBasePath.set(b)
               },
               "Ok"
-            )
+            ).sm.outlineSuccess
           )
         },
 

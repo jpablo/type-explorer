@@ -17,6 +17,8 @@ import org.jpablo.typeexplorer.ui.app.console
 import org.scalajs.dom
 import org.scalajs.dom.EventTarget
 import com.raquo.domtypes.jsdom.defs.events.TypedTargetMouseEvent
+import org.jpablo.typeexplorer.ui.bootstrap.*
+import org.jpablo.typeexplorer.shared.models.Symbol
 
 
 def svgToLaminar(svg: dom.Element) =
@@ -27,6 +29,7 @@ def InheritanceTab(
   $svgDiagram    : EventStream[dom.Element],
   $diagram       : EventStream[InheritanceDiagram],
   selectedSymbol : SelectedSymbols,
+  $selectedNamespace: EventBus[Symbol]
 ) =
   val autocomplete = customProp("autocomplete", StringAsIsCodec)
   val $filter = Var("")
@@ -40,25 +43,23 @@ def InheritanceTab(
 
   def ControlledCheckbox(id: String, labelStr: String, field: Options => Boolean, modifyField: PathLazyModify[Options, Boolean]) =
     List(
-      input( tpe := "checkbox", cls := "btn-check", idAttr := id, autocomplete := "off",
+      Checkbox(idAttr := id, autocomplete := "off",
         controlled(
           checked <-- selectedSymbol.options.signal.map(field),
           onClick.mapToChecked --> selectedSymbol.options.updater[Boolean]((options, b) => modifyField.setTo(b)(options))
         )
       ),
-      label(cls := "btn btn-outline-primary", forId := id, labelStr)
+      Label(forIdAttr = id, labelStr)
     )
 
   // -------------- render --------------------------------
   div( cls := "text-document-areas",
 
     form(cls := "inheritance-tree-search",
-      input(
-        cls := "form-control form-control-sm",
-        tpe := "search",
+      Search(
         placeholder := "filter",
         controlled(value <-- $filter, onInput.mapToValue --> $filter)
-      ),
+      ) //.sm,
     ),
     
     div( cls := "structure",
@@ -66,20 +67,18 @@ def InheritanceTab(
     ),
 
     div(cls := "inheritance-container-toolbar", 
-      div(
-        cls := "btn-toolbar mb-3",
-        role := "toolbar",
+      ButtonToolbar(
+        cls := "mb-3",
         // ariaLabel := "Toolbar with button groups",
-        div(
-          cls := "btn-group btn-group-sm me-2",
-          role := "group",
+        ButtonGroup(
+          cls := "me-2", 
           // ariaLabel := "First group",
           ControlledCheckbox("fields-checkbox-1", "fields",     _.fields,     modifySelection(_.fields)),
           ControlledCheckbox("fields-checkbox-2", "signatures", _.signatures, modifySelection(_.signatures)),
           
-          button( tpe := "button", cls := "btn btn-outline-secondary", disabled := true, "fit"),
-          button( tpe := "button", cls := "btn btn-outline-secondary", disabled := true, "zoom")
-        )
+          Button(disabled := true, "fit").outlineSecondary,
+          Button(disabled := true, "zoom").outlineSecondary
+        ).sm
       )
     ),
 
@@ -90,28 +89,32 @@ def InheritanceTab(
           (e.target +: parents(e.target))
             .takeWhile(_.isInstanceOf[dom.SVGElement])
             .find(isNamespace)
-            .map(NameSpaceElement.apply)
-            .foreach(_.selectToggle)
-            // TODO: emit event to update selected symbols
+            .map(NameSpaceElement(_))
+            .foreach { ns => 
+              ns.selectToggle
+              $selectedNamespace.emit(ns.symbol)
+            }
         }
       )
     )
   )
 
-def parents(e: dom.Element) = 
-  LazyList.unfold(e)(e => Option(e.parentNode.asInstanceOf[dom.Element]).map(e => (e, e)))
-
-def isDiagramElement(e: dom.Element)(prefix: String) = 
-  e.tagName == "g" && e.hasAttribute("id") && e.getAttribute("id").startsWith(prefix)
-
-def isNamespace(e: dom.Element) = isDiagramElement(e)("elem_")
-def isPackage(e: dom.Element) = isDiagramElement(e)("cluster_")
-
+  
 extension (e: dom.Element)
+  def parents = 
+    LazyList.unfold(e)(e => Option(e.parentNode.asInstanceOf[dom.Element]).map(e => (e, e)))
+  
+  def isDiagramElement(prefix: String) = 
+    e.tagName == "g" && e.hasAttribute("id") && e.getAttribute("id").startsWith(prefix)
+  
+  def isNamespace = e.isDiagramElement("elem_")
+  def isPackage = e.isDiagramElement("cluster_")
+  
   def fill = e.getAttribute("fill") 
   def fill_=(c: String) = e.setAttribute("fill", c) 
 
-case class NameSpaceElement(ref: dom.Element):
+
+class NameSpaceElement(ref: dom.Element):
   val selectedFill = "red"
   val defaultFill = "#F1F1F1"
 

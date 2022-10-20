@@ -7,10 +7,9 @@ import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.Inheritance
 import org.jpablo.typeexplorer.ui.app.components.tabs.semanticDBTab.SemanticDBTab
 import org.scalajs.dom
 import org.jpablo.typeexplorer.ui.app.Path
-import org.jpablo.typeexplorer.shared.models
+import org.jpablo.typeexplorer.shared.models.Symbol
 import org.jpablo.typeexplorer.ui.app.components.state.SelectedSymbols
-import org.jpablo.typeexplorer.ui.bootstrap.Tab
-import com.raquo.laminar.nodes.ReactiveHtmlElement
+import org.jpablo.typeexplorer.ui.bootstrap.*
 
 def TabsArea(
   $projectPath    : Signal[Path], 
@@ -18,31 +17,22 @@ def TabsArea(
   $inheritance    : EventStream[dom.Element],
   $classes        : EventStream[InheritanceDiagram],
   selectedSymbol  : SelectedSymbols,
+  $selectedNamespace: EventBus[Symbol]
 ) =
-  val inheritance = Tab(true, "inheritance-tab-pane")
-  val semanticDB  = Tab(false, "semanticdb-tab-pane")
+  val inheritance = Tab("inheritance-tab-pane", active = true)
+  val semanticDB  = Tab("semanticdb-tab-pane")
   List(
-    // Tab headers
-    div(
-      idAttr := "te-tabs-header",
-      ul(
-        cls := "nav nav-tabs",
-        role := "tablist",
-
-        inheritance.header("Inheritance"),
-        semanticDB.header("SemanticDB"),
-      )
+    NavTabs(
+      cls := "te-tabs-header",
+      inheritance.NavItem("Inheritance"),
+      semanticDB.NavItem("SemanticDB"),
     ),
     
-    // Tab bodies
-    div(
+    TabContent(
       cls := "te-tabs-container",
-      div(
-        cls := "tab-content",
-        inheritance.body(0, InheritanceTab($inheritance, $classes, selectedSymbol)),
-        semanticDB.body(1, SemanticDBTab($projectPath, $documents)),
-      )
+      inheritance.Pane(0, InheritanceTab($inheritance, $classes, selectedSymbol, $selectedNamespace)),
+      semanticDB.Pane(1, SemanticDBTab($projectPath, $documents)),
     )
-  )
+)
   
 
