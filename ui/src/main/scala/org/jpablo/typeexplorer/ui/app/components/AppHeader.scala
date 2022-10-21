@@ -13,7 +13,7 @@ enum DiagramType:
   case CallGraph
 
 
-def AppHeaderZ =
+def AppHeader =
   for 
     projectPath <- AppState.projectPath
   yield

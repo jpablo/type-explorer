@@ -1,26 +1,23 @@
 package org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab
 
+
 import com.raquo.airstream.core.EventStream
 import com.raquo.airstream.core.Observer
 import com.raquo.airstream.core.Signal
 import com.raquo.airstream.eventbus.EventBus
 import com.raquo.laminar.api.L.*
+import com.raquo.laminar.nodes.ReactiveHtmlElement
 import com.softwaremill.quicklens.*
-import org.scalajs.dom.html
-import scalajs.js.URIUtils.encodeURIComponent
-import scalajs.js
-
 import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
 import org.jpablo.typeexplorer.shared.fileTree.FileTree
 import org.jpablo.typeexplorer.shared.inheritance.InheritanceDiagram
 import org.jpablo.typeexplorer.shared.models.{Namespace, NamespaceKind, Symbol}
+import org.jpablo.typeexplorer.ui.app.components.state.AppState
 import org.jpablo.typeexplorer.ui.app.components.state.SelectedSymbols
 import org.jpablo.typeexplorer.ui.app.components.state.Selection
 import org.jpablo.typeexplorer.ui.widgets.{collapsableTree, collapsable2}
-import zio.prelude.fx.ZPure
-import com.raquo.laminar.nodes.ReactiveHtmlElement
-import zio.ZEnvironment.apply
-import zio.ZEnvironment
+import scalajs.js
+import scalajs.js.URIUtils.encodeURIComponent
 
 object InheritanceTree:
 
@@ -32,19 +29,19 @@ object InheritanceTree:
     */
   def build =
     for
-      $diagram <- ZPure.service[Unit, EventStream[InheritanceDiagram]]
       renderNamespace <- renderNamespaceZ
     yield
-      for diagram <- $diagram yield
-        for fileTree <- diagram.toFileTrees yield
-          collapsableTree(fileTree)(
-            renderBranch = b => span(cls := "collapsable-branch-label", b),
-            renderLeaf = renderNamespace
-          )
+      ($diagram: EventStream[InheritanceDiagram]) =>
+        for diagram <- $diagram yield
+          for fileTree <- diagram.toFileTrees yield
+            collapsableTree(fileTree)(
+              renderBranch = b => span(cls := "collapsable-branch-label", b),
+              renderLeaf = renderNamespace
+            )
 
   private def renderNamespaceZ =
     for
-      selectedSymbols <- ZPure.service[Unit, SelectedSymbols]
+      selectedSymbols <- AppState.selectedSymbols
     yield
       (name: String, ns: Namespace) =>
         val uri = encodeURIComponent(ns.symbol.toString)

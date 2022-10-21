@@ -1,21 +1,19 @@
 package org.jpablo.typeexplorer.ui.app.components.state
 
-import org.scalajs.dom
-import com.raquo.laminar.api.L.*
-import io.laminext.syntax.core.*
-import org.jpablo.typeexplorer.shared.inheritance.Related
-import org.jpablo.typeexplorer.ui.app.toggle
-import org.jpablo.typeexplorer.ui.app.*
-import org.jpablo.typeexplorer.ui.app.client.fetchInheritanceSVGDiagram
-import org.jpablo.typeexplorer.shared.models.Symbol
 import com.raquo.airstream.core.EventStream
-import org.jpablo.typeexplorer.shared.inheritance.PlantumlInheritance.Options
-import org.jpablo.typeexplorer.ui.app.client.{fetchClasses, fetchDocuments, fetchInheritanceSVGDiagram}
-import io.laminext.core.StoredString
-import com.raquo.airstream.core.Signal
-import app.tulz.tuplez.Composition.Aux
+import com.raquo.airstream.eventbus.EventBus
+import com.raquo.airstream.state.Var
+import com.raquo.laminar.api.L.*
+import io.laminext.syntax.core.{StoredString, storedString}
+import org.scalajs.dom
 import zio.prelude.fx.ZPure
+import zio.Tag
 
+import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
+import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, Related}
+import org.jpablo.typeexplorer.shared.inheritance.PlantumlInheritance.Options
+import org.jpablo.typeexplorer.shared.models.Symbol
+import org.jpablo.typeexplorer.ui.app.Path
 
 case class AppState(
   selectedSymbols: SelectedSymbols = SelectedSymbols(),
@@ -46,10 +44,22 @@ case class AppState(
       .combineWith($requestBody.toSignal(Set.empty), selectedSymbols.options.signal)
       .changes
 
+
+type Service[A] = 
+  ZPure[Nothing, Unit, Unit, A, Nothing, A]
+
+def service[A: Tag]: Service[A] =
+  ZPure.service[Unit, A]
+
 object AppState:
-  val projectPath = ZPure.service[Unit, StoredString]
-  val $diagramSelection = ZPure.service[Unit, Var[Set[Symbol]]]
-      
+  val $diagram           = service[EventStream[InheritanceDiagram]]
+  val $diagramSelection  = service[Var[Set[Symbol]]]
+  val $documents         = service[EventStream[List[TextDocumentsWithSource]]]
+  val $projectPath       = service[Signal[Path]]
+  val $selectedNamespace = service[EventBus[Symbol]]
+  val $svgDiagram        = service[EventStream[dom.SVGElement]]
+  val projectPath        = service[StoredString]
+  val selectedSymbols    = service[SelectedSymbols]
 
 
 case class SelectedSymbols(

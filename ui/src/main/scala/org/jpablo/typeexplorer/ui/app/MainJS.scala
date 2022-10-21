@@ -11,11 +11,11 @@ import zio.ZEnvironment
 object MainJS:
   def main(args: Array[String]): Unit =
 
-    val appState        = AppState()
-    val $documents      = fetchDocuments(appState.$projectPath)
-    val $classes        = fetchClasses(appState.$projectPath)
-    val $inheritance    = appState.$inheritanceSelection.flatMap(fetchInheritanceSVGDiagram)
-    val $setSymbol      = EventBus[Symbol]()
+    val appState     = AppState()
+    val $documents   = fetchDocuments(appState.$projectPath)
+    val $classes     = fetchClasses(appState.$projectPath)
+    val $inheritance = appState.$inheritanceSelection.flatMap(fetchInheritanceSVGDiagram)
+    val $setSymbol   = EventBus[Symbol]()
 
     val appEnv = 
       ZEnvironment(

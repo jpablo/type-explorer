@@ -9,20 +9,20 @@ import scalajs.js.URIUtils.encodeURIComponent
 import org.jpablo.typeexplorer.shared.models
 import org.jpablo.typeexplorer.ui.app.Path
 import zio.prelude.fx.ZPure
+import org.jpablo.typeexplorer.ui.app.components.state.AppState
 
 object SemanticDBTree:
 
-  def build =
-    for
-      $documents <- ZPure.service[Unit, EventStream[List[TextDocumentsWithSource]]]
-    yield
-      ($selectedSemanticDb: EventBus[Path]) =>
-        for documentsWithSource <- $documents yield
-          for fileTree <- FileTree.build(documentsWithSource)(buildPath) yield
-            collapsableTree(fileTree)(
-              renderBranch = b => span(cls := "collapsable-branch-label", b),
-              renderLeaf = renderDocWithSource($selectedSemanticDb)
-            )
+  def build(
+    $documents: EventStream[List[TextDocumentsWithSource]],
+    $selectedSemanticDb: EventBus[Path]
+  ) =
+    for documentsWithSource <- $documents yield
+      for fileTree <- FileTree.build(documentsWithSource)(buildPath) yield
+        collapsableTree(fileTree)(
+          renderBranch = b => span(cls := "collapsable-branch-label", b),
+          renderLeaf = renderDocWithSource($selectedSemanticDb)
+        )
 
   private def buildPath(doc: TextDocumentsWithSource) =
     val all = doc.semanticDbUri.split("/").toList.filter(_.nonEmpty)

@@ -10,11 +10,13 @@ import zio.json.*
 
 import org.jpablo.typeexplorer.protos.{TextDocumentsWithSource, TextDocumentsWithSourceSeq}
 import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, Related}
+import org.jpablo.typeexplorer.shared.inheritance.PlantumlInheritance.Options
 import org.jpablo.typeexplorer.shared.models.{Symbol, Namespace}
 import org.jpablo.typeexplorer.shared.webApp.InheritanceReq
 import org.jpablo.typeexplorer.ui.app.components.DiagramType
+import org.jpablo.typeexplorer.ui.app.components.state.AppState
 import org.jpablo.typeexplorer.ui.app.Path
-import org.jpablo.typeexplorer.shared.inheritance.PlantumlInheritance.Options
+import org.jpablo.typeexplorer.ui.app.console
 
 val basePath = "http://localhost:8090/" 
 
@@ -49,15 +51,18 @@ def fetchClasses($projectPath: Signal[Path]): EventStream[InheritanceDiagram] =
   yield
     classes
 
-def fetchInheritanceSVGDiagram(projectPath: Path, symbols: Set[(Symbol, Set[Related])], options: Options): EventStream[dom.Element] =
+def fetchInheritanceSVGDiagram(projectPath: Path, symbols: Set[(Symbol, Set[Related])], options: Options): EventStream[dom.SVGElement] =
   val parser = dom.DOMParser()
   if projectPath.toString.isEmpty then 
-    EventStream.fromValue(div().ref)
+    EventStream.fromValue(svg.svg().ref)
   else
     val body = InheritanceReq(List(projectPath.toString), symbols, InheritanceReq.Config(options.fields, options.signatures))
     val req  = Fetch.post(basePath + "inheritance", body.toJson)
     req.text.map { fetchResponse =>
-      parser.parseFromString(fetchResponse.data, dom.MIMEType.`image/svg+xml`).documentElement
+      parser
+        .parseFromString(fetchResponse.data, dom.MIMEType.`image/svg+xml`)
+        .documentElement
+        .asInstanceOf[dom.SVGElement]
     }
 
 def fetchCallGraphSVGDiagram($diagram: Signal[(DiagramType, Path)]): EventStream[dom.Element] =
@@ -78,9 +83,11 @@ def fetchCallGraphSVGDiagram($diagram: Signal[(DiagramType, Path)]): EventStream
 //      errorNode = doc.querySelector("parsererror")
   yield doc
 
-def fetchSourceCode($projectPath: Signal[Path])(selectedPath: Path): EventStream[String] =
-  for
-    projectPath <- $projectPath
-    response    <- fetchBase(s"source?path=$projectPath/$selectedPath").text
-  yield
-    response.data
+def fetchSourceCode =
+  AppState.$projectPath.map { $projectPath => (selectedPath: Path) =>
+    for
+      projectPath <- $projectPath
+      response    <- fetchBase(s"source?path=$projectPath/$selectedPath").text
+    yield
+      response.data
+  }

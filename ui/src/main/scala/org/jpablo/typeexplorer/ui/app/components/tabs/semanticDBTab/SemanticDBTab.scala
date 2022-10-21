@@ -8,27 +8,30 @@ import org.jpablo.typeexplorer.ui.app.components.tabs.semanticDBTab.{SemanticDBT
 import org.jpablo.typeexplorer.ui.app.Path
 import org.jpablo.typeexplorer.shared.models
 import zio.prelude.fx.ZPure
+import org.jpablo.typeexplorer.ui.app.components.state.AppState
+import com.raquo.airstream.core.Signal
+import org.scalajs.dom.html
+import com.raquo.laminar.nodes.ReactiveHtmlElement
 
 
-def SemanticDBTabZ =
+def SemanticDBTab =
   for
-    $projectPath <- ZPure.environment[Unit, Signal[Path]]
-    $documents <- ZPure.environment[Unit, EventStream[List[TextDocumentsWithSource]]]
-    semanticDBTree <- SemanticDBTree.build
+    fetchSourceCode <- fetchSourceCode
+    $documents  <- AppState.$documents
   yield
     val $selectedSemanticDb = EventBus[Path]
 
     val $selectedDocument = 
-      $selectedSemanticDb.events.combineWith($documents.get)
+      $selectedSemanticDb.events.combineWith($documents)
         .map { (path, documents) => 
           path -> documents.find(_.semanticDbUri == path.toString)
         }
 
     val $sourceCode = 
       $selectedDocument
-        .collect { case (path, Some(documentsWithSource)) => documentsWithSource.documents.headOption }
+        .collect { case (_, Some(documentsWithSource)) => documentsWithSource.documents.headOption }
         .collect { case Some(doc) => Path(doc.uri) }
-        .flatMap(fetchSourceCode($projectPath.get))
+        .flatMap(fetchSourceCode)
 
     div(
       cls := "text-document-areas",
@@ -36,7 +39,7 @@ def SemanticDBTabZ =
       div(
         cls := "structure",
         div(""), // TODO: add controls to expand / collapse all
-        children <-- semanticDBTree($selectedSemanticDb)
+        children <-- SemanticDBTree.build($documents, $selectedSemanticDb)
       ),
 
       div(
