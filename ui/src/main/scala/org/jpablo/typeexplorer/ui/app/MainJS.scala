@@ -30,8 +30,10 @@ object MainJS:
         appState.$diagramSelection
       )
 
+    val app = 
+      TopLevel.provideEnvironment(appEnv)
 
     render(
       document.querySelector("#app"), 
-      TopLevel.provideEnvironment(appEnv).run
+      app.run
     )

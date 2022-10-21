@@ -40,14 +40,12 @@ object InheritanceTab:
     yield
       val $filter = Var("")
       val modifySelection = modifyLens[Options]
-
-      val $filteredDiagrams: EventStream[InheritanceDiagram] = 
+      val $filteredDiagram = 
         $diagram.toSignal(InheritanceDiagram.empty)
           .combineWith($filter.signal)
-          .changes.debounce(300)
-          .map((event, w) => 
-            if w.isBlank then event else event.filterBySymbols(w)
-          )
+          .changes
+          .debounce(300)
+          .map((event, w) => if w.isBlank then event else event.filterBySymbols(w))
       // -------------- render --------------------------------
       div( cls := "text-document-areas",
 
@@ -55,7 +53,7 @@ object InheritanceTab:
           Search(placeholder := "filter", controlled(value <-- $filter, onInput.mapToValue --> $filter)).small
         ),
         
-        div(cls := "structure", children <-- inheritanceTree($filteredDiagrams)),
+        div(cls := "structure", children <-- inheritanceTree($filteredDiagram)),
 
         div(cls := "inheritance-container-toolbar", 
           ButtonToolbar(

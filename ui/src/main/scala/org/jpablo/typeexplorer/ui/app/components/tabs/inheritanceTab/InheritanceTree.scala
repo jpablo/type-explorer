@@ -33,6 +33,7 @@ object InheritanceTree:
     yield
       ($diagram: EventStream[InheritanceDiagram]) =>
         for diagram <- $diagram yield
+          // TODO: diagram.toFileTrees can be called *before* filtering
           for fileTree <- diagram.toFileTrees yield
             collapsableTree(fileTree)(
               renderBranch = b => span(cls := "collapsable-branch-label", b),
