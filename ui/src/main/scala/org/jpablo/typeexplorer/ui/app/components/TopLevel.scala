@@ -17,9 +17,9 @@ def TopLevel =
   yield
     div(
       idAttr := "te-toplevel",
-      $selectedNamespace --> $diagramSelection.updater[Symbol](_ `toggle` _),
       AppHeader,
       TabsArea,
       AppFooter,
+      $selectedNamespace --> $diagramSelection.updater[Symbol](_ `toggle` _),
       div(child.text <-- $diagramSelection.signal.map(_.toString)),
     )

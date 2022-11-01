@@ -53,10 +53,12 @@ def service[A: Tag]: Service[A] =
 
 object AppState:
   val $diagram           = service[EventStream[InheritanceDiagram]]
-  val $diagramSelection  = service[Var[Set[Symbol]]]
   val $documents         = service[EventStream[List[TextDocumentsWithSource]]]
   val $projectPath       = service[Signal[Path]]
+
   val $selectedNamespace = service[EventBus[Symbol]]
+  val $diagramSelection  = service[Var[Set[Symbol]]]
+
   val $svgDiagram        = service[EventStream[dom.SVGElement]]
   val projectPath        = service[StoredString]
   val selectedSymbols    = service[SelectedSymbols]

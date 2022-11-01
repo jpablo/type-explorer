@@ -30,6 +30,6 @@ def TabsArea =
         inheritance.Pane(0, inheritanceTabContent),
         semanticDB.Pane(1, semanticDBTabContent),
       )
-)
+    )
   
 

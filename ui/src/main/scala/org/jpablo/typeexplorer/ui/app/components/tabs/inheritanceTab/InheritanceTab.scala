@@ -37,6 +37,7 @@ object InheritanceTab:
       selectedSymbols    <- AppState.selectedSymbols
       $selectedNamespace <- AppState.$selectedNamespace
       inheritanceTree    <- InheritanceTree.build
+      $diagramSelection  <- AppState.$diagramSelection
     yield
       val $filter = Var("")
       val modifySelection = modifyLens[Options]
@@ -70,7 +71,16 @@ object InheritanceTab:
 
         div( cls := "inheritance-container",
           div(
-            child <-- $svgDiagram.map(svgToLaminar),
+            child <-- $svgDiagram.map { svg => 
+              val selection = $diagramSelection.now()
+              val namespaces = svg.querySelectorAll("g[id ^= elem_]").map(NameSpaceElement(_))
+              for 
+                ns <- namespaces 
+                if selection.contains(ns.symbol)
+              do 
+                ns.select
+              svgToLaminar(svg)
+            },
             onClick --> handleSvgClick($selectedNamespace)
           )
         )
@@ -99,7 +109,7 @@ object InheritanceTab:
 
 
 
-
+// TODO: move to a new file
 extension (e: dom.Element)
   def parents = 
     LazyList.unfold(e)(e => Option(e.parentNode.asInstanceOf[dom.Element]).map(e => (e, e)))
@@ -123,6 +133,9 @@ class NameSpaceElement(ref: dom.Element):
   def box = 
     ref.getElementsByTagName("rect")
     .find(_.getAttribute("id") == id)
+
+  def select =
+    box.foreach(_.fill = selectedFill)
 
   def selectToggle =
     for box <- box do
