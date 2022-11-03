@@ -72,13 +72,21 @@ object InheritanceTab:
         div( cls := "inheritance-container",
           div(
             child <-- $svgDiagram.map { svg => 
-              val selection = $diagramSelection.now()
-              val namespaces = svg.querySelectorAll("g[id ^= elem_]").map(NameSpaceElement(_))
+              // TODO: Refactor this after tree selection is changed.
+              val diagramSelection: Set[Symbol] = $diagramSelection.now()
+              val diagramElements = svg.querySelectorAll("g[id ^= elem_]").map(NameSpaceElement(_))
+              
               for 
-                ns <- namespaces 
-                if selection.contains(ns.symbol)
+                elem <- diagramElements 
+                if diagramSelection.contains(elem.symbol)
               do 
-                ns.select
+                elem.select
+
+              val diagramSymbols = diagramElements.map(_.symbol).toSet
+              val toRemove = diagramSelection -- diagramSymbols
+              
+              $diagramSelection.update(_ -- toRemove)
+
               svgToLaminar(svg)
             },
             onClick --> handleSvgClick($selectedNamespace)
