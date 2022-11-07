@@ -18,6 +18,8 @@ import org.jpablo.typeexplorer.ui.app.components.state.Selection
 import org.jpablo.typeexplorer.ui.widgets.{collapsableTree, collapsable2}
 import scalajs.js
 import scalajs.js.URIUtils.encodeURIComponent
+import org.jpablo.typeexplorer.ui.bootstrap.*
+import org.scalajs.dom.html
 
 object InheritanceTree:
 
@@ -87,6 +89,8 @@ object InheritanceTree:
               ),
               div( cls := "inheritance-namespace-selection hide", cls.toggle("show-inline", "hide") <-- $isSelected,
                 span(" "),
+                miniButton("p", onClick.mapTo(true) --> symbolsUpdater(modifySelection(_.parents))),
+                miniButton("c", onClick.mapTo(true) --> symbolsUpdater(modifySelection(_.children))),
                 controlledCheckbox(_.current, modifySelection(_.current), "current"),
                 span(" "),
                 controlledCheckbox(_.parents, modifySelection(_.parents), "parents"),
@@ -97,6 +101,9 @@ object InheritanceTree:
           contents =
             ns.methods.map(m => a(m.displayName, title := m.symbol.toString))
         )
+
+  def miniButton(label: String, mods: Modifier[ReactiveHtmlElement[html.Element]]*) =
+    span(cls := "te-mini-button", label, mods)
 
   /** The "stereotype" is an element indicating which kind of namespace we have:
     * an Object, a Class, etc.

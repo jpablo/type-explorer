@@ -155,6 +155,23 @@ a {
 #inheritance-tab-pane .inheritance-namespace-symbol:hover + div {
   display: inline;
 }
+
+
+.te-mini-button {
+  border: 1px solid #0d6efd;
+  color: #0d6efd;
+  border-radius: 5px;
+  display: inline-block;
+  line-height: 1em;
+  width: 1em;
+  text-align: center;
+  margin-right: 2px;
+}
+
+.te-mini-button:hover {
+  cursor: pointer;
+}
+
 /* --------------    */
 
 #semanticdb-tab-pane > .text-document-areas {
@@ -219,3 +236,5 @@ ul.collapsable-children > li > .collapsable-wrapper {
 .collapsable-branch-label {
     white-space: nowrap;
 }
+
+

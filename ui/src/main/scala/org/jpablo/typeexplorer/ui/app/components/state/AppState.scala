@@ -70,7 +70,7 @@ case class SelectedSymbols(
 )
 
 case class Selection(
-  current : Boolean = false,
+  current : Boolean = false, // <--
   parents : Boolean = false,
   children: Boolean = false,
 ):
