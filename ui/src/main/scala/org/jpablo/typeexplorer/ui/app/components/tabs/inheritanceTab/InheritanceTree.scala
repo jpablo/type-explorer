@@ -20,8 +20,10 @@ import scalajs.js
 import scalajs.js.URIUtils.encodeURIComponent
 import org.jpablo.typeexplorer.ui.bootstrap.*
 import org.scalajs.dom.html
+import zio.prelude.fx.ZPure
 
 object InheritanceTree:
+
 
   /** Builds a collapasable tree based on the given inheritance diagram.
     * 
@@ -39,27 +41,17 @@ object InheritanceTree:
           for fileTree <- diagram.toFileTrees yield
             collapsableTree(fileTree)(
               renderBranch = b => span(cls := "collapsable-branch-label", b),
-              renderLeaf = renderNamespace
+              renderLeaf = renderNamespace(diagram)
             )
 
   private def renderNamespaceZ =
     for
       selectedSymbols <- AppState.selectedSymbols
     yield
-      (name: String, ns: Namespace) =>
+      (diagram: InheritanceDiagram) => (name: String, ns: Namespace) =>
         val uri = encodeURIComponent(ns.symbol.toString)
         val modifySelection = modifyLens[Selection]
-        val $selection = 
-          selectedSymbols.symbols.signal.map(_.getOrElse(ns.symbol, Selection.empty))
-
-        def symbolsUpdater(modifyField: PathLazyModify[Selection, Boolean]) =
-          selectedSymbols.symbols.updater[Boolean] { (symbols, b) =>
-            val selection = modifyField.setTo(b)(symbols.getOrElse(ns.symbol, Selection.empty))
-            if selection.allEmpty then
-              symbols - ns.symbol
-            else
-              symbols + (ns.symbol -> selection)
-          }      
+        val $selection = selectedSymbols.selection(ns.symbol)
 
         def controlledCheckbox(field: Selection => Boolean, modifyField: PathLazyModify[Selection, Boolean], title: String) = 
           input(
@@ -73,7 +65,7 @@ object InheritanceTree:
             ),
             controlled(
               checked <-- $selection.map(field), 
-              onClick.mapToChecked --> symbolsUpdater(modifyField)
+              onClick.mapToChecked --> selectedSymbols.symbolsUpdater(ns, modifyField)
             )
           )
           
@@ -85,12 +77,17 @@ object InheritanceTree:
               stereotype(ns),
               span(" "),
               a(cls := "inheritance-namespace-symbol", href := "#elem_" + uri, title := ns.symbol.toString, ns.displayName,
-                onClick.mapTo(true) --> symbolsUpdater(modifySelection(_.current))
+                onClick.mapTo(true) --> selectedSymbols.symbolsUpdater(ns, modifySelection(_.current))
               ),
               div( cls := "inheritance-namespace-selection hide", cls.toggle("show-inline", "hide") <-- $isSelected,
                 span(" "),
-                miniButton("p", onClick.mapTo(true) --> symbolsUpdater(modifySelection(_.parents))),
-                miniButton("c", onClick.mapTo(true) --> symbolsUpdater(modifySelection(_.children))),
+                
+                // miniButton("p", onClick.mapTo(true) --> symbolsUpdater(modifySelection(_.parents))),
+
+                miniButton("p", onClick.mapTo(ns.symbol) --> selectedSymbols.enableParents(diagram)),
+                
+                miniButton("c", onClick.mapTo(true) --> selectedSymbols.symbolsUpdater(ns, modifySelection(_.children))),
+                
                 controlledCheckbox(_.current, modifySelection(_.current), "current"),
                 span(" "),
                 controlledCheckbox(_.parents, modifySelection(_.parents), "parents"),

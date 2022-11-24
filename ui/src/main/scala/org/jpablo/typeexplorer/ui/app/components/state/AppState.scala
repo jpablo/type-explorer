@@ -12,13 +12,16 @@ import zio.Tag
 import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
 import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, Related}
 import org.jpablo.typeexplorer.shared.inheritance.PlantumlInheritance.Options
-import org.jpablo.typeexplorer.shared.models.Symbol
 import org.jpablo.typeexplorer.ui.app.Path
+import com.softwaremill.quicklens.*
+import org.jpablo.typeexplorer.shared.models
+import com.raquo.airstream.core.Signal
+
 
 case class AppState(
   selectedSymbols: SelectedSymbols = SelectedSymbols(),
   projectPath: StoredString = storedString("projectPath", initial = ""),
-  $diagramSelection: Var[Set[Symbol]] = Var(Set.empty)
+  $diagramSelection: Var[Set[models.Symbol]] = Var(Set.empty)
 ):
   val $projectPath: Signal[Path] = 
     projectPath.signal.map(Path.apply)
@@ -29,7 +32,7 @@ case class AppState(
     * - the selected symbol with its "related" configuration (i.e. parents, children, etc)
     * - diagram options
     */
-  def $inheritanceSelection: EventStream[(Path, Set[(Symbol, Set[Related])], Options)] =
+  def $inheritanceSelection: EventStream[(Path, Set[(models.Symbol, Set[Related])], Options)] =
     val $requestBody =
       selectedSymbols.symbols.signal.changes.map { symbols =>
         symbols.transform { (symbol, selection) => selection match
@@ -43,6 +46,57 @@ case class AppState(
     $projectPath
       .combineWith($requestBody.toSignal(Set.empty), selectedSymbols.options.signal)
       .changes
+
+
+end AppState
+
+
+
+
+case class SelectedSymbols(
+  symbols: Var[Map[models.Symbol, Selection]] = Var(Map.empty),
+  ignored: Var[Set[models.Symbol]] = Var(Set.empty),
+  options: Var[Options] = Var(Options())
+):
+
+  def enableParents(diagram: InheritanceDiagram)(symbol: models.Symbol): Unit =
+    val parents: Set[models.Symbol] = diagram.allParents(symbol).namespaces.map(_.symbol)
+    println(parents)
+    symbols.update { (symbols: Map[models.Symbol, Selection]) =>
+      parents.foldLeft(symbols) { (acc, sym) => 
+        val selection0 = symbols.getOrElse(symbol, Selection.empty)
+        val selection1 = if !selection0.current then selection0.copy(current = true) else selection0
+        symbols.updated(sym, selection1)
+      }
+    }
+
+  def symbolsUpdater(ns: models.Namespace, modifyField: PathLazyModify[Selection, Boolean]) =
+    symbols.updater[Boolean] { (symbols, b) =>
+      val selection0 = symbols.getOrElse(ns.symbol, Selection.empty)
+      val selection1 = modifyField.setTo(b)(selection0)
+      if selection1.allEmpty then
+        symbols - ns.symbol
+      else
+        symbols + (ns.symbol -> selection1)
+    }      
+
+  def selection(symbol: models.Symbol): Signal[Selection] = 
+    symbols.signal.map(_.getOrElse(symbol, Selection.empty))    
+
+end SelectedSymbols
+
+case class Selection(
+  current : Boolean = false, // <--
+  parents : Boolean = false,
+  children: Boolean = false,
+):
+  def allEmpty = !current && !parents && !children
+
+object Selection:
+  def empty = Selection()
+
+
+
 
 
 type Service[A] = 
@@ -62,21 +116,4 @@ object AppState:
   val $svgDiagram        = service[EventStream[dom.SVGElement]]
   val projectPath        = service[StoredString]
   val selectedSymbols    = service[SelectedSymbols]
-
-
-case class SelectedSymbols(
-  symbols: Var[Map[Symbol, Selection]] = Var(Map.empty),
-  options: Var[Options] = Var(Options())
-)
-
-case class Selection(
-  current : Boolean = false, // <--
-  parents : Boolean = false,
-  children: Boolean = false,
-):
-  def allEmpty = !current && !parents && !children
-
-object Selection:
-  def empty = Selection()
-
 

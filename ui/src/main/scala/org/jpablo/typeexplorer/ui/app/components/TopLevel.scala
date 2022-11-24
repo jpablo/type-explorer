@@ -14,6 +14,7 @@ def TopLevel =
     TabsArea  <- TabsArea
     $diagramSelection <- AppState.$diagramSelection
     $selectedNamespace <- AppState.$selectedNamespace
+    selectedSymbols <- AppState.selectedSymbols
   yield
     div(
       idAttr := "te-toplevel",
@@ -21,5 +22,6 @@ def TopLevel =
       TabsArea,
       AppFooter,
       $selectedNamespace --> $diagramSelection.updater[Symbol](_ `toggle` _),
-      div(child.text <-- $diagramSelection.signal.map(_.toString)),
+      div(child.text <-- $diagramSelection.signal.map(ds => s"diagramSelection: $ds")),
+      div(child.text <-- selectedSymbols.symbols.signal.map(ss => s"selectedSymbols: $ss")),
     )
