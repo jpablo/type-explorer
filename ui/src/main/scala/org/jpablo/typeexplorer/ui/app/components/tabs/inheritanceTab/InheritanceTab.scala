@@ -11,14 +11,14 @@ import com.softwaremill.quicklens.*
 import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
 import org.jpablo.typeexplorer.shared.inheritance.InheritanceDiagram
 import org.jpablo.typeexplorer.shared.inheritance.PlantumlInheritance.Options
-import org.jpablo.typeexplorer.ui.app.components.state.SelectedSymbols
+import org.jpablo.typeexplorer.ui.app.components.state.PackageTreeState
 import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.InheritanceTree
 import org.jpablo.typeexplorer.ui.app.console
 import org.scalajs.dom
 import org.scalajs.dom.EventTarget
 import com.raquo.domtypes.jsdom.defs.events.TypedTargetMouseEvent
 import org.jpablo.typeexplorer.ui.bootstrap.*
-import org.jpablo.typeexplorer.shared.models.Symbol
+import org.jpablo.typeexplorer.shared.models
 import zio.prelude.fx.ZPure
 import org.jpablo.typeexplorer.ui.app.components.state.AppState
 
@@ -73,7 +73,7 @@ object InheritanceTab:
           div(
             child <-- $svgDiagram.map { svg => 
               // TODO: Refactor this after tree selection is changed.
-              val diagramSelection: Set[Symbol] = $diagramSelection.now()
+              val diagramSelection: Set[models.Symbol] = $diagramSelection.now()
               val diagramElements = svg.querySelectorAll("g[id ^= elem_]").map(NameSpaceElement(_))
               
               for 
@@ -94,7 +94,7 @@ object InheritanceTab:
         )
       )
 
-  private def handleSvgClick($selectedNamespace: EventBus[Symbol])(e: TypedTargetMouseEvent[dom.Element]) =
+  private def handleSvgClick($selectedNamespace: EventBus[models.Symbol])(e: TypedTargetMouseEvent[dom.Element]) =
     (e.target +: parents(e.target))
       .takeWhile(_.isInstanceOf[dom.SVGElement])
       .find(isNamespace)
@@ -104,7 +104,7 @@ object InheritanceTab:
         $selectedNamespace.emit(ns.symbol)
       }
 
-  private def ControlledCheckbox(id: String, labelStr: String, field: Options => Boolean, modifyField: PathLazyModify[Options, Boolean], selectedSymbols: SelectedSymbols) =
+  private def ControlledCheckbox(id: String, labelStr: String, field: Options => Boolean, modifyField: PathLazyModify[Options, Boolean], selectedSymbols: PackageTreeState) =
     List(
       Checkbox(idAttr := id, autocomplete := "off",
         controlled(
@@ -137,7 +137,7 @@ class NameSpaceElement(ref: dom.Element):
   val defaultFill = "#F1F1F1"
 
   lazy val id = ref.id.stripPrefix("elem_")
-  lazy val symbol = Symbol(id)
+  lazy val symbol = models.Symbol(id)
   def box = 
     ref.getElementsByTagName("rect")
     .find(_.getAttribute("id") == id)

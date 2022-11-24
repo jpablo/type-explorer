@@ -8,7 +8,7 @@ import org.jpablo.typeexplorer.ui.app.components.tabs.semanticDBTab.SemanticDBTa
 import org.scalajs.dom
 import org.jpablo.typeexplorer.ui.app.Path
 import org.jpablo.typeexplorer.shared.models.Symbol
-import org.jpablo.typeexplorer.ui.app.components.state.SelectedSymbols
+import org.jpablo.typeexplorer.ui.app.components.state.PackageTreeState
 import org.jpablo.typeexplorer.ui.bootstrap.*
 
 def TabsArea =

@@ -19,7 +19,7 @@ import com.raquo.airstream.core.Signal
 
 
 case class AppState(
-  selectedSymbols: SelectedSymbols = SelectedSymbols(),
+  selectedSymbols: PackageTreeState = PackageTreeState(),
   projectPath: StoredString = storedString("projectPath", initial = ""),
   $diagramSelection: Var[Set[models.Symbol]] = Var(Set.empty)
 ):
@@ -52,39 +52,6 @@ end AppState
 
 
 
-
-case class SelectedSymbols(
-  symbols: Var[Map[models.Symbol, Selection]] = Var(Map.empty),
-  ignored: Var[Set[models.Symbol]] = Var(Set.empty),
-  options: Var[Options] = Var(Options())
-):
-
-  def enableParents(diagram: InheritanceDiagram)(symbol: models.Symbol): Unit =
-    val parents: Set[models.Symbol] = diagram.allParents(symbol).namespaces.map(_.symbol)
-    println(parents)
-    symbols.update { (symbols: Map[models.Symbol, Selection]) =>
-      parents.foldLeft(symbols) { (acc, sym) => 
-        val selection0 = symbols.getOrElse(symbol, Selection.empty)
-        val selection1 = if !selection0.current then selection0.copy(current = true) else selection0
-        symbols.updated(sym, selection1)
-      }
-    }
-
-  def symbolsUpdater(ns: models.Namespace, modifyField: PathLazyModify[Selection, Boolean]) =
-    symbols.updater[Boolean] { (symbols, b) =>
-      val selection0 = symbols.getOrElse(ns.symbol, Selection.empty)
-      val selection1 = modifyField.setTo(b)(selection0)
-      if selection1.allEmpty then
-        symbols - ns.symbol
-      else
-        symbols + (ns.symbol -> selection1)
-    }      
-
-  def selection(symbol: models.Symbol): Signal[Selection] = 
-    symbols.signal.map(_.getOrElse(symbol, Selection.empty))    
-
-end SelectedSymbols
-
 case class Selection(
   current : Boolean = false, // <--
   parents : Boolean = false,
@@ -110,10 +77,10 @@ object AppState:
   val $documents         = service[EventStream[List[TextDocumentsWithSource]]]
   val $projectPath       = service[Signal[Path]]
 
-  val $selectedNamespace = service[EventBus[Symbol]]
-  val $diagramSelection  = service[Var[Set[Symbol]]]
+  val $selectedNamespace = service[EventBus[models.Symbol]]
+  val $diagramSelection  = service[Var[Set[models.Symbol]]]
 
   val $svgDiagram        = service[EventStream[dom.SVGElement]]
   val projectPath        = service[StoredString]
-  val selectedSymbols    = service[SelectedSymbols]
+  val selectedSymbols    = service[PackageTreeState]
 
