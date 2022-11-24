@@ -6,6 +6,7 @@ import org.jpablo.typeexplorer.shared.models
 import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, Related}
 import org.jpablo.typeexplorer.shared.inheritance.PlantumlInheritance.Options
 import com.softwaremill.quicklens.*
+import com.raquo.airstream.core.Observer
 
 
 case class PackageTreeState(
@@ -35,14 +36,14 @@ case class PackageTreeState(
       }
     }
 
-  def symbolsUpdater(ns: models.Namespace, modifyField: PathLazyModify[Selection, Boolean]) =
+  def symbolsUpdater(symbol: models.Symbol)(modifyField: PathLazyModify[Selection, Boolean]): Observer[Boolean] =
     symbols.updater[Boolean] { (symbols, b) =>
-      val selection0 = symbols.getOrElse(ns.symbol, Selection.empty)
+      val selection0 = symbols.getOrElse(symbol, Selection.empty)
       val selection1 = modifyField.setTo(b)(selection0)
       if selection1.allEmpty then
-        symbols - ns.symbol
+        symbols - symbol
       else
-        symbols + (ns.symbol -> selection1)
+        symbols + (symbol -> selection1)
     }      
 
   def selection(symbol: models.Symbol): Signal[Selection] = 

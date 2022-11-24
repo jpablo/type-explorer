@@ -22,7 +22,7 @@ import org.jpablo.typeexplorer.ui.bootstrap.*
 import org.scalajs.dom.html
 import zio.prelude.fx.ZPure
 
-object InheritanceTree:
+object PackagesTree:
 
 
   /** Builds a collapasable tree based on the given inheritance diagram.
@@ -46,12 +46,13 @@ object InheritanceTree:
 
   private def renderNamespaceZ =
     for
-      selectedSymbols <- AppState.selectedSymbols
+      packageTreeState <- AppState.packageTreeState
     yield
       (diagram: InheritanceDiagram) => (name: String, ns: Namespace) =>
         val uri = encodeURIComponent(ns.symbol.toString)
         val modifySelection = modifyLens[Selection]
-        val $selection = selectedSymbols.selection(ns.symbol)
+        val $selection = packageTreeState.selection(ns.symbol)
+        val updateSymbols = packageTreeState.symbolsUpdater(ns.symbol)
 
         def controlledCheckbox(field: Selection => Boolean, modifyField: PathLazyModify[Selection, Boolean], title: String) = 
           input(
@@ -65,7 +66,7 @@ object InheritanceTree:
             ),
             controlled(
               checked <-- $selection.map(field), 
-              onClick.mapToChecked --> selectedSymbols.symbolsUpdater(ns, modifyField)
+              onClick.mapToChecked --> updateSymbols(modifyField)
             )
           )
           
@@ -77,16 +78,16 @@ object InheritanceTree:
               stereotype(ns),
               span(" "),
               a(cls := "inheritance-namespace-symbol", href := "#elem_" + uri, title := ns.symbol.toString, ns.displayName,
-                onClick.mapTo(true) --> selectedSymbols.symbolsUpdater(ns, modifySelection(_.current))
+                onClick.mapTo(true) --> updateSymbols(modifySelection(_.current))
               ),
               div( cls := "inheritance-namespace-selection hide", cls.toggle("show-inline", "hide") <-- $isSelected,
                 span(" "),
                 
                 // miniButton("p", onClick.mapTo(true) --> symbolsUpdater(modifySelection(_.parents))),
 
-                miniButton("p", onClick.mapTo(ns.symbol) --> selectedSymbols.enableParents(diagram)),
+                miniButton("p", onClick.mapTo(ns.symbol) --> packageTreeState.enableParents(diagram)),
                 
-                miniButton("c", onClick.mapTo(true) --> selectedSymbols.symbolsUpdater(ns, modifySelection(_.children))),
+                miniButton("c", onClick.mapTo(true) --> updateSymbols(modifySelection(_.children))),
                 
                 controlledCheckbox(_.current, modifySelection(_.current), "current"),
                 span(" "),
@@ -120,4 +121,4 @@ object InheritanceTree:
       fontWeight   := "bold"
     )
 
-end InheritanceTree
+end PackagesTree

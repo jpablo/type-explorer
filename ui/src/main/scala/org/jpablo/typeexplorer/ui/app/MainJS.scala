@@ -23,7 +23,7 @@ object MainJS:
         $documents,
         $inheritance,
         $classes,
-        appState.selectedSymbols,
+        appState.packageTreeState,
       ) ++ ZEnvironment(
         $setSymbol, 
         appState.projectPath,

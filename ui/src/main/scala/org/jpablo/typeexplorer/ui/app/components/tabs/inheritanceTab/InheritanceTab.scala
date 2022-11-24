@@ -12,7 +12,7 @@ import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
 import org.jpablo.typeexplorer.shared.inheritance.InheritanceDiagram
 import org.jpablo.typeexplorer.shared.inheritance.PlantumlInheritance.Options
 import org.jpablo.typeexplorer.ui.app.components.state.PackageTreeState
-import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.InheritanceTree
+import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.PackagesTree
 import org.jpablo.typeexplorer.ui.app.console
 import org.scalajs.dom
 import org.scalajs.dom.EventTarget
@@ -34,9 +34,9 @@ object InheritanceTab:
     for 
       $svgDiagram        <- AppState.$svgDiagram
       $diagram           <- AppState.$diagram
-      selectedSymbols    <- AppState.selectedSymbols
+      selectedSymbols    <- AppState.packageTreeState
       $selectedNamespace <- AppState.$selectedNamespace
-      inheritanceTree    <- InheritanceTree.build
+      packagesTree       <- PackagesTree.build
       $diagramSelection  <- AppState.$diagramSelection
     yield
       val $filter = Var("")
@@ -54,7 +54,7 @@ object InheritanceTab:
           Search(placeholder := "filter", controlled(value <-- $filter, onInput.mapToValue --> $filter)).small
         ),
         
-        div(cls := "structure", children <-- inheritanceTree($filteredDiagram)),
+        div(cls := "structure", children <-- packagesTree($filteredDiagram)),
 
         div(cls := "inheritance-container-toolbar", 
           ButtonToolbar(

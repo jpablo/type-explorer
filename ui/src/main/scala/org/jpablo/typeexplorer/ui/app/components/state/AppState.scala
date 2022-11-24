@@ -19,7 +19,7 @@ import com.raquo.airstream.core.Signal
 
 
 case class AppState(
-  selectedSymbols: PackageTreeState = PackageTreeState(),
+  packageTreeState: PackageTreeState = PackageTreeState(),
   projectPath: StoredString = storedString("projectPath", initial = ""),
   $diagramSelection: Var[Set[models.Symbol]] = Var(Set.empty)
 ):
@@ -34,7 +34,7 @@ case class AppState(
     */
   def $inheritanceSelection: EventStream[(Path, Set[(models.Symbol, Set[Related])], Options)] =
     val $requestBody =
-      selectedSymbols.symbols.signal.changes.map { symbols =>
+      packageTreeState.symbols.signal.changes.map { symbols =>
         symbols.transform { (symbol, selection) => selection match
           case Selection(true, false, false) => Set.empty
           case Selection(_   , true , false) => Set(Related.Parents)
@@ -44,7 +44,7 @@ case class AppState(
         }.toSet
       }
     $projectPath
-      .combineWith($requestBody.toSignal(Set.empty), selectedSymbols.options.signal)
+      .combineWith($requestBody.toSignal(Set.empty), packageTreeState.options.signal)
       .changes
 
 
@@ -82,5 +82,5 @@ object AppState:
 
   val $svgDiagram        = service[EventStream[dom.SVGElement]]
   val projectPath        = service[StoredString]
-  val selectedSymbols    = service[PackageTreeState]
+  val packageTreeState    = service[PackageTreeState]
 

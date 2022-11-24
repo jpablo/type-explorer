@@ -14,7 +14,7 @@ def TopLevel =
     TabsArea  <- TabsArea
     $diagramSelection <- AppState.$diagramSelection
     $selectedNamespace <- AppState.$selectedNamespace
-    selectedSymbols <- AppState.selectedSymbols
+    selectedSymbols <- AppState.packageTreeState
   yield
     div(
       idAttr := "te-toplevel",
