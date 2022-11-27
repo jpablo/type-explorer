@@ -3,7 +3,7 @@ package org.jpablo.typeexplorer.ui.app.components.tabs
 import com.raquo.laminar.api.L.*
 import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
 import org.jpablo.typeexplorer.shared.inheritance.InheritanceDiagram
-import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.InheritanceTab
+import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.InheritanceCanvas
 import org.jpablo.typeexplorer.ui.app.components.tabs.semanticDBTab.SemanticDBTab
 import org.scalajs.dom
 import org.jpablo.typeexplorer.ui.app.Path
@@ -13,7 +13,7 @@ import org.jpablo.typeexplorer.ui.bootstrap.*
 
 def TabsArea =
   for
-    inheritanceTabContent <- InheritanceTab.build
+    inheritanceCanvas    <- InheritanceCanvas.build
     semanticDBTabContent <- SemanticDBTab
   yield
     val inheritance = Tab("inheritance-tab-pane", active = true)
@@ -27,7 +27,7 @@ def TabsArea =
       
       TabContent(
         cls := "te-tabs-container",
-        inheritance.Pane(0, inheritanceTabContent),
+        inheritance.Pane(0, inheritanceCanvas),
         semanticDB.Pane(1, semanticDBTabContent),
       )
     )

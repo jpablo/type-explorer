@@ -33,18 +33,11 @@ case class AppState(
     * - diagram options
     */
   def $inheritanceSelection: EventStream[(Path, Set[(models.Symbol, Set[Related])], Options)] =
-    val $requestBody =
-      packageTreeState.symbols.signal.changes.map { symbols =>
-        symbols.transform { (symbol, selection) => selection match
-          case Selection(true, false, false) => Set.empty
-          case Selection(_   , true , false) => Set(Related.Parents)
-          case Selection(_   , false, true ) => Set(Related.Children)
-          case Selection(_   , true , true ) => Set(Related.Parents, Related.Children)
-          case _                             => throw Exception(s"Defect: symbol ${symbol} without selection found")
-        }.toSet
-      }
     $projectPath
-      .combineWith($requestBody.toSignal(Set.empty), packageTreeState.options.signal)
+      .combineWith(
+        packageTreeState.$requestBody.toSignal(Set.empty), 
+        packageTreeState.options.signal
+      )
       .changes
 
 

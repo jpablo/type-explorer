@@ -156,6 +156,10 @@ a {
   display: inline;
 }
 
+#inheritance-tab-pane .inheritance-namespace-symbol-secondary {
+  background: lightblue;
+}
+
 
 .te-mini-button {
   border: 1px solid #0d6efd;

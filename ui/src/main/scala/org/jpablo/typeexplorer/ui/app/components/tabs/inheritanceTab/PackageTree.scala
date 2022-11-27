@@ -52,9 +52,11 @@ object PackagesTree:
         val uri = encodeURIComponent(ns.symbol.toString)
         val modifySelection = modifyLens[Selection]
         val $selection = packageTreeState.selection(ns.symbol)
+        val $isSelected = $selection.map(!_.allEmpty)
         val updateSymbols = packageTreeState.symbolsUpdater(ns.symbol)
+        val $isSecondary = packageTreeState.$secondary(diagram).map(_.contains(ns.symbol))
 
-        def controlledCheckbox(field: Selection => Boolean, modifyField: PathLazyModify[Selection, Boolean], title: String) = 
+        def controlledCheckbox(getField: Selection => Boolean, modifyField: PathLazyModify[Selection, Boolean], title: String) = 
           input(
             cls := "form-check-input mt-0", 
             tpe := "checkbox", 
@@ -65,28 +67,30 @@ object PackagesTree:
               js.Dynamic.newInstance(js.Dynamic.global.bootstrap.Tooltip)(ctx.thisNode.ref)
             ),
             controlled(
-              checked <-- $selection.map(field), 
+              checked <-- $selection.map(getField), 
               onClick.mapToChecked --> updateSymbols(modifyField)
             )
           )
           
-        val $isSelected = $selection.map(!_.allEmpty)
         collapsable2(
           branchLabel =
             div(
               display := "inline",
               stereotype(ns),
               span(" "),
-              a(cls := "inheritance-namespace-symbol", href := "#elem_" + uri, title := ns.symbol.toString, ns.displayName,
+              a(
+                cls := "inheritance-namespace-symbol", 
+                cls.toggle("inheritance-namespace-symbol-secondary", "noop") <-- $isSecondary,
+                href := "#elem_" + uri, 
+                title := ns.symbol.toString, 
+                ns.displayName,
                 onClick.mapTo(true) --> updateSymbols(modifySelection(_.current))
               ),
+              
               div( cls := "inheritance-namespace-selection hide", cls.toggle("show-inline", "hide") <-- $isSelected,
                 span(" "),
                 
-                // miniButton("p", onClick.mapTo(true) --> symbolsUpdater(modifySelection(_.parents))),
-
                 miniButton("p", onClick.mapTo(ns.symbol) --> packageTreeState.enableParents(diagram)),
-                
                 miniButton("c", onClick.mapTo(true) --> updateSymbols(modifySelection(_.children))),
                 
                 controlledCheckbox(_.current, modifySelection(_.current), "current"),

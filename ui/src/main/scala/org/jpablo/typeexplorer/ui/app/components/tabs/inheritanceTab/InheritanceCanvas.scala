@@ -26,7 +26,7 @@ import org.jpablo.typeexplorer.ui.app.components.state.AppState
 def svgToLaminar(svg: dom.SVGElement) =
   new ChildNode[dom.SVGElement] { val ref = svg }
 
-object InheritanceTab:
+object InheritanceCanvas:
 
   val autocomplete = customProp("autocomplete", StringAsIsCodec)
 
