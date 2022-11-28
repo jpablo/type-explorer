@@ -90,9 +90,6 @@ object PackagesTree:
               div( cls := "inheritance-namespace-selection hide", cls.toggle("show-inline", "hide") <-- $isSelected,
                 span(" "),
                 
-                miniButton("p", onClick.mapTo(ns.symbol) --> packageTreeState.enableParents(diagram)),
-                miniButton("c", onClick.mapTo(true) --> updateSymbols(modifySelection(_.children))),
-                
                 controlledCheckbox(_.current, modifySelection(_.current), "current"),
                 span(" "),
                 controlledCheckbox(_.parents, modifySelection(_.parents), "parents"),

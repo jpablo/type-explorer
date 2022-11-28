@@ -87,7 +87,7 @@ def fetchSourceCode =
   AppState.$projectPath.map { $projectPath => (selectedPath: Path) =>
     for
       projectPath <- $projectPath
-      response    <- fetchBase(s"source?path=$projectPath/$selectedPath").text
+      response    <- fetchBase(s"source?path=${encodeURIComponent(projectPath.toString + "/" + selectedPath)}").text
     yield
       response.data
   }
