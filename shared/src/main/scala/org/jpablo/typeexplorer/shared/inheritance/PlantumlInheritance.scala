@@ -55,6 +55,7 @@ object PlantumlInheritance:
         else
           ns.methods
           .groupBy(_.displayName)
+          .toList.sortBy(_._1)
           .map((_, ms) => renderField(ms.length)(ms.head)).mkString(" {\n", "\n", "\n}\n") 
       else 
         ""

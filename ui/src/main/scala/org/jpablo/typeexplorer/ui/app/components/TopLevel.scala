@@ -12,16 +12,15 @@ def TopLevel =
   for
     AppHeader <- AppHeader
     TabsArea  <- TabsArea
-    $diagramSelection <- AppState.$diagramSelection
-    $selectedNamespace <- AppState.$selectedNamespace
-    selectedSymbols <- AppState.packageTreeState
+    $svgSymbolSelected <- AppState.svgSymbolSelected
+    inheritanceTabState <- AppState.inheritanceTabState
   yield
     div(
       idAttr := "te-toplevel",
       AppHeader,
       TabsArea,
       AppFooter,
-      $selectedNamespace --> $diagramSelection.updater[models.Symbol](_ `toggle` _),
-      div(child.text <-- $diagramSelection.signal.map(ds => s"diagramSelection: $ds")),
-      div(child.text <-- selectedSymbols.symbols.signal.map(ss => s"selectedSymbols: $ss")),
+      $svgSymbolSelected --> inheritanceTabState.$canvasSelection.updater[models.Symbol](_ `toggle` _),
+      div(child.text <-- inheritanceTabState.$canvasSelection.signal.map(ds => s"canvasSelection: $ds")),
+      div(child.text <-- inheritanceTabState.$activeSymbols.signal.map(ss => s"activeSymbols: $ss")),
     )

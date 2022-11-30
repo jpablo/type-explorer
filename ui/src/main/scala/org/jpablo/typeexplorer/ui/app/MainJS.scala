@@ -17,23 +17,23 @@ object MainJS:
     val $inheritance = appState.$inheritanceSelection.flatMap(fetchInheritanceSVGDiagram)
     val $setSymbol   = EventBus[Symbol]()
 
-    val appEnv = 
+    val appEnv =
       ZEnvironment(
         appState.$projectPath,
         $documents,
         $inheritance,
         $classes,
-        appState.packageTreeState,
+        appState.inheritanceTabState,
       ) ++ ZEnvironment(
-        $setSymbol, 
+        $setSymbol,
         appState.projectPath,
-        appState.$diagramSelection
+        appState.inheritanceTabState.$canvasSelection
       )
 
-    val app = 
+    val app =
       TopLevel.provideEnvironment(appEnv)
 
     render(
-      document.querySelector("#app"), 
+      document.querySelector("#app"),
       app.run
     )

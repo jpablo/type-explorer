@@ -179,7 +179,9 @@ object InheritanceDiagram:
     Set(
       "scala/AnyRef#",
       "scala/AnyVal#",
-      "java/io/Serializable#"
+      "java/io/Serializable#",
+      "copy$default$",
+      "local"
     )
 
   given JsonCodec[InheritanceDiagram] = DeriveJsonCodec.gen
@@ -192,8 +194,7 @@ object InheritanceDiagram:
       textDocuments.documents
         .flatMap(_.symbols)
         .distinct
-        .filterNot(si => excluded.contains(si.symbol))
-        .sortBy(_.symbol)
+        .filterNot(si => excluded.exists(si.symbol.startsWith))
         .map(s => Symbol(s.symbol) -> s)
         .toMap
 
@@ -204,7 +205,6 @@ object InheritanceDiagram:
         clsSignature <- signature match
           case cs: ClassSignature => List(cs)
           case _ =>  List.empty
-        if !symbol.toString.startsWith("local")
         nsKind       = translateKind(symbolInfo.kind)
         declarations = clsSignature.declarations.map(_.symlinks.map(Symbol(_))).toSeq.flatten
         methods      = declarations.map(method(allSymbols))

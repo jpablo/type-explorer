@@ -13,7 +13,7 @@ import org.jpablo.typeexplorer.shared.fileTree.FileTree
 import org.jpablo.typeexplorer.shared.inheritance.InheritanceDiagram
 import org.jpablo.typeexplorer.shared.models.{Namespace, NamespaceKind, Symbol}
 import org.jpablo.typeexplorer.ui.app.components.state.AppState
-import org.jpablo.typeexplorer.ui.app.components.state.PackageTreeState
+import org.jpablo.typeexplorer.ui.app.components.state.InheritanceTabState
 import org.jpablo.typeexplorer.ui.app.components.state.Selection
 import org.jpablo.typeexplorer.ui.widgets.{collapsableTree, collapsable2}
 import scalajs.js
@@ -26,7 +26,7 @@ object PackagesTree:
 
 
   /** Builds a collapasable tree based on the given inheritance diagram.
-    * 
+    *
     * @param $diagram The diagram
     * @param selectedSymbols The checked status of each symbol
     * @return A List of trees, one for each top level package name in the diagram: e.g. ["com..., ", "java.io..."]
@@ -46,32 +46,32 @@ object PackagesTree:
 
   private def renderNamespaceZ =
     for
-      packageTreeState <- AppState.packageTreeState
+      inheritanceTabState <- AppState.inheritanceTabState
     yield
       (diagram: InheritanceDiagram) => (name: String, ns: Namespace) =>
         val uri = encodeURIComponent(ns.symbol.toString)
         val modifySelection = modifyLens[Selection]
-        val $selection = packageTreeState.selection(ns.symbol)
+        val $selection = inheritanceTabState.selection(ns.symbol)
         val $isSelected = $selection.map(!_.allEmpty)
-        val updateSymbols = packageTreeState.symbolsUpdater(ns.symbol)
-        val $isSecondary = packageTreeState.$secondary(diagram).map(_.contains(ns.symbol))
+        val $updateSymbols = inheritanceTabState.$symbolsUpdater(ns.symbol)
+        val $isSecondary = inheritanceTabState.$secondary(diagram).map(_.contains(ns.symbol))
 
-        def controlledCheckbox(getField: Selection => Boolean, modifyField: PathLazyModify[Selection, Boolean], title: String) = 
+        def controlledCheckbox(getField: Selection => Boolean, modifyField: PathLazyModify[Selection, Boolean], title: String) =
           input(
-            cls := "form-check-input mt-0", 
-            tpe := "checkbox", 
+            cls := "form-check-input mt-0",
+            tpe := "checkbox",
             dataAttr("bs-toggle")  := "tooltip",
             dataAttr("bs-trigger") := "hover",
             dataAttr("bs-title")   := title,
-            onMountCallback(ctx => 
+            onMountCallback(ctx =>
               js.Dynamic.newInstance(js.Dynamic.global.bootstrap.Tooltip)(ctx.thisNode.ref)
             ),
             controlled(
-              checked <-- $selection.map(getField), 
-              onClick.mapToChecked --> updateSymbols(modifyField)
+              checked <-- $selection.map(getField),
+              onClick.mapToChecked --> $updateSymbols(modifyField)
             )
           )
-          
+
         collapsable2(
           branchLabel =
             div(
@@ -79,17 +79,17 @@ object PackagesTree:
               stereotype(ns),
               span(" "),
               a(
-                cls := "inheritance-namespace-symbol", 
+                cls := "inheritance-namespace-symbol",
                 cls.toggle("inheritance-namespace-symbol-secondary", "noop") <-- $isSecondary,
-                href := "#elem_" + uri, 
-                title := ns.symbol.toString, 
+                href := "#elem_" + uri,
+                title := ns.symbol.toString,
                 ns.displayName,
-                onClick.mapTo(true) --> updateSymbols(modifySelection(_.current))
+                onClick.mapTo(true) --> $updateSymbols(modifySelection(_.current))
               ),
-              
+
               div( cls := "inheritance-namespace-selection hide", cls.toggle("show-inline", "hide") <-- $isSelected,
                 span(" "),
-                
+
                 controlledCheckbox(_.current, modifySelection(_.current), "current"),
                 span(" "),
                 controlledCheckbox(_.parents, modifySelection(_.parents), "parents"),

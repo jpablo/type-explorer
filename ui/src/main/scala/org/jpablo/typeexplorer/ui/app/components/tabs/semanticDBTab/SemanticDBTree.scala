@@ -36,13 +36,13 @@ object SemanticDBTree:
           cls := "collapsable-leaf",
           Icons.fileBinary,
           a(
-            href := "#" + docWithSource.semanticDbUri, 
+            href := "#" + docWithSource.semanticDbUri,
             onClick.preventDefault.mapTo(Path(docWithSource.semanticDbUri)) --> $selectedSemanticDb,
             name
           )
         ),
       contents = docWithSource.documents.map(renderTextDocument),
-      open = true
+      open = false
     )
 
   private def renderTextDocument(doc: TextDocument) =
