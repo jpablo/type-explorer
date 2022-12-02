@@ -79,13 +79,10 @@ object InheritanceTab:
               val canvasSelection: Set[models.Symbol] = inheritanceTabState.$canvasSelection.now()
               val diagramElements = svg.querySelectorAll("g[id ^= elem_]").map(NameSpaceElement(_))
               // select incoming svg elements based on app state.
-              for
-                elem <- diagramElements
-                if canvasSelection.contains(elem.symbol)
-              do
-                elem.select
-              val diagramSymbols = diagramElements.map(_.symbol).toSet
+              for elem <- diagramElements if canvasSelection.contains(elem.symbol) do
+                elem.select()
               // remove missing elements from app state
+              val diagramSymbols = diagramElements.map(_.symbol).toSet
               val toRemove = canvasSelection -- diagramSymbols
               inheritanceTabState.$canvasSelection.update(_ -- toRemove)
               // attach to then DOM
@@ -103,7 +100,7 @@ object InheritanceTab:
       .find(isNamespace)
       .map(NameSpaceElement(_))
       .foreach { ns =>
-        ns.selectToggle
+        ns.selectToggle()
         $selectedNamespace.emit(ns.symbol)
       }
 
@@ -137,19 +134,19 @@ extension (e: dom.Element)
 
 
 class NameSpaceElement(ref: dom.Element):
-  val selectedFill = "red"
-  val defaultFill = "#F1F1F1"
+  private val selectedFill = "red"
+  private val defaultFill = "#F1F1F1"
 
   lazy val id = ref.id.stripPrefix("elem_")
   lazy val symbol = models.Symbol(id)
-  def box =
+  private def box =
     ref.getElementsByTagName("rect")
     .find(_.getAttribute("id") == id)
 
-  def select =
+  def select() =
     box.foreach(_.fill = selectedFill)
 
-  def selectToggle =
+  def selectToggle() =
     for box <- box do
       box.fill =
         if box.fill == defaultFill then selectedFill else defaultFill

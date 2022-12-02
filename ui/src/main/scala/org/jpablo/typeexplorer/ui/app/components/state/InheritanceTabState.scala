@@ -31,11 +31,11 @@ case class InheritanceTabState(
 
   def enableParents(diagram: InheritanceDiagram)(symbol: models.Symbol): Unit =
     val parents: Set[models.Symbol] = diagram.allParents(symbol).namespaces.map(_.symbol)
-    $activeSymbols.update { (symbols: Map[models.Symbol, Selection]) =>
-      parents.foldLeft(symbols) { (acc, sym) =>
-        val selection0 = symbols.getOrElse(symbol, Selection.empty)
+    $activeSymbols.update { activeSymbols =>
+      parents.foldLeft(activeSymbols) { (activeSymbols, sym) =>
+        val selection0 = activeSymbols.getOrElse(symbol, Selection.empty)
         val selection1 = if !selection0.current then selection0.copy(current = true) else selection0
-        symbols.updated(sym, selection1)
+        activeSymbols.updated(sym, selection1)
       }
     }
 

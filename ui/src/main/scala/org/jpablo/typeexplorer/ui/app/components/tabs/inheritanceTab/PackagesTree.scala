@@ -50,27 +50,7 @@ object PackagesTree:
     yield
       (diagram: InheritanceDiagram) => (name: String, ns: Namespace) =>
         val uri = encodeURIComponent(ns.symbol.toString)
-        val modifySelection = modifyLens[Selection]
-        val $selection = inheritanceTabState.selection(ns.symbol)
-        val $isSelected = $selection.map(!_.allEmpty)
-        val $updateSymbols = inheritanceTabState.$symbolsUpdater(ns.symbol)
         val $isSecondary = inheritanceTabState.$secondary(diagram).map(_.contains(ns.symbol))
-
-        def controlledCheckbox(getField: Selection => Boolean, modifyField: PathLazyModify[Selection, Boolean], title: String) =
-          input(
-            cls := "form-check-input mt-0",
-            tpe := "checkbox",
-            dataAttr("bs-toggle")  := "tooltip",
-            dataAttr("bs-trigger") := "hover",
-            dataAttr("bs-title")   := title,
-            onMountCallback(ctx =>
-              js.Dynamic.newInstance(js.Dynamic.global.bootstrap.Tooltip)(ctx.thisNode.ref)
-            ),
-            controlled(
-              checked <-- $selection.map(getField),
-              onClick.mapToChecked --> $updateSymbols(modifyField)
-            )
-          )
 
         collapsable2(
           branchLabel =
@@ -84,25 +64,13 @@ object PackagesTree:
                 href := "#elem_" + uri,
                 title := ns.symbol.toString,
                 ns.displayName,
-                onClick.mapTo(true) --> $updateSymbols(modifySelection(_.current))
+                onClick.mapTo(true) -->
+                  inheritanceTabState.$symbolsUpdater(ns.symbol)(modifyLens[Selection](_.current))
               ),
-
-              div( cls := "inheritance-namespace-selection hide", cls.toggle("show-inline", "hide") <-- $isSelected,
-                span(" "),
-
-                controlledCheckbox(_.current, modifySelection(_.current), "current"),
-                span(" "),
-                controlledCheckbox(_.parents, modifySelection(_.parents), "parents"),
-                span(" "),
-                controlledCheckbox(_.children, modifySelection(_.children), "children"),
-              )
             ),
           contents =
             ns.methods.map(m => a(m.displayName, title := m.symbol.toString))
         )
-
-  def miniButton(label: String, mods: Modifier[ReactiveHtmlElement[html.Element]]*) =
-    span(cls := "te-mini-button", label, mods)
 
   /** The "stereotype" is an element indicating which kind of namespace we have:
     * an Object, a Class, etc.

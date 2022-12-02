@@ -18,7 +18,7 @@ import org.jpablo.typeexplorer.ui.app.components.state.AppState
 import org.jpablo.typeexplorer.ui.app.Path
 import org.jpablo.typeexplorer.ui.app.console
 
-val basePath = "http://localhost:8090/" 
+val basePath = "http://localhost:8090/"
 
 def fetchBase(path: String): FetchEventStreamBuilder =
   Fetch.get(basePath + path)
@@ -30,7 +30,7 @@ def fetchDocuments($projectPath: Signal[Path]): EventStream[List[TextDocumentsWi
     lst <-
       if path.toString.isEmpty then
         EventStream.fromValue(List.empty)
-      else 
+      else
         for response <- fetchBase("semanticdb?path=" + path).arrayBuffer yield
           val ia = Int8Array(response.data, 0, length = response.data.byteLength)
           TextDocumentsWithSourceSeq.parseFrom(ia.toArray).documentsWithSource.toList.sortBy(_.semanticDbUri)
@@ -53,7 +53,7 @@ def fetchClasses($projectPath: Signal[Path]): EventStream[InheritanceDiagram] =
 
 def fetchInheritanceSVGDiagram(projectPath: Path, symbols: Set[(Symbol, Set[Related])], options: Options): EventStream[dom.SVGElement] =
   val parser = dom.DOMParser()
-  if projectPath.toString.isEmpty then 
+  if projectPath.toString.isEmpty then
     EventStream.fromValue(svg.svg().ref)
   else
     val body = InheritanceReq(List(projectPath.toString), symbols, InheritanceReq.Config(options.fields, options.signatures))

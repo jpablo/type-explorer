@@ -30,9 +30,9 @@ object ModelsSpec extends ZIOSpecDefault {
               "fields": false,
               "signatures": false
           }
-      }      
+      }
       """
-      val expected = 
+      val expected =
         InheritanceReq(
           List("/Users/jpablo/GitHub/Airstream"),
           Set(models.Symbol("com/raquo/airstream/core/EventStream#") -> Set(Parents, Children))
@@ -50,9 +50,9 @@ object ModelsSpec extends ZIOSpecDefault {
           "symbols": [
             ["com/raquo/airstream/core/EventStream#", ["Parents", "Children"]]
           ]
-      }      
+      }
       """
-      val expected = 
+      val expected =
         InheritanceReq(
           List("/Users/jpablo/GitHub/Airstream"),
           Set(models.Symbol("com/raquo/airstream/core/EventStream#") -> Set(Parents, Children))
@@ -64,4 +64,4 @@ object ModelsSpec extends ZIOSpecDefault {
 
 
 }
-  
+
