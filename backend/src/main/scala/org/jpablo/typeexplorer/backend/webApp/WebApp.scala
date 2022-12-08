@@ -36,7 +36,7 @@ object WebApp extends ZIOAppDefault:
   val appZ = Http.collectZIO[Request] {
     case req @ Method.POST -> !! / "inheritance" =>
 
-      def reqToDiagram(ireq: InheritanceReq): Task[PlantUML] =
+      def createDiagram(ireq: InheritanceReq): Task[PlantUML] =
         for
           docs <- toTask(readTextDocumentsWithSource(Some(ireq.paths)), error = "No path provided")
           diagram = InheritanceDiagram.fromTextDocuments(toTextDocuments(docs))
@@ -48,7 +48,7 @@ object WebApp extends ZIOAppDefault:
       for
         body <- req.body.asString
         ireq <- toTask(body.fromJson[InheritanceReq])
-        puml <- reqToDiagram(ireq)
+        puml <- createDiagram(ireq)
         svgText <- puml.toSVG("laminar")
       yield
         Response.text(svgText).withContentType("image/svg+xml")

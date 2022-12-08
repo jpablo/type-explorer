@@ -19,8 +19,8 @@ import com.raquo.airstream.core.Signal
 
 
 case class AppState(
-  inheritanceTabState: InheritanceTabState = InheritanceTabState(),
-  projectPath        : StoredString = storedString("projectPath", initial = "")
+  inheritanceTabState: InheritanceTabState,
+  projectPath        : StoredString
 ):
   val $projectPath: Signal[Path] =
     projectPath.signal.map(Path.apply)

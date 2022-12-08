@@ -1,9 +1,10 @@
 package org.jpablo.typeexplorer.ui.app
 
 import com.raquo.laminar.api.L.*
+import io.laminext.syntax.core.storedString
 import org.jpablo.typeexplorer.shared.models.Symbol
-import org.jpablo.typeexplorer.ui.app.client.{fetchInheritanceDiagram, fetchDocuments, fetchInheritanceSVGDiagram}
-import org.jpablo.typeexplorer.ui.app.components.state.AppState
+import org.jpablo.typeexplorer.ui.app.client.{fetchDocuments, fetchInheritanceDiagram, fetchInheritanceSVGDiagram}
+import org.jpablo.typeexplorer.ui.app.components.state.{AppState, InheritanceTabState}
 import org.jpablo.typeexplorer.ui.app.components.TopLevel
 import org.scalajs.dom.document
 import zio.ZEnvironment
@@ -11,9 +12,12 @@ import zio.ZEnvironment
 object MainJS:
   def main(args: Array[String]): Unit =
 
-    val appState     = AppState()
-    val $documents   = fetchDocuments(appState.$projectPath)
-    val $inheritanceDiagram = fetchInheritanceDiagram(appState.$projectPath)
+    val projectPath = storedString("projectPath", initial = "")
+    val $projectPath = projectPath.signal.map(Path.apply)
+    val $inheritanceDiagram = fetchInheritanceDiagram($projectPath)
+
+    val appState     = AppState(InheritanceTabState($inheritanceDiagram), projectPath)
+    val $documents   = fetchDocuments($projectPath)
     val $inheritance = appState.$inheritanceSelection.flatMap(fetchInheritanceSVGDiagram)
     val $setSymbol   = EventBus[Symbol]()
 

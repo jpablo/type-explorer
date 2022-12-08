@@ -66,8 +66,12 @@ object InheritanceTab:
             ).small,
             ButtonGroup(
               cls := "me-2",
-              Button("children", onClick --> (_ => inheritanceTabState.showChildren())).outlineSecondary,
-              Button("parents" , onClick --> (_ => inheritanceTabState.showParents())).outlineSecondary,
+              Button("children",
+                composeEvents(onClick)(inheritanceTabState.selection) --> inheritanceTabState.addSelectedChildren.tupled,
+              ).outlineSecondary,
+              Button("parents" ,
+                composeEvents(onClick)(inheritanceTabState.selection) --> inheritanceTabState.addSelectedParents.tupled,
+              ).outlineSecondary,
             ).small
           ),
         ),
