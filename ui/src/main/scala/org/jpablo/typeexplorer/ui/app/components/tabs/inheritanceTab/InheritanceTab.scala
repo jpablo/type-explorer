@@ -5,21 +5,20 @@ import com.raquo.airstream.core.{EventStream, Observer, Signal}
 import com.raquo.airstream.eventbus.WriteBus
 import com.raquo.airstream.state.StrictSignal
 import com.raquo.domtypes.generic.codecs.StringAsIsCodec
+import com.raquo.domtypes.jsdom.defs.events.TypedTargetMouseEvent
 import com.raquo.laminar.api.L.*
 import com.raquo.laminar.nodes.ChildNode
 import com.softwaremill.quicklens.*
 import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
 import org.jpablo.typeexplorer.shared.inheritance.InheritanceDiagram
 import org.jpablo.typeexplorer.shared.inheritance.PlantumlInheritance.Options
+import org.jpablo.typeexplorer.shared.models
 import org.jpablo.typeexplorer.ui.app.components.state.{AppState, InheritanceTabState}
 import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.PackagesTree
 import org.jpablo.typeexplorer.ui.app.console
+import org.jpablo.typeexplorer.ui.bootstrap.*
 import org.scalajs.dom
 import org.scalajs.dom.EventTarget
-import com.raquo.domtypes.jsdom.defs.events.TypedTargetMouseEvent
-import org.jpablo.typeexplorer.ui.bootstrap.*
-import org.jpablo.typeexplorer.shared.models
-import zio.prelude.fx.ZPure
 
 
 def svgToLaminar(svg: dom.SVGElement) =
@@ -45,6 +44,7 @@ object InheritanceTab:
           .changes
           .debounce(300)
           .map((diagram, w) => if w.isBlank then diagram else diagram.filterBySymbols(w))
+      val $selectionEmpty = inheritanceTabState.$canvasSelection.signal.map(_.isEmpty)
       // -------------- render --------------------------------
       div( cls := "text-document-areas",
 
@@ -66,8 +66,9 @@ object InheritanceTab:
             ).small,
             ButtonGroup(
               cls := "me-2",
-              Button("children", inheritanceTabState.selectChildren(onClick)).outlineSecondary,
-              Button("parents" , inheritanceTabState.selectParents(onClick)).outlineSecondary,
+              Button("children", disabled <-- $selectionEmpty, inheritanceTabState.addSelectionChildren(onClick)).outlineSecondary,
+              Button("parents",  disabled <-- $selectionEmpty, inheritanceTabState.addSelectionParents(onClick)).outlineSecondary,
+              Button("remove",   disabled <-- $selectionEmpty, inheritanceTabState.removeSelection(onClick)).outlineSecondary,
             ).small
           ),
         ),

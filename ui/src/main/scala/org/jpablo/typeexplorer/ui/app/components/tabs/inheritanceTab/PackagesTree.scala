@@ -40,16 +40,16 @@ object PackagesTree:
           for fileTree <- diagram.toFileTrees yield
             collapsableTree(fileTree)(
               renderBranch = b => span(cls := "collapsable-branch-label", b),
-              renderLeaf = renderNamespace(diagram)
+              renderLeaf = renderNamespace
             )
 
   private def renderNamespaceZ =
     for
       inheritanceTabState <- AppState.inheritanceTabState
     yield
-      (diagram: InheritanceDiagram) => (name: String, ns: Namespace) =>
+      (name: String, ns: Namespace) =>
         val uri = encodeURIComponent(ns.symbol.toString)
-        val isActive = diagram.symbols.contains(ns.symbol)
+        val $isActive = inheritanceTabState.$activeSymbols.signal.map(_.contains(ns.symbol))
 
         collapsable2(
           branchLabel =
@@ -59,7 +59,7 @@ object PackagesTree:
               span(" "),
               a(
                 cls := "inheritance-namespace-symbol",
-                cls := (if isActive then "inheritance-namespace-symbol-secondary" else "noop"),
+                cls.toggle("inheritance-namespace-symbol-secondary", "noop") <-- $isActive,
                 href  := "#elem_" + uri,
                 title := ns.symbol.toString,
                 ns.displayName,

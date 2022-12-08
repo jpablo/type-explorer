@@ -1,17 +1,14 @@
 package org.jpablo.typeexplorer.ui.app.components.state
 
-import com.raquo.airstream.state.Var
-import com.raquo.airstream.core.Signal
-import org.jpablo.typeexplorer.shared.models
-import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, Related}
-import org.jpablo.typeexplorer.shared.inheritance.PlantumlInheritance.Options
-import com.softwaremill.quicklens.*
-import com.raquo.airstream.core.Observer
-import org.jpablo.typeexplorer.shared.models
 import com.raquo.airstream.core.EventStream
-import org.jpablo.typeexplorer.shared.models.Namespace
-import org.jpablo.typeexplorer.shared.models
+import com.raquo.airstream.core.Observer
+import com.raquo.airstream.core.Signal
+import com.raquo.airstream.state.Var
 import com.raquo.laminar.api.L.*
+import com.softwaremill.quicklens.*
+import org.jpablo.typeexplorer.shared.inheritance.PlantumlInheritance.Options
+import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, Related}
+import org.jpablo.typeexplorer.shared.models
 import org.scalajs.dom
 
 
@@ -31,16 +28,36 @@ case class InheritanceTabState(
   def addSymbol(symbol: models.Symbol): Unit =
     $activeSymbols.update(_ + symbol)
 
+  /**
+    * Removes all user-selected symbols (in the canvas) from $activeSymbols
+    */
+  def removeSelection[E <: dom.Event](ep: EventProp[E]) =
+    composeEvents(ep)(_.sample($canvasSelection)) --> { selection =>
+      $activeSymbols.update(_ -- selection)
+    }
 
-  def selectChildren[E <: dom.Event](ep: EventProp[E]) =
-    selectWith(_.allChildren(_), ep)
+  /**
+    * Adds all children of the canvas selection to $activeSymbols
+    */
+  def addSelectionChildren[E <: dom.Event](ep: EventProp[E]) =
+    addSelectionWith(_.allChildren(_), ep)
 
-  def selectParents[E <: dom.Event](ep: EventProp[E]) =
-    selectWith(_.allParents(_), ep)
+  /**
+    * Adds all parents of the canvas selection to $activeSymbols
+    */
+  def addSelectionParents[E <: dom.Event](ep: EventProp[E]) =
+    addSelectionWith(_.allParents(_), ep)
 
-  private def selectWith[E <: dom.Event](f: (InheritanceDiagram, models.Symbol) => InheritanceDiagram, ep: EventProp[E]) =
+  /**
+    * Updates $activeSymbols with the given function `f` and the current canvas selection.
+    */
+  private def addSelectionWith[E <: dom.Event](f: (InheritanceDiagram, models.Symbol) => InheritanceDiagram, ep: EventProp[E]) =
     val combined = $inheritanceDiagram.combineWith($canvasSelection.signal)
-    composeEvents(ep)(_.sample(combined)) --> {(diagram, selection) => $activeSymbols.set(selection.foldLeft(diagram)(f).symbols)}
+    composeEvents(ep)(_.sample(combined)) --> { (diagram, selection) =>
+      if selection.nonEmpty then
+        val newSymbols = selection.foldLeft(diagram)(f).symbols
+        $activeSymbols.update(_ ++ newSymbols)
+    }
 
 
 end InheritanceTabState
