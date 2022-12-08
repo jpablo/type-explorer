@@ -7,7 +7,7 @@ import org.jpablo.typeexplorer.shared.inheritance.Related
 
 case class InheritanceReq(
   paths  : List[String],
-  symbols: Set[(Symbol, Set[Related])],
+  symbols: Set[Symbol],
   options: InheritanceReq.Config = InheritanceReq.Config(),
 )
 

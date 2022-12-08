@@ -40,7 +40,7 @@ object InheritanceTab:
       val $filter = Var("")
       val modifySelection = modifyLens[Options]
       val $filteredDiagram =
-        $diagram.toSignal(InheritanceDiagram.empty)
+        $diagram
           .combineWith($filter.signal)
           .changes
           .debounce(300)

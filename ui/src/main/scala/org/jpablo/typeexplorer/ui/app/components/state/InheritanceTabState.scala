@@ -17,10 +17,11 @@ import org.jpablo.typeexplorer.shared.models
 
 
 case class InheritanceTabState(
+  $inheritanceDiagram: Signal[InheritanceDiagram] = Signal.fromValue(InheritanceDiagram.empty),
   /**
     * primary selection: based on direct user interactions
     */
-  $activeSymbols  : Var[Map[models.Symbol, Selection]] = Var(Map.empty),
+  $activeSymbols  : Var[Set[models.Symbol]] = Var(Set.empty),
   /**
     * explicitly ignored symbols
     */
@@ -29,48 +30,45 @@ case class InheritanceTabState(
   $canvasSelection: Var[Set[models.Symbol]] = Var(Set.empty)
 ):
 
-  def enableParents(diagram: InheritanceDiagram)(symbol: models.Symbol): Unit =
-    val parents: Set[models.Symbol] = diagram.allParents(symbol).namespaces.map(_.symbol)
-    $activeSymbols.update { activeSymbols =>
-      parents.foldLeft(activeSymbols) { (activeSymbols, sym) =>
-        val selection0 = activeSymbols.getOrElse(symbol, Selection.empty)
-        val selection1 = if !selection0.current then selection0.copy(current = true) else selection0
-        activeSymbols.updated(sym, selection1)
-      }
-    }
+//  def enableParents(diagram: InheritanceDiagram)(symbol: models.Symbol): Unit =
+//    val parents: Set[models.Symbol] = diagram.allParents(symbol).namespaces.map(_.symbol)
+//    $activeSymbols.update { activeSymbols =>
+//      parents.foldLeft(activeSymbols) { (activeSymbols, sym) =>
+//        val selection0 = activeSymbols.getOrElse(symbol, Selection.empty)
+//        val selection1 = if !selection0.current then selection0.copy(current = true) else selection0
+//        activeSymbols.updated(sym, selection1)
+//      }
+//    }
 
-  private def related(symbols: Map[models.Symbol, Selection]): Set[(models.Symbol, Set[Related])] =
-    symbols.transform { (symbol, selection) => selection match
-      case Selection(true, false, false) => Set.empty
-      case Selection(_   , true , false) => Set(Related.Parents)
-      case Selection(_   , false, true ) => Set(Related.Children)
-      case Selection(_   , true , true ) => Set(Related.Parents, Related.Children)
-      case _                             => throw Exception(s"Defect: symbol ${symbol} without selection found")
-    }.toSet
+//  private def related(symbols: Set[models.Symbol, Selection]): Set[(models.Symbol, Set[Related])] =
+//    symbols.transform { (symbol, selection) => selection match
+//      case Selection(true, false, false) => Set.empty
+//      case Selection(_   , true , false) => Set(Related.Parents)
+//      case Selection(_   , false, true ) => Set(Related.Children)
+//      case Selection(_   , true , true ) => Set(Related.Parents, Related.Children)
+//      case _                             => throw Exception(s"Defect: symbol ${symbol} without selection found")
+//    }.toSet
 
   /**
     * symbols indirectly selected: parents, children, etc.
     */
-  def $secondary(diagram: InheritanceDiagram): Signal[Set[models.Symbol]] =
-    $activeSymbols.signal.map(secondary(diagram)).map(_.namespaces.map(_.symbol))
+//  def selection(symbol: models.Symbol): Signal[Selection] =
+//    $activeSymbols.signal.map(_.getOrElse(symbol, Selection.empty))
 
-  private def secondary(diagram: InheritanceDiagram)(symbols: Map[models.Symbol, Selection]): InheritanceDiagram =
-    diagram.filterSymbols(related(symbols))
+//  val $activeSymbolsChanges: EventStream[Set[(models.Symbol, Set[Related])]] =
+//    $activeSymbols.signal.changes.map()
 
-  def $symbolsUpdater(symbol: models.Symbol)(modifyField: PathLazyModify[Selection, Boolean]): Observer[Boolean] =
-    $activeSymbols.updater[Boolean](symbolsUpdater(symbol, modifyField))
+  def addSymbol(symbol: models.Symbol): Unit =
+    $activeSymbols.update(_ + symbol)
 
-  def selection(symbol: models.Symbol): Signal[Selection] =
-    $activeSymbols.signal.map(_.getOrElse(symbol, Selection.empty))
+  def showChildren(): Signal[Unit] =
+    $inheritanceDiagram.combineWith($canvasSelection.signal).map { (diagram, selection) =>
+      val symbols = selection.foldLeft(diagram)((d, s) => d.allChildren(s)).symbols
+      $activeSymbols.set(symbols)
+    }
 
-  val $requestBody: EventStream[Set[(models.Symbol, Set[Related])]] =
-    $activeSymbols.signal.changes.map(related)
-
-  def showChildren(): Unit =
-    showSelection(modifyLens[Selection](_.children))
-
-  def showParents(): Unit =
-    showSelection(modifyLens[Selection](_.parents))
+  def showParents(): Unit = ()
+//    showSelection(modifyLens[Selection](_.parents))
 
 
   private def symbolsUpdater(symbol: models.Symbol, modifyField: PathLazyModify[Selection, Boolean])(symbols: Map[models.Symbol, Selection], b: Boolean) =
@@ -81,12 +79,12 @@ case class InheritanceTabState(
     else
       symbols + (symbol -> selection1)
 
-  private def showSelection(modifyField: PathLazyModify[Selection, Boolean]): Unit =
-    $activeSymbols.update { activeSymbols =>
-      $canvasSelection.now().foldLeft(activeSymbols) { (activeSymbols, symbol) =>
-        symbolsUpdater(symbol, modifyField)(activeSymbols, true)
-      }
-    }
+//  private def showSelection(modifyField: PathLazyModify[Selection, Boolean]): Unit =
+//    $activeSymbols.update { activeSymbols =>
+//      $canvasSelection.now().foldLeft(activeSymbols) { (activeSymbols, symbol) =>
+//        symbolsUpdater(symbol, modifyField)(activeSymbols, true)
+//      }
+//    }
 
 
 end InheritanceTabState

@@ -38,7 +38,7 @@ def fetchDocuments($projectPath: Signal[Path]): EventStream[List[TextDocumentsWi
     lst
 
 
-def fetchClasses($projectPath: Signal[Path]): EventStream[InheritanceDiagram] =
+def fetchInheritanceDiagram($projectPath: Signal[Path]): Signal[InheritanceDiagram] = {
   for
     path     <- $projectPath
     response <- fetchBase("classes?path=" + path).text
@@ -50,8 +50,9 @@ def fetchClasses($projectPath: Signal[Path]): EventStream[InheritanceDiagram] =
     }
   yield
     classes
+}.startWith(InheritanceDiagram.empty)
 
-def fetchInheritanceSVGDiagram(projectPath: Path, symbols: Set[(Symbol, Set[Related])], options: Options): EventStream[dom.SVGElement] =
+def fetchInheritanceSVGDiagram(projectPath: Path, symbols: Set[Symbol], options: Options): EventStream[dom.SVGElement] =
   val parser = dom.DOMParser()
   if projectPath.toString.isEmpty then
     EventStream.fromValue(svg.svg().ref)

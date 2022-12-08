@@ -50,7 +50,7 @@ object PackagesTree:
     yield
       (diagram: InheritanceDiagram) => (name: String, ns: Namespace) =>
         val uri = encodeURIComponent(ns.symbol.toString)
-        val $isSecondary = inheritanceTabState.$secondary(diagram).map(_.contains(ns.symbol))
+        val isActive = diagram.symbols.contains(ns.symbol)
 
         collapsable2(
           branchLabel =
@@ -60,12 +60,11 @@ object PackagesTree:
               span(" "),
               a(
                 cls := "inheritance-namespace-symbol",
-                cls.toggle("inheritance-namespace-symbol-secondary", "noop") <-- $isSecondary,
-                href := "#elem_" + uri,
+                cls := (if isActive then "inheritance-namespace-symbol-secondary" else "noop"),
+                href  := "#elem_" + uri,
                 title := ns.symbol.toString,
                 ns.displayName,
-                onClick.mapTo(true) -->
-                  inheritanceTabState.$symbolsUpdater(ns.symbol)(modifyLens[Selection](_.current))
+                onClick --> (_ => inheritanceTabState.addSymbol(ns.symbol))
               ),
             ),
           contents =

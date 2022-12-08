@@ -31,10 +31,10 @@ case class AppState(
     * - the selected symbol with its "related" configuration (i.e. parents, children, etc)
     * - diagram options
     */
-  def $inheritanceSelection: EventStream[(Path, Set[(models.Symbol, Set[Related])], Options)] =
+  def $inheritanceSelection: EventStream[(Path, Set[models.Symbol], Options)] =
     $projectPath
       .combineWith(
-        inheritanceTabState.$requestBody.toSignal(Set.empty),
+        inheritanceTabState.$activeSymbols.signal,
         inheritanceTabState.$options.signal
       )
       .changes
@@ -61,7 +61,7 @@ def service[A: Tag]: Service[A] =
   ZPure.service[Unit, A]
 
 object AppState:
-  val $diagram            = service[EventStream[InheritanceDiagram]]
+  val $diagram            = service[Signal[InheritanceDiagram]]
   val $documents          = service[EventStream[List[TextDocumentsWithSource]]]
   val $projectPath        = service[Signal[Path]]
   val svgSymbolSelected   = service[EventBus[models.Symbol]]

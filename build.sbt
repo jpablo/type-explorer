@@ -1,6 +1,6 @@
 import org.scalajs.linker.interface.ModuleSplitStyle
 
-val scala3Version     = "3.2.0"
+val scala3Version     = "3.2.1"
 val scalametaVersion  = "4.5.9"
 val zioHttpVersion    = "2.0.0-RC11+9-b95c109e-SNAPSHOT"
 val zioJsonVersion    = "0.3.0"
@@ -25,7 +25,7 @@ ThisBuild / scalacOptions ++= // Scala 3.x options
     "-Ysafe-init",
     "-language:implicitConversions",
     "-source:future",
-    "-deprecation",
+    "-deprecation"
   )
 
 lazy val protos =
@@ -64,7 +64,7 @@ val sharedSettings = Seq(
     "com.softwaremill.quicklens" %%% "quicklens" % "1.9.0",
     "org.scalameta"              %%% "scalameta" % scalametaVersion cross CrossVersion.for3Use2_13
   ),
-  testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework"),
+  testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework")
 )
 
 /**
@@ -147,8 +147,8 @@ lazy val ui =
       libraryDependencies ++= Seq(
         "org.scala-js"  %%% "scalajs-dom"       % "2.2.0",
         "com.raquo"     %%% "laminar"           % "0.14.5",
-        "io.laminext"   %%% "fetch"             % "0.14.4",
-      ), 
+        "io.laminext"   %%% "fetch"             % "0.14.4"
+      ),
       excludeDependencies ++= Seq(
         "org.scala-lang.modules" %% "scala-collection-compat_sjs1"
       ),
@@ -171,7 +171,7 @@ lazy val root =
     .settings(
       name := "type-explorer",
       version := "0.1.0",
-      welcomeMessage,
+      welcomeMessage
     )
 
 
@@ -188,6 +188,6 @@ def welcomeMessage = onLoadMessage := {
       |
       |Useful sbt tasks:
       |${item("~ backend/reStart")} - start backend server
-      |${item("~ ui/fastLinkJS")} - compile ui 
+      |${item("~ ui/fastLinkJS")} - compile ui
       """.stripMargin
 }
