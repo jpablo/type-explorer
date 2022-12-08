@@ -41,19 +41,6 @@ case class AppState(
 end AppState
 
 
-
-case class Selection(
-  current : Boolean = false,
-  parents : Boolean = false,
-  children: Boolean = false,
-):
-  def allEmpty = !current && !parents && !children
-
-object Selection:
-  def empty = Selection()
-
-
-
 type Service[A] =
   ZPure[Nothing, Unit, Unit, A, Nothing, A]
 
@@ -61,6 +48,14 @@ def service[A: Tag]: Service[A] =
   ZPure.service[Unit, A]
 
 object AppState:
+  def build(projectPath: StoredString, fetchDiagram: Path => Signal[InheritanceDiagram]) =
+    val state0 =
+      AppState(InheritanceTabState(Signal.fromValue(InheritanceDiagram.empty)), projectPath)
+    state0
+      .modify(_.inheritanceTabState.$inheritanceDiagram)
+      .setTo(state0.$projectPath.flatMap(fetchDiagram))
+
+
   val $diagram            = service[Signal[InheritanceDiagram]]
   val $documents          = service[EventStream[List[TextDocumentsWithSource]]]
   val $projectPath        = service[Signal[Path]]

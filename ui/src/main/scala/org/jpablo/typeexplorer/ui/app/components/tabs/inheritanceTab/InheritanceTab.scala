@@ -11,7 +11,7 @@ import com.softwaremill.quicklens.*
 import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
 import org.jpablo.typeexplorer.shared.inheritance.InheritanceDiagram
 import org.jpablo.typeexplorer.shared.inheritance.PlantumlInheritance.Options
-import org.jpablo.typeexplorer.ui.app.components.state.{AppState, InheritanceTabState, Selection}
+import org.jpablo.typeexplorer.ui.app.components.state.{AppState, InheritanceTabState}
 import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.PackagesTree
 import org.jpablo.typeexplorer.ui.app.console
 import org.scalajs.dom
@@ -66,12 +66,8 @@ object InheritanceTab:
             ).small,
             ButtonGroup(
               cls := "me-2",
-              Button("children",
-                composeEvents(onClick)(inheritanceTabState.selection) --> inheritanceTabState.addSelectedChildren.tupled,
-              ).outlineSecondary,
-              Button("parents" ,
-                composeEvents(onClick)(inheritanceTabState.selection) --> inheritanceTabState.addSelectedParents.tupled,
-              ).outlineSecondary,
+              Button("children", inheritanceTabState.selectChildren(onClick)).outlineSecondary,
+              Button("parents" , inheritanceTabState.selectParents(onClick)).outlineSecondary,
             ).small
           ),
         ),

@@ -9,23 +9,21 @@ import com.softwaremill.quicklens.*
 import com.raquo.airstream.core.Observer
 import org.jpablo.typeexplorer.shared.models
 import com.raquo.airstream.core.EventStream
-import org.jpablo.typeexplorer.shared.models
-import org.jpablo.typeexplorer.shared.models
-import org.jpablo.typeexplorer.shared.models
 import org.jpablo.typeexplorer.shared.models.Namespace
 import org.jpablo.typeexplorer.shared.models
+import com.raquo.laminar.api.L.*
+import org.scalajs.dom
 
 
 case class InheritanceTabState(
+  /**
+    * Derived from $activeSymbols
+    */
   $inheritanceDiagram: Signal[InheritanceDiagram],
   /**
     * primary selection: based on direct user interactions
     */
   $activeSymbols  : Var[Set[models.Symbol]] = Var(Set.empty),
-  /**
-    * explicitly ignored symbols
-    */
-  $ignored        : Var[Set[models.Symbol]] = Var(Set.empty),
   $options        : Var[Options] = Var(Options()),
   $canvasSelection: Var[Set[models.Symbol]] = Var(Set.empty),
 ):
@@ -33,19 +31,16 @@ case class InheritanceTabState(
   def addSymbol(symbol: models.Symbol): Unit =
     $activeSymbols.update(_ + symbol)
 
-  def addSelectedChildren =
-    addSelectedWith(_.allChildren(_))
 
-  def addSelectedParents =
-    addSelectedWith(_.allParents(_))
+  def selectChildren[E <: dom.Event](ep: EventProp[E]) =
+    selectWith(_.allChildren(_), ep)
 
-  private def addSelectedWith(f: (InheritanceDiagram, models.Symbol) => InheritanceDiagram)(diagram: InheritanceDiagram, selection: Set[models.Symbol]): Unit =
-    $activeSymbols.set(
-      selection.foldLeft(diagram)(f).symbols
-    )
+  def selectParents[E <: dom.Event](ep: EventProp[E]) =
+    selectWith(_.allParents(_), ep)
 
-  def selection[A](events: EventStream[A]): EventStream[(InheritanceDiagram, Set[models.Symbol])] =
-    events.sample($inheritanceDiagram.combineWith($canvasSelection.signal))
+  private def selectWith[E <: dom.Event](f: (InheritanceDiagram, models.Symbol) => InheritanceDiagram, ep: EventProp[E]) =
+    val combined = $inheritanceDiagram.combineWith($canvasSelection.signal)
+    composeEvents(ep)(_.sample(combined)) --> {(diagram, selection) => $activeSymbols.set(selection.foldLeft(diagram)(f).symbols)}
 
 
 end InheritanceTabState

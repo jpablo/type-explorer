@@ -8,16 +8,14 @@ import org.jpablo.typeexplorer.ui.app.components.state.{AppState, InheritanceTab
 import org.jpablo.typeexplorer.ui.app.components.TopLevel
 import org.scalajs.dom.document
 import zio.ZEnvironment
+import com.softwaremill.quicklens.*
 
 object MainJS:
   def main(args: Array[String]): Unit =
 
-    val projectPath = storedString("projectPath", initial = "")
-    val $projectPath = projectPath.signal.map(Path.apply)
-    val $inheritanceDiagram = fetchInheritanceDiagram($projectPath)
+    val appState = AppState.build(storedString("projectPath", initial = ""), fetchInheritanceDiagram)
 
-    val appState     = AppState(InheritanceTabState($inheritanceDiagram), projectPath)
-    val $documents   = fetchDocuments($projectPath)
+    val $documents   = fetchDocuments(appState.$projectPath)
     val $inheritance = appState.$inheritanceSelection.flatMap(fetchInheritanceSVGDiagram)
     val $setSymbol   = EventBus[Symbol]()
 
@@ -26,7 +24,7 @@ object MainJS:
         appState.$projectPath,
         $documents,
         $inheritance,
-        $inheritanceDiagram,
+        appState.inheritanceTabState.$inheritanceDiagram,
         appState.inheritanceTabState,
       ) ++ ZEnvironment(
         $setSymbol,

@@ -38,10 +38,9 @@ def fetchDocuments($projectPath: Signal[Path]): EventStream[List[TextDocumentsWi
     lst
 
 
-def fetchInheritanceDiagram($projectPath: Signal[Path]): Signal[InheritanceDiagram] = {
+def fetchInheritanceDiagram(projectPath: Path): Signal[InheritanceDiagram] = {
   for
-    path     <- $projectPath
-    response <- fetchBase("classes?path=" + path).text
+    response <- fetchBase("classes?path=" + projectPath).text
     classes  <- EventStream.fromTry {
       response.data
         .fromJson[InheritanceDiagram].left
