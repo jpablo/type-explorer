@@ -61,6 +61,7 @@ object InheritanceTab:
               cls := "me-2",
               ControlledCheckbox("fields-checkbox-1", "fields",     _.fields,     modifySelection(_.fields), inheritanceTabState),
               ControlledCheckbox("fields-checkbox-2", "signatures", _.signatures, modifySelection(_.signatures), inheritanceTabState),
+              Button(disabled := false, "clear", onClick --> (_ => inheritanceTabState.removeAll())).outlineSecondary,
               Button(disabled := true, "fit").outlineSecondary,
               Button(disabled := true, "zoom").outlineSecondary
             ).small,
@@ -135,7 +136,7 @@ extension (e: dom.Element)
 
 
 class NameSpaceElement(ref: dom.Element):
-  private val selectedFill = "red"
+  private val selectedFill = "yellow"
   private val defaultFill = "#F1F1F1"
 
   lazy val id = ref.id.stripPrefix("elem_")

@@ -28,6 +28,9 @@ case class InheritanceTabState(
   def addSymbol(symbol: models.Symbol): Unit =
     $activeSymbols.update(_ + symbol)
 
+  def removeAll() =
+    $activeSymbols.set(Set.empty)
+
   /**
     * Removes all user-selected symbols (in the canvas) from $activeSymbols
     */
