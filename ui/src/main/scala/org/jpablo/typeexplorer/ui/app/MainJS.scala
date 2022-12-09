@@ -1,6 +1,7 @@
 package org.jpablo.typeexplorer.ui.app
 
 import com.raquo.laminar.api.L.*
+import com.raquo.airstream.ownership.OneTimeOwner
 import io.laminext.syntax.core.storedString
 import org.jpablo.typeexplorer.shared.models.Symbol
 import org.jpablo.typeexplorer.ui.app.client.{fetchDocuments, fetchInheritanceDiagram, fetchInheritanceSVGDiagram}
@@ -11,10 +12,9 @@ import zio.ZEnvironment
 import com.softwaremill.quicklens.*
 
 object MainJS:
+
   def main(args: Array[String]): Unit =
-
-    val appState = AppState.build(storedString("projectPath", initial = ""), fetchInheritanceDiagram)
-
+    val appState     = AppState.build(storedString("projectPath", initial = ""), fetchInheritanceDiagram)
     val $documents   = fetchDocuments(appState.$projectPath)
     val $inheritance = appState.$inheritanceSelection.flatMap(fetchInheritanceSVGDiagram)
     val $setSymbol   = EventBus[Symbol]()

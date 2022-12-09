@@ -3,20 +3,20 @@ package org.jpablo.typeexplorer.ui.app.client
 import com.raquo.laminar.api.L.*
 import concurrent.ExecutionContext.Implicits.global
 import io.laminext.fetch.*
+import io.laminext.syntax.core.StoredString
+import org.jpablo.typeexplorer.protos.{TextDocumentsWithSource, TextDocumentsWithSourceSeq}
+import org.jpablo.typeexplorer.shared.inheritance.PlantumlInheritance.Options
+import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, Related}
+import org.jpablo.typeexplorer.shared.models.{Namespace, Symbol}
+import org.jpablo.typeexplorer.shared.webApp.InheritanceReq
+import org.jpablo.typeexplorer.ui.app.Path
+import org.jpablo.typeexplorer.ui.app.components.DiagramType
+import org.jpablo.typeexplorer.ui.app.components.state.AppState
+import org.jpablo.typeexplorer.ui.app.console
 import org.scalajs.dom
 import scala.scalajs.js.typedarray.Int8Array
 import scalajs.js.URIUtils.encodeURIComponent
 import zio.json.*
-
-import org.jpablo.typeexplorer.protos.{TextDocumentsWithSource, TextDocumentsWithSourceSeq}
-import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, Related}
-import org.jpablo.typeexplorer.shared.inheritance.PlantumlInheritance.Options
-import org.jpablo.typeexplorer.shared.models.{Symbol, Namespace}
-import org.jpablo.typeexplorer.shared.webApp.InheritanceReq
-import org.jpablo.typeexplorer.ui.app.components.DiagramType
-import org.jpablo.typeexplorer.ui.app.components.state.AppState
-import org.jpablo.typeexplorer.ui.app.Path
-import org.jpablo.typeexplorer.ui.app.console
 
 val basePath = "http://localhost:8090/"
 

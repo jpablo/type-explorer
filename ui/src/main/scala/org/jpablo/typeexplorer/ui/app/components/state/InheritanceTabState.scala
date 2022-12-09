@@ -6,25 +6,27 @@ import com.raquo.airstream.core.Signal
 import com.raquo.airstream.state.Var
 import com.raquo.laminar.api.L.*
 import com.softwaremill.quicklens.*
+import io.laminext.syntax.core.{StoredString, storedString}
 import org.jpablo.typeexplorer.shared.inheritance.PlantumlInheritance.Options
 import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, Related}
 import org.jpablo.typeexplorer.shared.models
+import org.jpablo.typeexplorer.ui.app.Path
 import org.scalajs.dom
-
+import zio.json.*
 
 case class InheritanceTabState(
   /**
     * Derived from $activeSymbols
     */
   $inheritanceDiagram: Signal[InheritanceDiagram],
+  activeSymbolsJson: StoredString,
   /**
     * primary selection: based on direct user interactions
     */
-  $activeSymbols  : Var[Set[models.Symbol]] = Var(Set.empty),
-  $options        : Var[Options] = Var(Options()),
-  $canvasSelection: Var[Set[models.Symbol]] = Var(Set.empty),
+  $activeSymbols   : Var[Set[models.Symbol]],
+  $options         : Var[Options] = Var(Options()),
+  $canvasSelection : Var[Set[models.Symbol]] = Var(Set.empty),
 ):
-
   def addSymbol(symbol: models.Symbol): Unit =
     $activeSymbols.update(_ + symbol)
 

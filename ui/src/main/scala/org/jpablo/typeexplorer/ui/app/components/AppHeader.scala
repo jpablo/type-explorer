@@ -14,19 +14,19 @@ enum DiagramType:
 
 
 def AppHeader =
-  for 
+  for
     projectPath <- AppState.projectPath
   yield
-    val onEnterPress  = onKeyPress.filter(_.keyCode == dom.ext.KeyCode.Enter)
-    val onEscapePress = onKeyDown.filter(_.keyCode == dom.ext.KeyCode.Escape)
+    val onEnterPress  = onKeyPress.filter(_.keyCode == dom.KeyCode.Enter)
+    val onEscapePress = onKeyDown.filter(_.keyCode == dom.KeyCode.Escape)
     val editBasePath  = Var(false)
     // a() --[a:onClick ==> editBasePath = true]--> input() --[input:onEnterPress|onEscapePress ==> editBasePath = false]--> a()
-    val searchInput = 
+    val searchInput =
       Search(
         cls := "me-2",
         onMountFocus,
         value <-- projectPath.signal,
-        onEnterPress.preventDefault.mapToValue --> { v => 
+        onEnterPress.preventDefault.mapToValue --> { v =>
           projectPath.set(v)
           editBasePath.set(false)
         },
@@ -47,7 +47,7 @@ def AppHeader =
               cls := "d-flex me-2",
               searchInput,
               Button(
-                onClick.mapTo(false) --> { b => 
+                onClick.mapTo(false) --> { b =>
                   projectPath.set(searchInput.ref.value)
                   editBasePath.set(b)
                 },
@@ -58,8 +58,8 @@ def AppHeader =
 
           editBasePath.signal.childWhenFalse {
             a(
-              cls := "nav-link base-path", 
-              href := "#", 
+              cls := "nav-link base-path",
+              href := "#",
               child.text <-- projectPath.signal,
               onClick.mapTo(true) --> editBasePath
             )
