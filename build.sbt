@@ -1,11 +1,11 @@
 import org.scalajs.linker.interface.ModuleSplitStyle
 
 val scala3Version     = "3.2.1"
-val scalametaVersion  = "4.5.9"
-val zioHttpVersion    = "2.0.0-RC11+9-b95c109e-SNAPSHOT"
+val scalametaVersion  = "4.6.0"
+val zioHttpVersion    = "2.0.0-RC11"
 val zioJsonVersion    = "0.3.0"
 val zioPreludeVersion = "1.0.0-RC16"
-val zioVersion        = "2.0.2"
+val zioVersion        = "2.0.5"
 
 // TODO:
 // - Maybe create a plugin to correctly set semanticdbTargetRoot for each subproject?
@@ -106,10 +106,10 @@ lazy val backend =
       reStart / mainClass := Some("org.jpablo.typeexplorer.backend.webApp.WebApp"),
       libraryDependencies ++= Seq(
       "io.d11"                   %% "zhttp"             % zioHttpVersion,
-      "org.json4s"               %% "json4s-native"     % "4.0.5",
+      "org.json4s"               %% "json4s-native"     % "4.0.6",
       "guru.nidi"                %  "graphviz-java"     % "0.18.1",
       "net.sourceforge.plantuml" %  "plantuml"          % "1.2022.5",
-      "com.lihaoyi"              %% "scalatags"         % "0.11.1" cross CrossVersion.for3Use2_13,
+      "com.lihaoyi"              %% "scalatags"         % "0.11.1" cross CrossVersion.for3Use2_13, // Needed until org.scalameta-common upgrades to 3.x
        "io.github.arainko"       %% "ducktape"          % "0.1.0-RC2"
       ),
       excludeDependencies ++= Seq(
