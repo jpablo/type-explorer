@@ -51,19 +51,31 @@ def fetchInheritanceDiagram(projectPath: Path): Signal[InheritanceDiagram] = {
     classes
 }.startWith(InheritanceDiagram.empty)
 
-def fetchInheritanceSVGDiagram(projectPath: Path, symbols: Set[Symbol], options: Options): EventStream[dom.SVGElement] =
-  val parser = dom.DOMParser()
-  if projectPath.toString.isEmpty then
-    EventStream.fromValue(svg.svg().ref)
-  else
-    val body = InheritanceReq(List(projectPath.toString), symbols, InheritanceReq.Config(options.fields, options.signatures))
-    val req  = Fetch.post(basePath + "inheritance", body.toJson)
-    req.text.map { fetchResponse =>
-      parser
-        .parseFromString(fetchResponse.data, dom.MIMEType.`image/svg+xml`)
-        .documentElement
-        .asInstanceOf[dom.SVGElement]
-    }
+def fetchInheritanceSVGDiagram(appState: AppState): EventStream[dom.SVGElement] =
+  val combined =
+    appState.$projectPath
+      .combineWith(
+        appState.inheritanceTabState.$activeSymbols.signal,
+        appState.inheritanceTabState.$options.signal
+      )
+  for
+    (projectPath, symbols, options) <- combined
+    parser = dom.DOMParser()
+    diagram <-
+      if projectPath.toString.isEmpty then
+        EventStream.fromValue(svg.svg().ref)
+      else
+        val body = InheritanceReq(List(projectPath.toString), symbols, InheritanceReq.Config(options.fields, options.signatures))
+        val req = Fetch.post(basePath + "inheritance", body.toJson)
+        req.text.map { fetchResponse =>
+          parser
+            .parseFromString(fetchResponse.data, dom.MIMEType.`image/svg+xml`)
+            .documentElement
+            .asInstanceOf[dom.SVGElement]
+        }
+  yield
+    diagram
+
 
 def fetchCallGraphSVGDiagram($diagram: Signal[(DiagramType, Path)]): EventStream[dom.Element] =
   val parser = dom.DOMParser()

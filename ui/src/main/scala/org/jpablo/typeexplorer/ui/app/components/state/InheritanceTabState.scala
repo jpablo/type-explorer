@@ -15,11 +15,11 @@ import org.scalajs.dom
 import zio.json.*
 
 case class InheritanceTabState(
+  activeSymbolsJson: StoredString,
   /**
     * Derived from $activeSymbols
     */
-  $inheritanceDiagram: Signal[InheritanceDiagram],
-  activeSymbolsJson: StoredString,
+  $inheritanceDiagram: Signal[InheritanceDiagram] = Signal.fromValue(InheritanceDiagram.empty),
   /**
     * primary selection: based on direct user interactions
     */

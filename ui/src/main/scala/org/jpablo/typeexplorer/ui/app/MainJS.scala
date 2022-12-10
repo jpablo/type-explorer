@@ -16,14 +16,14 @@ object MainJS:
   def main(args: Array[String]): Unit =
     val appState     = AppState.build(fetchInheritanceDiagram)
     val $documents   = fetchDocuments(appState.$projectPath)
-    val $inheritance = appState.$inheritanceSelection.flatMap(fetchInheritanceSVGDiagram)
     val $setSymbol   = EventBus[Symbol]()
+    val $inheritanceSvgDiagram = fetchInheritanceSVGDiagram(appState)
 
     val appEnv =
       ZEnvironment(
         appState.$projectPath,
         $documents,
-        $inheritance,
+        $inheritanceSvgDiagram,
         appState.inheritanceTabState.$inheritanceDiagram,
         appState.inheritanceTabState,
       ) ++ ZEnvironment(
