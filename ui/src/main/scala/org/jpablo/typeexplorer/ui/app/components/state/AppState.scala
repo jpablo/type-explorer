@@ -13,6 +13,7 @@ import org.jpablo.typeexplorer.shared.inheritance.PlantumlInheritance.Options
 import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, Related}
 import org.jpablo.typeexplorer.shared.models
 import org.jpablo.typeexplorer.ui.app.Path
+import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.InheritanceTab.UserSelectionCommand
 import org.scalajs.dom
 import zio.Tag
 import zio.json.*
@@ -73,7 +74,7 @@ object AppState:
   val $diagram            = service[Signal[InheritanceDiagram]]
   val $documents          = service[EventStream[List[TextDocumentsWithSource]]]
   val $projectPath        = service[Signal[Path]]
-  val svgSymbolSelected   = service[EventBus[models.Symbol]]
+  val $userSelectionCommand = service[EventBus[UserSelectionCommand]]
   val $svgDiagram         = service[EventStream[dom.SVGElement]]
   val projectPath         = service[StoredString]
   val inheritanceTabState = service[InheritanceTabState]

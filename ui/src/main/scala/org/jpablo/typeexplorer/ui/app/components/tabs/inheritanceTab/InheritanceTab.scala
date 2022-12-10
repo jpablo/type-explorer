@@ -26,13 +26,18 @@ def svgToLaminar(svg: dom.SVGElement) =
 
 object InheritanceTab:
 
+  enum UserSelectionCommand:
+    case Replace(symbol: models.Symbol)
+    case Extend(symbol: models.Symbol)
+    case Clear
+
   private val autocomplete = customProp("autocomplete", StringAsIsCodec)
 
   def build =
     for
       $svgDiagram         <- AppState.$svgDiagram
       $diagram            <- AppState.$diagram
-      $svgSymbolSelected  <- AppState.svgSymbolSelected
+      $svgSymbolSelected  <- AppState.$userSelectionCommand
       packagesTree        <- PackagesTree.build
       inheritanceTabState <- AppState.inheritanceTabState
     yield
@@ -96,14 +101,14 @@ object InheritanceTab:
       )
 
 
-  private def handleSvgClick($selectedNamespace: EventBus[models.Symbol])(e: TypedTargetMouseEvent[dom.Element]) =
+  private def handleSvgClick($userSelection: EventBus[UserSelectionCommand])(e: TypedTargetMouseEvent[dom.Element]) =
     (e.target +: parents(e.target))
       .takeWhile(_.isInstanceOf[dom.SVGElement])
       .find(isNamespace)
       .map(NameSpaceElement(_))
       .foreach { ns =>
         ns.selectToggle()
-        $selectedNamespace.emit(ns.symbol)
+        $userSelection.emit(UserSelectionCommand.Replace(ns.symbol))
       }
 
   private def ControlledCheckbox(id: String, labelStr: String, field: Options => Boolean, modifyField: PathLazyModify[Options, Boolean], selectedSymbols: InheritanceTabState) =
@@ -133,22 +138,3 @@ extension (e: dom.Element)
 
   def fill = e.getAttribute("fill")
   def fill_=(c: String) = e.setAttribute("fill", c)
-
-
-class NameSpaceElement(ref: dom.Element):
-  private val selectedFill = "yellow"
-  private val defaultFill = "#F1F1F1"
-
-  lazy val id = ref.id.stripPrefix("elem_")
-  lazy val symbol = models.Symbol(id)
-  private def box =
-    ref.getElementsByTagName("rect")
-    .find(_.getAttribute("id") == id)
-
-  def select() =
-    box.foreach(_.fill = selectedFill)
-
-  def selectToggle() =
-    for box <- box do
-      box.fill =
-        if box.fill == defaultFill then selectedFill else defaultFill
