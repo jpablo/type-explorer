@@ -2,6 +2,7 @@ package org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab
 
 import org.jpablo.typeexplorer.shared.models
 import org.scalajs.dom
+import org.scalajs.dom.Element
 
 class NameSpaceElement(ref: dom.Element):
   private val selectedFill = "yellow"
@@ -11,12 +12,15 @@ class NameSpaceElement(ref: dom.Element):
 
   lazy val symbol = models.Symbol(id)
 
-  private def box =
+  private def box: Option[Element] =
     ref.getElementsByTagName("rect")
       .find(_.getAttribute("id") == id)
 
   def select() =
     box.foreach(_.fill = selectedFill)
+
+  def unselect() =
+    box.foreach(_.fill = defaultFill)
 
   def selectToggle() =
     for box <- box do

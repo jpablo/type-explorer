@@ -12,6 +12,7 @@ import org.jpablo.typeexplorer.shared.webApp.InheritanceReq
 import org.jpablo.typeexplorer.ui.app.Path
 import org.jpablo.typeexplorer.ui.app.components.DiagramType
 import org.jpablo.typeexplorer.ui.app.components.state.AppState
+import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.InheritanceSvgDiagram
 import org.jpablo.typeexplorer.ui.app.console
 import org.scalajs.dom
 import scala.scalajs.js.typedarray.Int8Array
@@ -51,7 +52,7 @@ def fetchInheritanceDiagram(projectPath: Path): Signal[InheritanceDiagram] = {
     classes
 }.startWith(InheritanceDiagram.empty)
 
-def fetchInheritanceSVGDiagram(appState: AppState): EventStream[dom.SVGElement] =
+def fetchInheritanceSVGDiagram(appState: AppState): EventStream[InheritanceSvgDiagram] =
   val combined =
     appState.$projectPath
       .combineWith(
@@ -74,7 +75,7 @@ def fetchInheritanceSVGDiagram(appState: AppState): EventStream[dom.SVGElement] 
             .asInstanceOf[dom.SVGElement]
         }
   yield
-    diagram
+    InheritanceSvgDiagram(diagram)
 
 
 def fetchCallGraphSVGDiagram($diagram: Signal[(DiagramType, Path)]): EventStream[dom.Element] =

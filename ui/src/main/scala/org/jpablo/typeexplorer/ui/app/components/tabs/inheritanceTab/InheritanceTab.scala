@@ -7,7 +7,6 @@ import com.raquo.airstream.state.StrictSignal
 import com.raquo.domtypes.generic.codecs.StringAsIsCodec
 import com.raquo.domtypes.jsdom.defs.events.TypedTargetMouseEvent
 import com.raquo.laminar.api.L.*
-import com.raquo.laminar.nodes.ChildNode
 import com.softwaremill.quicklens.*
 import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
 import org.jpablo.typeexplorer.shared.inheritance.InheritanceDiagram
@@ -21,9 +20,6 @@ import org.scalajs.dom
 import org.scalajs.dom.EventTarget
 
 
-def svgToLaminar(svg: dom.SVGElement) =
-  new ChildNode[dom.SVGElement] { val ref = svg }
-
 object InheritanceTab:
 
   enum UserSelectionCommand:
@@ -35,9 +31,9 @@ object InheritanceTab:
 
   def build =
     for
-      $svgDiagram         <- AppState.$svgDiagram
-      $diagram            <- AppState.$diagram
-      $svgSymbolSelected  <- AppState.$userSelectionCommand
+      $inheritanceSvgDiagram <- AppState.$inheritanceSvgDiagram
+      $diagram               <- AppState.$inheritanceDiagram
+      $userSelectionCommand  <- AppState.$userSelectionCommand
       packagesTree        <- PackagesTree.build
       inheritanceTabState <- AppState.inheritanceTabState
     yield
@@ -81,35 +77,37 @@ object InheritanceTab:
 
         div( cls := "inheritance-container",
           div(
-            child <-- $svgDiagram.map { svg =>
-              // TODO: Refactor this after tree selection is changed.
-              val canvasSelection: Set[models.Symbol] = inheritanceTabState.$canvasSelection.now()
-              val diagramElements = svg.querySelectorAll("g[id ^= elem_]").map(NameSpaceElement(_))
-              // select incoming svg elements based on app state.
-              for elem <- diagramElements if canvasSelection.contains(elem.symbol) do
-                elem.select()
-              // remove missing elements from app state
-              val diagramSymbols = diagramElements.map(_.symbol).toSet
-              val toRemove = canvasSelection -- diagramSymbols
-              inheritanceTabState.$canvasSelection.update(_ -- toRemove)
-              // attach to then DOM
-              svgToLaminar(svg)
+            child <-- $inheritanceSvgDiagram.map { diagram =>
+              val selection = inheritanceTabState.$canvasSelection.now()
+              diagram.select(selection)
+              // remove elements not present in the new diagram
+              // (such elements did exist in the previous diagram)
+              val missingSymbols = selection -- diagram.elementSymbols
+              inheritanceTabState.$canvasSelection.update(_ -- missingSymbols)
+              diagram.toLaminar
             },
-            onClick --> handleSvgClick($svgSymbolSelected)
+            composeEvents(onClick.preventDefault)(_.combineWith($inheritanceSvgDiagram)) --> handleSvgClick($userSelectionCommand).tupled,
           )
         )
       )
 
 
-  private def handleSvgClick($userSelection: EventBus[UserSelectionCommand])(e: TypedTargetMouseEvent[dom.Element]) =
+  private def handleSvgClick($command: EventBus[UserSelectionCommand])(e: TypedTargetMouseEvent[dom.Element], diagram: InheritanceSvgDiagram) =
     (e.target +: parents(e.target))
       .takeWhile(_.isInstanceOf[dom.SVGElement])
       .find(isNamespace)
-      .map(NameSpaceElement(_))
-      .foreach { ns =>
-        ns.selectToggle()
-        $userSelection.emit(UserSelectionCommand.Replace(ns.symbol))
-      }
+      .map(NameSpaceElement(_)) match
+        case Some(nsElement) =>
+          if e.shiftKey then
+            nsElement.selectToggle()
+            $command.emit(UserSelectionCommand.Extend(nsElement.symbol))
+          else
+            diagram.unselectAll()
+            nsElement.select()
+            $command.emit(UserSelectionCommand.Replace(nsElement.symbol))
+        case None =>
+          diagram.unselectAll()
+          $command.emit(UserSelectionCommand.Clear)
 
   private def ControlledCheckbox(id: String, labelStr: String, field: Options => Boolean, modifyField: PathLazyModify[Options, Boolean], selectedSymbols: InheritanceTabState) =
     List(
