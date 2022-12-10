@@ -14,7 +14,7 @@ import com.softwaremill.quicklens.*
 object MainJS:
 
   def main(args: Array[String]): Unit =
-    val appState     = AppState.build(storedString("projectPath", initial = ""), fetchInheritanceDiagram)
+    val appState     = AppState.build(fetchInheritanceDiagram)
     val $documents   = fetchDocuments(appState.$projectPath)
     val $inheritance = appState.$inheritanceSelection.flatMap(fetchInheritanceSVGDiagram)
     val $setSymbol   = EventBus[Symbol]()

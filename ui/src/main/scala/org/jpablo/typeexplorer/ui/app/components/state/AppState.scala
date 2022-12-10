@@ -26,29 +26,28 @@ case class AppState(
   val $projectPath: Signal[Path] =
     projectPath.signal.map(Path.apply)
 
-  private val owner: Owner = OneTimeOwner(() => ())
-
-  val storedActiveSymbols =
-    inheritanceTabState.activeSymbolsJson.signal.map(_.fromJson[Map[Path, Set[models.Symbol]]].getOrElse(Map.empty))
-
-  projectPath.signal.combineWith(inheritanceTabState.$activeSymbols.signal, storedActiveSymbols).foreach((path, symbols, map0) => {
-    val map = map0 + (Path(path) -> symbols)
-    inheritanceTabState.activeSymbolsJson.set(map.toJson)
-  })(owner)
-
-
-/**
+  /**
     * A selection consists of:
     * - the basePath (aka project Path)
     * - the selected symbol with its "related" configuration (i.e. parents, children, etc)
     * - diagram options
     */
-  def $inheritanceSelection: Signal[(Path, Set[models.Symbol], Options)] =
+  val $inheritanceSelection: Signal[(Path, Set[models.Symbol], Options)] =
     $projectPath
       .combineWith(
         inheritanceTabState.$activeSymbols.signal,
         inheritanceTabState.$options.signal
       )
+
+  private val owner: Owner = OneTimeOwner(() => ())
+
+  $inheritanceSelection.foreach { (path, symbols, _) =>
+    inheritanceTabState.activeSymbolsJson.update { s =>
+      val map0 = s.fromJson[Map[Path, Set[models.Symbol]]].getOrElse(Map.empty)
+      val map = map0 + (path -> symbols)
+      map.toJson
+    }
+  }(owner)
 
 end AppState
 
@@ -60,32 +59,32 @@ def service[A: Tag]: Service[A] =
   ZPure.service[Unit, A]
 
 object AppState:
-  def build(projectPath: StoredString, fetchDiagram: Path => Signal[InheritanceDiagram]) =
+  def build(fetchDiagram: Path => Signal[InheritanceDiagram]) =
+    val projectPath = storedString("projectPath", initial = "")
+    val activeSymbolsJson = storedString("activeSymbols", initial = "{}")
 
     val owner: Owner = OneTimeOwner(() => ())
-    val activeSymbolsJson = storedString("activeSymbols", initial = "{}")
 
     val storedActiveSymbols = activeSymbolsJson.signal.map(_.fromJson[Map[Path, Set[models.Symbol]]].getOrElse(Map.empty))
 
     val $ss =
       projectPath.signal.combineWith(storedActiveSymbols).map((path, map) => map.getOrElse(Path(path), Set.empty))
 
-    val symbols = $ss.observe(owner).now()
+    val activeSymbols = $ss.observe(owner).now()
 
-    println(symbols)
+    println(activeSymbols)
 
     val state0 =
       AppState(
         InheritanceTabState(
           Signal.fromValue(InheritanceDiagram.empty),
           activeSymbolsJson,
-          Var(symbols)
         ),
         projectPath
       )
     state0
-      .modify(_.inheritanceTabState.$inheritanceDiagram)
-      .setTo(state0.$projectPath.flatMap(fetchDiagram))
+      .modify(_.inheritanceTabState.$inheritanceDiagram).setTo(state0.$projectPath.flatMap(fetchDiagram))
+      .modify(_.inheritanceTabState.$activeSymbols).setTo(Var(activeSymbols))
 
 
   val $diagram            = service[Signal[InheritanceDiagram]]

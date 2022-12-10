@@ -23,7 +23,7 @@ case class InheritanceTabState(
   /**
     * primary selection: based on direct user interactions
     */
-  $activeSymbols   : Var[Set[models.Symbol]],
+  $activeSymbols   : Var[Set[models.Symbol]] = Var(Set.empty),
   $options         : Var[Options] = Var(Options()),
   $canvasSelection : Var[Set[models.Symbol]] = Var(Set.empty),
 ):
