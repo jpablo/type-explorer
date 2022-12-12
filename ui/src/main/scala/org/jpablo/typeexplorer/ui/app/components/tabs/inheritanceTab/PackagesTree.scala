@@ -63,7 +63,7 @@ object PackagesTree:
                 href  := "#elem_" + uri,
                 title := ns.symbol.toString,
                 ns.displayName,
-                onClick --> (_ => inheritanceTabState.addSymbol(ns.symbol))
+                onClick --> (_ => inheritanceTabState.toggleSymbol(ns.symbol))
               ),
             ),
           contents =

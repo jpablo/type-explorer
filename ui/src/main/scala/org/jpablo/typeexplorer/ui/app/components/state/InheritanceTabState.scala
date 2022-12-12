@@ -30,6 +30,14 @@ case class InheritanceTabState(
   def addSymbol(symbol: models.Symbol): Unit =
     $activeSymbols.update(_ + symbol)
 
+  def toggleSymbol(symbol: models.Symbol): Unit =
+    $activeSymbols.update { m =>
+      if m.contains(symbol) then
+        m - symbol
+      else
+        m + symbol
+    }
+
   def removeAll() =
     $activeSymbols.set(Set.empty)
 

@@ -98,7 +98,7 @@ object InheritanceTab:
       .find(isNamespace)
       .map(NameSpaceElement(_)) match
         case Some(nsElement) =>
-          if e.shiftKey then
+          if e.metaKey then
             nsElement.selectToggle()
             $command.emit(UserSelectionCommand.Extend(nsElement.symbol))
           else

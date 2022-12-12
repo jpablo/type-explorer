@@ -35,13 +35,13 @@ case class AppState(
     val $symbols = $projectPath.combineWith($storedActiveSymbols).map((path, map) => map.getOrElse(path, Set.empty))
     $symbols.observe(owner).now()
 
-  private def parseStoredSymbols(json: String) =
+  private def parseStoredSymbols(json: String): Map[Path, Set[models.Symbol]] =
     json.fromJson[Map[Path, Set[models.Symbol]]].getOrElse(Map.empty)
 
   // ---------------------------------
   // Persist changes to $activeSymbols
   // ---------------------------------
-  $projectPath.combineWith(inheritanceTabState.$activeSymbols.signal).foreach { (path, symbols) =>
+  inheritanceTabState.$activeSymbols.signal.withCurrentValueOf($projectPath).foreach { (symbols, path) =>
     inheritanceTabState.activeSymbolsJson.update { json =>
       (parseStoredSymbols(json) + (path -> symbols)).toJson
     }

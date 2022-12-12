@@ -194,7 +194,7 @@ object InheritanceDiagram:
       textDocuments.documents
         .flatMap(_.symbols)
         .distinct
-        .filterNot(si => excluded.exists(si.symbol.startsWith))
+        .filterNot(si => excluded.exists(si.symbol.contains))
         .map(s => Symbol(s.symbol) -> s)
         .toMap
 
