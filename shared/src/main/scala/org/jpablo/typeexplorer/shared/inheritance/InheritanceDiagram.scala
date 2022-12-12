@@ -19,7 +19,7 @@ enum Related:
   case Parents, Children
 
 object Related:
-  given JsonCodec[Related] = 
+  given JsonCodec[Related] =
     JsonCodec(JsonEncoder[String].contramap(_.toString), JsonDecoder[String].map(Related.valueOf))
 
 
@@ -85,9 +85,9 @@ case class InheritanceDiagram(
   //         arrows  = arrows1
   //       )
 
-  //   val (foundSymbols, arrows) = 
+  //   val (foundSymbols, arrows) =
   //     go(symbol, related, Set.empty, Set.empty, Chunk.empty)
-    
+
   //   assert(foundSymbols contains symbol)
   //   InheritanceDiagram(arrows.toSet, namespaces.filter(ns => foundSymbols.contains(ns.symbol)))
 
@@ -110,12 +110,12 @@ case class InheritanceDiagram(
   // Note: doesn't handle loops.
   // How efficient is this compared to the tail rec version above?
   def unfold(symbol: Symbol, related: Symbol => Set[Symbol]): Set[Symbol] =
-    Set.unfold(Set(symbol)) { ss => 
+    Set.unfold(Set(symbol)) { ss =>
       val ss2 = ss.flatMap(related)
       if ss2.isEmpty then None else Some((ss2, ss2))
     }.flatten
 
-  
+
   def allRelated(s: Symbol, r: Symbol => Set[Symbol]): InheritanceDiagram =
     subdiagram(unfold(s, r) + s)
 
@@ -147,11 +147,11 @@ case class InheritanceDiagram(
     * @return
     */
   def findRelated(symbol: Symbol, related: Set[Related]): InheritanceDiagram =
-    related.foldLeft(subdiagram(Set(symbol))) { case (acc, r) => 
+    related.foldLeft(subdiagram(Set(symbol))) { case (acc, r) =>
       val d = r match
         case Parents => allParents(symbol)
         case Children => allChildren(symbol)
-      acc ++ d        
+      acc ++ d
     }
 
   /** Creates a new subdiagram with all related symbols.
@@ -175,7 +175,7 @@ end InheritanceDiagram
 object InheritanceDiagram:
 
   // TODO: make this configurable
-  val excluded = 
+  val excluded =
     Set(
       "scala/AnyRef#",
       "scala/AnyVal#",

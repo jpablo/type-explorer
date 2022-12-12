@@ -76,7 +76,7 @@ object AppState:
   val $documents          = service[EventStream[List[TextDocumentsWithSource]]]
   val $projectPath        = service[Signal[Path]]
   val $userSelectionCommand = service[EventBus[UserSelectionCommand]]
-  val $inheritanceSvgDiagram = service[EventStream[InheritanceSvgDiagram]]
+  val $inheritanceSvgDiagram = service[Signal[InheritanceSvgDiagram]]
   val projectPath         = service[StoredString]
   val inheritanceTabState = service[InheritanceTabState]
 

@@ -62,7 +62,7 @@ def fetchInheritanceSVGDiagram(appState: AppState): EventStream[InheritanceSvgDi
   for
     (projectPath, symbols, options) <- combined
     parser = dom.DOMParser()
-    diagram <-
+    svgElement <-
       if projectPath.toString.isEmpty then
         EventStream.fromValue(svg.svg().ref)
       else
@@ -75,7 +75,7 @@ def fetchInheritanceSVGDiagram(appState: AppState): EventStream[InheritanceSvgDi
             .asInstanceOf[dom.SVGElement]
         }
   yield
-    InheritanceSvgDiagram(diagram)
+    InheritanceSvgDiagram(svgElement)
 
 
 def fetchCallGraphSVGDiagram($diagram: Signal[(DiagramType, Path)]): EventStream[dom.Element] =

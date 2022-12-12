@@ -86,7 +86,7 @@ object InheritanceTab:
               inheritanceTabState.$canvasSelection.update(_ -- missingSymbols)
               diagram.toLaminar
             },
-            composeEvents(onClick.preventDefault)(_.combineWith($inheritanceSvgDiagram)) --> handleSvgClick($userSelectionCommand).tupled,
+            composeEvents(onClick.preventDefault)(_.withCurrentValueOf($inheritanceSvgDiagram)) --> handleSvgClick($userSelectionCommand).tupled,
           )
         )
       )
