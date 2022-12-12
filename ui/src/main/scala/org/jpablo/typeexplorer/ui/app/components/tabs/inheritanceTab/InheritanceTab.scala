@@ -48,13 +48,16 @@ object InheritanceTab:
       val $selectionEmpty = inheritanceTabState.$canvasSelection.signal.map(_.isEmpty)
       // -------------- render --------------------------------
       div( cls := "text-document-areas",
+        // --- packages tree ---
+        div(cls := "structure",
+          // --- filter form ---
+          form(cls := "inheritance-tree-search",
+            Search(placeholder := "filter", controlled(value <-- $filter, onInput.mapToValue --> $filter)).small
+          ),
 
-        form(cls := "inheritance-tree-search",
-          Search(placeholder := "filter", controlled(value <-- $filter, onInput.mapToValue --> $filter)).small
+          children <-- packagesTree($filteredDiagram)
         ),
-
-        div(cls := "structure", children <-- packagesTree($filteredDiagram)),
-
+        // --- toolbar ---
         div(cls := "inheritance-container-toolbar",
           ButtonToolbar(
             cls := "mb-3",
@@ -62,7 +65,7 @@ object InheritanceTab:
               cls := "me-2",
               ControlledCheckbox("fields-checkbox-1", "fields",     _.fields,     modifySelection(_.fields), inheritanceTabState),
               ControlledCheckbox("fields-checkbox-2", "signatures", _.signatures, modifySelection(_.signatures), inheritanceTabState),
-              Button(disabled := false, "clear", onClick --> (_ => inheritanceTabState.removeAll())).outlineSecondary,
+              Button(disabled := false, "remove all", onClick --> (_ => inheritanceTabState.removeAll())).outlineSecondary,
               Button(disabled := true, "fit").outlineSecondary,
               Button(disabled := true, "zoom").outlineSecondary
             ).small,
@@ -74,7 +77,7 @@ object InheritanceTab:
             ).small
           ),
         ),
-
+        // --- canvas ---
         div( cls := "inheritance-container",
           div(
             child <-- $inheritanceSvgDiagram.map { diagram =>

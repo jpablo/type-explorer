@@ -1,0 +1,158 @@
+#te-header {
+  grid-area: header;
+  border-bottom: 1px solid lightgray;
+  background-color: red;
+
+  .base-path {
+    color: var(--bs-link-color);
+  }
+}
+
+#te-footer {
+  background: rgb(248, 249, 250);
+  border-top: 1px solid lightgray;
+}
+
+#semanticdb-tab-pane, #inheritance-tab-pane {
+  height: 100%;
+}
+
+.text-document-areas {
+  display: grid;
+  height: 100%;
+}
+
+#inheritance-tab-pane {
+
+  .text-document-areas {
+    grid-template-columns: 1fr 4fr;
+    grid-template-rows: 3em auto;
+
+    .structure {
+      grid-column: 1;
+      grid-row: 1 / 3;
+
+      .inheritance-tree-search {
+        //grid-column: 1;
+        //grid-row: 1;
+        padding: 5px;
+        background-color: yellow;
+      }
+    }
+
+    .inheritance-container-toolbar {
+      grid-column: 2;
+      grid-row: 1;
+      border-left: 1px solid lightgray;
+      border-bottom: 1px solid lightgray;
+      padding: 2px 2px 2px 5px;
+    }
+
+    .inheritance-container {
+      grid-column: 2;
+      grid-row: 2 / 3;
+      border-left: 1px solid lightgray;
+      padding: 5px;
+    }
+  }
+
+  .inheritance-namespace-selection:hover {
+    display: inline;
+  }
+
+  .inheritance-namespace-symbol:hover + div {
+    display: inline;
+  }
+
+  .inheritance-namespace-symbol-secondary {
+    background: lightblue;
+  }
+}
+
+
+.inheritance-tree-search > input {
+  font-size: x-small;
+  padding: 2px 5px;
+}
+
+.te-mini-button {
+  border: 1px solid #0d6efd;
+  color: #0d6efd;
+  border-radius: 5px;
+  display: inline-block;
+  line-height: 1em;
+  width: 1em;
+  text-align: center;
+  margin-right: 2px;
+}
+
+.te-mini-button:hover {
+  cursor: pointer;
+}
+
+/* --------------    */
+
+#semanticdb-tab-pane > .text-document-areas {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.inheritance-container, .semanticdb-document-container, .semanticdb-source-container {
+  height: 100%;
+  overflow: auto;
+}
+
+.semanticdb-source-container {
+  padding: 5px;
+  border-left: 1px solid lightgray;
+}
+
+.semanticdb-document-container {
+  border-left: 1px solid lightgray;
+}
+
+.semanticdb-document-file {
+  padding: 10px;
+}
+
+.card {
+  margin: 5px;
+  border: none !important;
+}
+
+/* ----- collapsable --------- */
+
+.collapsable-wrapper {
+  white-space: nowrap;
+}
+
+ul.collapsable-children {
+  padding-left: 1.5em;
+  list-style: none;
+}
+
+ul.collapsable-children > li > .collapsable-wrapper {
+  margin-left: 0;
+  border-left: 1px dotted lightblue;
+}
+
+.collapsable {
+}
+
+.collapsable-leaf {
+  margin-left: 1px;
+}
+
+.collapsable-leaf > a {
+  margin-left: 1px;
+}
+
+.collapsable-button {
+  width: 15px;
+  display: inline-block;
+}
+
+.collapsable-branch-label {
+  white-space: nowrap;
+}
+
+
