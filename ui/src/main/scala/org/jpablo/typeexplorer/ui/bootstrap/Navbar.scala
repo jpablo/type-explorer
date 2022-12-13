@@ -1,6 +1,7 @@
 package org.jpablo.typeexplorer.ui.bootstrap
 
 import com.raquo.laminar.api.L.*
+import com.raquo.laminar.api.L.svg as S
 import org.scalajs.dom
 import io.laminext.core.*
 import com.raquo.domtypes.generic.codecs.StringAsIsCodec
@@ -12,28 +13,19 @@ import com.raquo.laminar.nodes.ReactiveHtmlElement
 def Navbar(id: String, brand: String, items: Li*): Element =
   div(
     idAttr := id,
-    nav(
-      cls := "navbar navbar-expand-lg bg-light",
-      div(
-        cls :="container-fluid",
-        a(cls :="navbar-brand", brand),
-        button(
-          cls := "navbar-toggler",
-          tpe := "button",
-          dataAttr("bs-toggle") := "collapse",
-          dataAttr("bs-target") := "navbarSupportedContent",
-        ),
-        div(
-          cls := "collapse navbar-collapse",
-          idAttr := "navbarSupportedContent",
-          ul(cls := "navbar-nav",
-            items
-          )
-        )
+    cls := "navbar bg-base-100",
+    div(
+      cls := "flex-1",
+      a(cls := "btn btn-ghost normal-case text-xl", brand)
+    ),
+    div(
+      cls := "flex-none",
+      ul(
+        cls := "menu menu-horizontal px-1",
+        items
       )
     )
   )
 
 def NavItem(mods: Modifier[ReactiveHtmlElement.Base]*) =
-  li(cls := "nav-item", mods)
-
+  li(mods)

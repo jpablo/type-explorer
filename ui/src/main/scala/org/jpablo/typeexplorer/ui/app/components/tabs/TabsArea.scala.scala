@@ -16,19 +16,20 @@ def TabsArea =
     inheritanceCanvas    <- InheritanceTab.build
     semanticDBTabContent <- SemanticDBTab
   yield
-    val inheritance = Tab("inheritance-tab-pane", active = true)
-    val semanticDB  = Tab("semanticdb-tab-pane")
+    val tabs = Tabs("Inheritance", "SemanticDB")
+    val inheritance = tabs(0)
+    val semanticDB  = tabs(1)
     List(
       NavTabs(
         cls := "te-tabs-header",
-        inheritance.NavItem("Inheritance"),
-        semanticDB.NavItem("SemanticDB"),
+        inheritance.NavItem,
+        semanticDB.NavItem,
       ),
 
       TabContent(
         cls := "te-tabs-container",
-        inheritance.Pane(0, inheritanceCanvas),
-        semanticDB.Pane(1, semanticDBTabContent),
+        inheritance.Pane("inheritance-tab-pane", inheritanceCanvas),
+        semanticDB.Pane("semanticdb-tab-pane", semanticDBTabContent),
       )
     )
 
