@@ -20,5 +20,3 @@ extension [A] (sa: Set[A])
     if sa contains a then sa - a else sa + a
 
 
-object console:
-  def log(args: scala.scalajs.js.Any*) = global.console.log(args*)

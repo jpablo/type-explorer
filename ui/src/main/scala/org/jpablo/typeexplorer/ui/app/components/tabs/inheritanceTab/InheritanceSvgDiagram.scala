@@ -4,11 +4,13 @@ import com.raquo.laminar.api.L.*
 import com.raquo.laminar.nodes.ChildNode
 import org.jpablo.typeexplorer.shared.models
 import org.scalajs.dom
+import org.scalajs.dom.console
 
 class InheritanceSvgDiagram(svg: dom.SVGElement):
 
-  def elements: collection.Seq[NameSpaceElement] =
-    svg.querySelectorAll("g[id ^= elem_]").map(NameSpaceElement(_))
+  def elements =
+    svg.querySelectorAll("g[id ^= elem_]")
+      .map(el => NameSpaceElement(el.asInstanceOf[dom.SVGGElement]))
 
   def elementSymbols: Set[models.Symbol] =
     elements.map(_.symbol).toSet

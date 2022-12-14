@@ -58,8 +58,8 @@ object PackagesTree:
               stereotype(ns),
               span(" "),
               a(
-                cls := "inheritance-namespace-symbol",
-                cls.toggle("inheritance-namespace-symbol-secondary", "noop") <-- $isActive,
+                cls := "hover:bg-blue-200",
+                cls.toggle("bg-blue-300", "noop") <-- $isActive,
                 href  := "#elem_" + uri,
                 title := ns.symbol.toString,
                 ns.displayName,

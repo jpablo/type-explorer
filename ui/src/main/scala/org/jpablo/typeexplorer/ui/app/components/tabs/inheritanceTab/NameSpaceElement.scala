@@ -4,13 +4,17 @@ import org.jpablo.typeexplorer.shared.models
 import org.scalajs.dom
 import org.scalajs.dom.Element
 
-class NameSpaceElement(ref: dom.Element):
+class NameSpaceElement(ref: dom.SVGGElement):
   private val selectedFill = "yellow"
   private val defaultFill = "#F1F1F1"
 
   lazy val id = ref.id.stripPrefix("elem_")
 
   lazy val symbol = models.Symbol(id)
+
+  box.foreach { el =>
+    el.classList.add("hover:fill-blue-200")
+  }
 
   private def box: Option[Element] =
     ref.getElementsByTagName("rect")

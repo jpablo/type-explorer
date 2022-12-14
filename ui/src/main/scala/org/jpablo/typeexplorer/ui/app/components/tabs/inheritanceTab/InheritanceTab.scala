@@ -14,7 +14,6 @@ import org.jpablo.typeexplorer.shared.inheritance.PlantumlInheritance.Options
 import org.jpablo.typeexplorer.shared.models
 import org.jpablo.typeexplorer.ui.app.components.state.{AppState, InheritanceTabState}
 import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.PackagesTree
-import org.jpablo.typeexplorer.ui.app.console
 import org.jpablo.typeexplorer.ui.daisyui.*
 import org.scalajs.dom
 import org.scalajs.dom.EventTarget
@@ -49,9 +48,9 @@ object InheritanceTab:
       // -------------- render --------------------------------
       div( cls := "text-document-areas",
         // --- packages tree ---
-        div(cls := "structure", // overflow-auto h-full p-1"
+        div(cls := "structure overflow-auto h-full p-1",
           // --- filter form ---
-          form(cls := "inheritance-tree-search p-1",
+          form(cls := "p-1",
             Search(placeholder := "filter", controlled(value <-- $filter, onInput.mapToValue --> $filter)).small
           ),
 
@@ -75,7 +74,7 @@ object InheritanceTab:
           )
         ),
         // --- canvas ---
-        div( cls := "inheritance-container",
+        div(cls := "inheritance-container border-t border-l border-slate-300 p-1",
           div(
             child <-- $inheritanceSvgDiagram.map { diagram =>
               val selection = inheritanceTabState.$canvasSelection.now()
@@ -96,7 +95,7 @@ object InheritanceTab:
     (e.target +: parents(e.target))
       .takeWhile(_.isInstanceOf[dom.SVGElement])
       .find(isNamespace)
-      .map(NameSpaceElement(_)) match
+      .map(el => NameSpaceElement(el.asInstanceOf[dom.SVGGElement])) match
         case Some(nsElement) =>
           if e.metaKey then
             nsElement.selectToggle()

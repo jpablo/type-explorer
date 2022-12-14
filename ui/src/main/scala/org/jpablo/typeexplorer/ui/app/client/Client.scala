@@ -13,7 +13,6 @@ import org.jpablo.typeexplorer.ui.app.Path
 import org.jpablo.typeexplorer.ui.app.components.DiagramType
 import org.jpablo.typeexplorer.ui.app.components.state.AppState
 import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.InheritanceSvgDiagram
-import org.jpablo.typeexplorer.ui.app.console
 import org.scalajs.dom
 import scala.scalajs.js.typedarray.Int8Array
 import scalajs.js.URIUtils.encodeURIComponent
