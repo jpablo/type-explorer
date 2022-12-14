@@ -58,7 +58,7 @@ object InheritanceTab:
           children <-- packagesTree($filteredDiagram)
         ),
         // --- toolbar ---
-        div(cls := "flex space-x-2",
+        div(cls := "flex gap-4",
           ButtonGroup(
             ControlledCheckbox("fields-checkbox-1", "fields",     _.fields,     modifySelection(_.fields), inheritanceTabState),
             ControlledCheckbox("fields-checkbox-2", "signatures", _.signatures, modifySelection(_.signatures), inheritanceTabState),

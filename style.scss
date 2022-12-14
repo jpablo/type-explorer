@@ -1,3 +1,40 @@
+body {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-size: small;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  height: 100vh;
+}
+
+
+
+/* -------- tabs ------------- */
+
+.te-tabs-header {
+  margin-top: 5px;
+  margin-bottom: -1px;
+}
+
+.te-tabs-container {
+  flex: 1;
+  grid-area: te-tabs-container;
+  overflow: auto;
+  padding-top: 5px;
+  border-top: 1px solid lightgray;
+}
+
+.tab-content {
+  height: 100%;
+}
+
+
+.structure {
+  height: 100%;
+  overflow: auto;
+  padding: 5px;
+}
+
+
 #te-header {
   grid-area: header;
   border-bottom: 1px solid lightgray;
@@ -55,14 +92,6 @@
     }
   }
 
-  .inheritance-namespace-selection:hover {
-    display: inline;
-  }
-
-  .inheritance-namespace-symbol:hover + div {
-    display: inline;
-  }
-
   .inheritance-namespace-symbol-secondary {
     background: lightblue;
   }
@@ -74,22 +103,8 @@
   padding: 2px 5px;
 }
 
-.te-mini-button {
-  border: 1px solid #0d6efd;
-  color: #0d6efd;
-  border-radius: 5px;
-  display: inline-block;
-  line-height: 1em;
-  width: 1em;
-  text-align: center;
-  margin-right: 2px;
-}
 
-.te-mini-button:hover {
-  cursor: pointer;
-}
-
-/* --------------    */
+/* -------------- */
 
 #semanticdb-tab-pane > .text-document-areas {
   grid-template-columns: 1fr 1fr 1fr;
@@ -155,3 +170,33 @@ ul.collapsable-children > li > .collapsable-wrapper {
 }
 
 
+/*---- cards --- */
+
+.card-body {
+  background-color: #f6f2f0;
+  padding: 5px;
+}
+
+.card-uri {
+  /* background-color: lightgray; */
+}
+
+.card-symbol-information {
+  /* background-color: lightblue; */
+}
+
+.card-uri pre,
+.card-occurrence pre,
+.card-synthetic pre,
+.card-symbol-information pre {
+  margin: 0;
+  font-size: xx-small;
+}
+
+.card-occurrence {
+  /* background-color: lightgoldenrodyellow; */
+}
+
+.card-synthetic {
+  /* background-color: lightpink; */
+}

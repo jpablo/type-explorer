@@ -15,5 +15,5 @@ object ButtonGroup:
   opaque type ButtonGroup <: Div = Div
 
   def apply(mods: Modifier[ReactiveElement]*): ButtonGroup =
-    div(cls := "btn-group", mods)
+    div(cls := "btn-group flex-wrap content-center", mods)
 
