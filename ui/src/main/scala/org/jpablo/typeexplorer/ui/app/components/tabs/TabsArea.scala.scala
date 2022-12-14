@@ -21,14 +21,14 @@ def TabsArea =
     val semanticDB  = tabs(1)
     List(
       NavTabs(
-        cls := "te-tabs-header",
+        cls := "mt-2 -mb-px",
         inheritance.NavItem,
         semanticDB.NavItem,
         div(cls :="tab tab-lifted mr-6 flex-1 cursor-default [--tab-border-color:transparent]")
       ),
 
       TabContent(
-        cls := "te-tabs-container",
+        cls := "te-tabs-container overflow-auto pt-2 border-t border-slate-300",
         inheritance.Pane("inheritance-tab-pane", inheritanceCanvas),
         semanticDB.Pane("semanticdb-tab-pane", semanticDBTabContent),
       )

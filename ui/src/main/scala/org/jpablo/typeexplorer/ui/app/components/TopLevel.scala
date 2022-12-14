@@ -18,7 +18,6 @@ def TopLevel =
   yield
     div(
       cls := "flex flex-col h-full",
-      idAttr := "te-toplevel",
       AppHeader,
       TabsArea,
       AppFooter,

@@ -49,9 +49,9 @@ object InheritanceTab:
       // -------------- render --------------------------------
       div( cls := "text-document-areas",
         // --- packages tree ---
-        div(cls := "structure",
+        div(cls := "structure", // overflow-auto h-full p-1"
           // --- filter form ---
-          form(cls := "inheritance-tree-search",
+          form(cls := "inheritance-tree-search p-1",
             Search(placeholder := "filter", controlled(value <-- $filter, onInput.mapToValue --> $filter)).small
           ),
 

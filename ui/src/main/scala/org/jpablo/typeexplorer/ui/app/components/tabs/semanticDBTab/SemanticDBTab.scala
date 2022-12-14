@@ -21,13 +21,13 @@ def SemanticDBTab =
   yield
     val $selectedSemanticDb = EventBus[Path]
 
-    val $selectedDocument = 
+    val $selectedDocument =
       $selectedSemanticDb.events.combineWith($documents)
-        .map { (path, documents) => 
+        .map { (path, documents) =>
           path -> documents.find(_.semanticDbUri == path.toString)
         }
 
-    val $sourceCode = 
+    val $sourceCode =
       $selectedDocument
         .collect { case (_, Some(documentsWithSource)) => documentsWithSource.documents.headOption }
         .collect { case Some(doc) => Path(doc.uri) }
@@ -37,7 +37,7 @@ def SemanticDBTab =
       cls := "text-document-areas",
 
       div(
-        cls := "structure",
+        cls := "structure overflow-auto h-full p-1",
         div(""), // TODO: add controls to expand / collapse all
         children <-- SemanticDBTree.build($documents, $selectedSemanticDb)
       ),
