@@ -134,7 +134,7 @@ lazy val ui =
       scalaJSUseMainModuleInitializer := true,
       scalaJSLinkerConfig ~= {
         _.withModuleKind(ModuleKind.ESModule)
-          .withModuleSplitStyle(ModuleSplitStyle.SmallModulesFor(List("org.jpablo.typeexplorer.ui")))
+//          .withModuleSplitStyle(ModuleSplitStyle.SmallModulesFor(List("org.jpablo.typeexplorer.ui")))
           .withSourceMap(true)
       },
       externalNpm := {

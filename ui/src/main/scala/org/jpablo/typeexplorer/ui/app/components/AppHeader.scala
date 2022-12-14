@@ -34,6 +34,7 @@ def AppHeader =
       )
     // ------- render -------
     div(
+      cls := "border-b border-slate-300",
       idAttr := "te-header",
       Navbar(
         id    = "te-header-content",
@@ -42,18 +43,21 @@ def AppHeader =
         NavItem(span(cls := "nav-link", b("base path:"))),
 
         NavItem(
-          editBasePath.signal.childWhenTrue {
-            form(
-              cls := "d-flex me-2",
-              searchInput,
-              Button(
-                onClick.mapTo(false) --> { b =>
-                  projectPath.set(searchInput.ref.value)
-                  editBasePath.set(b)
-                },
-                "Ok"
-              ).small.outline.success
-            )
+          editBasePath.signal
+            .combineWith(projectPath.signal.map(_.isEmpty))
+            .map(_ || _)
+            .childWhenTrue {
+              form(
+                cls := "d-flex me-2",
+                searchInput,
+                Button(
+                  onClick.mapTo(false) --> { b =>
+                    projectPath.set(searchInput.ref.value)
+                    editBasePath.set(b)
+                  },
+                  "Ok"
+                ).small.outline.success
+              )
           },
 
           editBasePath.signal.childWhenFalse {

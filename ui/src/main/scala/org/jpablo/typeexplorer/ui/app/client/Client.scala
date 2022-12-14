@@ -39,16 +39,19 @@ def fetchDocuments($projectPath: Signal[Path]): EventStream[List[TextDocumentsWi
 
 
 def fetchInheritanceDiagram(projectPath: Path): Signal[InheritanceDiagram] = {
-  for
-    response <- fetchBase("classes?path=" + projectPath).text
-    classes  <- EventStream.fromTry {
-      response.data
-        .fromJson[InheritanceDiagram].left
-        .map(Exception(_))
-        .toTry
-    }
-  yield
-    classes
+  if projectPath.isEmpty then
+    EventStream.empty
+  else
+    for
+      response <- fetchBase("classes?path=" + projectPath).text
+      classes  <- EventStream.fromTry {
+        response.data
+          .fromJson[InheritanceDiagram].left
+          .map(Exception(_))
+          .toTry
+      }
+    yield
+      classes
 }.startWith(InheritanceDiagram.empty)
 
 def fetchInheritanceSVGDiagram(appState: AppState): EventStream[InheritanceSvgDiagram] =

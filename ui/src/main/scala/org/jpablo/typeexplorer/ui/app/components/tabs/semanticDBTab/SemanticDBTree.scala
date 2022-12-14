@@ -20,7 +20,7 @@ object SemanticDBTree:
     for documentsWithSource <- $documents yield
       for fileTree <- FileTree.build(documentsWithSource)(buildPath) yield
         collapsableTree(fileTree)(
-          renderBranch = b => span(cls := "collapsable-branch-label", b),
+          renderBranch = b => span(cls := "whitespace-nowrap", b),
           renderLeaf = renderDocWithSource($selectedSemanticDb)
         )
 
@@ -33,7 +33,6 @@ object SemanticDBTree:
     collapsable2(
       branchLabel =
         span(
-          cls := "collapsable-leaf",
           Icons.fileBinary,
           a(
             href := "#" + docWithSource.semanticDbUri,

@@ -29,5 +29,5 @@ def TopLevel =
 
       },
       div(child.text <-- inheritanceTabState.$canvasSelection.signal.map(ds => s"canvasSelection: $ds")),
-      div(child.text <-- inheritanceTabState.$activeSymbols.signal.map(ss => s"activeSymbols: $ss")),
+      div(child.text <-- inheritanceTabState.$activeSymbols.signal.map(ss => s"activeSymbols: ${ss.size}")),
     )

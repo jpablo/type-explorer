@@ -14,7 +14,7 @@ object SemanticDBText:
     div(
       idAttr := textDoc.semanticDbUri,
       cls := "semanticdb-document",
-      h4(cls := "semanticdb-document-file", textDoc.semanticDbUri),
+      h4(cls := "semanticdb-document-file p-2", textDoc.semanticDbUri),
       div(
         cls := "text-document-container",
         textDoc.documents.map(renderTextDocument)
@@ -46,13 +46,14 @@ object SemanticDBText:
   private def textCard(id: String, className: String, text: String) =
     div(
       idAttr := id,
-      cls := ("card", className),
+      cls := ("card m-1", className),
       div(
-        cls := "card-body",
+        cls := "p-2",
         pre(
+          cls := "m-0 text-xs",
           code(
-            cls := "language-protobuf",
-            onMountCallback { ctx => 
+            cls := "language-protobuf 0 text-xs",
+            onMountCallback { ctx =>
               js.Dynamic.global.Prism.highlightElement(ctx.thisNode.ref)
             },
             text

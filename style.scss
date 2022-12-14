@@ -6,35 +6,7 @@ body {
   height: 100vh;
 }
 
-
-
-/* -------- tabs ------------- */
-
-#te-header {
-  grid-area: header;
-  border-bottom: 1px solid lightgray;
-
-  .base-path {
-    color: var(--bs-link-color);
-  }
-}
-
-#te-footer {
-  background: rgb(248, 249, 250);
-  border-top: 1px solid lightgray;
-}
-
-#semanticdb-tab-pane, #inheritance-tab-pane {
-  height: 100%;
-}
-
-.text-document-areas {
-  display: grid;
-  height: 100%;
-}
-
 #inheritance-tab-pane {
-
   .text-document-areas {
     grid-template-columns: 1fr 4fr;
     grid-template-rows: 3em auto;
@@ -51,100 +23,33 @@ body {
   }
 }
 
-
-/* -------------- */
-
-#semanticdb-tab-pane > .text-document-areas {
-  grid-template-columns: 1fr 1fr 1fr;
-}
-
-.inheritance-container, .semanticdb-document-container, .semanticdb-source-container {
-  height: 100%;
-  overflow: auto;
-}
-
-.semanticdb-source-container {
-  padding: 5px;
-  border-left: 1px solid lightgray;
-}
-
-.semanticdb-document-container {
-  border-left: 1px solid lightgray;
-}
-
-.semanticdb-document-file {
-  padding: 10px;
-}
-
-.card {
-  margin: 5px;
-  border: none !important;
+#semanticdb-tab-pane {
+  .text-document-areas {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
 }
 
 /* ----- collapsable --------- */
 
-.collapsable-wrapper {
-  white-space: nowrap;
-}
-
-ul.collapsable-children {
-  padding-left: 1.5em;
-  list-style: none;
-}
-
 ul.collapsable-children > li > .collapsable-wrapper {
   margin-left: 0;
-  border-left: 1px dotted lightblue;
-}
-
-.collapsable {
-}
-
-.collapsable-leaf {
-  margin-left: 1px;
-}
-
-.collapsable-leaf > a {
-  margin-left: 1px;
-}
-
-.collapsable-button {
-  width: 15px;
-  display: inline-block;
-}
-
-.collapsable-branch-label {
-  white-space: nowrap;
 }
 
 
 /*---- cards --- */
 
-.card-body {
-  background-color: #f6f2f0;
-  padding: 5px;
+code[class*=language-], pre[class*=language-] {
+  //font-size: inherit;
 }
 
-.card-uri {
-  /* background-color: lightgray; */
-}
-
-.card-symbol-information {
-  /* background-color: lightblue; */
+.card {
+  border: none !important;
 }
 
 .card-uri pre,
 .card-occurrence pre,
 .card-synthetic pre,
 .card-symbol-information pre {
-  margin: 0;
-  font-size: xx-small;
-}
-
-.card-occurrence {
-  /* background-color: lightgoldenrodyellow; */
-}
-
-.card-synthetic {
-  /* background-color: lightpink; */
+  //margin: 0;
+  //font-size: xx-small;
 }

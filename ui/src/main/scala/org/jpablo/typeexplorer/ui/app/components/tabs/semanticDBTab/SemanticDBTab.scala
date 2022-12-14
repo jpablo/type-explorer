@@ -34,7 +34,7 @@ def SemanticDBTab =
         .flatMap(fetchSourceCode)
 
     div(
-      cls := "text-document-areas",
+      cls := "text-document-areas grid h-full",
 
       div(
         cls := "structure overflow-auto h-full p-1",
@@ -43,7 +43,7 @@ def SemanticDBTab =
       ),
 
       div(
-        cls := "semanticdb-document-container",
+        cls := "h-full overflow-auto border-l border-slate-300",
         child <--
           $selectedDocument.map {
             case (_, Some(document)) => SemanticDBText(document)
@@ -52,7 +52,7 @@ def SemanticDBTab =
       ),
 
       div(
-        cls := "semanticdb-source-container",
+        cls := "semanticdb-source-container h-full overflow-auto border-l border-slate-300",
         SourceCodeTab($sourceCode)
       )
     )

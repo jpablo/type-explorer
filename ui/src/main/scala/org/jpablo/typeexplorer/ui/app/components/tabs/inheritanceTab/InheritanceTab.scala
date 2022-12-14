@@ -46,7 +46,7 @@ object InheritanceTab:
           .map((diagram, w) => if w.isBlank then diagram else diagram.filterBySymbols(w))
       val $selectionEmpty = inheritanceTabState.$canvasSelection.signal.map(_.isEmpty)
       // -------------- render --------------------------------
-      div( cls := "text-document-areas",
+      div(cls := "text-document-areas grid h-full",
         // --- packages tree ---
         div(cls := "structure overflow-auto h-full p-1",
           // --- filter form ---
@@ -74,7 +74,7 @@ object InheritanceTab:
           )
         ),
         // --- canvas ---
-        div(cls := "inheritance-container border-t border-l border-slate-300 p-1",
+        div(cls := "inheritance-container h-full overflow-auto border-t border-l border-slate-300 p-1",
           div(
             child <-- $inheritanceSvgDiagram.map { diagram =>
               val selection = inheritanceTabState.$canvasSelection.now()
@@ -111,7 +111,7 @@ object InheritanceTab:
   private def ControlledCheckbox(id: String, labelStr: String, field: Options => Boolean, modifyField: PathLazyModify[Options, Boolean], selectedSymbols: InheritanceTabState) =
     div(cls := "form-control",
       label(forId := id, cls := "label cursor-pointer",
-        span(cls := "label-text", labelStr),
+        span(cls := "label-text pr-1", labelStr),
         Checkbox(idAttr := id, autocomplete := "off", cls := "toggle-xs",
           controlled(
             checked <-- selectedSymbols.$options.signal.map(field),

@@ -39,7 +39,7 @@ object PackagesTree:
           // TODO: diagram.toFileTrees can be called *before* filtering
           for fileTree <- diagram.toFileTrees yield
             collapsableTree(fileTree)(
-              renderBranch = b => span(cls := "collapsable-branch-label", b),
+              renderBranch = b => span(cls := "whitespace-nowrap", b),
               renderLeaf = renderNamespace
             )
 
