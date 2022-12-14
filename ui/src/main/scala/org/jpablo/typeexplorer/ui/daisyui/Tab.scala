@@ -1,15 +1,15 @@
-package org.jpablo.typeexplorer.ui.bootstrap
+package org.jpablo.typeexplorer.ui.daisyui
 
 import com.raquo.laminar.api.L.*
-import org.scalajs.dom
 import com.raquo.laminar.nodes.ReactiveHtmlElement
+import org.scalajs.dom
 
 
 def NavTabs(mods: Modifier[ReactiveHtmlElement.Base]*) =
-  div(cls := "tabs", mods)
+  div(cls := "tabs z-10 -mb-px", mods)
 
 def TabContent(mods: Modifier[ReactiveHtmlElement.Base]*) =
-  div(cls := "tab-content", mods)
+  div(mods)
 
 
 class Tab(activeTab: Var[Int], title: String, index: Int):

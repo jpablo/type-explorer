@@ -4,7 +4,7 @@ import com.raquo.laminar.api.L.*
 import io.laminext.core.*
 import io.laminext.syntax.core.*
 import org.jpablo.typeexplorer.ui.app.components.state.AppState
-import org.jpablo.typeexplorer.ui.bootstrap.*
+import org.jpablo.typeexplorer.ui.daisyui.*
 import org.scalajs.dom
 import zio.prelude.fx.ZPure
 
@@ -52,7 +52,7 @@ def AppHeader =
                   editBasePath.set(b)
                 },
                 "Ok"
-              ).small.outlineSuccess
+              ).small.outline.success
             )
           },
 

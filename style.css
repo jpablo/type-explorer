@@ -33,20 +33,21 @@ a {
 
 /* -------- tabs ------------- */
 
+.te-tabs-header {
+    margin-top: 5px;
+    margin-bottom: -2px;
+}
+
 .te-tabs-container {
     flex: 1;
     grid-area: te-tabs-container;
-    border-left: 1px solid lightgray;
     overflow: auto;
     padding-top: 5px;
+    border-top: 1px solid lightgray;
 }
 
 .tab-content {
     height: 100%;
-}
-
-.te-tabs-header {
-    margin-top: 5px;
 }
 
 /*---- cards --- */

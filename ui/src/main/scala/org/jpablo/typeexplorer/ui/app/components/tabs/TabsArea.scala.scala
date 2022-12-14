@@ -9,7 +9,7 @@ import org.scalajs.dom
 import org.jpablo.typeexplorer.ui.app.Path
 import org.jpablo.typeexplorer.shared.models.Symbol
 import org.jpablo.typeexplorer.ui.app.components.state.InheritanceTabState
-import org.jpablo.typeexplorer.ui.bootstrap.*
+import org.jpablo.typeexplorer.ui.daisyui.*
 
 def TabsArea =
   for
@@ -24,6 +24,7 @@ def TabsArea =
         cls := "te-tabs-header",
         inheritance.NavItem,
         semanticDB.NavItem,
+        div(cls :="tab tab-lifted mr-6 flex-1 cursor-default [--tab-border-color:transparent]")
       ),
 
       TabContent(

@@ -15,7 +15,7 @@ import org.jpablo.typeexplorer.shared.models
 import org.jpablo.typeexplorer.ui.app.components.state.{AppState, InheritanceTabState}
 import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.PackagesTree
 import org.jpablo.typeexplorer.ui.app.console
-import org.jpablo.typeexplorer.ui.bootstrap.*
+import org.jpablo.typeexplorer.ui.daisyui.*
 import org.scalajs.dom
 import org.scalajs.dom.EventTarget
 
@@ -58,24 +58,21 @@ object InheritanceTab:
           children <-- packagesTree($filteredDiagram)
         ),
         // --- toolbar ---
-        div(cls := "inheritance-container-toolbar",
-          ButtonToolbar(
-            cls := "mb-3",
-            ButtonGroup(
-              cls := "me-2",
-              ControlledCheckbox("fields-checkbox-1", "fields",     _.fields,     modifySelection(_.fields), inheritanceTabState),
-              ControlledCheckbox("fields-checkbox-2", "signatures", _.signatures, modifySelection(_.signatures), inheritanceTabState),
-              Button(disabled := false, "remove all", onClick --> (_ => inheritanceTabState.removeAll())).outlineSecondary,
-              Button(disabled := true, "fit").outlineSecondary,
-              Button(disabled := true, "zoom").outlineSecondary
-            ).small,
-            ButtonGroup(
-              cls := "me-2",
-              Button("children", disabled <-- $selectionEmpty, inheritanceTabState.addSelectionChildren(onClick)).outlineSecondary,
-              Button("parents",  disabled <-- $selectionEmpty, inheritanceTabState.addSelectionParents(onClick)).outlineSecondary,
-              Button("remove",   disabled <-- $selectionEmpty, inheritanceTabState.removeSelection(onClick)).outlineSecondary,
-            ).small
+        div(cls := "flex space-x-2",
+          ButtonGroup(
+            ControlledCheckbox("fields-checkbox-1", "fields",     _.fields,     modifySelection(_.fields), inheritanceTabState),
+            ControlledCheckbox("fields-checkbox-2", "signatures", _.signatures, modifySelection(_.signatures), inheritanceTabState),
           ),
+          ButtonGroup(
+            Button(disabled := false, "remove all", onClick --> (_ => inheritanceTabState.removeAll())).outline.secondary.tiny,
+            Button(disabled := true, "fit").outline.secondary.tiny,
+            Button(disabled := true, "zoom").outline.secondary.tiny
+          ),
+          ButtonGroup(
+            Button("children", disabled <-- $selectionEmpty, inheritanceTabState.addSelectionChildren(onClick)).outline.secondary.tiny,
+            Button("parents",  disabled <-- $selectionEmpty, inheritanceTabState.addSelectionParents(onClick)).outline.secondary.tiny,
+            Button("remove",   disabled <-- $selectionEmpty, inheritanceTabState.removeSelection(onClick)).outline.secondary.tiny,
+          )
         ),
         // --- canvas ---
         div( cls := "inheritance-container",
@@ -113,14 +110,16 @@ object InheritanceTab:
           $command.emit(UserSelectionCommand.Clear)
 
   private def ControlledCheckbox(id: String, labelStr: String, field: Options => Boolean, modifyField: PathLazyModify[Options, Boolean], selectedSymbols: InheritanceTabState) =
-    List(
-      Checkbox(idAttr := id, autocomplete := "off",
-        controlled(
-          checked <-- selectedSymbols.$options.signal.map(field),
-          onClick.mapToChecked --> selectedSymbols.$options.updater[Boolean]((options, b) => modifyField.setTo(b)(options))
-        )
+    div(cls := "form-control",
+      label(forId := id, cls := "label cursor-pointer",
+        span(cls := "label-text", labelStr),
+        Checkbox(idAttr := id, autocomplete := "off", cls := "toggle-xs",
+          controlled(
+            checked <-- selectedSymbols.$options.signal.map(field),
+            onClick.mapToChecked --> selectedSymbols.$options.updater[Boolean]((options, b) => modifyField.setTo(b)(options))
+          )
+        ),
       ),
-      Label(forIdAttr = id, labelStr)
     )
 end InheritanceTab
 

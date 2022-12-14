@@ -17,7 +17,7 @@ import org.jpablo.typeexplorer.ui.app.components.state.InheritanceTabState
 import org.jpablo.typeexplorer.ui.widgets.{collapsableTree, collapsable2}
 import scalajs.js
 import scalajs.js.URIUtils.encodeURIComponent
-import org.jpablo.typeexplorer.ui.bootstrap.*
+import org.jpablo.typeexplorer.ui.daisyui.*
 import org.scalajs.dom.html
 import zio.prelude.fx.ZPure
 
