@@ -14,3 +14,13 @@ body {
 ul.collapsable-children > li > .collapsable-wrapper {
     margin-left: 0;
 }
+
+svg g[id ^= cluster_]:hover {
+    outline: 3px solid rgb(251 191 36);
+    cursor: pointer;
+}
+
+svg g[id ^= elem_]:hover {
+    outline: 3px solid rgb(251 191 36);
+    cursor: pointer;
+}

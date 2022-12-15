@@ -56,7 +56,7 @@ object InheritanceTab:
           children <-- packagesTree($filteredDiagram)
         ),
         // --- toolbar ---
-        div(cls := "flex",
+        div(cls := "flex gap-4 ml-2",
           ButtonGroup(
             ControlledCheckbox("fields-checkbox-1", "fields",     _.fields,     modifySelection(_.fields), inheritanceTabState),
             ControlledCheckbox("fields-checkbox-2", "signatures", _.signatures, modifySelection(_.signatures), inheritanceTabState),
@@ -73,19 +73,17 @@ object InheritanceTab:
           )
         ),
         // --- canvas ---
-        div(cls := "h-full overflow-auto border-t border-slate-300 p-1 row-start-2 row-end-3",
-          div(
-            child <-- $inheritanceSvgDiagram.map { diagram =>
-              val selection = inheritanceTabState.$canvasSelection.now()
-              diagram.select(selection)
-              // remove elements not present in the new diagram
-              // (such elements did exist in the previous diagram)
-              val missingSymbols = selection -- diagram.elementSymbols
-              inheritanceTabState.$canvasSelection.update(_ -- missingSymbols)
-              diagram.toLaminar
-            },
-            composeEvents(onClick.preventDefault)(_.withCurrentValueOf($inheritanceSvgDiagram)) --> handleSvgClick($userSelectionCommand).tupled,
-          )
+        div(cls := "h-full overflow-auto border-t border-slate-300 p-1 row-start-2 row-end-3 bg-orange-100",
+          child <-- $inheritanceSvgDiagram.map { diagram =>
+            val selection = inheritanceTabState.$canvasSelection.now()
+            diagram.select(selection)
+            // remove elements not present in the new diagram
+            // (such elements did exist in the previous diagram)
+            val missingSymbols = selection -- diagram.elementSymbols
+            inheritanceTabState.$canvasSelection.update(_ -- missingSymbols)
+            diagram.toLaminar
+          },
+          composeEvents(onClick.preventDefault)(_.withCurrentValueOf($inheritanceSvgDiagram)) --> handleSvgClick($userSelectionCommand).tupled,
         )
       )
 
@@ -94,7 +92,7 @@ object InheritanceTab:
     (e.target +: parents(e.target))
       .takeWhile(_.isInstanceOf[dom.SVGElement])
       .find(isNamespace)
-      .map(el => NameSpaceElement(el.asInstanceOf[dom.SVGGElement])) match
+      .map(el => NamespaceElement(el.asInstanceOf[dom.SVGGElement])) match
         case Some(nsElement) =>
           if e.metaKey then
             nsElement.selectToggle()
@@ -120,19 +118,3 @@ object InheritanceTab:
       ),
     )
 end InheritanceTab
-
-
-
-// TODO: move to a new file
-extension (e: dom.Element)
-  def parents =
-    LazyList.unfold(e)(e => Option(e.parentNode.asInstanceOf[dom.Element]).map(e => (e, e)))
-
-  def isDiagramElement(prefix: String) =
-    e.tagName == "g" && e.hasAttribute("id") && e.getAttribute("id").startsWith(prefix)
-
-  def isNamespace = e.isDiagramElement("elem_")
-  def isPackage = e.isDiagramElement("cluster_")
-
-  def fill = e.getAttribute("fill")
-  def fill_=(c: String) = e.setAttribute("fill", c)
