@@ -22,11 +22,11 @@ class InheritanceSvgDiagram(svg: dom.SVGElement):
 
 
   def elements =
-    svg.querySelectorAll("g[id ^= elem_]")
+    svg.querySelectorAll(NamespaceElement.selector)
       .map(el => NamespaceElement(el.asInstanceOf[dom.SVGGElement]))
 
   def clusters =
-    svg.querySelectorAll("g[id ^= cluster_]")
+    svg.querySelectorAll(ClusterElement.selector)
       .map(el => ClusterElement(el.asInstanceOf[dom.SVGGElement]))
 
   def elementSymbols: Set[models.Symbol] =
