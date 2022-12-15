@@ -46,9 +46,9 @@ object InheritanceTab:
           .map((diagram, w) => if w.isBlank then diagram else diagram.filterBySymbols(w))
       val $selectionEmpty = inheritanceTabState.$canvasSelection.signal.map(_.isEmpty)
       // -------------- render --------------------------------
-      div(cls := "text-document-areas grid h-full",
+      div(cls := "grid h-full grid-cols-[1fr_4fr] grid-rows-[3em_auto]",
         // --- packages tree ---
-        div(cls := "structure overflow-auto h-full p-1",
+        div(cls := "overflow-auto h-full p-1 row-start-1 row-end-3",
           // --- filter form ---
           form(cls := "p-1",
             Search(placeholder := "filter", controlled(value <-- $filter, onInput.mapToValue --> $filter)).small
@@ -74,7 +74,7 @@ object InheritanceTab:
           )
         ),
         // --- canvas ---
-        div(cls := "inheritance-container h-full overflow-auto border-t border-l border-slate-300 p-1",
+        div(cls := "h-full overflow-auto border-t border-l border-slate-300 p-1 row-start-2 row-end-3",
           div(
             child <-- $inheritanceSvgDiagram.map { diagram =>
               val selection = inheritanceTabState.$canvasSelection.now()

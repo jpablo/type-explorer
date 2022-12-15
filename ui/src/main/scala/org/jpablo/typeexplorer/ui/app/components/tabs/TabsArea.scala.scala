@@ -29,8 +29,8 @@ def TabsArea =
 
       TabContent(
         cls := "flex-1 overflow-auto pt-2 border-t border-slate-300",
-        inheritance.Pane("inheritance-tab-pane", inheritanceCanvas),
-        semanticDB.Pane("semanticdb-tab-pane", semanticDBTabContent),
+        inheritance.Pane(inheritanceCanvas),
+        semanticDB.Pane(semanticDBTabContent),
       )
     )
 

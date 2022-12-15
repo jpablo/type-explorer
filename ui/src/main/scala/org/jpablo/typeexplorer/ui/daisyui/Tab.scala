@@ -21,9 +21,8 @@ class Tab(activeTab: Var[Int], title: String, index: Int):
       title
     )
 
-  def Pane(target: String, content: Element) =
+  def Pane(content: Element) =
     div(
-      idAttr := target,
       cls := "h-full",
       cls.toggle("hidden", "") <-- activeTab.signal.map(_ != index),
       tabIndex := index,

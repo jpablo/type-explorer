@@ -35,12 +35,11 @@ def AppHeader =
     // ------- render -------
     div(
       cls := "border-b border-slate-300",
-      idAttr := "te-header",
+      
       Navbar(
-        id    = "te-header-content",
         brand = "Type Explorer",
 
-        NavItem(span(cls := "nav-link", b("base path:"))),
+        NavItem(span(b("base path:"))),
 
         NavItem(
           editBasePath.signal
@@ -48,7 +47,7 @@ def AppHeader =
             .map(_ || _)
             .childWhenTrue {
               form(
-                cls := "d-flex me-2",
+                cls := "d-flex",
                 searchInput,
                 Button(
                   onClick.mapTo(false) --> { b =>
@@ -62,7 +61,6 @@ def AppHeader =
 
           editBasePath.signal.childWhenFalse {
             a(
-              cls := "nav-link base-path",
               href := "#",
               child.text <-- projectPath.signal,
               onClick.mapTo(true) --> editBasePath

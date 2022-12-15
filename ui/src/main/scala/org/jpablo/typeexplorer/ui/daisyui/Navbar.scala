@@ -10,9 +10,8 @@ import com.raquo.domtypes.generic.codecs.BooleanAsIsCodec
 import org.scalajs.dom.html.LI
 import com.raquo.laminar.nodes.ReactiveHtmlElement
 
-def Navbar(id: String, brand: String, items: Li*): Element =
+def Navbar(brand: String, items: Li*): Element =
   div(
-    idAttr := id,
     cls := "navbar bg-base-100",
     div(
       cls := "flex-1",
@@ -21,7 +20,7 @@ def Navbar(id: String, brand: String, items: Li*): Element =
     div(
       cls := "flex-none",
       ul(
-        cls := "menu menu-horizontal px-1",
+        cls := "menu menu-compact menu-horizontal px-1",
         items
       )
     )

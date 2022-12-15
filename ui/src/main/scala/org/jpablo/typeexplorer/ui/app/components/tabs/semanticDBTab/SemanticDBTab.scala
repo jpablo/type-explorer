@@ -34,10 +34,10 @@ def SemanticDBTab =
         .flatMap(fetchSourceCode)
 
     div(
-      cls := "text-document-areas grid h-full",
+      cls := "grid h-full grid-cols-3",
 
       div(
-        cls := "structure overflow-auto h-full p-1",
+        cls := "overflow-auto h-full p-1",
         div(""), // TODO: add controls to expand / collapse all
         children <-- SemanticDBTree.build($documents, $selectedSemanticDb)
       ),

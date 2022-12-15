@@ -1,3 +1,16 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+    font-family: Avenir, Helvetica, Arial, sans-serif;
+    font-size: small;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    height: 100vh;
+}
+
+
+ul.collapsable-children > li > .collapsable-wrapper {
+    margin-left: 0;
+}
