@@ -45,19 +45,18 @@ object InheritanceTab:
           .debounce(300)
           .map((diagram, w) => if w.isBlank then diagram else diagram.filterBySymbols(w))
       val $selectionEmpty = inheritanceTabState.$canvasSelection.signal.map(_.isEmpty)
-      // -------------- render --------------------------------
+      // --- container: two columns, two rows ---
       div(cls := "grid h-full grid-cols-[1fr_4fr] grid-rows-[3em_auto]",
         // --- packages tree ---
-        div(cls := "overflow-auto h-full p-1 row-start-1 row-end-3",
+        div(cls := "h-full overflow-auto p-1 row-start-1 row-end-3 border-r border-slate-300",
           // --- filter form ---
           form(cls := "p-1",
             Search(placeholder := "filter", controlled(value <-- $filter, onInput.mapToValue --> $filter)).small
           ),
-
           children <-- packagesTree($filteredDiagram)
         ),
         // --- toolbar ---
-        div(cls := "flex gap-4",
+        div(cls := "flex",
           ButtonGroup(
             ControlledCheckbox("fields-checkbox-1", "fields",     _.fields,     modifySelection(_.fields), inheritanceTabState),
             ControlledCheckbox("fields-checkbox-2", "signatures", _.signatures, modifySelection(_.signatures), inheritanceTabState),
@@ -74,7 +73,7 @@ object InheritanceTab:
           )
         ),
         // --- canvas ---
-        div(cls := "h-full overflow-auto border-t border-l border-slate-300 p-1 row-start-2 row-end-3",
+        div(cls := "h-full overflow-auto border-t border-slate-300 p-1 row-start-2 row-end-3",
           div(
             child <-- $inheritanceSvgDiagram.map { diagram =>
               val selection = inheritanceTabState.$canvasSelection.now()
