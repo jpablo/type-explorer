@@ -6,12 +6,9 @@ import org.jpablo.typeexplorer.shared.models
 import org.scalajs.dom
 
 class InheritanceSvgDiagram(svg: dom.SVGElement):
-
-  svg.classList.add("bg-orange-100")
-
   // Remove inline style so we can use our own style
   svg.setStyle("background", "")
-
+  svg.classList.add("bg-orange-100")
   // set a solid fill color for clusters
   for
     elem <- clusters
@@ -19,21 +16,14 @@ class InheritanceSvgDiagram(svg: dom.SVGElement):
   do
     box.setAttribute("fill", "white")
 
-
   def elements =
-    svg.querySelectorAll(NamespaceElement.selector)
-      .flatMap(NamespaceElement.from)
+    NamespaceElement.selectAll(svg)
 
   def clusterElements(cluster: ClusterElement) =
-    svg.querySelectorAll(NamespaceElement.selector)
-      .flatMap(NamespaceElement.from)
-      // hack: cluster id can't contain '/' so it has '.' for now
-      // (plantUML limitation)
-      .filter(_.id.startsWith(cluster.id.replace('.', '/')))
+    elements.filter(_.id.startsWith(cluster.idWithSlashes))
 
   def clusters =
-    svg.querySelectorAll(ClusterElement.selector)
-      .flatMap(ClusterElement.from)
+    ClusterElement.selectAll(svg)
 
   def elementSymbols: Set[models.Symbol] =
     elements.map(_.symbol).toSet

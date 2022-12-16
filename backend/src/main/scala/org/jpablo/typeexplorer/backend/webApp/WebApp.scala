@@ -5,7 +5,6 @@ import org.jpablo.typeexplorer.backend.semanticdb.All
 import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, InheritanceExamples, Related}
 import org.jpablo.typeexplorer.shared.inheritance.{PlantUML, PlantumlInheritance}
 import org.jpablo.typeexplorer.shared.models
-import org.jpablo.typeexplorer.shared.utils.*
 import org.jpablo.typeexplorer.shared.webApp.InheritanceReq
 
 import io.github.arainko.ducktape.*
@@ -101,7 +100,7 @@ object WebApp extends ZIOAppDefault:
     Serialization.formats(NoTypeHints)
 
   def toTextDocuments(docs: TextDocumentsWithSourceSeq): TextDocuments =
-    TextDocuments.apply <|: docs.documentsWithSource.flatMap(_.documents)
+    TextDocuments.apply(docs.documentsWithSource.flatMap(_.documents))
 
   def readTextDocumentsWithSource(path: Option[List[String]]): Option[TextDocumentsWithSourceSeq] =
     for p <- combinePaths(path) yield

@@ -48,12 +48,14 @@ object InheritanceTab:
       // --- container: two columns, two rows ---
       div(cls := "grid h-full grid-cols-[1fr_4fr] grid-rows-[3em_auto]",
         // --- packages tree ---
-        div(cls := "h-full overflow-auto p-1 row-start-1 row-end-3 border-r border-slate-300",
-          // --- filter form ---
+        div(cls := "overflow-auto p-1 row-start-1 row-end-3 border-r border-slate-300 flex flex-col",
+          // --- controls ---
           form(cls := "p-1",
             Search(placeholder := "filter", controlled(value <-- $filter, onInput.mapToValue --> $filter)).small
           ),
-          children <-- packagesTree($filteredDiagram)
+          div(cls := "overflow-auto",
+            children <-- packagesTree($filteredDiagram)
+          )
         ),
         // --- toolbar ---
         div(cls := "flex gap-4 ml-2",
@@ -62,7 +64,7 @@ object InheritanceTab:
             ControlledCheckbox("fields-checkbox-2", "signatures", _.signatures, modifySelection(_.signatures), inheritanceTabState),
           ),
           ButtonGroup(
-            Button(disabled := false, "remove all", onClick --> (_ => inheritanceTabState.removeAll())).outline.secondary.tiny,
+            Button(disabled := false, "remove all", onClick --> (_ => inheritanceTabState.removeAllActiveSymbols())).outline.secondary.tiny,
             Button(disabled := true, "fit").outline.secondary.tiny,
             Button(disabled := true, "zoom").outline.secondary.tiny
           ),

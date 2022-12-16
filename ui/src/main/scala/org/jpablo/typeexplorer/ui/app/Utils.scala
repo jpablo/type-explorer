@@ -1,7 +1,5 @@
 package org.jpablo.typeexplorer.ui.app
 
-import scalajs.js
-import scalajs.js.Dynamic.global
 import zio.json.*
 
 opaque type Path = String
@@ -17,8 +15,8 @@ object Path:
   given JsonFieldDecoder[Path] = JsonFieldDecoder.string
 
 
-extension [A] (sa: Set[A])
+extension [A] (set: Set[A])
   def toggle(a: A) =
-    if sa contains a then sa - a else sa + a
+    if set contains a then set - a else set + a
 
 

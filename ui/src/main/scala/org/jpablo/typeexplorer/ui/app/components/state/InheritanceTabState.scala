@@ -14,6 +14,7 @@ import org.jpablo.typeexplorer.ui.app.Path
 import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.InheritanceTab.UserSelectionCommand
 import org.scalajs.dom
 import zio.json.*
+import org.jpablo.typeexplorer.ui.app.toggle
 
 case class InheritanceTabState(
   activeSymbolsJson: StoredString,
@@ -29,7 +30,7 @@ case class InheritanceTabState(
   $canvasSelection : Var[Set[models.Symbol]] = Var(Set.empty),
 ):
 
-  def updateCanvasSelection =
+  def updateCanvasSelection: Observer[UserSelectionCommand] =
     $canvasSelection.updater[UserSelectionCommand] { (set, command) =>
       command match
         case UserSelectionCommand.SetTo(symbol) => Set(symbol)
@@ -37,16 +38,13 @@ case class InheritanceTabState(
         case UserSelectionCommand.Clear => Set.empty
     }
 
-  def addSymbol(symbol: models.Symbol): Unit =
-    $activeSymbols.update(_ + symbol)
-
   def toggleActiveSymbol(symbol: models.Symbol): Unit =
-    $activeSymbols.update(m => if m.contains(symbol) then m - symbol else m + symbol)
+    $activeSymbols.update(_.toggle(symbol))
 
   def toggleCanvasSelection(symbol: models.Symbol): Unit =
-    $canvasSelection.update(m => if m.contains(symbol) then m - symbol else m + symbol)
+    $canvasSelection.update(_.toggle(symbol))
 
-  def removeAll() =
+  def removeAllActiveSymbols() =
     $activeSymbols.set(Set.empty)
 
   /**
