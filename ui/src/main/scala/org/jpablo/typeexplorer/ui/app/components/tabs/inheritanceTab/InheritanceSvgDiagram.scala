@@ -17,7 +17,7 @@ class InheritanceSvgDiagram(svg: dom.SVGElement):
     elem <- clusters
     box <- elem.box
   do
-    box.setStyle("fill", "white")
+    box.setAttribute("fill", "white")
 
 
   def elements =
