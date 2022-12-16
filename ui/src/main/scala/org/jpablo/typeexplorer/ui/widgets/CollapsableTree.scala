@@ -1,7 +1,7 @@
 package org.jpablo.typeexplorer.ui.widgets
 
 import com.raquo.laminar.api.L.*
-import org.jpablo.typeexplorer.shared.fileTree.Tree
+import org.jpablo.typeexplorer.shared.tree.Tree
 
 def collapsableTree[A](
   t: Tree[A]

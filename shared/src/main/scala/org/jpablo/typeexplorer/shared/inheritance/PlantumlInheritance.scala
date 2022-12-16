@@ -1,7 +1,7 @@
 package org.jpablo.typeexplorer.shared.inheritance
 
 import zio.json.*
-import org.jpablo.typeexplorer.shared.fileTree.Tree
+import org.jpablo.typeexplorer.shared.tree.Tree
 import org.jpablo.typeexplorer.shared.models.{Method, Namespace, NamespaceKind}
 
 

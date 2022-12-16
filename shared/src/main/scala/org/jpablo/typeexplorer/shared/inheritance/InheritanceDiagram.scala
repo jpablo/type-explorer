@@ -1,6 +1,6 @@
 package org.jpablo.typeexplorer.shared.inheritance
 
-import org.jpablo.typeexplorer.shared.fileTree.Tree
+import org.jpablo.typeexplorer.shared.tree.Tree
 import zio.json.*
 import zio.Chunk
 
@@ -13,8 +13,6 @@ import java.util.jar.Attributes.Name
 import scala.annotation.{tailrec, targetName}
 
 type Arrow = (Symbol, Symbol)
-
-type Pred = Symbol => Boolean
 
 enum Related:
   case Parents, Children

@@ -9,7 +9,7 @@ import com.raquo.laminar.api.L.*
 import com.raquo.laminar.nodes.ReactiveHtmlElement
 import com.softwaremill.quicklens.*
 import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
-import org.jpablo.typeexplorer.shared.fileTree.Tree
+import org.jpablo.typeexplorer.shared.tree.Tree
 import org.jpablo.typeexplorer.shared.inheritance.InheritanceDiagram
 import org.jpablo.typeexplorer.shared.models.{Namespace, NamespaceKind, Symbol}
 import org.jpablo.typeexplorer.ui.app.components.state.AppState
@@ -63,7 +63,10 @@ object PackagesTree:
                 href  := "#elem_" + uri,
                 title := ns.symbol.toString,
                 ns.displayName,
-                onClick --> (_ => inheritanceTabState.toggleSymbol(ns.symbol))
+                onClick --> { _ =>
+                  inheritanceTabState.toggleActiveSymbol(ns.symbol)
+                  inheritanceTabState.toggleCanvasSelection(ns.symbol)
+                }
               ),
             ),
           contents =

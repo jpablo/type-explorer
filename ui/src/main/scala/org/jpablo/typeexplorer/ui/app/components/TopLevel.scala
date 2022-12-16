@@ -21,13 +21,7 @@ def TopLevel =
       AppHeader,
       TabsArea,
       AppFooter,
-      $userSelectionCommand --> inheritanceTabState.$canvasSelection.updater[UserSelectionCommand] { (set, command) =>
-        command match
-          case UserSelectionCommand.SetTo(symbol) => Set(symbol)
-          case UserSelectionCommand.Extend(symbol) => set + symbol
-          case UserSelectionCommand.Clear => Set.empty
-
-      },
+      $userSelectionCommand --> inheritanceTabState.updateCanvasSelection,
       div(child.text <-- inheritanceTabState.$canvasSelection.signal.map(ds => s"canvasSelection: $ds")),
       div(child.text <-- inheritanceTabState.$activeSymbols.signal.map(ss => s"activeSymbols: ${ss.size}")),
     )

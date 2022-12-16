@@ -89,10 +89,8 @@ object InheritanceTab:
 
 
   private def handleSvgClick($command: EventBus[UserSelectionCommand])(e: TypedTargetMouseEvent[dom.Element], diagram: InheritanceSvgDiagram) =
-    val path = e.target.path
-
     val groupElement =
-      path
+      e.target.path
         .takeWhile(_.isInstanceOf[dom.SVGElement])
         .map(e => NamespaceElement.from(e) orElse ClusterElement.from(e))
         .collectFirst { case Some(elem) => elem }

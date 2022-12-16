@@ -11,6 +11,7 @@ import org.jpablo.typeexplorer.shared.inheritance.PlantumlInheritance.Options
 import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, Related}
 import org.jpablo.typeexplorer.shared.models
 import org.jpablo.typeexplorer.ui.app.Path
+import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.InheritanceTab.UserSelectionCommand
 import org.scalajs.dom
 import zio.json.*
 
@@ -27,16 +28,23 @@ case class InheritanceTabState(
   $options         : Var[Options] = Var(Options()),
   $canvasSelection : Var[Set[models.Symbol]] = Var(Set.empty),
 ):
+
+  def updateCanvasSelection =
+    $canvasSelection.updater[UserSelectionCommand] { (set, command) =>
+      command match
+        case UserSelectionCommand.SetTo(symbol) => Set(symbol)
+        case UserSelectionCommand.Extend(symbol) => set + symbol
+        case UserSelectionCommand.Clear => Set.empty
+    }
+
   def addSymbol(symbol: models.Symbol): Unit =
     $activeSymbols.update(_ + symbol)
 
-  def toggleSymbol(symbol: models.Symbol): Unit =
-    $activeSymbols.update { m =>
-      if m.contains(symbol) then
-        m - symbol
-      else
-        m + symbol
-    }
+  def toggleActiveSymbol(symbol: models.Symbol): Unit =
+    $activeSymbols.update(m => if m.contains(symbol) then m - symbol else m + symbol)
+
+  def toggleCanvasSelection(symbol: models.Symbol): Unit =
+    $canvasSelection.update(m => if m.contains(symbol) then m - symbol else m + symbol)
 
   def removeAll() =
     $activeSymbols.set(Set.empty)
