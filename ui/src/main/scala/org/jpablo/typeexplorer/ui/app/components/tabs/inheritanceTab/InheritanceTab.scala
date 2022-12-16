@@ -16,13 +16,13 @@ import org.jpablo.typeexplorer.ui.app.components.state.{AppState, InheritanceTab
 import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.PackagesTree
 import org.jpablo.typeexplorer.ui.daisyui.*
 import org.scalajs.dom
-import org.scalajs.dom.EventTarget
+import org.scalajs.dom.{EventTarget, console}
 
 
 object InheritanceTab:
 
   enum UserSelectionCommand:
-    case Replace(symbol: models.Symbol)
+    case SetTo(symbol: models.Symbol)
     case Extend(symbol: models.Symbol)
     case Clear
 
@@ -89,21 +89,56 @@ object InheritanceTab:
 
 
   private def handleSvgClick($command: EventBus[UserSelectionCommand])(e: TypedTargetMouseEvent[dom.Element], diagram: InheritanceSvgDiagram) =
-    (e.target +: parents(e.target))
-      .takeWhile(_.isInstanceOf[dom.SVGElement])
-      .find(isNamespace)
-      .map(el => NamespaceElement(el.asInstanceOf[dom.SVGGElement])) match
-        case Some(nsElement) =>
+    val path = e.target.path
+
+    val groupElement =
+      path
+        .takeWhile(_.isInstanceOf[dom.SVGElement])
+        .map(e => NamespaceElement.from(e) orElse ClusterElement.from(e))
+        .collectFirst { case Some(elem) => elem }
+
+    groupElement match
+      case Some(elem) => elem match
+
+        case ns: NamespaceElement =>
           if e.metaKey then
-            nsElement.selectToggle()
-            $command.emit(UserSelectionCommand.Extend(nsElement.symbol))
+            ns.select()
+            $command.emit(UserSelectionCommand.Extend(ns.symbol))
           else
             diagram.unselectAll()
-            nsElement.select()
-            $command.emit(UserSelectionCommand.Replace(nsElement.symbol))
-        case None =>
-          diagram.unselectAll()
-          $command.emit(UserSelectionCommand.Clear)
+            ns.select()
+            $command.emit(UserSelectionCommand.SetTo(ns.symbol))
+
+        case cluster: ClusterElement =>
+          if !e.metaKey then
+            diagram.unselectAll()
+            $command.emit(UserSelectionCommand.Clear)
+          // select all boxes inside this cluster
+          for ns <- diagram.clusterElements(cluster) do
+            ns.select()
+            $command.emit(UserSelectionCommand.Extend(ns.symbol))
+
+      case None =>
+        diagram.unselectAll()
+        $command.emit(UserSelectionCommand.Clear)
+
+
+//    // -------
+//    path
+//      .takeWhile(_.isInstanceOf[dom.SVGElement])
+//      .find(isNamespace)
+//      .map(el => NamespaceElement(el.asInstanceOf[dom.SVGGElement])) match
+//        case Some(nsElement) =>
+//          if e.metaKey then
+//            nsElement.selectToggle()
+//            $command.emit(UserSelectionCommand.Extend(nsElement.symbol))
+//          else
+//            diagram.unselectAll()
+//            nsElement.select()
+//            $command.emit(UserSelectionCommand.SetTo(nsElement.symbol))
+//        case None =>
+//          diagram.unselectAll()
+//          $command.emit(UserSelectionCommand.Clear)
 
   private def ControlledCheckbox(id: String, labelStr: String, field: Options => Boolean, modifyField: PathLazyModify[Options, Boolean], selectedSymbols: InheritanceTabState) =
     div(cls := "form-control",

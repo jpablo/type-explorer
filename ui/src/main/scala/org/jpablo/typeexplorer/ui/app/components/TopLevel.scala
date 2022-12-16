@@ -23,8 +23,8 @@ def TopLevel =
       AppFooter,
       $userSelectionCommand --> inheritanceTabState.$canvasSelection.updater[UserSelectionCommand] { (set, command) =>
         command match
-          case UserSelectionCommand.Replace(symbol) => Set(symbol)
-          case UserSelectionCommand.Extend(symbol) => set.toggle(symbol)
+          case UserSelectionCommand.SetTo(symbol) => Set(symbol)
+          case UserSelectionCommand.Extend(symbol) => set + symbol
           case UserSelectionCommand.Clear => Set.empty
 
       },

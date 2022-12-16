@@ -1,20 +1,20 @@
 package org.jpablo.typeexplorer.ui.widgets
 
 import com.raquo.laminar.api.L.*
-import org.jpablo.typeexplorer.shared.fileTree.FileTree
+import org.jpablo.typeexplorer.shared.fileTree.Tree
 
 def collapsableTree[A](
-  t: FileTree[A]
+  t: Tree[A]
 )(
   renderBranch: String => HtmlElement,
   renderLeaf  : (String, A) => HtmlElement
 )
 : HtmlElement = t match
-  case FileTree.Directory(name, trees) =>
+  case Tree.Node(name, trees) =>
     collapsable2(
       branchLabel = renderBranch(name),
       contents    = trees.map(tree => collapsableTree(tree)(renderBranch, renderLeaf)),
       open        = true
     )
-  case FileTree.File(name, data) =>
+  case Tree.Leaf(name, data) =>
     renderLeaf(name, data)

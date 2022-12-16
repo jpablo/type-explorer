@@ -1,6 +1,7 @@
 package org.jpablo.typeexplorer.shared.inheritance
 
-import org.jpablo.typeexplorer.shared.fileTree.FileTree
+import zio.json.*
+import org.jpablo.typeexplorer.shared.fileTree.Tree
 import org.jpablo.typeexplorer.shared.models.{Method, Namespace, NamespaceKind}
 
 
@@ -13,7 +14,7 @@ object PlantumlInheritance:
 
   def fromInheritanceDiagram(diagram: InheritanceDiagram, options: Options = Options()): PlantUML =
     val declarations =
-      diagram.toFileTrees.map(renderTree(options))
+      diagram.toTrees.map(renderTree(options))
 
     val inheritance =
       for (source, target) <- diagram.arrows yield
@@ -28,15 +29,16 @@ object PlantumlInheritance:
     )
 
   // ----------------------------------------------------
-  
-  private def renderTree(options: Options): FileTree[Namespace] => String =
-    case FileTree.Directory(name, contents) =>
+
+  private def renderTree(options: Options, acc: Tree.Label = ""): Tree[Namespace] => String =
+    case Tree.Node(path, children) =>
+      val fullPath = if acc.isEmpty then path else acc + "." + path
       s"""
-         |namespace $name {
-         |  ${contents.map(renderTree(options)) mkString "\n"}
+         |namespace "$path" as $fullPath {
+         |  ${children.map(renderTree(options, fullPath)) mkString "\n"}
          |}
          |""".stripMargin
-    case FileTree.File(_, ns) =>
+    case Tree.Leaf(_, ns) =>
       renderNamespace(ns, options)
 
 
@@ -48,16 +50,16 @@ object PlantumlInheritance:
       case NamespaceKind.Trait         => """ << (T, pink) >>"""
       case NamespaceKind.Class         => ""
       case other                       => s""" <<$other>>"""
-    val fields = 
-      if options.fields then 
+    val fields =
+      if options.fields then
         if options.signatures then
-          ns.methods.map(renderField(0)).mkString(" {\n", "\n", "\n}\n") 
+          ns.methods.map(renderField(0)).mkString(" {\n", "\n", "\n}\n")
         else
           ns.methods
           .groupBy(_.displayName)
           .toList.sortBy(_._1)
-          .map((_, ms) => renderField(ms.length)(ms.head)).mkString(" {\n", "\n", "\n}\n") 
-      else 
+          .map((_, ms) => renderField(ms.length)(ms.head)).mkString(" {\n", "\n", "\n}\n")
+      else
         ""
     header + stereotype + fields
 

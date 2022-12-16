@@ -2,7 +2,7 @@ package org.jpablo.typeexplorer.ui.app.components.tabs.semanticDBTab
 
 import com.raquo.laminar.api.L.*
 import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
-import org.jpablo.typeexplorer.shared.fileTree.FileTree
+import org.jpablo.typeexplorer.shared.fileTree.Tree
 import org.jpablo.typeexplorer.ui.widgets.{Icons, collapsable, collapsable2, collapsableTree}
 import scala.meta.internal.semanticdb.{SymbolInformation, TextDocument}
 import scalajs.js.URIUtils.encodeURIComponent
@@ -18,7 +18,7 @@ object SemanticDBTree:
     $selectedSemanticDb: EventBus[Path]
   ) =
     for documentsWithSource <- $documents yield
-      for fileTree <- FileTree.build(documentsWithSource)(buildPath) yield
+      for fileTree <- Tree.fromPaths(documentsWithSource.map(buildPath)) yield
         collapsableTree(fileTree)(
           renderBranch = b => span(cls := "whitespace-nowrap", b),
           renderLeaf = renderDocWithSource($selectedSemanticDb)
@@ -26,7 +26,7 @@ object SemanticDBTree:
 
   private def buildPath(doc: TextDocumentsWithSource) =
     val all = doc.semanticDbUri.split("/").toList.filter(_.nonEmpty)
-    (doc, all.last, all.init)
+    (all.init, all.last, doc)
 
 
   private def renderDocWithSource($selectedSemanticDb: EventBus[Path])(name: String, docWithSource: TextDocumentsWithSource) =

@@ -1,15 +1,16 @@
 package org.jpablo.typeexplorer.shared.inheritance
 
-import org.jpablo.typeexplorer.shared.fileTree.FileTree
+import org.jpablo.typeexplorer.shared.fileTree.Tree
 import zio.json.*
 import zio.Chunk
 
 import scala.meta.internal.semanticdb.SymbolInformation.Kind
 import scala.meta.internal.semanticdb.{ClassSignature, MethodSignature, Scope, Signature, SymbolInformation, SymbolOccurrence, TextDocument, TextDocuments, Type, TypeRef, TypeSignature, ValueSignature}
 import org.jpablo.typeexplorer.shared.models.{Method, Namespace, NamespaceKind, Symbol}
+
 import scala.meta.internal.semanticdb
 import java.util.jar.Attributes.Name
-import scala.annotation.tailrec
+import scala.annotation.{tailrec, targetName}
 
 type Arrow = (Symbol, Symbol)
 
@@ -116,7 +117,7 @@ case class InheritanceDiagram(
     }.flatten
 
 
-  def allRelated(s: Symbol, r: Symbol => Set[Symbol]): InheritanceDiagram =
+  private def allRelated(s: Symbol, r: Symbol => Set[Symbol]): InheritanceDiagram =
     subdiagram(unfold(s, r) + s)
 
   def allParents(symbol: Symbol): InheritanceDiagram =
@@ -126,14 +127,16 @@ case class InheritanceDiagram(
     allRelated(symbol, directChildren)
 
 
-  lazy val toFileTrees: List[FileTree[Namespace]] =
-    FileTree.build(namespaces.toList, ".") { ns =>
-      (ns, ns.displayName, ns.symbol.toString.split("/").init.toList)
-    }
+  lazy val toTrees: List[Tree[Namespace]] =
+    val paths =
+      for ns <- namespaces.toList yield
+        (ns.symbol.toString.split("/").init.toList, ns.displayName, ns)
+    Tree.fromPaths(paths, ".")
 
   /** Combines the diagram on the left with the diagram on the right.
     * No new arrows are introduced beyond those present in both diagrams.
     */
+  @targetName("combine")
   def ++ (other: InheritanceDiagram): InheritanceDiagram =
     InheritanceDiagram(
       arrows = arrows ++ other.arrows,

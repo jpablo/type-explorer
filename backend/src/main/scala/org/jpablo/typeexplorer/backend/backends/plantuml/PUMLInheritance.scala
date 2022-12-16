@@ -5,6 +5,7 @@ import net.sourceforge.plantuml.{FileFormat, FileFormatOption, SourceStringReade
 import org.jpablo.typeexplorer.backend.semanticdb.All
 import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, InheritanceExamples}
 import org.jpablo.typeexplorer.shared.models.{Method, Namespace, NamespaceKind}
+import org.jpablo.typeexplorer.shared.models
 
 import java.io.ByteArrayOutputStream
 import java.nio.charset.Charset
@@ -24,7 +25,7 @@ extension (puml: PlantUML)
       reader <- ZIO.from(SourceStringReader(puml.diagram))
       createStream = ZIO.succeed(new ByteArrayOutputStream)
       svg <-
-        ZIO.acquireReleaseWith(createStream)(os => ZIO.succeed(os.close)) { os => 
+        ZIO.acquireReleaseWith(createStream)(os => ZIO.succeed(os.close)) { os =>
           ZIO.attemptBlocking {
             reader.outputImage(os, FileFormatOption(FileFormat.SVG))
             os.toString(Charset.defaultCharset())
@@ -37,9 +38,15 @@ extension (puml: PlantUML)
 
 @main
 def plantumlExample(): Unit =
-  val path = file.Paths.get("/Users/jpablo/proyectos/playground/type-explorer")
+  val path = file.Paths.get("/Users/jpablo/GitHub/scala-js-dom")
   val docs = TextDocuments(All.scan(path).flatMap(_._2.documents))
   val diagram = InheritanceDiagram.fromTextDocuments(docs)
+    .subdiagram(
+      Set(
+        models.Symbol("org/scalajs/dom/experimental/domparser/package."),
+        models.Symbol("org/scalajs/dom/EventTarget#")
+      )
+    )
   val diagramStr = PlantumlInheritance.fromInheritanceDiagram(diagram)
   println(diagramStr)
 //  println("-------------------")

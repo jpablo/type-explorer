@@ -108,7 +108,7 @@ lazy val backend =
       "io.d11"                   %% "zhttp"             % zioHttpVersion,
       "org.json4s"               %% "json4s-native"     % "4.0.6",
       "guru.nidi"                %  "graphviz-java"     % "0.18.1",
-      "net.sourceforge.plantuml" %  "plantuml"          % "1.2022.5",
+      "net.sourceforge.plantuml" %  "plantuml"          % "1.2022.14",
       "com.lihaoyi"              %% "scalatags"         % "0.11.1" cross CrossVersion.for3Use2_13, // Needed until org.scalameta-common upgrades to 3.x
        "io.github.arainko"       %% "ducktape"          % "0.1.0-RC2"
       ),

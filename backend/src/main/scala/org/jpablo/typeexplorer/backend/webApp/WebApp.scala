@@ -5,7 +5,6 @@ import org.jpablo.typeexplorer.backend.semanticdb.All
 import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, InheritanceExamples, Related}
 import org.jpablo.typeexplorer.shared.inheritance.{PlantUML, PlantumlInheritance}
 import org.jpablo.typeexplorer.shared.models
-import org.jpablo.typeexplorer.shared.models
 import org.jpablo.typeexplorer.shared.utils.*
 import org.jpablo.typeexplorer.shared.webApp.InheritanceReq
 

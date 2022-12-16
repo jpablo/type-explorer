@@ -9,7 +9,7 @@ import com.raquo.laminar.api.L.*
 import com.raquo.laminar.nodes.ReactiveHtmlElement
 import com.softwaremill.quicklens.*
 import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
-import org.jpablo.typeexplorer.shared.fileTree.FileTree
+import org.jpablo.typeexplorer.shared.fileTree.Tree
 import org.jpablo.typeexplorer.shared.inheritance.InheritanceDiagram
 import org.jpablo.typeexplorer.shared.models.{Namespace, NamespaceKind, Symbol}
 import org.jpablo.typeexplorer.ui.app.components.state.AppState
@@ -37,7 +37,7 @@ object PackagesTree:
       ($diagram: EventStream[InheritanceDiagram]) =>
         for diagram <- $diagram yield
           // TODO: diagram.toFileTrees can be called *before* filtering
-          for fileTree <- diagram.toFileTrees yield
+          for fileTree <- diagram.toTrees yield
             collapsableTree(fileTree)(
               renderBranch = b => span(cls := "whitespace-nowrap", b),
               renderLeaf = renderNamespace
