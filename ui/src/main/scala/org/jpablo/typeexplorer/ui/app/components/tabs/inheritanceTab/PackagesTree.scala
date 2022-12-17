@@ -39,7 +39,13 @@ object PackagesTree:
           // TODO: diagram.toFileTrees can be called *before* filtering
           for fileTree <- diagram.toTrees yield
             collapsableTree(fileTree)(
-              renderBranch = b => span(cls := "whitespace-nowrap", b),
+              renderBranch = { b =>
+                div(
+                  cls := "whitespace-nowrap inline-block w-full focus:bg-blue-100",
+                  tabIndex := 0,
+                  b
+                )
+              },
               renderLeaf = renderNamespace
             )
 
@@ -54,12 +60,14 @@ object PackagesTree:
         collapsable2(
           branchLabel =
             div(
-              display := "inline",
+              idAttr := ns.symbol.toString,
+              cls := "inline-block w-full focus:bg-blue-100",
+              tabIndex := 0,
               stereotype(ns),
               span(" "),
               a(
-                cls := "hover:bg-blue-200",
-                cls.toggle("bg-blue-300", "noop") <-- $isActive,
+                cls := "p-0.5",
+                cls.toggle("bg-blue-200 rounded", "noop") <-- $isActive,
                 href  := "#elem_" + uri,
                 title := ns.symbol.toString,
                 ns.displayName,

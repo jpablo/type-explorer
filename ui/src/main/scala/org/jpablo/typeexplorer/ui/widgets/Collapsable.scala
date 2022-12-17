@@ -21,7 +21,7 @@ private def showContents(open: Boolean, contents: Seq[HtmlElement]) =
 
 private def renderCollapsable(branchLabel: HtmlElement, $open: Var[Boolean], $managedChildren: Signal[Seq[HtmlElement]]) =
   div(
-    cls := "collapsable-wrapper whitespace-nowrap",
+    cls := "collapsable-wrapper whitespace-nowrap bg-slate-100 cursor-pointer",
     Icons.chevron(
       $open.signal,
       onClick --> $open.updater((v, _) => !v)
