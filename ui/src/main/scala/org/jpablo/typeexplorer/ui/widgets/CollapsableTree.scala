@@ -10,7 +10,7 @@ def collapsableTree[A](
   renderLeaf  : (String, A) => HtmlElement
 )
 : HtmlElement = t match
-  case Tree.Node(name, trees) =>
+  case Tree.Node(name, _, trees) =>
     collapsable2(
       branchLabel = renderBranch(name),
       contents    = trees.map(tree => collapsableTree(tree)(renderBranch, renderLeaf)),

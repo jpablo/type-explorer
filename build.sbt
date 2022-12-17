@@ -106,6 +106,9 @@ lazy val backend =
       reStart / mainClass := Some("org.jpablo.typeexplorer.backend.webApp.WebApp"),
       libraryDependencies ++= Seq(
       "io.d11"                   %% "zhttp"             % zioHttpVersion,
+      "dev.zio"                  %% "zio-logging"       % "2.1.5",
+      "dev.zio"                  %% "zio-logging-slf4j" % "2.1.5",
+      "dev.zio"                  %% "zio-logging-slf4j-bridge" % "2.1.5",
       "org.json4s"               %% "json4s-native"     % "4.0.6",
       "guru.nidi"                %  "graphviz-java"     % "0.18.1",
       "net.sourceforge.plantuml" %  "plantuml"          % "1.2022.14",

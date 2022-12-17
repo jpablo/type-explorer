@@ -40,10 +40,14 @@ object PackagesTree:
           for fileTree <- diagram.toTrees yield
             collapsableTree(fileTree)(
               renderBranch = { b =>
+                // renders package name
                 div(
                   cls := "whitespace-nowrap inline-block w-full focus:bg-blue-100",
                   tabIndex := 0,
-                  b
+                  a(
+                    b,
+                    onClick --> { _ => println(b) }
+                  )
                 )
               },
               renderLeaf = renderNamespace
@@ -63,8 +67,10 @@ object PackagesTree:
               idAttr := ns.symbol.toString,
               cls := "inline-block w-full focus:bg-blue-100",
               tabIndex := 0,
-              stereotype(ns),
-              span(" "),
+              span(
+                cls := "inline-block w-5",
+                stereotype(ns)
+              ),
               a(
                 cls := "p-0.5",
                 cls.toggle("bg-blue-200 rounded", "noop") <-- $isActive,
