@@ -23,6 +23,6 @@ def TopLevel =
       AppFooter,
       $userSelectionCommand --> inheritanceTabState.updateCanvasSelection,
       // TODO: remove this in prod mode
-      div(child.text <-- inheritanceTabState.$canvasSelection.signal.map(ds => s"canvasSelection: $ds")),
+      div(child.text <-- inheritanceTabState.$canvasSelection.signal.map(ds => s"canvasSelection: ${ds.size}")),
       div(child.text <-- inheritanceTabState.$activeSymbols.signal.map(ss => s"activeSymbols: ${ss.size}")),
     )

@@ -35,14 +35,21 @@ case class InheritanceTabState(
       command match
         case UserSelectionCommand.SetTo(symbol) => Set(symbol)
         case UserSelectionCommand.Extend(symbol) => set + symbol
+        case UserSelectionCommand.Toggle(symbol) => set.toggle(symbol)
         case UserSelectionCommand.Clear => Set.empty
     }
 
   def toggleActiveSymbol(symbol: models.Symbol): Unit =
     $activeSymbols.update(_.toggle(symbol))
 
+  def addActiveSymbol(symbol: models.Symbol): Unit =
+    $activeSymbols.update(_ + symbol)
+
   def toggleCanvasSelection(symbol: models.Symbol): Unit =
     $canvasSelection.update(_.toggle(symbol))
+
+  def addCanvasSelection(symbol: models.Symbol): Unit =
+    $canvasSelection.update(_ + symbol)
 
   def removeAllActiveSymbols() =
     $activeSymbols.set(Set.empty)

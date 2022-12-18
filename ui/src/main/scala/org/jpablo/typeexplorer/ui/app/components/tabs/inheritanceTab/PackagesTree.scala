@@ -18,6 +18,7 @@ import org.jpablo.typeexplorer.ui.widgets.{collapsableTree, collapsable2}
 import scalajs.js
 import scalajs.js.URIUtils.encodeURIComponent
 import org.jpablo.typeexplorer.ui.daisyui.*
+import org.scalajs.dom
 import org.scalajs.dom.html
 import zio.prelude.fx.ZPure
 
@@ -33,20 +34,33 @@ object PackagesTree:
   def build =
     for
       renderNamespace <- renderNamespaceZ
+      inheritanceTabState <- AppState.inheritanceTabState
     yield
       ($diagram: EventStream[InheritanceDiagram]) =>
         for diagram <- $diagram yield
           // TODO: diagram.toFileTrees can be called *before* filtering
           for fileTree <- diagram.toTrees yield
             collapsableTree(fileTree)(
-              renderBranch = { b =>
+              renderBranch = { (packageLabel, path) =>
                 // renders package name
                 div(
                   cls := "whitespace-nowrap inline-block w-full focus:bg-blue-100",
                   tabIndex := 0,
                   a(
-                    b,
-                    onClick --> { _ => println(b) }
+                    packageLabel,
+                    onClick --> { ev =>
+                      val prefix = path.mkString("/")
+                      val selector = s"[id ^= '$prefix']"
+                      // Rather hacky: find visible children with the given prefix
+                      val parent = ev.target.path.find(_.classList.contains("te-package-name"))
+                      for
+                        packageElement <- parent
+                        elem <- packageElement.querySelectorAll(selector)
+                      do
+                        val symbol = Symbol(elem.id)
+                        inheritanceTabState.addActiveSymbol(symbol)
+                        inheritanceTabState.addCanvasSelection(symbol)
+                    }
                   )
                 )
               },
@@ -57,7 +71,7 @@ object PackagesTree:
     for
       inheritanceTabState <- AppState.inheritanceTabState
     yield
-      (name: String, ns: Namespace) =>
+      (_: String, ns: Namespace) =>
         val uri = encodeURIComponent(ns.symbol.toString)
         val $isActive = inheritanceTabState.$activeSymbols.signal.map(_.contains(ns.symbol))
 

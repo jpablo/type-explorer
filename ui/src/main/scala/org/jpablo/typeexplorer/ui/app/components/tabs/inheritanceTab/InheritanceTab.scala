@@ -24,6 +24,7 @@ object InheritanceTab:
   enum UserSelectionCommand:
     case SetTo(symbol: models.Symbol)
     case Extend(symbol: models.Symbol)
+    case Toggle(symbol: models.Symbol)
     case Clear
 
   private val autocomplete = customProp("autocomplete", StringAsIsCodec)
@@ -91,13 +92,13 @@ object InheritanceTab:
 
 
   private def handleSvgClick($command: EventBus[UserSelectionCommand])(e: TypedTargetMouseEvent[dom.Element], diagram: InheritanceSvgDiagram) =
-    val groupElement =
+    val selectedElement =
       e.target.path
         .takeWhile(_.isInstanceOf[dom.SVGElement])
         .map(e => NamespaceElement.from(e) orElse ClusterElement.from(e))
         .collectFirst { case Some(elem) => elem }
 
-    groupElement match
+    selectedElement match
       case Some(elem) => elem match
 
         case ns: NamespaceElement =>

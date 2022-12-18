@@ -48,7 +48,7 @@ def plantumlExample(): Unit =
       )
     )
   val diagramStr = PlantumlInheritance.fromInheritanceDiagram(diagram)
-  println(diagramStr)
+  println(diagramStr.diagram)
 //  println("-------------------")
 //  var svg = renderDiagram("laminar", diagram)
 //  println(svg)

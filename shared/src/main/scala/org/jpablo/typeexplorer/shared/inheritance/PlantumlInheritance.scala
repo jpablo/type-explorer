@@ -30,12 +30,11 @@ object PlantumlInheritance:
 
   // ----------------------------------------------------
 
-  private def renderTree(options: Options, acc: Tree.Label = ""): Tree[Namespace] => String =
-    case Tree.Node(path, children) =>
-      val fullPath = if acc.isEmpty then path else acc + "." + path
+  private def renderTree(options: Options): Tree[Namespace] => String =
+    case Tree.Node(label, path, children) =>
       s"""
-         |namespace "$path" as $fullPath {
-         |  ${children.map(renderTree(options, fullPath)) mkString "\n"}
+         |namespace "$label" as ${path.mkString(".")} {
+         |  ${children.map(renderTree(options)) mkString "\n"}
          |}
          |""".stripMargin
     case Tree.Leaf(_, ns) =>

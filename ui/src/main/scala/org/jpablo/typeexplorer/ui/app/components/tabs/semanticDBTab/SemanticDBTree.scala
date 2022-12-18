@@ -20,7 +20,7 @@ object SemanticDBTree:
     for documentsWithSource <- $documents yield
       for fileTree <- Tree.fromPaths(documentsWithSource.map(buildPath)) yield
         collapsableTree(fileTree)(
-          renderBranch = b => span(cls := "whitespace-nowrap", b),
+          renderBranch = (b, path) => span(cls := "whitespace-nowrap", b),
           renderLeaf = renderDocWithSource($selectedSemanticDb)
         )
 
