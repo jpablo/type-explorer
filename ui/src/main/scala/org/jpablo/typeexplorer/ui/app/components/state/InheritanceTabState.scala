@@ -39,6 +39,9 @@ case class InheritanceTabState(
     def extend(symbol: models.Symbol): Unit =
       $canvasSelection.update(_ + symbol)
 
+    def extend(symbols: collection.Seq[models.Symbol]): Unit =
+      $canvasSelection.update(_ ++ symbols)
+
     def clear(): Unit =
       $canvasSelection.set(Set.empty)
 
@@ -47,8 +50,11 @@ case class InheritanceTabState(
     def toggle(symbol: models.Symbol): Unit =
       $activeSymbols.update(_.toggle(symbol))
 
-    def add(symbol: models.Symbol): Unit =
+    def extend(symbol: models.Symbol): Unit =
       $activeSymbols.update(_ + symbol)
+
+    def extend(symbols: collection.Seq[models.Symbol]): Unit =
+      $activeSymbols.update(_ ++ symbols)
 
     def clear() =
       $activeSymbols.set(Set.empty)

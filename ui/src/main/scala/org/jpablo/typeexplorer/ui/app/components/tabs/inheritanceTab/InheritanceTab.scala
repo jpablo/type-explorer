@@ -88,7 +88,7 @@ object InheritanceTab:
   private def handleSvgClick
     (inheritanceTabState: InheritanceTabState)
     (e: TypedTargetMouseEvent[dom.Element], diagram: InheritanceSvgDiagram) =
-    val selectedElement =
+    val selectedElement: Option[SvgGroupElement] =
       e.target.path
         .takeWhile(_.isInstanceOf[dom.SVGElement])
         .map(e => NamespaceElement.from(e) orElse ClusterElement.from(e))

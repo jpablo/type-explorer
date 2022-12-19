@@ -52,14 +52,10 @@ object PackagesTree:
                       val prefix = path.mkString("/")
                       val selector = s"[id ^= '$prefix']"
                       // Rather hacky: find visible children with the given prefix
-                      val parent = ev.target.path.find(_.classList.contains("te-package-name"))
-                      for
-                        packageElement <- parent
-                        elem <- packageElement.querySelectorAll(selector)
-                      do
-                        val symbol = Symbol(elem.id)
-                        inheritanceTabState.activeSymbols.add(symbol)
-                        inheritanceTabState.canvasSelection.extend(symbol)
+                      for parent <- ev.target.path.find(_.classList.contains("te-package-name")) do
+                        val symbols = parent.querySelectorAll(selector).map(e => Symbol(e.id))
+                        inheritanceTabState.activeSymbols.extend(symbols)
+                        inheritanceTabState.canvasSelection.extend(symbols)
                     }
                   )
                 )
