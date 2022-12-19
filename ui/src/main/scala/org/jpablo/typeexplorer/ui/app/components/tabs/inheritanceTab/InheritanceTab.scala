@@ -21,8 +21,6 @@ import org.scalajs.dom.{EventTarget, console}
 
 object InheritanceTab:
 
-  private val autocomplete = customProp("autocomplete", StringAsIsCodec)
-
   def build =
     for
       $inheritanceSvgDiagram <- AppState.$inheritanceSvgDiagram
@@ -31,13 +29,20 @@ object InheritanceTab:
       inheritanceTabState <- AppState.inheritanceTabState
     yield
       val $filter = Var("")
+      val $nsKind = Var[Set[models.NamespaceKind]](Set.empty)
       val modifySelection = modifyLens[Options]
       val $filteredDiagram =
         $diagram
           .combineWith($filter.signal)
+          .combineWith($nsKind.signal)
           .changes
           .debounce(300)
-          .map((diagram, w) => if w.isBlank then diagram else diagram.filterBySymbols(w))
+          .map { (diagram, w, nsKind) =>
+            if w.isBlank then
+              diagram
+            else
+              diagram.filterBySymbols(w)
+          }
       val $selectionEmpty = inheritanceTabState.$canvasSelection.signal.map(_.isEmpty)
       // --- container: two columns, two rows ---
       div(cls := "grid h-full grid-cols-[1fr_4fr] grid-rows-[3em_auto]",
@@ -45,6 +50,8 @@ object InheritanceTab:
         div(cls := "overflow-auto p-1 row-start-1 row-end-3 border-r border-slate-300 flex flex-col",
           // --- controls ---
           form(cls := "p-1",
+
+
             Search(placeholder := "filter", controlled(value <-- $filter, onInput.mapToValue --> $filter)).small
           ),
           div(cls := "overflow-auto",
@@ -54,8 +61,8 @@ object InheritanceTab:
         // --- toolbar ---
         div(cls := "flex gap-4 ml-2",
           ButtonGroup(
-            ControlledCheckbox("fields-checkbox-1", "fields",     _.fields,     modifySelection(_.fields), inheritanceTabState),
-            ControlledCheckbox("fields-checkbox-2", "signatures", _.signatures, modifySelection(_.signatures), inheritanceTabState),
+            OptionsCheckbox("fields-checkbox-1", "fields",     _.fields,     modifySelection(_.fields), inheritanceTabState),
+            OptionsCheckbox("fields-checkbox-2", "signatures", _.signatures, modifySelection(_.signatures), inheritanceTabState),
           ),
           ButtonGroup(
             Button(disabled := false, "remove all", onClick --> (_ => inheritanceTabState.activeSymbols.clear())).outline.secondary.tiny,
@@ -92,10 +99,10 @@ object InheritanceTab:
       e.target.path
         .takeWhile(_.isInstanceOf[dom.SVGElement])
         .map(e => NamespaceElement.from(e) orElse ClusterElement.from(e))
-        .collectFirst { case Some(elem) => elem }
+        .collectFirst { case Some(g) => g }
 
     selectedElement match
-      case Some(elem) => elem match
+      case Some(g) => g match
 
         case ns: NamespaceElement =>
           if e.metaKey then
@@ -120,16 +127,12 @@ object InheritanceTab:
         inheritanceTabState.canvasSelection.clear()
 
 
-  private def ControlledCheckbox(id: String, labelStr: String, field: Options => Boolean, modifyField: PathLazyModify[Options, Boolean], selectedSymbols: InheritanceTabState) =
-    div(cls := "form-control",
-      label(forId := id, cls := "label cursor-pointer",
-        span(cls := "label-text pr-1", labelStr),
-        Checkbox(idAttr := id, autocomplete := "off", cls := "toggle-xs",
-          controlled(
-            checked <-- selectedSymbols.$options.signal.map(field),
-            onClick.mapToChecked --> selectedSymbols.$options.updater[Boolean]((options, b) => modifyField.setTo(b)(options))
-          )
-        ),
-      ),
+  private def OptionsCheckbox(id: String, labelStr: String, field: Options => Boolean, modifyField: PathLazyModify[Options, Boolean], selectedSymbols: InheritanceTabState) =
+    LabeledCheckbox(
+      id = id,
+      labelStr = labelStr,
+      $checked = selectedSymbols.$options.signal.map(field),
+      clickHandler = selectedSymbols.$options.updater[Boolean]((options, b) => modifyField.setTo(b)(options))
     )
+
 end InheritanceTab

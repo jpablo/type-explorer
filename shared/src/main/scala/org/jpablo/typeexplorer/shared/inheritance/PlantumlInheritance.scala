@@ -33,6 +33,11 @@ object PlantumlInheritance:
   private def renderTree(options: Options): Tree[Namespace] => String =
     case Tree.Node(label, path, children) =>
       s"""
+         |skinparam class {
+         |  'FontSize 20
+         |  FontName "JetBrains Mono"
+         |}
+         |
          |namespace "$label" as ${path.mkString(".")} {
          |  ${children.map(renderTree(options)) mkString "\n"}
          |}

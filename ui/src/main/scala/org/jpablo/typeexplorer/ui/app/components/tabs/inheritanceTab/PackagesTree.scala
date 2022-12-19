@@ -49,6 +49,7 @@ object PackagesTree:
                   a(
                     packageLabel,
                     onClick --> { ev =>
+                      // TODO: move "/" to a named constant
                       val prefix = path.mkString("/")
                       val selector = s"[id ^= '$prefix']"
                       // Rather hacky: find visible children with the given prefix
@@ -82,7 +83,7 @@ object PackagesTree:
                 stereotype(ns)
               ),
               a(
-                cls := "p-0.5",
+                cls := "p-0.5 font-['JetBrains_Mono']",
                 cls.toggle("bg-blue-200 rounded", "noop") <-- $isActive,
                 href  := "#elem_" + uri,
                 title := ns.symbol.toString,
@@ -94,7 +95,13 @@ object PackagesTree:
               ),
             ),
           contents =
-            ns.methods.map(m => a(m.displayName, title := m.symbol.toString))
+            ns.methods.map { m =>
+              a(
+                cls := "font-['JetBrains_Mono']",
+                title := m.symbol.toString,
+                m.displayName
+              )
+            }
         )
 
   /** The "stereotype" is an element indicating which kind of namespace we have:

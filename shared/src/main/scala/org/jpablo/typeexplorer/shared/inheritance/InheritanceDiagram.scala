@@ -43,13 +43,16 @@ case class InheritanceDiagram(
     .transform((_, ss) => ss.map(_._2))
     .withDefaultValue(Set.empty)
 
-  lazy val directChildren: Symbol => Set[Symbol] =
+  private lazy val directChildren: Symbol => Set[Symbol] =
     arrows.groupBy(_._2)
     .transform((_, ss) => ss.map(_._1))
     .withDefaultValue(Set.empty)
 
-  lazy val nsBySymbol: Map[Symbol, Namespace] =
+  private lazy val nsBySymbol: Map[Symbol, Namespace] =
     namespaces.groupMapReduce(_.symbol)(identity)((_, b) => b)
+
+  private lazy val nsByKind: Map[NamespaceKind, Set[Namespace]] =
+    namespaces.groupBy(_.kind)
 
   def directRelatives(related: Related): Symbol => Set[Symbol] =
     if related == Parents then directParents else directChildren
@@ -92,19 +95,24 @@ case class InheritanceDiagram(
 
   // ---------------------------------------------
 
+  private def arrowsForSymbols(symbols: Set[Symbol]) =
+    for
+      arrow@(a, b) <- arrows
+      if (symbols contains a) && (symbols contains b)
+    yield
+      arrow
 
   /** Creates a diagram containing the given symbols and the arrows between them.
     */
   def subdiagram(symbols: Set[Symbol]): InheritanceDiagram =
     val foundSymbols = nsBySymbol.keySet.intersect(symbols)
     val foundNS      = foundSymbols.map(nsBySymbol)
-    val foundArrows  =
-      for
-        arrow @ (a, b) <- arrows
-        if (foundSymbols contains a) && (foundSymbols contains b)
-      yield
-        arrow
-    InheritanceDiagram(foundArrows, foundNS)
+    InheritanceDiagram(arrowsForSymbols(foundSymbols), foundNS)
+
+  def subdiagramByKinds(kinds: Set[NamespaceKind]): InheritanceDiagram =
+    val foundKinds  = nsByKind.filter((kind, _) => kinds.contains(kind))
+    val foundNS     = foundKinds.values.flatten.toSet
+    InheritanceDiagram(arrowsForSymbols(foundNS.map(_.symbol)), foundNS)
 
   // Note: doesn't handle loops.
   // How efficient is this compared to the tail rec version above?
@@ -182,7 +190,8 @@ object InheritanceDiagram:
       "scala/AnyVal#",
       "java/io/Serializable#",
       "copy$default$",
-      "local"
+      "local",
+      "<init>"
     )
 
   given JsonCodec[InheritanceDiagram] = DeriveJsonCodec.gen
@@ -207,7 +216,14 @@ object InheritanceDiagram:
           case cs: ClassSignature => List(cs)
           case _ =>  List.empty
         nsKind       = translateKind(symbolInfo.kind)
-        declarations = clsSignature.declarations.map(_.symlinks.map(Symbol(_))).toSeq.flatten
+        declarations = clsSignature
+          .declarations
+          .map(_.symlinks
+            .filterNot(si => excluded.exists(si.contains))
+            .map(Symbol(_))
+          )
+          .toSeq.flatten
+
         methods      = declarations.map(method(allSymbols))
         namespace    =
           Namespace(

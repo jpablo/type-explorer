@@ -1,31 +1,38 @@
 package org.jpablo.typeexplorer.ui.widgets
 
-import com.raquo.laminar.api.L.*
 import com.raquo.airstream.core.EventStream
-import scala.meta.internal.semanticdb.{TextDocument, SymbolInformation, SymbolOccurrence, Synthetic}
-import org.scalajs.dom.html.LI
 import com.raquo.airstream.core.Signal
-import scalajs.js.URIUtils.encodeURIComponent
+import com.raquo.laminar.api.L.*
+import com.raquo.laminar.nodes.ReactiveHtmlElement
+import io.laminext.syntax.core.*
 import org.scalajs.dom
+import org.scalajs.dom.html.LI
+
+import scala.meta.internal.semanticdb.{SymbolInformation, SymbolOccurrence, Synthetic, TextDocument}
+import scalajs.js.URIUtils.encodeURIComponent
 
 def collapsable(branchLabel: HtmlElement, $children: Signal[Seq[HtmlElement]], open: Boolean = false) =
   val $open = Var(open)
-  renderCollapsable(branchLabel, $open, $open.signal.combineWith($children).mapN(showContents))
+  renderCollapsable(branchLabel, false, $open, $open.signal.combineWith($children).mapN(showContents))
 
 def collapsable2(branchLabel: HtmlElement, contents: Seq[HtmlElement], open: Boolean = false) =
   val $open = Var(open)
-  renderCollapsable(branchLabel, $open, $open.signal.map(open => showContents(open, contents)))
+  renderCollapsable(branchLabel, contents.isEmpty, $open, $open.signal.map(open => showContents(open, contents)))
 
-private def showContents(open: Boolean, contents: Seq[HtmlElement]) =
+private def showContents(open: Boolean, contents: Seq[HtmlElement]): Seq[Li] =
   if open then contents.map(li(_)) else Seq.empty
 
-private def renderCollapsable(branchLabel: HtmlElement, $open: Var[Boolean], $managedChildren: Signal[Seq[HtmlElement]]) =
+private def renderCollapsable(branchLabel: HtmlElement, isEmpty: Boolean, $open: Var[Boolean], $managedChildren: Signal[Seq[HtmlElement]]) =
   div(
     cls := "collapsable-wrapper whitespace-nowrap bg-slate-100 cursor-pointer te-package-name",
-    Icons.chevron(
-      $open.signal,
-      onClick --> $open.updater((v, _) => !v)
-    ),
+
+    if isEmpty then
+      span(cls := "bi inline-block w-5")
+    else
+      Icons.chevron(
+        $open.signal,
+        onClick --> $open.updater((v, _) => !v)
+      ),
     branchLabel,
     ul(
       cls := "collapsable-children pl-4",
@@ -40,7 +47,7 @@ object Icons:
     mods: Modifier[Anchor]*
   ) =
     a(
-      cls := "bi",
+      cls := "bi inline-block w-5",
       cls <-- $open.map(o => if o then "bi-chevron-down" else "bi-chevron-right")
     ).amend(mods)
 
