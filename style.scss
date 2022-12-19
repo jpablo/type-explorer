@@ -1,0 +1,27 @@
+
+svg {
+
+  // clusters are packages
+  g[id ^= cluster_] {
+    &:hover {
+      outline: 3px solid rgb(251 191 36);
+      cursor: pointer;
+    }
+    path {
+      fill: white;
+    }
+  }
+
+  // `elem_` are namespaces (aka classes, objects, traits, etc)
+  g[id ^= elem_] {
+    text {
+      font-family: 'JetBrains Mono', Monaco, monospace;
+    }
+
+    &:hover {
+      outline: 3px solid rgb(251 191 36);
+      cursor: pointer;
+    }
+  }
+}
+

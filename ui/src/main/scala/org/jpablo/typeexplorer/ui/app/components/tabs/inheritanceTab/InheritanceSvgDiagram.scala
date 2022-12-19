@@ -6,13 +6,8 @@ import org.jpablo.typeexplorer.shared.models
 import org.scalajs.dom
 
 class InheritanceSvgDiagram(svg: dom.SVGElement):
-  // Remove inline style so we can use our own style
-  svg.setStyle("background", "")
   svg.classList.add("bg-orange-100")
-
-  clusters
-    .flatMap(_.box)
-    .foreach(_.setAttribute("fill", "white"))
+  // (more styles are set in style.scss)
 
   def elements =
     NamespaceElement.selectAll(svg)
