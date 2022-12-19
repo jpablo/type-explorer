@@ -10,7 +10,6 @@ import org.jpablo.typeexplorer.ui.app.components.TopLevel
 import org.scalajs.dom.document
 import zio.ZEnvironment
 import com.softwaremill.quicklens.*
-import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.InheritanceTab.UserSelectionCommand
 import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.InheritanceSvgDiagram
 
 object MainJS:
@@ -18,7 +17,6 @@ object MainJS:
   def main(args: Array[String]): Unit =
     val appState     = AppState.build(fetchInheritanceDiagram)
     val $documents   = fetchDocuments(appState.$projectPath)
-    val $userSelectionCommand  = EventBus[UserSelectionCommand]()
     val $inheritanceSvgDiagram = fetchInheritanceSVGDiagram(appState).startWith(InheritanceSvgDiagram.empty)
 
     val appEnv =
@@ -29,7 +27,6 @@ object MainJS:
         appState.inheritanceTabState.$inheritanceDiagram,
         appState.inheritanceTabState,
       ) ++ ZEnvironment(
-        $userSelectionCommand,
         appState.projectPath,
         appState.inheritanceTabState.$canvasSelection
       )

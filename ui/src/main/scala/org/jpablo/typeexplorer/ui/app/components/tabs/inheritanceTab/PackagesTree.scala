@@ -58,8 +58,8 @@ object PackagesTree:
                         elem <- packageElement.querySelectorAll(selector)
                       do
                         val symbol = Symbol(elem.id)
-                        inheritanceTabState.addActiveSymbol(symbol)
-                        inheritanceTabState.addCanvasSelection(symbol)
+                        inheritanceTabState.activeSymbols.add(symbol)
+                        inheritanceTabState.canvasSelection.extend(symbol)
                     }
                   )
                 )
@@ -92,8 +92,8 @@ object PackagesTree:
                 title := ns.symbol.toString,
                 ns.displayName,
                 onClick --> { _ =>
-                  inheritanceTabState.toggleActiveSymbol(ns.symbol)
-                  inheritanceTabState.toggleCanvasSelection(ns.symbol)
+                  inheritanceTabState.activeSymbols.toggle(ns.symbol)
+                  inheritanceTabState.canvasSelection.toggle(ns.symbol)
                 }
               ),
             ),

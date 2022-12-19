@@ -14,7 +14,6 @@ import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, Related}
 import org.jpablo.typeexplorer.shared.models
 import org.jpablo.typeexplorer.ui.app.Path
 import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.InheritanceSvgDiagram
-import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.InheritanceTab.UserSelectionCommand
 import org.scalajs.dom
 import zio.Tag
 import zio.json.*
@@ -75,7 +74,6 @@ object AppState:
   val $inheritanceDiagram = service[Signal[InheritanceDiagram]]
   val $documents          = service[EventStream[List[TextDocumentsWithSource]]]
   val $projectPath        = service[Signal[Path]]
-  val $userSelectionCommand = service[EventBus[UserSelectionCommand]]
   val $inheritanceSvgDiagram = service[Signal[InheritanceSvgDiagram]]
   val projectPath         = service[StoredString]
   val inheritanceTabState = service[InheritanceTabState]

@@ -11,7 +11,6 @@ import org.jpablo.typeexplorer.shared.inheritance.PlantumlInheritance.Options
 import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, Related}
 import org.jpablo.typeexplorer.shared.models
 import org.jpablo.typeexplorer.ui.app.Path
-import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.InheritanceTab.UserSelectionCommand
 import org.scalajs.dom
 import zio.json.*
 import org.jpablo.typeexplorer.ui.app.toggle
@@ -30,29 +29,29 @@ case class InheritanceTabState(
   $canvasSelection : Var[Set[models.Symbol]] = Var(Set.empty),
 ):
 
-  def updateCanvasSelection: Observer[UserSelectionCommand] =
-    $canvasSelection.updater[UserSelectionCommand] { (set, command) =>
-      command match
-        case UserSelectionCommand.SetTo(symbol) => Set(symbol)
-        case UserSelectionCommand.Extend(symbol) => set + symbol
-        case UserSelectionCommand.Toggle(symbol) => set.toggle(symbol)
-        case UserSelectionCommand.Clear => Set.empty
-    }
+  object canvasSelection:
+    def toggle(symbol: models.Symbol): Unit =
+      $canvasSelection.update(_.toggle(symbol))
 
-  def toggleActiveSymbol(symbol: models.Symbol): Unit =
-    $activeSymbols.update(_.toggle(symbol))
+    def replace(symbol: models.Symbol): Unit =
+      $canvasSelection.set(Set(symbol))
 
-  def addActiveSymbol(symbol: models.Symbol): Unit =
-    $activeSymbols.update(_ + symbol)
+    def extend(symbol: models.Symbol): Unit =
+      $canvasSelection.update(_ + symbol)
 
-  def toggleCanvasSelection(symbol: models.Symbol): Unit =
-    $canvasSelection.update(_.toggle(symbol))
+    def clear(): Unit =
+      $canvasSelection.set(Set.empty)
 
-  def addCanvasSelection(symbol: models.Symbol): Unit =
-    $canvasSelection.update(_ + symbol)
 
-  def removeAllActiveSymbols() =
-    $activeSymbols.set(Set.empty)
+  object activeSymbols:
+    def toggle(symbol: models.Symbol): Unit =
+      $activeSymbols.update(_.toggle(symbol))
+
+    def add(symbol: models.Symbol): Unit =
+      $activeSymbols.update(_ + symbol)
+
+    def clear() =
+      $activeSymbols.set(Set.empty)
 
   /**
     * Removes all user-selected symbols (in the canvas) from $activeSymbols

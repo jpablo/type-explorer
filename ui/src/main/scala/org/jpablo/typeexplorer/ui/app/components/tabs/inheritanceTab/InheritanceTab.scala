@@ -21,19 +21,12 @@ import org.scalajs.dom.{EventTarget, console}
 
 object InheritanceTab:
 
-  enum UserSelectionCommand:
-    case SetTo(symbol: models.Symbol)
-    case Extend(symbol: models.Symbol)
-    case Toggle(symbol: models.Symbol)
-    case Clear
-
   private val autocomplete = customProp("autocomplete", StringAsIsCodec)
 
   def build =
     for
       $inheritanceSvgDiagram <- AppState.$inheritanceSvgDiagram
       $diagram               <- AppState.$inheritanceDiagram
-      $userSelectionCommand  <- AppState.$userSelectionCommand
       packagesTree        <- PackagesTree.build
       inheritanceTabState <- AppState.inheritanceTabState
     yield
@@ -65,7 +58,7 @@ object InheritanceTab:
             ControlledCheckbox("fields-checkbox-2", "signatures", _.signatures, modifySelection(_.signatures), inheritanceTabState),
           ),
           ButtonGroup(
-            Button(disabled := false, "remove all", onClick --> (_ => inheritanceTabState.removeAllActiveSymbols())).outline.secondary.tiny,
+            Button(disabled := false, "remove all", onClick --> (_ => inheritanceTabState.activeSymbols.clear())).outline.secondary.tiny,
             Button(disabled := true, "fit").outline.secondary.tiny,
             Button(disabled := true, "zoom").outline.secondary.tiny
           ),
@@ -86,12 +79,15 @@ object InheritanceTab:
             inheritanceTabState.$canvasSelection.update(_ -- missingSymbols)
             diagram.toLaminar
           },
-          composeEvents(onClick.preventDefault)(_.withCurrentValueOf($inheritanceSvgDiagram)) --> handleSvgClick($userSelectionCommand).tupled,
+          composeEvents(onClick.preventDefault)(_.withCurrentValueOf($inheritanceSvgDiagram)) -->
+            handleSvgClick(inheritanceTabState).tupled,
         )
       )
 
 
-  private def handleSvgClick($command: EventBus[UserSelectionCommand])(e: TypedTargetMouseEvent[dom.Element], diagram: InheritanceSvgDiagram) =
+  private def handleSvgClick
+    (inheritanceTabState: InheritanceTabState)
+    (e: TypedTargetMouseEvent[dom.Element], diagram: InheritanceSvgDiagram) =
     val selectedElement =
       e.target.path
         .takeWhile(_.isInstanceOf[dom.SVGElement])
@@ -104,42 +100,25 @@ object InheritanceTab:
         case ns: NamespaceElement =>
           if e.metaKey then
             ns.select()
-            $command.emit(UserSelectionCommand.Extend(ns.symbol))
+            inheritanceTabState.canvasSelection.extend(ns.symbol)
           else
             diagram.unselectAll()
             ns.select()
-            $command.emit(UserSelectionCommand.SetTo(ns.symbol))
+            inheritanceTabState.canvasSelection.replace(ns.symbol)
 
         case cluster: ClusterElement =>
           if !e.metaKey then
             diagram.unselectAll()
-            $command.emit(UserSelectionCommand.Clear)
+            inheritanceTabState.canvasSelection.clear()
           // select all boxes inside this cluster
           for ns <- diagram.clusterElements(cluster) do
             ns.select()
-            $command.emit(UserSelectionCommand.Extend(ns.symbol))
+            inheritanceTabState.canvasSelection.extend(ns.symbol)
 
       case None =>
         diagram.unselectAll()
-        $command.emit(UserSelectionCommand.Clear)
+        inheritanceTabState.canvasSelection.clear()
 
-
-//    // -------
-//    path
-//      .takeWhile(_.isInstanceOf[dom.SVGElement])
-//      .find(isNamespace)
-//      .map(el => NamespaceElement(el.asInstanceOf[dom.SVGGElement])) match
-//        case Some(nsElement) =>
-//          if e.metaKey then
-//            nsElement.selectToggle()
-//            $command.emit(UserSelectionCommand.Extend(nsElement.symbol))
-//          else
-//            diagram.unselectAll()
-//            nsElement.select()
-//            $command.emit(UserSelectionCommand.SetTo(nsElement.symbol))
-//        case None =>
-//          diagram.unselectAll()
-//          $command.emit(UserSelectionCommand.Clear)
 
   private def ControlledCheckbox(id: String, labelStr: String, field: Options => Boolean, modifyField: PathLazyModify[Options, Boolean], selectedSymbols: InheritanceTabState) =
     div(cls := "form-control",
