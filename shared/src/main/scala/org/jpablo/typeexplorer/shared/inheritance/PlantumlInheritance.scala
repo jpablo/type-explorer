@@ -40,9 +40,17 @@ object PlantumlInheritance:
     case Tree.Leaf(_, ns) =>
       renderNamespace(ns, options)
 
+  // certain characters are interpreted by plantuml, so we use unicode codes instead
+  private val replacementTable = Map(
+    "|" -> "&#124;"
+  )
+  private def replaceMultiple(s: String) =
+    var s1 = s
+    replacementTable.foreach((k, v) => s1 = s1.replace(k, v))
+    s1
 
   private def renderNamespace(ns: Namespace, options: Options): String =
-    val header = s"""class "${ns.displayName}" as ${ns.symbol}"""
+    val header = s"""class "${replaceMultiple(ns.displayName)}" as ${ns.symbol}"""
     val stereotype = ns.kind match
       case NamespaceKind.Object        => """ << (O, orchid) >>"""
       case NamespaceKind.PackageObject => """ << (P, lightblue) >>"""

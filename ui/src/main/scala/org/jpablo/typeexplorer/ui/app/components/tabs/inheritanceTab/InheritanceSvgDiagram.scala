@@ -9,12 +9,10 @@ class InheritanceSvgDiagram(svg: dom.SVGElement):
   // Remove inline style so we can use our own style
   svg.setStyle("background", "")
   svg.classList.add("bg-orange-100")
-  // set a solid fill color for clusters
-  for
-    elem <- clusters
-    box <- elem.box
-  do
-    box.setAttribute("fill", "white")
+
+  clusters
+    .flatMap(_.box)
+    .foreach(_.setAttribute("fill", "white"))
 
   def elements =
     NamespaceElement.selectAll(svg)

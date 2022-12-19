@@ -24,3 +24,8 @@ svg g[id ^= elem_]:hover {
     outline: 3px solid rgb(251 191 36);
     cursor: pointer;
 }
+
+svg g[id ^= elem_] text {
+    font-family: 'JetBrains Mono', Monaco, monospace;
+}
+
