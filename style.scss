@@ -15,7 +15,7 @@ svg {
   // `elem_` are namespaces (aka classes, objects, traits, etc)
   g[id ^= elem_] {
     text {
-      font-family: 'JetBrains Mono', Monaco, monospace;
+      //font-family: 'JetBrains Mono', Monaco, monospace;
     }
 
     &:hover {

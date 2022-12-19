@@ -9,7 +9,7 @@ enum NamespaceKind:
   case Class
   case Trait
   case Unknown
-  case Other(name: String)
+//  case Other(name: String)
 
 object NamespaceKind:
   given JsonCodec[NamespaceKind] = DeriveJsonCodec.gen

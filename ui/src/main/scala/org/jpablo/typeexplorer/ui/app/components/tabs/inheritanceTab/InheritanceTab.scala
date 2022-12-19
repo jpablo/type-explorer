@@ -15,6 +15,8 @@ import org.jpablo.typeexplorer.shared.models
 import org.jpablo.typeexplorer.ui.app.components.state.{AppState, InheritanceTabState}
 import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.PackagesTree
 import org.jpablo.typeexplorer.ui.daisyui.*
+import io.laminext.syntax.core.*
+import org.jpablo.typeexplorer.ui.app.toggleWith
 import org.scalajs.dom
 import org.scalajs.dom.{EventTarget, console}
 
@@ -29,7 +31,8 @@ object InheritanceTab:
       inheritanceTabState <- AppState.inheritanceTabState
     yield
       val $filter = Var("")
-      val $nsKind = Var[Set[models.NamespaceKind]](Set.empty)
+      val $nsKind = Var[Set[models.NamespaceKind]](models.NamespaceKind.values.toSet)
+      val $showOptions = Var(false)
       val modifySelection = modifyLens[Options]
       val $filteredDiagram =
         $diagram
@@ -37,21 +40,35 @@ object InheritanceTab:
           .combineWith($nsKind.signal)
           .changes
           .debounce(300)
-          .map { (diagram, w, nsKind) =>
+          .map { (diagram: InheritanceDiagram, w, nsKind) =>
             if w.isBlank then
-              diagram
+              (diagram, nsKind)
             else
-              diagram.filterBySymbols(w)
+              (diagram.filterBySymbols(w), nsKind)
           }
+          .map((diagram, nsKind) => diagram.subdiagramByKinds(nsKind))
       val $selectionEmpty = inheritanceTabState.$canvasSelection.signal.map(_.isEmpty)
       // --- container: two columns, two rows ---
       div(cls := "grid h-full grid-cols-[1fr_4fr] grid-rows-[3em_auto]",
         // --- packages tree ---
+
         div(cls := "overflow-auto p-1 row-start-1 row-end-3 border-r border-slate-300 flex flex-col",
           // --- controls ---
           form(cls := "p-1",
-
-
+            LabeledCheckbox("", "options",
+              $showOptions.signal,
+              Observer[Boolean](_ => $showOptions.update(b => !b)),
+              toggle = true
+            ),
+            $showOptions.signal.childWhenTrue(
+              div(
+                for kind <- models.NamespaceKind.values.toList yield
+                  LabeledCheckbox("", kind.toString,
+                    $nsKind.signal.map(_.contains(kind)),
+                    $nsKind.updater[Boolean]((set, b) => set.toggleWith(kind, b))
+                  )
+              ),
+            ),
             Search(placeholder := "filter", controlled(value <-- $filter, onInput.mapToValue --> $filter)).small
           ),
           div(cls := "overflow-auto",
@@ -61,8 +78,8 @@ object InheritanceTab:
         // --- toolbar ---
         div(cls := "flex gap-4 ml-2",
           ButtonGroup(
-            OptionsCheckbox("fields-checkbox-1", "fields",     _.fields,     modifySelection(_.fields), inheritanceTabState),
-            OptionsCheckbox("fields-checkbox-2", "signatures", _.signatures, modifySelection(_.signatures), inheritanceTabState),
+            OptionsToggle("fields-checkbox-1", "fields",     _.fields,     modifySelection(_.fields), inheritanceTabState),
+            OptionsToggle("fields-checkbox-2", "signatures", _.signatures, modifySelection(_.signatures), inheritanceTabState),
           ),
           ButtonGroup(
             Button(disabled := false, "remove all", onClick --> (_ => inheritanceTabState.activeSymbols.clear())).outline.secondary.tiny,
@@ -127,12 +144,13 @@ object InheritanceTab:
         inheritanceTabState.canvasSelection.clear()
 
 
-  private def OptionsCheckbox(id: String, labelStr: String, field: Options => Boolean, modifyField: PathLazyModify[Options, Boolean], selectedSymbols: InheritanceTabState) =
+  private def OptionsToggle(id: String, labelStr: String, field: Options => Boolean, modifyField: PathLazyModify[Options, Boolean], selectedSymbols: InheritanceTabState) =
     LabeledCheckbox(
       id = id,
       labelStr = labelStr,
       $checked = selectedSymbols.$options.signal.map(field),
-      clickHandler = selectedSymbols.$options.updater[Boolean]((options, b) => modifyField.setTo(b)(options))
+      clickHandler = selectedSymbols.$options.updater[Boolean]((options, b) => modifyField.setTo(b)(options)),
+      toggle = true
     )
 
 end InheritanceTab

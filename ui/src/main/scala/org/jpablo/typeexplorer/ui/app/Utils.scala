@@ -17,6 +17,9 @@ object Path:
 
 extension [A] (set: Set[A])
   def toggle(a: A) =
-    if set contains a then set - a else set + a
+    set.toggleWith(a, !set.contains(a))
+
+  def toggleWith(a: A, b: Boolean) =
+    if b then set + a else set - a
 
 
