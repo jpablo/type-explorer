@@ -23,6 +23,10 @@ import org.scalajs.dom.{EventTarget, console}
 
 object InheritanceTab:
 
+  extension [A](a: A)
+    def orElse(b: Boolean, f: A => A): A =
+      if b then a else f(a)
+
   def build =
     for
       $inheritanceSvgDiagram <- AppState.$inheritanceSvgDiagram
@@ -30,23 +34,22 @@ object InheritanceTab:
       packagesTree        <- PackagesTree.build
       inheritanceTabState <- AppState.inheritanceTabState
     yield
-      val $filter = Var("")
-      val $nsKind = Var[Set[models.NamespaceKind]](models.NamespaceKind.values.toSet)
-      val $showOptions = Var(false)
+      val $filterBySymbolName = Var("")
+      val $filterByNsKind     = Var(models.NamespaceKind.values.toSet)
+      val $filterByActive     = Var(false)
+      val $showOptions        = Var(false)
       val modifySelection = modifyLens[Options]
       val $filteredDiagram =
         $diagram
-          .combineWith($filter.signal)
-          .combineWith($nsKind.signal)
+          .combineWith($filterBySymbolName.signal, $filterByNsKind.signal, $filterByActive.signal, inheritanceTabState.$activeSymbols.signal)
           .changes
           .debounce(300)
-          .map { (diagram: InheritanceDiagram, w, nsKind) =>
-            if w.isBlank then
-              (diagram, nsKind)
-            else
-              (diagram.filterBySymbols(w), nsKind)
+          .map { (diagram: InheritanceDiagram, w, nsKind, filterByActive, activeSymbols) =>
+            diagram
+              .orElse(w.isBlank, _.filterBySymbols(w))
+              .subdiagramByKinds(nsKind)
+              .orElse(!filterByActive, _.subdiagram(activeSymbols))
           }
-          .map((diagram, nsKind) => diagram.subdiagramByKinds(nsKind))
       val $selectionEmpty = inheritanceTabState.$canvasSelection.signal.map(_.isEmpty)
       // --- container: two columns, two rows ---
       div(cls := "grid h-full grid-cols-[1fr_4fr] grid-rows-[3em_auto]",
@@ -55,21 +58,27 @@ object InheritanceTab:
         div(cls := "overflow-auto p-1 row-start-1 row-end-3 border-r border-slate-300 flex flex-col",
           // --- controls ---
           form(cls := "p-1",
-            LabeledCheckbox("", "options",
+            LabeledCheckbox("show-options-toggle", "options",
               $showOptions.signal,
-              Observer[Boolean](_ => $showOptions.update(b => !b)),
+              Observer[Boolean](_ => $showOptions.update(!_)),
               toggle = true
             ),
             $showOptions.signal.childWhenTrue(
               div(
+                cls := "bg-slate-200 p-1 mb-2",
+                LabeledCheckbox(s"filter-by-active", "only active",
+                  $filterByActive.signal,
+                  Observer[Boolean](_ => $filterByActive.update(!_)),
+                  toggle = true
+                ),
                 for kind <- models.NamespaceKind.values.toList yield
-                  LabeledCheckbox("", kind.toString,
-                    $nsKind.signal.map(_.contains(kind)),
-                    $nsKind.updater[Boolean]((set, b) => set.toggleWith(kind, b))
+                  LabeledCheckbox(s"show-ns-kind-$kind", kind.toString,
+                    $filterByNsKind.signal.map(_.contains(kind)),
+                    $filterByNsKind.updater[Boolean]((set, b) => set.toggleWith(kind, b))
                   )
               ),
             ),
-            Search(placeholder := "filter", controlled(value <-- $filter, onInput.mapToValue --> $filter)).small
+            Search(placeholder := "filter", controlled(value <-- $filterBySymbolName, onInput.mapToValue --> $filterBySymbolName)).small
           ),
           div(cls := "overflow-auto",
             children <-- packagesTree($filteredDiagram)

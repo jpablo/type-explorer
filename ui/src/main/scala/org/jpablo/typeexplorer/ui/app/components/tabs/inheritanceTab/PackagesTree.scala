@@ -61,7 +61,8 @@ object PackagesTree:
                   )
                 )
               },
-              renderLeaf = renderNamespace
+              renderLeaf = renderNamespace,
+              open = true
             )
 
   private def renderNamespaceZ =

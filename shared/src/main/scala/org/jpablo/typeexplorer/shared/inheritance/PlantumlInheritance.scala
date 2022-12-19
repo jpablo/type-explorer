@@ -35,7 +35,7 @@ object PlantumlInheritance:
       s"""
          |skinparam class {
          |  'FontSize 20
-         |  FontName "JetBrains Mono"
+         |  'FontName "JetBrains Mono"
          |}
          |
          |namespace "$label" as ${path.mkString(".")} {
