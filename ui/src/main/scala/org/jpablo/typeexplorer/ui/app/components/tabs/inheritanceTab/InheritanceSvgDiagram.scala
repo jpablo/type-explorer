@@ -9,7 +9,21 @@ class InheritanceSvgDiagram(svg: dom.SVGElement):
   svg.classList.add("bg-orange-100")
   // (more styles are set in style.scss)
 
-  def elements =
+  private def setDimensions(w: Int, h: Int) =
+    svg.setStyle("width",  s"${w}px")
+    svg.setStyle("height", s"${h}px")
+
+  private def width = svg.getBoundingClientRect().width
+  private def height = svg.getBoundingClientRect().height
+
+  def zoom(r: Double) =
+    setDimensions((width * r).toInt, (height * r).toInt)
+
+  def fitToRect(rect: dom.DOMRect) =
+    zoom(scala.math.min(rect.width / width, rect.height / height))
+
+
+  private def elements =
     NamespaceElement.selectAll(svg)
 
   def clusterElements(cluster: ClusterElement) =

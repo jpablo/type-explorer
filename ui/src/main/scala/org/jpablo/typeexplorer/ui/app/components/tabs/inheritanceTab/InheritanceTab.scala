@@ -18,7 +18,7 @@ import org.jpablo.typeexplorer.ui.daisyui.*
 import io.laminext.syntax.core.*
 import org.jpablo.typeexplorer.ui.app.toggleWith
 import org.scalajs.dom
-import org.scalajs.dom.{EventTarget, console}
+import org.scalajs.dom.{DOMRect, EventTarget, console}
 
 
 object InheritanceTab:
@@ -51,6 +51,21 @@ object InheritanceTab:
               .orElse(!filterByActive, _.subdiagram(activeSymbols))
           }
       val $selectionEmpty = inheritanceTabState.$canvasSelection.signal.map(_.isEmpty)
+      val canvasContainer =
+        div(cls := "h-full overflow-auto border-t border-slate-300 p-1 row-start-2 row-end-3 bg-orange-100",
+          child <-- $inheritanceSvgDiagram.map { diagram =>
+            val selection = inheritanceTabState.$canvasSelection.now()
+            diagram.select(selection)
+            // remove elements not present in the new diagram
+            // (such elements did exist in the previous diagram)
+            val missingSymbols = selection -- diagram.elementSymbols
+            inheritanceTabState.$canvasSelection.update(_ -- missingSymbols)
+            diagram.toLaminar
+          },
+          composeEvents(onClick.preventDefault)(_.withCurrentValueOf($inheritanceSvgDiagram)) -->
+            handleSvgClick(inheritanceTabState).tupled,
+        )
+
       // --- container: two columns, two rows ---
       div(cls := "grid h-full grid-cols-[1fr_4fr] grid-rows-[3em_auto]",
         // --- packages tree ---
@@ -80,9 +95,7 @@ object InheritanceTab:
             ),
             Search(placeholder := "filter", controlled(value <-- $filterBySymbolName, onInput.mapToValue --> $filterBySymbolName)).small
           ),
-          div(cls := "overflow-auto",
-            children <-- packagesTree($filteredDiagram)
-          )
+          div(cls := "overflow-auto", children <-- packagesTree($filteredDiagram))
         ),
         // --- toolbar ---
         div(cls := "flex gap-4 ml-2",
@@ -91,9 +104,15 @@ object InheritanceTab:
             OptionsToggle("fields-checkbox-2", "signatures", _.signatures, modifySelection(_.signatures), inheritanceTabState),
           ),
           ButtonGroup(
-            Button(disabled := false, "remove all", onClick --> (_ => inheritanceTabState.activeSymbols.clear())).outline.secondary.tiny,
-            Button(disabled := true, "fit").outline.secondary.tiny,
-            Button(disabled := true, "zoom").outline.secondary.tiny
+            Button("remove all",
+              onClick --> (_ => inheritanceTabState.activeSymbols.clear())
+            ).outline.secondary.tiny,
+            Button("fit",
+              composeEvents(onClick)(_.sample($inheritanceSvgDiagram)) --> (_.fitToRect(canvasContainer.ref.getBoundingClientRect()))
+            ).outline.secondary.tiny,
+            Button("zoom",
+              composeEvents(onClick)(_.sample($inheritanceSvgDiagram)) --> (_.zoom(1.1))
+            ).outline.secondary.tiny
           ),
           ButtonGroup(
             Button("children", disabled <-- $selectionEmpty, inheritanceTabState.addSelectionChildren(onClick)).outline.secondary.tiny,
@@ -101,22 +120,8 @@ object InheritanceTab:
             Button("remove",   disabled <-- $selectionEmpty, inheritanceTabState.removeSelection(onClick)).outline.secondary.tiny,
           )
         ),
-        // --- canvas ---
-        div(cls := "h-full overflow-auto border-t border-slate-300 p-1 row-start-2 row-end-3 bg-orange-100",
-          child <-- $inheritanceSvgDiagram.map { diagram =>
-            val selection = inheritanceTabState.$canvasSelection.now()
-            diagram.select(selection)
-            // remove elements not present in the new diagram
-            // (such elements did exist in the previous diagram)
-            val missingSymbols = selection -- diagram.elementSymbols
-            inheritanceTabState.$canvasSelection.update(_ -- missingSymbols)
-            diagram.toLaminar
-          },
-          composeEvents(onClick.preventDefault)(_.withCurrentValueOf($inheritanceSvgDiagram)) -->
-            handleSvgClick(inheritanceTabState).tupled,
-        )
+        canvasContainer
       )
-
 
   private def handleSvgClick
     (inheritanceTabState: InheritanceTabState)
