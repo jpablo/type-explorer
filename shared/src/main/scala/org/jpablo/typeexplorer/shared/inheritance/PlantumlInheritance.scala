@@ -57,7 +57,7 @@ object PlantumlInheritance:
   private def renderNamespace(ns: Namespace, options: Options): String =
     val header = s"""class "${replaceMultiple(ns.displayName)}" as ${ns.symbol}"""
     val stereotype = ns.kind match
-      case NamespaceKind.Object        => """ << (O, orchid) >>"""
+      case NamespaceKind.Object        => """ << (O, #44ad7d) >>"""
       case NamespaceKind.PackageObject => """ << (P, lightblue) >>"""
       case NamespaceKind.Trait         => """ << (T, pink) >>"""
       case NamespaceKind.Class         => ""

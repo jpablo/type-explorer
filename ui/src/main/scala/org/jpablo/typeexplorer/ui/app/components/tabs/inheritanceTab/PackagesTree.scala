@@ -79,7 +79,7 @@ object PackagesTree:
               idAttr := ns.symbol.toString,
               cls := "inline-block w-full focus:bg-blue-100",
               tabIndex := 0,
-              span(
+              div(
                 cls := "inline-block w-5",
                 stereotype(ns)
               ),
@@ -108,19 +108,17 @@ object PackagesTree:
   /** The "stereotype" is an element indicating which kind of namespace we have:
     * an Object, a Class, etc.
     */
-  private def stereotype(ns: Namespace): Span =
+  private def stereotype(ns: Namespace) =
     val elem =
       ns.kind match
-        case NamespaceKind.Object        => span("O", backgroundColor := "orchid")
-        case NamespaceKind.PackageObject => span("P", backgroundColor := "lightblue")
-        case NamespaceKind.Class         => span("C", backgroundColor := "rgb(173, 209, 178)")
-        case NamespaceKind.Trait         => span("T", backgroundColor := "pink")
-        case other                       => span(other.toString)
+        case NamespaceKind.Object        => div("o", backgroundColor := "rgb(44, 107, 141)", color := "white")
+        case NamespaceKind.PackageObject => div("p", backgroundColor := "lightblue", color := "white")
+        case NamespaceKind.Class         => div("c", backgroundColor := "rgb(68, 173, 125)", color := "white")
+        case NamespaceKind.Trait         => div("t", backgroundColor := "rgb(24, 170, 207)", color := "white")
+        case other                       => div(other.toString)
     elem.amend(
-      borderRadius := "8px",
-      paddingLeft  := "4px",
-      paddingRight := "4px",
-      fontWeight   := "bold"
+      cls := "rounded-full inline-block text-center w-4 h-4",
+      lineHeight := "16px"
     )
 
 end PackagesTree
