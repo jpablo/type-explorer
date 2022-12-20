@@ -109,16 +109,17 @@ object PackagesTree:
     * an Object, a Class, etc.
     */
   private def stereotype(ns: Namespace) =
-    val elem =
-      ns.kind match
-        case NamespaceKind.Object        => div("o", backgroundColor := "rgb(44, 107, 141)", color := "white")
-        case NamespaceKind.PackageObject => div("p", backgroundColor := "lightblue", color := "white")
-        case NamespaceKind.Class         => div("c", backgroundColor := "rgb(68, 173, 125)", color := "white")
-        case NamespaceKind.Trait         => div("t", backgroundColor := "rgb(24, 170, 207)", color := "white")
-        case other                       => div(other.toString)
-    elem.amend(
-      cls := "rounded-full inline-block text-center w-4 h-4",
-      lineHeight := "16px"
-    )
+    def circle(s: String, color: String) =
+      div(cls := "avatar placeholder",
+        div(cls := s"text-neutral-content rounded-full w-4",
+          backgroundColor := color, span(cls := "text-xs", s)
+        )
+      )
+    ns.kind match
+      case NamespaceKind.Object        => circle("o", "rgb(44, 107, 141)")
+      case NamespaceKind.PackageObject => circle("p", "lightblue")
+      case NamespaceKind.Class         => circle("c", "rgb(68, 173, 125)")
+      case NamespaceKind.Trait         => circle("t", "rgb(24, 170, 207)")
+      case other                       => div(other.toString)
 
 end PackagesTree
