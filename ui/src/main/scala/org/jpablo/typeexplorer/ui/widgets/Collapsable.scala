@@ -11,32 +11,17 @@ import org.scalajs.dom.html.LI
 import scala.meta.internal.semanticdb.{SymbolInformation, SymbolOccurrence, Synthetic, TextDocument}
 import scalajs.js.URIUtils.encodeURIComponent
 
-def collapsable(branchLabel: HtmlElement, $children: Signal[Seq[HtmlElement]], open: Boolean = false) =
+def Collapsable(branchLabel: HtmlElement, contents: Seq[HtmlElement], open: Boolean = false) =
   val $open = Var(open)
-  renderCollapsable(branchLabel, false, $open, $open.signal.combineWith($children).mapN(showContents))
-
-def collapsable2(branchLabel: HtmlElement, contents: Seq[HtmlElement], open: Boolean = false) =
-  val $open = Var(open)
-  renderCollapsable(branchLabel, contents.isEmpty, $open, $open.signal.map(open => showContents(open, contents)))
-
-private def showContents(open: Boolean, contents: Seq[HtmlElement]): Seq[Li] =
-  if open then contents.map(li(_)) else Seq.empty
-
-private def renderCollapsable(branchLabel: HtmlElement, isEmpty: Boolean, $open: Var[Boolean], $managedChildren: Signal[Seq[HtmlElement]]) =
   div(
     cls := "collapsable-wrapper whitespace-nowrap bg-slate-100 cursor-pointer te-package-name",
-
-    if isEmpty then
+    if contents.isEmpty then
       span(cls := "bi inline-block w-5")
     else
-      Icons.chevron(
-        $open.signal,
-        onClick --> $open.updater((v, _) => !v)
-      ),
+      Icons.chevron($open.signal, onClick --> $open.updater((v, _) => !v)),
     branchLabel,
-    ul(
-      cls := "collapsable-children pl-4",
-      children <-- $managedChildren
+    $open.signal.childWhenTrue(
+      ul(cls := "collapsable-children pl-4", contents.map(li(_)))
     )
   )
 

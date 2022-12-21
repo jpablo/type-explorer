@@ -56,10 +56,8 @@ object InheritanceTab:
           child <-- $inheritanceSvgDiagram.map { diagram =>
             val selection = inheritanceTabState.$canvasSelection.now()
             diagram.select(selection)
-            // remove elements not present in the new diagram
-            // (such elements did exist in the previous diagram)
-            val missingSymbols = selection -- diagram.elementSymbols
-            inheritanceTabState.$canvasSelection.update(_ -- missingSymbols)
+            // remove elements not present in the new diagram (such elements did exist in the previous diagram)
+            inheritanceTabState.$canvasSelection.update(_ -- (selection -- diagram.elementSymbols))
             diagram.toLaminar
           },
           composeEvents(onClick.preventDefault)(_.withCurrentValueOf($inheritanceSvgDiagram)) -->
@@ -69,7 +67,6 @@ object InheritanceTab:
       // --- container: two columns, two rows ---
       div(cls := "grid h-full grid-cols-[1fr_4fr] grid-rows-[3em_auto]",
         // --- packages tree ---
-
         div(cls := "overflow-auto p-1 row-start-1 row-end-3 border-r border-slate-300 flex flex-col",
           // --- controls ---
           form(cls := "p-1",
@@ -110,7 +107,7 @@ object InheritanceTab:
             Button("fit",
               composeEvents(onClick)(_.sample($inheritanceSvgDiagram)) --> (_.fitToRect(canvasContainer.ref.getBoundingClientRect()))
             ).outline.secondary.tiny,
-            Button("zoom",
+            Button("zoom +",
               composeEvents(onClick)(_.sample($inheritanceSvgDiagram)) --> (_.zoom(1.1))
             ).outline.secondary.tiny
           ),

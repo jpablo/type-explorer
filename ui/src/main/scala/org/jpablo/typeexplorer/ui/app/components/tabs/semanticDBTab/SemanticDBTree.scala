@@ -3,7 +3,7 @@ package org.jpablo.typeexplorer.ui.app.components.tabs.semanticDBTab
 import com.raquo.laminar.api.L.*
 import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
 import org.jpablo.typeexplorer.shared.tree.Tree
-import org.jpablo.typeexplorer.ui.widgets.{Icons, collapsable, collapsable2, collapsableTree}
+import org.jpablo.typeexplorer.ui.widgets.{Icons, Collapsable, CollapsableTree}
 import scala.meta.internal.semanticdb.{SymbolInformation, TextDocument}
 import scalajs.js.URIUtils.encodeURIComponent
 import org.jpablo.typeexplorer.shared.models
@@ -19,7 +19,7 @@ object SemanticDBTree:
   ) =
     for documentsWithSource <- $documents yield
       for fileTree <- Tree.fromPaths(documentsWithSource.map(buildPath)) yield
-        collapsableTree(fileTree)(
+        CollapsableTree(fileTree)(
           renderBranch = (b, path) => span(cls := "whitespace-nowrap", b),
           renderLeaf = renderDocWithSource($selectedSemanticDb)
         )
@@ -30,7 +30,7 @@ object SemanticDBTree:
 
 
   private def renderDocWithSource($selectedSemanticDb: EventBus[Path])(name: String, docWithSource: TextDocumentsWithSource) =
-    collapsable2(
+    Collapsable(
       branchLabel =
         span(
           Icons.fileBinary,
@@ -45,34 +45,27 @@ object SemanticDBTree:
     )
 
   private def renderTextDocument(doc: TextDocument) =
-    collapsable(
+    Collapsable(
       branchLabel =
         span(
           Icons.fileCode,
           doc.uri
         ),
-      $children =
-        Signal.fromValue(doc).map(_.symbols.sortBy(_.symbol)).split(_.symbol)(renderSymbolInformation),
+      contents =
+        doc.symbols.sortBy(_.symbol).map(renderSymbolInformation),
       open = false
     )
 
-  private def renderSymbolInformation(id: String, initial: SymbolInformation, elem: Signal[SymbolInformation]) =
-    collapsable(
+  private def renderSymbolInformation(si: SymbolInformation) =
+    Collapsable(
       branchLabel =
         span(
-          children <-- elem.map(sym =>
-            List(
-              span(sym.kind.toString),
-              span(": "),
-              a(href := "#" + encodeURIComponent(sym.symbol), sym.displayName)
-            )
-          )
+          span(si.kind.toString),
+          span(": "),
+          a(href := "#" + encodeURIComponent(si.symbol), si.displayName)
         ),
-      $children = elem.map(sym =>
-        List(
-          li("symbol: ", sym.symbol),
-        )
-      )
+      contents =
+        List(li("symbol: ", si.symbol))
     )
 
 end SemanticDBTree

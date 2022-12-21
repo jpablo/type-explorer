@@ -3,7 +3,7 @@ package org.jpablo.typeexplorer.ui.widgets
 import com.raquo.laminar.api.L.*
 import org.jpablo.typeexplorer.shared.tree.Tree
 
-def collapsableTree[A](
+def CollapsableTree[A](
   t: Tree[A]
 )(
   renderBranch: (String, List[String]) => HtmlElement,
@@ -11,11 +11,11 @@ def collapsableTree[A](
   open        : Boolean = false
 )
 : HtmlElement = t match
-  case Tree.Node(name, path, trees) =>
-    collapsable2(
-      branchLabel = renderBranch(name, path),
-      contents    = trees.map(tree => collapsableTree(tree)(renderBranch, renderLeaf, open)),
+  case Tree.Node(label, path, children) =>
+    Collapsable(
+      branchLabel = renderBranch(label, path),
+      contents    = children.map(tree => CollapsableTree(tree)(renderBranch, renderLeaf, open)),
       open        = open
     )
-  case Tree.Leaf(name, data) =>
-    renderLeaf(name, data)
+  case Tree.Leaf(label, data) =>
+    renderLeaf(label, data)

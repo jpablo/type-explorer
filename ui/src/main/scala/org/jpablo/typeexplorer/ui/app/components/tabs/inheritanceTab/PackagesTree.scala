@@ -14,7 +14,7 @@ import org.jpablo.typeexplorer.shared.inheritance.InheritanceDiagram
 import org.jpablo.typeexplorer.shared.models.{Namespace, NamespaceKind, Symbol}
 import org.jpablo.typeexplorer.ui.app.components.state.AppState
 import org.jpablo.typeexplorer.ui.app.components.state.InheritanceTabState
-import org.jpablo.typeexplorer.ui.widgets.{collapsableTree, collapsable2}
+import org.jpablo.typeexplorer.ui.widgets.{CollapsableTree, Collapsable}
 import scalajs.js
 import scalajs.js.URIUtils.encodeURIComponent
 import org.jpablo.typeexplorer.ui.daisyui.*
@@ -28,82 +28,72 @@ object PackagesTree:
   /** Builds a collapasable tree based on the given inheritance diagram.
     *
     * @param $diagram The diagram
-    * @param selectedSymbols The checked status of each symbol
     * @return A List of trees, one for each top level package name in the diagram: e.g. ["com..., ", "java.io..."]
     */
   def build =
-    for
-      renderNamespace <- renderNamespaceZ
-      inheritanceTabState <- AppState.inheritanceTabState
-    yield
+    for inheritanceTabState <- AppState.inheritanceTabState yield
       ($diagram: EventStream[InheritanceDiagram]) =>
         for diagram <- $diagram yield
-          // TODO: diagram.toFileTrees can be called *before* filtering
-          for fileTree <- diagram.toTrees yield
-            collapsableTree(fileTree)(
-              renderBranch = { (packageLabel, path) =>
-                // renders package name
-                div(
-                  cls := "whitespace-nowrap inline-block w-full focus:bg-blue-100",
-                  tabIndex := 0,
-                  a(
-                    packageLabel,
-                    onClick --> { ev =>
-                      // TODO: move "/" to a named constant
-                      val prefix = path.mkString("/")
-                      val selector = s"[id ^= '$prefix']"
-                      // Rather hacky: find visible children with the given prefix
-                      for parent <- ev.target.path.find(_.classList.contains("te-package-name")) do
-                        val symbols = parent.querySelectorAll(selector).map(e => Symbol(e.id))
-                        inheritanceTabState.activeSymbols.extend(symbols)
-                        inheritanceTabState.canvasSelection.extend(symbols)
-                    }
-                  )
-                )
-              },
-              renderLeaf = renderNamespace,
+          for tree <- diagram.toTrees yield
+            CollapsableTree(tree)(
+              renderBranch = renderPackage(inheritanceTabState),
+              renderLeaf   = renderNamespace(inheritanceTabState),
               open = true
             )
 
-  private def renderNamespaceZ =
-    for
-      inheritanceTabState <- AppState.inheritanceTabState
-    yield
-      (_: String, ns: Namespace) =>
-        val uri = encodeURIComponent(ns.symbol.toString)
-        val $isActive = inheritanceTabState.$activeSymbols.signal.map(_.contains(ns.symbol))
+  private def renderPackage(inheritanceTabState: InheritanceTabState)(packageLabel: String, packagePath: List[String]) =
+    div(
+      cls := "whitespace-nowrap inline-block w-full focus:bg-blue-100",
+      tabIndex := 0,
+      a(
+        packageLabel,
+        onClick --> { ev =>
+          // TODO: move "/" to a named constant
+          val prefix = packagePath.mkString("/")
+          // Rather hacky: find visible children with the given prefix
+          for parent <- ev.target.path.find(_.classList.contains("te-package-name")) do
+            val symbols = parent.querySelectorAll(s"[id ^= '$prefix']").map(e => Symbol(e.id))
+            inheritanceTabState.activeSymbols.extend(symbols)
+            inheritanceTabState.canvasSelection.extend(symbols)
+        }
+      )
+    )
 
-        collapsable2(
-          branchLabel =
-            div(
-              idAttr := ns.symbol.toString,
-              cls := "inline-block w-full focus:bg-blue-100",
-              tabIndex := 0,
-              div(
-                cls := "inline-block w-5",
-                stereotype(ns)
-              ),
-              a(
-                cls := "p-0.5 font-['JetBrains_Mono']",
-                cls.toggle("bg-blue-200 rounded", "noop") <-- $isActive,
-                href  := "#elem_" + uri,
-                title := ns.symbol.toString,
-                ns.displayName,
-                onClick --> { _ =>
-                  inheritanceTabState.activeSymbols.toggle(ns.symbol)
-                  inheritanceTabState.canvasSelection.toggle(ns.symbol)
-                }
-              ),
-            ),
-          contents =
-            ns.methods.map { m =>
-              a(
-                cls := "font-['JetBrains_Mono']",
-                title := m.symbol.toString,
-                m.displayName
-              )
+  private def renderNamespace(inheritanceTabState: InheritanceTabState)(s: String, ns: Namespace) =
+    val uri = encodeURIComponent(ns.symbol.toString)
+    val $isActive = inheritanceTabState.$activeSymbols.signal.map(_.contains(ns.symbol))
+
+    Collapsable(
+      branchLabel =
+        div(
+          idAttr := ns.symbol.toString,
+          cls := "inline-block w-full focus:bg-blue-100",
+          tabIndex := 0,
+          div(
+            cls := "inline-block w-5",
+            stereotype(ns)
+          ),
+          a(
+            cls := "p-0.5 font-['JetBrains_Mono']",
+            cls.toggle("bg-blue-200 rounded", "noop") <-- $isActive,
+            href  := "#elem_" + uri,
+            title := ns.symbol.toString,
+            ns.displayName,
+            onClick --> { _ =>
+              inheritanceTabState.activeSymbols.toggle(ns.symbol)
+              inheritanceTabState.canvasSelection.toggle(ns.symbol)
             }
-        )
+          ),
+        ),
+      contents =
+        ns.methods.map { m =>
+          a(
+            cls := "font-['JetBrains_Mono']",
+            title := m.symbol.toString,
+            m.displayName
+          )
+        }
+    )
 
   /** The "stereotype" is an element indicating which kind of namespace we have:
     * an Object, a Class, etc.
