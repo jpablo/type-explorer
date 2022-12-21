@@ -36,8 +36,8 @@ object PackagesTree:
         for diagram <- $diagram yield
           for tree <- diagram.toTrees yield
             CollapsableTree(tree)(
-              renderBranch = renderPackage(inheritanceTabState),
-              renderLeaf   = renderNamespace(inheritanceTabState),
+              renderNode = renderPackage(inheritanceTabState),
+              renderLeaf = renderNamespace(inheritanceTabState),
               open = true
             )
 
@@ -64,7 +64,7 @@ object PackagesTree:
     val $isActive = inheritanceTabState.$activeSymbols.signal.map(_.contains(ns.symbol))
 
     Collapsable(
-      branchLabel =
+      nodeLabel =
         div(
           idAttr := ns.symbol.toString,
           cls := "inline-block w-full focus:bg-blue-100",
@@ -85,7 +85,7 @@ object PackagesTree:
             }
           ),
         ),
-      contents =
+      nodeContents =
         ns.methods.map { m =>
           a(
             cls := "font-['JetBrains_Mono']",

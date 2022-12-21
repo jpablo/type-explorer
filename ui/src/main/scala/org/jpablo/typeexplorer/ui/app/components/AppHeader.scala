@@ -13,67 +13,64 @@ enum DiagramType:
   case CallGraph
 
 
-def AppHeader =
-  for
-    projectPath <- AppState.projectPath
-  yield
-    val onEnterPress  = onKeyPress.filter(_.keyCode == dom.KeyCode.Enter)
-    val onEscapePress = onKeyDown.filter(_.keyCode == dom.KeyCode.Escape)
-    val editBasePath  = Var(false)
-    // a() --[a:onClick ==> editBasePath = true]--> input() --[input:onEnterPress|onEscapePress ==> editBasePath = false]--> a()
-    val searchInput =
-      Search(
-        cls := "me-2",
-        onMountFocus,
-        value <-- projectPath.signal,
-        onEnterPress.preventDefault.mapToValue --> { v =>
-          projectPath.set(v)
-          editBasePath.set(false)
-        },
-        onEscapePress.mapTo(false) --> editBasePath,
-      )
-    // ------- render -------
-    div(
-      cls := "border-b border-slate-300",
-      
-      Navbar(
-        brand = "Type Explorer",
-
-        NavItem(span(b("base path:"))),
-
-        NavItem(
-          editBasePath.signal
-            .combineWith(projectPath.signal.map(_.isEmpty))
-            .map(_ || _)
-            .childWhenTrue {
-              form(
-                cls := "d-flex",
-                searchInput,
-                Button(
-                  onClick.mapTo(false) --> { b =>
-                    projectPath.set(searchInput.ref.value)
-                    editBasePath.set(b)
-                  },
-                  "Ok"
-                ).small.outline.success
-              )
-          },
-
-          editBasePath.signal.childWhenFalse {
-            a(
-              href := "#",
-              child.text <-- projectPath.signal,
-              onClick.mapTo(true) --> editBasePath
-            )
-          }
-        ),
-      ),
-        // li (cls := "nav-item",
-        //   Dropdown (
-        //     label = "Diagram",
-        //     elements = List(Inheritance, CallGraph),
-        //     selection = selection
-        //   )
-        // )
-
+def AppHeader(projectPath: StoredString) =
+  val onEnterPress  = onKeyPress.filter(_.keyCode == dom.KeyCode.Enter)
+  val onEscapePress = onKeyDown.filter(_.keyCode == dom.KeyCode.Escape)
+  val editBasePath  = Var(false)
+  // a() --[a:onClick ==> editBasePath = true]--> input() --[input:onEnterPress|onEscapePress ==> editBasePath = false]--> a()
+  val searchInput =
+    Search(
+      cls := "me-2",
+      onMountFocus,
+      value <-- projectPath.signal,
+      onEnterPress.preventDefault.mapToValue --> { v =>
+        projectPath.set(v)
+        editBasePath.set(false)
+      },
+      onEscapePress.mapTo(false) --> editBasePath,
     )
+  // ------- render -------
+  div(
+    cls := "border-b border-slate-300",
+
+    Navbar(
+      brand = "Type Explorer",
+
+      NavItem(span(b("base path:"))),
+
+      NavItem(
+        editBasePath.signal
+          .combineWith(projectPath.signal.map(_.isEmpty))
+          .map(_ || _)
+          .childWhenTrue {
+            form(
+              cls := "d-flex",
+              searchInput,
+              Button(
+                onClick.mapTo(false) --> { b =>
+                  projectPath.set(searchInput.ref.value)
+                  editBasePath.set(b)
+                },
+                "Ok"
+              ).small.outline.success
+            )
+        },
+
+        editBasePath.signal.childWhenFalse {
+          a(
+            href := "#",
+            child.text <-- projectPath.signal,
+            onClick.mapTo(true) --> editBasePath
+          )
+        }
+      ),
+    ),
+      // li (cls := "nav-item",
+      //   Dropdown (
+      //     label = "Diagram",
+      //     elements = List(Inheritance, CallGraph),
+      //     selection = selection
+      //   )
+      // )
+
+  )

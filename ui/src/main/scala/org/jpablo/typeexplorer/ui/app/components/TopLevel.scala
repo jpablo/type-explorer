@@ -10,13 +10,13 @@ import zio.prelude.fx.ZPure
 
 def TopLevel =
   for
-    AppHeader <- AppHeader
-    TabsArea  <- TabsArea
+    TabsArea    <- TabsArea
+    projectPath <- AppState.projectPath
     inheritanceTabState <- AppState.inheritanceTabState
   yield
     div(
       cls := "flex flex-col h-full",
-      AppHeader,
+      AppHeader(projectPath),
       TabsArea,
       AppFooter,
       // TODO: remove this in prod mode

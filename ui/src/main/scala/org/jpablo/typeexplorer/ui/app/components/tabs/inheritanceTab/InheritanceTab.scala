@@ -30,9 +30,8 @@ object InheritanceTab:
   def build =
     for
       $inheritanceSvgDiagram <- AppState.$inheritanceSvgDiagram
-      $diagram               <- AppState.$inheritanceDiagram
-      packagesTree        <- PackagesTree.build
-      inheritanceTabState <- AppState.inheritanceTabState
+      packagesTree           <- PackagesTree.build
+      inheritanceTabState    <- AppState.inheritanceTabState
     yield
       val $filterBySymbolName = Var("")
       val $filterByNsKind     = Var(models.NamespaceKind.values.toSet)
@@ -40,8 +39,13 @@ object InheritanceTab:
       val $showOptions        = Var(false)
       val modifySelection = modifyLens[Options]
       val $filteredDiagram =
-        $diagram
-          .combineWith($filterBySymbolName.signal, $filterByNsKind.signal, $filterByActive.signal, inheritanceTabState.$activeSymbols.signal)
+        inheritanceTabState.$inheritanceDiagram
+          .combineWith(
+            $filterBySymbolName.signal,
+            $filterByNsKind.signal,
+            $filterByActive.signal,
+            inheritanceTabState.$activeSymbols.signal
+          )
           .changes
           .debounce(300)
           .map { (diagram: InheritanceDiagram, w, nsKind, filterByActive, activeSymbols) =>

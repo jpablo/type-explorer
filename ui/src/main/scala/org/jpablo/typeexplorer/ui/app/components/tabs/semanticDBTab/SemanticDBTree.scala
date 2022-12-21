@@ -20,7 +20,7 @@ object SemanticDBTree:
     for documentsWithSource <- $documents yield
       for fileTree <- Tree.fromPaths(documentsWithSource.map(buildPath)) yield
         CollapsableTree(fileTree)(
-          renderBranch = (b, path) => span(cls := "whitespace-nowrap", b),
+          renderNode = (b, path) => span(cls := "whitespace-nowrap", b),
           renderLeaf = renderDocWithSource($selectedSemanticDb)
         )
 
@@ -31,7 +31,7 @@ object SemanticDBTree:
 
   private def renderDocWithSource($selectedSemanticDb: EventBus[Path])(name: String, docWithSource: TextDocumentsWithSource) =
     Collapsable(
-      branchLabel =
+      nodeLabel =
         span(
           Icons.fileBinary,
           a(
@@ -40,31 +40,31 @@ object SemanticDBTree:
             name
           )
         ),
-      contents = docWithSource.documents.map(renderTextDocument),
+      nodeContents = docWithSource.documents.map(renderTextDocument),
       open = false
     )
 
   private def renderTextDocument(doc: TextDocument) =
     Collapsable(
-      branchLabel =
+      nodeLabel =
         span(
           Icons.fileCode,
           doc.uri
         ),
-      contents =
+      nodeContents =
         doc.symbols.sortBy(_.symbol).map(renderSymbolInformation),
       open = false
     )
 
   private def renderSymbolInformation(si: SymbolInformation) =
     Collapsable(
-      branchLabel =
+      nodeLabel =
         span(
           span(si.kind.toString),
           span(": "),
           a(href := "#" + encodeURIComponent(si.symbol), si.displayName)
         ),
-      contents =
+      nodeContents =
         List(li("symbol: ", si.symbol))
     )
 

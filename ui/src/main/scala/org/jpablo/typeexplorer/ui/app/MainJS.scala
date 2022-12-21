@@ -24,11 +24,8 @@ object MainJS:
         appState.$projectPath,
         $documents,
         $inheritanceSvgDiagram,
-        appState.inheritanceTabState.$inheritanceDiagram,
         appState.inheritanceTabState,
-      ) ++ ZEnvironment(
-        appState.projectPath,
-        appState.inheritanceTabState.$canvasSelection
+        appState.projectPath
       )
 
     val app =

@@ -71,7 +71,6 @@ object AppState:
       .modify(_.inheritanceTabState.$activeSymbols).setTo(Var(state0.storedActiveSymbols))
 
 
-  val $inheritanceDiagram = service[Signal[InheritanceDiagram]]
   val $documents          = service[EventStream[List[TextDocumentsWithSource]]]
   val $projectPath        = service[Signal[Path]]
   val $inheritanceSvgDiagram = service[Signal[InheritanceSvgDiagram]]

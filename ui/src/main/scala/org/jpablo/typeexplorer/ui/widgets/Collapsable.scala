@@ -11,17 +11,17 @@ import org.scalajs.dom.html.LI
 import scala.meta.internal.semanticdb.{SymbolInformation, SymbolOccurrence, Synthetic, TextDocument}
 import scalajs.js.URIUtils.encodeURIComponent
 
-def Collapsable(branchLabel: HtmlElement, contents: Seq[HtmlElement], open: Boolean = false) =
+def Collapsable(nodeLabel: HtmlElement, nodeContents: Seq[HtmlElement], open: Boolean = false) =
   val $open = Var(open)
   div(
     cls := "collapsable-wrapper whitespace-nowrap bg-slate-100 cursor-pointer te-package-name",
-    if contents.isEmpty then
+    if nodeContents.isEmpty then
       span(cls := "bi inline-block w-5")
     else
       Icons.chevron($open.signal, onClick --> $open.updater((v, _) => !v)),
-    branchLabel,
+    nodeLabel,
     $open.signal.childWhenTrue(
-      ul(cls := "collapsable-children pl-4", contents.map(li(_)))
+      ul(cls := "collapsable-children pl-4", nodeContents.map(li(_)))
     )
   )
 
