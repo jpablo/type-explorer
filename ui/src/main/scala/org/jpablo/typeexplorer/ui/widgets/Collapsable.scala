@@ -7,23 +7,35 @@ import com.raquo.laminar.nodes.ReactiveHtmlElement
 import io.laminext.syntax.core.*
 import org.scalajs.dom
 import org.scalajs.dom.html.LI
-
+import org.jpablo.typeexplorer.ui.app.toggle
 import scala.meta.internal.semanticdb.{SymbolInformation, SymbolOccurrence, Synthetic, TextDocument}
 import scalajs.js.URIUtils.encodeURIComponent
 
-def Collapsable(nodeLabel: HtmlElement, nodeContents: Seq[HtmlElement], open: Boolean = false) =
-  val $open = Var(open)
-  div(
-    cls := "collapsable-wrapper whitespace-nowrap bg-slate-100 cursor-pointer te-package-name",
-    if nodeContents.isEmpty then
-      span(cls := "bi inline-block w-5")
-    else
-      Icons.chevron($open.signal, onClick --> $open.updater((v, _) => !v)),
-    nodeLabel,
-    $open.signal.childWhenTrue(
-      ul(cls := "collapsable-children pl-4", nodeContents.map(li(_)))
+object Collapsable:
+
+  class Control private (val $isOpen: Signal[Boolean], val toggle: Observer[Boolean])
+
+  object Control:
+    def from(key: String, initial: Boolean, $open: Var[Map[String, Boolean]]) =
+      Control(
+        $open.signal.map(_.getOrElse(key, initial)),
+        Observer[Boolean](_ => $open.update(_.toggle(key, initial)))
+      )
+
+
+  def apply(nodeLabel: HtmlElement, nodeContents: Seq[HtmlElement], control: Control) =
+    div(
+      cls := "collapsable-wrapper whitespace-nowrap bg-slate-100 cursor-pointer te-package-name",
+      if nodeContents.isEmpty then
+        span(cls := "bi inline-block w-5")
+      else
+        Icons.chevron(control.$isOpen, onClick.mapToTrue --> control.toggle),
+      nodeLabel,
+      control.$isOpen.childWhenTrue(
+        ul(cls := "collapsable-children pl-4", nodeContents.map(li(_)))
+      )
     )
-  )
+
 
 object Icons:
 
@@ -33,7 +45,7 @@ object Icons:
   ) =
     a(
       cls := "bi inline-block w-5",
-      cls <-- $open.map(o => if o then "bi-chevron-down" else "bi-chevron-right")
+      cls <-- $open.map(o => if o then "bi-chevron-down" else "bi-chevron-right"),
     ).amend(mods)
 
   def fileBinary =

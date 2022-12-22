@@ -1,15 +1,12 @@
 package org.jpablo.typeexplorer.ui.app
 
 import com.raquo.laminar.api.L.*
-import com.raquo.airstream.ownership.OneTimeOwner
-import io.laminext.syntax.core.storedString
 import org.jpablo.typeexplorer.shared.models.Symbol
 import org.jpablo.typeexplorer.ui.app.client.{fetchDocuments, fetchInheritanceDiagram, fetchInheritanceSVGDiagram}
 import org.jpablo.typeexplorer.ui.app.components.state.{AppState, InheritanceTabState}
 import org.jpablo.typeexplorer.ui.app.components.TopLevel
 import org.scalajs.dom.document
 import zio.ZEnvironment
-import com.softwaremill.quicklens.*
 import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.InheritanceSvgDiagram
 
 object MainJS:

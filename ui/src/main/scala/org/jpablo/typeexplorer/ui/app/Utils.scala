@@ -23,3 +23,6 @@ extension [A] (set: Set[A])
     if b then set + a else set - a
 
 
+extension [K] (map: Map[K, Boolean])
+  def toggle(k: K, initial: Boolean = false) =
+    map + (k -> !map.getOrElse(k, initial))

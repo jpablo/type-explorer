@@ -73,7 +73,7 @@ object AppState:
 
   val $documents          = service[EventStream[List[TextDocumentsWithSource]]]
   val $projectPath        = service[Signal[Path]]
-  val $inheritanceSvgDiagram = service[Signal[InheritanceSvgDiagram]]
   val projectPath         = service[StoredString]
   val inheritanceTabState = service[InheritanceTabState]
+  val $inheritanceSvgDiagram = service[Signal[InheritanceSvgDiagram]]
 

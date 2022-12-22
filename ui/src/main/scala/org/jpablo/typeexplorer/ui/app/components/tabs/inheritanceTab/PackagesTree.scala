@@ -25,21 +25,21 @@ import zio.prelude.fx.ZPure
 object PackagesTree:
 
 
-  /** Builds a collapasable tree based on the given inheritance diagram.
+  /** Builds a collapsable tree based on the given inheritance diagram.
     *
     * @param $diagram The diagram
     * @return A List of trees, one for each top level package name in the diagram: e.g. ["com..., ", "java.io..."]
     */
-  def build =
-    for inheritanceTabState <- AppState.inheritanceTabState yield
-      ($diagram: EventStream[InheritanceDiagram]) =>
-        for diagram <- $diagram yield
-          for tree <- diagram.toTrees yield
-            CollapsableTree(tree)(
-              renderNode = renderPackage(inheritanceTabState),
-              renderLeaf = renderNamespace(inheritanceTabState),
-              open = true
-            )
+  def apply(inheritanceTabState: InheritanceTabState, $diagram: EventStream[InheritanceDiagram]) =
+    val $open = Var(Map.empty[String, Boolean])
+    for diagram <- $diagram yield
+      for tree <- diagram.toTrees yield
+        CollapsableTree(tree)(
+          renderNode = renderPackage(inheritanceTabState),
+          renderLeaf = renderNamespace(inheritanceTabState, $open),
+          initial = true,
+          $open
+        )
 
   private def renderPackage(inheritanceTabState: InheritanceTabState)(packageLabel: String, packagePath: List[String]) =
     div(
@@ -59,14 +59,15 @@ object PackagesTree:
       )
     )
 
-  private def renderNamespace(inheritanceTabState: InheritanceTabState)(s: String, ns: Namespace) =
-    val uri = encodeURIComponent(ns.symbol.toString)
+  private def renderNamespace(inheritanceTabState: InheritanceTabState, $open: Var[Map[String, Boolean]])(s: String, ns: Namespace) =
+    val symStr = ns.symbol.toString
+    val uri = encodeURIComponent(symStr)
     val $isActive = inheritanceTabState.$activeSymbols.signal.map(_.contains(ns.symbol))
 
     Collapsable(
       nodeLabel =
         div(
-          idAttr := ns.symbol.toString,
+          idAttr := symStr,
           cls := "inline-block w-full focus:bg-blue-100",
           tabIndex := 0,
           div(
@@ -77,7 +78,7 @@ object PackagesTree:
             cls := "p-0.5 font-['JetBrains_Mono']",
             cls.toggle("bg-blue-200 rounded", "noop") <-- $isActive,
             href  := "#elem_" + uri,
-            title := ns.symbol.toString,
+            title := symStr,
             ns.displayName,
             onClick --> { _ =>
               inheritanceTabState.activeSymbols.toggle(ns.symbol)
@@ -92,7 +93,10 @@ object PackagesTree:
             title := m.symbol.toString,
             m.displayName
           )
-        }
+        },
+      // namespaces start closed
+      control =
+        Collapsable.Control.from(symStr, initial = false, $open)
     )
 
   /** The "stereotype" is an element indicating which kind of namespace we have:

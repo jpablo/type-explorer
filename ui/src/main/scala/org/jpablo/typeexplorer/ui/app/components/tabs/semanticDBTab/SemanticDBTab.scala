@@ -1,23 +1,16 @@
 package org.jpablo.typeexplorer.ui.app.components.tabs.semanticDBTab
 
 import com.raquo.laminar.api.L.*
-import com.raquo.airstream.core.EventStream
-import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
 import org.jpablo.typeexplorer.ui.app.client.fetchSourceCode
 import org.jpablo.typeexplorer.ui.app.components.tabs.semanticDBTab.{SemanticDBText, SemanticDBTree}
 import org.jpablo.typeexplorer.ui.app.Path
-import org.jpablo.typeexplorer.shared.models
-import zio.prelude.fx.ZPure
 import org.jpablo.typeexplorer.ui.app.components.state.AppState
-import com.raquo.airstream.core.Signal
-import org.scalajs.dom.html
-import com.raquo.laminar.nodes.ReactiveHtmlElement
 
 
 def SemanticDBTab =
   for
-    fetchSourceCode <- fetchSourceCode
-    $documents  <- AppState.$documents
+    $projectPath <- AppState.$projectPath
+    $documents   <- AppState.$documents
   yield
     val $selectedSemanticDb = EventBus[Path]
 
@@ -31,7 +24,7 @@ def SemanticDBTab =
       $selectedDocument
         .collect { case (_, Some(documentsWithSource)) => documentsWithSource.documents.headOption }
         .collect { case Some(doc) => Path(doc.uri) }
-        .flatMap(fetchSourceCode)
+        .flatMap(fetchSourceCode($projectPath))
 
     div(
       cls := "grid h-full grid-cols-3",

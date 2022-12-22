@@ -30,7 +30,6 @@ object InheritanceTab:
   def build =
     for
       $inheritanceSvgDiagram <- AppState.$inheritanceSvgDiagram
-      packagesTree           <- PackagesTree.build
       inheritanceTabState    <- AppState.inheritanceTabState
     yield
       val $filterBySymbolName = Var("")
@@ -96,7 +95,7 @@ object InheritanceTab:
             ),
             Search(placeholder := "filter", controlled(value <-- $filterBySymbolName, onInput.mapToValue --> $filterBySymbolName)).small
           ),
-          div(cls := "overflow-auto", children <-- packagesTree($filteredDiagram))
+          div(cls := "overflow-auto", children <-- PackagesTree(inheritanceTabState, $filteredDiagram))
         ),
         // --- toolbar ---
         div(cls := "flex gap-4 ml-2",
