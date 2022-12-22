@@ -20,11 +20,11 @@ object SemanticDBTree:
     for documentsWithSource <- $documents yield
       val $open = Var(Map.empty[String, Boolean])
       for fileTree <- Tree.fromPaths(documentsWithSource.map(buildPath)) yield
+        val mkControl = Collapsable.Control(false, $open)
         CollapsableTree(fileTree)(
           renderNode = (b, path) => span(cls := "whitespace-nowrap", b),
-          renderLeaf = renderDocWithSource($selectedSemanticDb, $open),
-          initial = true,
-          $open
+          renderLeaf = renderDocWithSource($selectedSemanticDb, mkControl),
+          mkControl
         )
 
   private def buildPath(doc: TextDocumentsWithSource) =
@@ -32,7 +32,7 @@ object SemanticDBTree:
     (all.init, all.last, doc)
 
 
-  private def renderDocWithSource($selectedSemanticDb: EventBus[Path], $open: Var[Map[String, Boolean]])(name: String, docWithSource: TextDocumentsWithSource) = {
+  private def renderDocWithSource($selectedSemanticDb: EventBus[Path], mkControl: String => Collapsable.Control)(name: String, docWithSource: TextDocumentsWithSource) = {
     val uri = docWithSource.semanticDbUri
     Collapsable(
       nodeLabel =
@@ -44,12 +44,12 @@ object SemanticDBTree:
             name
           )
         ),
-      nodeContents = docWithSource.documents.map(renderTextDocument($open)),
-      Collapsable.Control.from(uri, false, $open)
+      nodeContents = docWithSource.documents.map(renderTextDocument(mkControl)),
+      mkControl(uri)
     )
   }
 
-  private def renderTextDocument($open: Var[Map[String, Boolean]])(doc: TextDocument) =
+  private def renderTextDocument(mkControl: String => Collapsable.Control)(doc: TextDocument) =
     Collapsable(
       nodeLabel =
         span(
@@ -57,11 +57,11 @@ object SemanticDBTree:
           doc.uri
         ),
       nodeContents =
-        doc.symbols.sortBy(_.symbol).map(renderSymbolInformation($open)),
-      Collapsable.Control.from(doc.uri, false, $open)
+        doc.symbols.sortBy(_.symbol).map(renderSymbolInformation(mkControl)),
+      mkControl(doc.uri)
     )
 
-  private def renderSymbolInformation($open: Var[Map[String, Boolean]])(si: SymbolInformation) =
+  private def renderSymbolInformation(mkControl: String => Collapsable.Control)(si: SymbolInformation) =
     Collapsable(
       nodeLabel =
         span(
@@ -71,7 +71,7 @@ object SemanticDBTree:
         ),
       nodeContents =
         List(li("symbol: ", si.symbol)),
-      Collapsable.Control.from(si.symbol, false, $open)
+      mkControl(si.symbol)
     )
 
 end SemanticDBTree

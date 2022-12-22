@@ -36,9 +36,8 @@ object PackagesTree:
       for tree <- diagram.toTrees yield
         CollapsableTree(tree)(
           renderNode = renderPackage(inheritanceTabState),
-          renderLeaf = renderNamespace(inheritanceTabState, $open),
-          initial = true,
-          $open
+          renderLeaf = renderNamespace(inheritanceTabState, Collapsable.Control(startOpen = false, $open)),
+          Collapsable.Control(startOpen = true, $open)
         )
 
   private def renderPackage(inheritanceTabState: InheritanceTabState)(packageLabel: String, packagePath: List[String]) =
@@ -59,7 +58,7 @@ object PackagesTree:
       )
     )
 
-  private def renderNamespace(inheritanceTabState: InheritanceTabState, $open: Var[Map[String, Boolean]])(s: String, ns: Namespace) =
+  private def renderNamespace(inheritanceTabState: InheritanceTabState, mkControl: String => Collapsable.Control)(s: String, ns: Namespace) =
     val symStr = ns.symbol.toString
     val uri = encodeURIComponent(symStr)
     val $isActive = inheritanceTabState.$activeSymbols.signal.map(_.contains(ns.symbol))
@@ -94,9 +93,7 @@ object PackagesTree:
             m.displayName
           )
         },
-      // namespaces start closed
-      control =
-        Collapsable.Control.from(symStr, initial = false, $open)
+      control = mkControl(symStr)
     )
 
   /** The "stereotype" is an element indicating which kind of namespace we have:

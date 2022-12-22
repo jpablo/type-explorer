@@ -15,11 +15,14 @@ object Collapsable:
 
   class Control private (val $isOpen: Signal[Boolean], val toggle: Observer[Boolean])
 
+  // This is Sub-Var or Var-projection of sorts.
+  // The method Var#zoom does not provide an easy way to update the value of the Var
+  // without an Owner.
   object Control:
-    def from(key: String, initial: Boolean, $open: Var[Map[String, Boolean]]) =
-      Control(
-        $open.signal.map(_.getOrElse(key, initial)),
-        Observer[Boolean](_ => $open.update(_.toggle(key, initial)))
+    def apply(startOpen: Boolean, $open: Var[Map[String, Boolean]])(key: String) =
+      new Control(
+        $open.signal.map(_.getOrElse(key, startOpen)),
+        Observer[Boolean](_ => $open.update(_.toggle(key, startOpen)))
       )
 
 
@@ -40,12 +43,12 @@ object Collapsable:
 object Icons:
 
   def chevron(
-    $open: Signal[Boolean],
-    mods: Modifier[Anchor]*
+    $isOpen: Signal[Boolean],
+    mods   : Modifier[Anchor]*
   ) =
     a(
       cls := "bi inline-block w-5",
-      cls <-- $open.map(o => if o then "bi-chevron-down" else "bi-chevron-right"),
+      cls <-- $isOpen.map(o => if o then "bi-chevron-down" else "bi-chevron-right"),
     ).amend(mods)
 
   def fileBinary =

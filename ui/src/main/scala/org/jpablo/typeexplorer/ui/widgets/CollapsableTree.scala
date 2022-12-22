@@ -8,16 +8,15 @@ def CollapsableTree[A](
 )(
   renderNode: (String, List[String]) => HtmlElement,
   renderLeaf: (String, A) => HtmlElement,
-  initial   : Boolean,
-  $open     : Var[Map[String, Boolean]],
+  mkControl : String => Collapsable.Control
 )
 : HtmlElement = t match
   case Tree.Node(label, path, children) =>
     val key = path.mkString(".") ++ "." + label
     Collapsable(
       nodeLabel    = renderNode(label, path),
-      nodeContents = children.map(tree => CollapsableTree(tree)(renderNode, renderLeaf, initial, $open)),
-      Collapsable.Control.from(key, initial, $open)
+      nodeContents = children.map(tree => CollapsableTree(tree)(renderNode, renderLeaf, mkControl)),
+      mkControl(key)
     )
   case Tree.Leaf(label, data) =>
     renderLeaf(label, data)
