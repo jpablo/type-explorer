@@ -19,10 +19,10 @@ object Collapsable:
   // The method Var#zoom does not provide an easy way to update the value of the Var
   // without an Owner.
   object Control:
-    def apply(startOpen: Boolean, $open: Var[Map[String, Boolean]])(key: String) =
+    def apply(startOpen: Boolean, $openState: Var[Map[String, Boolean]])(key: String) =
       new Control(
-        $open.signal.map(_.getOrElse(key, startOpen)),
-        Observer[Boolean](_ => $open.update(_.toggle(key, startOpen)))
+        $openState.signal.map(_.getOrElse(key, startOpen)),
+        Observer[Boolean](_ => $openState.update(_.toggle(key, startOpen)))
       )
 
 

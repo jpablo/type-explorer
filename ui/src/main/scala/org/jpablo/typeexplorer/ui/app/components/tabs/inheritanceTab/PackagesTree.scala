@@ -28,16 +28,16 @@ object PackagesTree:
   /** Builds a collapsable tree based on the given inheritance diagram.
     *
     * @param $diagram The diagram
-    * @return A List of trees, one for each top level package name in the diagram: e.g. ["com..., ", "java.io..."]
+    * @return A List of trees, one for each top level package in the diagram: e.g. ["com..., ", "java.io..."]
     */
-  def apply(inheritanceTabState: InheritanceTabState, $diagram: EventStream[InheritanceDiagram]) =
-    val $open = Var(Map.empty[String, Boolean])
+  def apply(inheritanceTabState: InheritanceTabState, $diagram: EventStream[InheritanceDiagram]): EventStream[List[HtmlElement]] =
+    val $openState = Var(Map.empty[String, Boolean])
     for diagram <- $diagram yield
       for tree <- diagram.toTrees yield
         CollapsableTree(tree)(
           renderNode = renderPackage(inheritanceTabState),
-          renderLeaf = renderNamespace(inheritanceTabState, Collapsable.Control(startOpen = false, $open)),
-          Collapsable.Control(startOpen = true, $open)
+          renderLeaf = renderNamespace(inheritanceTabState, Collapsable.Control(startOpen = false, $openState)),
+          Collapsable.Control(startOpen = true, $openState)
         )
 
   private def renderPackage(inheritanceTabState: InheritanceTabState)(packageLabel: String, packagePath: List[String]) =
@@ -75,7 +75,7 @@ object PackagesTree:
           ),
           a(
             cls := "p-0.5 font-['JetBrains_Mono']",
-            cls.toggle("bg-blue-200 rounded", "noop") <-- $isActive,
+            cls.toggle("bg-blue-200 rounded") <-- $isActive,
             href  := "#elem_" + uri,
             title := symStr,
             ns.displayName,

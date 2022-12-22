@@ -86,8 +86,8 @@ case class InheritanceTabState(
     val combined = $inheritanceDiagram.combineWith($canvasSelection.signal)
     composeEvents(ep)(_.sample(combined)) --> { (diagram, selection) =>
       if selection.nonEmpty then
-        val newSymbols = selection.foldLeft(diagram)(f).symbols
-        $activeSymbols.update(_ ++ newSymbols)
+        val diagram1 = selection.foldLeft(InheritanceDiagram.empty)((acc, s) => f(diagram, s) ++ acc)
+        $activeSymbols.update(_ ++ diagram1.symbols)
     }
 
 

@@ -119,8 +119,6 @@ object InheritanceDiagramSpec extends ZIOSpecDefault {
         val filtered =
           diagram.filterSymbols(Set(base1.symbol -> related, base2.symbol -> related))
 
-        val filtered2 = diagram.allParents(base1.symbol)
-
         val expected =
           InheritanceDiagram(
             arrows = Set(base1.symbol -> base0.symbol, base2.symbol -> base0.symbol),
