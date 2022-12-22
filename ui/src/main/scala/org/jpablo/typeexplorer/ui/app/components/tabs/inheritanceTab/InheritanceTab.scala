@@ -137,8 +137,8 @@ object InheritanceTab:
 
         case ns: NamespaceElement =>
           if e.metaKey then
-            ns.select()
-            inheritanceTabState.canvasSelection.extend(ns.symbol)
+            ns.toggle()
+            inheritanceTabState.canvasSelection.toggle(ns.symbol)
           else
             diagram.unselectAll()
             ns.select()

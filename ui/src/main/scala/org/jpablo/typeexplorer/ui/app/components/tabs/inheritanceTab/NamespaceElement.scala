@@ -20,6 +20,11 @@ sealed trait SvgGroupElement(val ref: dom.SVGGElement):
   def unselect() =
     ref.removeStyle("outline")
 
+  def toggle() =
+    ref.getStyle("outline") match
+      case Some(_) => unselect()
+      case None    => select()
+
 
 class NamespaceElement(ref: dom.SVGGElement) extends SvgGroupElement(ref):
   def prefix = NamespaceElement.prefix
