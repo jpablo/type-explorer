@@ -3,6 +3,7 @@ package org.jpablo.typeexplorer.shared.inheritance
 import org.jpablo.typeexplorer.shared.tree.Tree
 import zio.json.*
 import zio.Chunk
+import zio.prelude.{Commutative, Identity}
 
 import scala.meta.internal.semanticdb.SymbolInformation.Kind
 import scala.meta.internal.semanticdb.{ClassSignature, MethodSignature, Scope, Signature, SymbolInformation, SymbolOccurrence, TextDocument, TextDocuments, Type, TypeRef, TypeSignature, ValueSignature}
@@ -13,17 +14,6 @@ import java.util.jar.Attributes.Name
 import scala.annotation.{tailrec, targetName}
 
 type Arrow = (Symbol, Symbol)
-
-enum Related:
-  case Parents, Children
-
-object Related:
-  given JsonCodec[Related] =
-    JsonCodec(JsonEncoder[String].contramap(_.toString), JsonDecoder[String].map(Related.valueOf))
-
-
-import Related.*
-
 
 
 /** A simplified representation of entities and subtype relationships
@@ -54,8 +44,6 @@ case class InheritanceDiagram(
   private lazy val nsByKind: Map[NamespaceKind, Set[Namespace]] =
     namespaces.groupBy(_.kind)
 
-  def directRelatives(related: Related): Symbol => Set[Symbol] =
-    if related == Parents then directParents else directChildren
 
   // /**
   //   * Follow all arrows related to the given symbol.
@@ -116,21 +104,21 @@ case class InheritanceDiagram(
 
   // Note: doesn't handle loops.
   // How efficient is this compared to the tail rec version above?
-  def unfold(symbol: Symbol, related: Symbol => Set[Symbol]): Set[Symbol] =
-    Set.unfold(Set(symbol)) { ss =>
+  def unfold(symbols: Set[Symbol], related: Symbol => Set[Symbol]): Set[Symbol] =
+    Set.unfold(symbols) { ss =>
       val ss2 = ss.flatMap(related)
       if ss2.isEmpty then None else Some((ss2, ss2))
     }.flatten
 
 
-  private def allRelated(s: Symbol, r: Symbol => Set[Symbol]): InheritanceDiagram =
-    subdiagram(unfold(s, r) + s)
+  private def allRelated(ss: Set[Symbol], r: Symbol => Set[Symbol]): InheritanceDiagram =
+    subdiagram(unfold(ss, r) ++ ss)
 
-  def allParents(symbol: Symbol): InheritanceDiagram =
-    allRelated(symbol, directParents)
+  def parentsOfAll(symbols: Set[Symbol]): InheritanceDiagram = allRelated(symbols, directParents)
+  def childrenOfAll(symbols: Set[Symbol]): InheritanceDiagram = allRelated(symbols, directChildren)
 
-  def allChildren(symbol: Symbol): InheritanceDiagram =
-    allRelated(symbol, directChildren)
+  def parentsOf(symbol: Symbol): InheritanceDiagram = allRelated(Set(symbol), directParents)
+  def childrenOf(symbol: Symbol): InheritanceDiagram = allRelated(Set(symbol), directChildren)
 
 
   lazy val toTrees: List[Tree[Namespace]] =
@@ -149,31 +137,10 @@ case class InheritanceDiagram(
       namespaces = namespaces ++ other.namespaces
     )
 
-  /** Creates a new subdiagram with all related symbols.
-    *
-    * @param symbol
-    * @param related If empty only `symbol` will be used.
-    * @return
-    */
-  def findRelated(symbol: Symbol, related: Set[Related]): InheritanceDiagram =
-    related.foldLeft(subdiagram(Set(symbol))) { case (acc, r) =>
-      val d = r match
-        case Parents => allParents(symbol)
-        case Children => allChildren(symbol)
-      acc ++ d
-    }
-
-  /** Creates a new subdiagram with all related symbols.
-    */
-  def filterSymbols(symbols: Set[(Symbol, Set[Related])]): InheritanceDiagram =
-    val initial = subdiagram(symbols.map(_._1))
-    val disjoint = symbols.map(findRelated).foldLeft(initial)(_ ++ _)
-    subdiagram(disjoint.symbols)
-
 
   /** Creates a new subdiagram with all the symbols containing the given String.
     */
-  def filterBySymbols(str: String): InheritanceDiagram =
+  def filterBySymbolName(str: String): InheritanceDiagram =
     subdiagram(symbols.filter(_.toString.toLowerCase.contains(str.toLowerCase)))
 
 
@@ -182,6 +149,11 @@ end InheritanceDiagram
 
 
 object InheritanceDiagram:
+
+  given Commutative[InheritanceDiagram] with Identity[InheritanceDiagram] with
+    def identity = InheritanceDiagram.empty
+    def combine(l: => InheritanceDiagram, r: => InheritanceDiagram) = l ++ r
+
 
   // TODO: make this configurable
   val excluded =

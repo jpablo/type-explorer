@@ -6,16 +6,11 @@ import zio.Scope
 import zio.json.*
 
 import org.jpablo.typeexplorer.shared.webApp.InheritanceReq
-import org.jpablo.typeexplorer.shared.inheritance.Related.*
 import org.jpablo.typeexplorer.shared.models
 
 object ModelsSpec extends ZIOSpecDefault {
 
   override def spec = suite("Models Spec") (
-    test("serialize Related") {
-      assertTrue(Parents.toJson == """"Parents"""") &&
-      assertTrue(Children.toJson == """"Children"""")
-    },
 
     test("Serialize InheritanceReq") {
       val json = """

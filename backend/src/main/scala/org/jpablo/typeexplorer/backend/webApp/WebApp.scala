@@ -2,7 +2,7 @@ package org.jpablo.typeexplorer.backend.webApp
 
 import org.jpablo.typeexplorer.backend.backends.plantuml.toSVG
 import org.jpablo.typeexplorer.backend.semanticdb.All
-import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, InheritanceExamples, Related}
+import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, InheritanceExamples}
 import org.jpablo.typeexplorer.shared.inheritance.{PlantUML, PlantumlInheritance}
 import org.jpablo.typeexplorer.shared.models
 import org.jpablo.typeexplorer.shared.webApp.InheritanceReq

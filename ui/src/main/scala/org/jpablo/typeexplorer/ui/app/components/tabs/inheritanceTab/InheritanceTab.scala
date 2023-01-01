@@ -49,7 +49,7 @@ object InheritanceTab:
           .debounce(300)
           .map { (diagram: InheritanceDiagram, w, nsKind, filterByActive, activeSymbols) =>
             diagram
-              .orElse(w.isBlank, _.filterBySymbols(w))
+              .orElse(w.isBlank, _.filterBySymbolName(w))
               .subdiagramByKinds(nsKind)
               .orElse(!filterByActive, _.subdiagram(activeSymbols))
           }

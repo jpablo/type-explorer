@@ -59,17 +59,17 @@ object InheritanceDiagramSpec extends ZIOSpecDefault {
     suite("Related symbols spec")(
 
       test("unfold") {
-        val ss = diagram.unfold(classB.symbol, diagram.directParents)
+        val ss = diagram.unfold(Set(classB.symbol), diagram.directParents)
         assertTrue(ss == Set(classA, base1, base2, base0).map(_.symbol))
       },
 
-      test("subdiagram 1") {
+      test("subdiagram - single symbol") {
         val filtered = diagram.subdiagram(Set(classA.symbol))
         val expected = InheritanceDiagram(arrows = Set(), namespaces = Set(classA) )
         assertTrue(filtered == expected)
       },
 
-      test("subdiagram 2") {
+      test("subdiagram - multiple symbols") {
         val filtered = diagram.subdiagram(Set(classA, classB, classC).map(_.symbol))
         val expected =
           InheritanceDiagram(
@@ -79,8 +79,8 @@ object InheritanceDiagramSpec extends ZIOSpecDefault {
         assertTrue(filtered == expected)
       },
 
-      test("Find all parents v2 - simple case") {
-        val filtered = diagram.allParents(classA.symbol)
+      test("Find all parents - simple case") {
+        val filtered = diagram.parentsOf(classA.symbol)
 
         val expected =
           InheritanceDiagram(
@@ -95,8 +95,8 @@ object InheritanceDiagramSpec extends ZIOSpecDefault {
         assertTrue(filtered == expected)
       },
 
-      test("Find all parents v2") {
-        val filtered = diagram.allParents(classB.symbol)
+      test("Find all parents") {
+        val filtered = diagram.parentsOf(classB.symbol)
 
         val expected =
           InheritanceDiagram(
@@ -112,84 +112,38 @@ object InheritanceDiagramSpec extends ZIOSpecDefault {
         assertTrue(filtered == expected)
       },
 
-      // -----------------------------------------
-
-      test("Find all parents - simple case") {
-        val related = Set(Related.Parents)
-        val filtered =
-          diagram.filterSymbols(Set(base1.symbol -> related, base2.symbol -> related))
-
-        val expected =
-          InheritanceDiagram(
-            arrows = Set(base1.symbol -> base0.symbol, base2.symbol -> base0.symbol),
-            namespaces = Set(base0, base1, base2)
-          )
-        assertTrue(filtered == expected)
-      },
-
-      test("Find all parents") {
-        val related = Set(Related.Parents)
-        val filtered =
-          diagram.filterSymbols(Set(classB.symbol -> related, classC.symbol -> related))
-        val expected = diagram
-
-        assertTrue(filtered == expected)
-      },
-
-      test("Find all children - simple case") {
-        val filtered =
-          diagram.filterSymbols(Set(classA.symbol -> Set(Related.Children)))
-
-        val expected =
-          InheritanceDiagram(
-            arrows = Set(classB.symbol -> classA.symbol, classC.symbol -> classA.symbol),
-            namespaces = Set(classA, classB, classC)
-          )
-        assertTrue(filtered == expected)
-      },
-
-      test("Find all children") {
-        val related = Set(Related.Children)
-        val filtered =
-          diagram.filterSymbols(Set(base0.symbol -> related))
-
-        val expected = diagram
-
-        assertTrue(filtered == expected)
-      },
-
-      test("Find specific") {
-        val related = Set.empty[Related]
-        val filtered =
-          diagram.filterSymbols(
-            Set(
-              base0.symbol -> related,
-              base1.symbol -> related,
-              base2.symbol -> related
-            )
-          )
-
-        val expected = InheritanceDiagram(
-            arrows = Set(base1.symbol -> base0.symbol, base2.symbol -> base0.symbol),
-            namespaces = Set(base0, base1, base2)
+      test("parentsOfAll") {
+        val base3  = makeClass("base3")
+        val base4  = makeClass("base4")
+        val diagram2 = InheritanceDiagram(
+          Set(base3.symbol -> base4.symbol),
+          Set(base3, base4)
+        )
+        val diagram3 = diagram ++ diagram2
+        val result = diagram3.parentsOfAll(Set(base2.symbol, base3.symbol)).symbols
+        val expected = Set(
+          base2.symbol, base0.symbol,
+          base3.symbol, base4.symbol
         )
 
-        assertTrue(filtered == expected)
+        assertTrue(result == expected)
       },
 
-      test("Include all arrows") {
-        val filtered =
-          diagram.filterSymbols(
-            Set(
-              base1.symbol -> Set(Related.Parents),
-              base2.symbol -> Set(),
-            )
-          )
-        val expected = InheritanceDiagram(
-            arrows = Set(base1.symbol -> base0.symbol, base2.symbol -> base0.symbol),
-            namespaces = Set(base0, base1, base2)
+      test("childrenOfAll") {
+        val base3  = makeClass("base3")
+        val base4  = makeClass("base4")
+        val diagram2 = InheritanceDiagram(
+          Set(base3.symbol -> base4.symbol),
+          Set(base3, base4)
         )
-        assertTrue(filtered == expected)
+        val diagram3 = diagram ++ diagram2
+        val result = diagram3.childrenOfAll(Set(classA.symbol, base4.symbol)).symbols
+        val expected = Set(
+          classA.symbol, classB.symbol, classC.symbol,
+          base3.symbol, base4.symbol
+        )
+
+        assertTrue(result == expected)
       }
     )
 }
