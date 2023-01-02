@@ -53,7 +53,7 @@ object PackagesTree:
           for parent <- ev.target.path.find(_.classList.contains("te-package-name")) do
             val symbols = parent.querySelectorAll(s"[id ^= '$prefix']").map(e => Symbol(e.id))
             inheritanceTabState.activeSymbols.extend(symbols)
-            inheritanceTabState.canvasSelection.extend(symbols)
+            inheritanceTabState.canvasSelection.extend(symbols.toSet)
         }
       )
     )

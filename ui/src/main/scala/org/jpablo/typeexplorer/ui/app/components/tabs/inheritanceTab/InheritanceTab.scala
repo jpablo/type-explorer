@@ -114,6 +114,42 @@ object InheritanceTab:
               composeEvents(onClick)(_.sample($inheritanceSvgDiagram)) --> (_.zoom(1.1))
             ).outline.secondary.tiny
           ),
+
+          ul(
+            tabIndex := 0, 
+            cls := "menu menu-horizontal px-1",
+            li(
+              tabIndex := 0,
+              a(
+                cls := "py-0",
+                "Selection",
+                svg.svg(
+                  svg.cls := "fill-current",
+                  svg.xmlns := "http://www.w3.org/2000/svg",
+                  svg.width := "20",
+                  svg.height := "20",
+                  svg.viewBox := "0 0 20 20",
+                  svg.path( svg.d := "M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z")
+                )
+              ),
+              ul(
+                cls := "p-2 bg-base-100",
+                li(
+                  a(
+                    "Select parents",
+                    composeEvents(onClick)(_.sample(inheritanceTabState.$inheritanceDiagram, $inheritanceSvgDiagram)) --> inheritanceTabState.canvasSelection.selectParents.tupled
+                  )
+                ),
+                li(
+                  a(
+                    "Select children",
+                    composeEvents(onClick)(_.sample(inheritanceTabState.$inheritanceDiagram, $inheritanceSvgDiagram)) --> inheritanceTabState.canvasSelection.selectChildren.tupled
+                  )
+                )
+              )
+            ),
+          ),
+          
           ButtonGroup(
             Button("children", disabled <-- $selectionEmpty, inheritanceTabState.addSelectionChildren(onClick)).outline.secondary.tiny,
             Button("parents",  disabled <-- $selectionEmpty, inheritanceTabState.addSelectionParents(onClick)).outline.secondary.tiny,

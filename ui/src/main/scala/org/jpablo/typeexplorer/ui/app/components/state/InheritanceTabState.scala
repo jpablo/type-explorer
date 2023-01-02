@@ -8,22 +8,17 @@ import com.raquo.laminar.api.L.*
 import com.softwaremill.quicklens.*
 import io.laminext.syntax.core.{StoredString, storedString}
 import org.jpablo.typeexplorer.shared.inheritance.PlantumlInheritance.Options
-import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, Related}
+import org.jpablo.typeexplorer.shared.inheritance.InheritanceDiagram
 import org.jpablo.typeexplorer.shared.models
 import org.jpablo.typeexplorer.ui.app.Path
 import org.scalajs.dom
 import zio.json.*
 import org.jpablo.typeexplorer.ui.app.toggle
+import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.InheritanceSvgDiagram
 
 case class InheritanceTabState(
-  activeSymbolsJson: StoredString,
-  /**
-    * Derived from $activeSymbols
-    */
+  activeSymbolsJson  : StoredString,
   $inheritanceDiagram: Signal[InheritanceDiagram] = Signal.fromValue(InheritanceDiagram.empty),
-  /**
-    * primary selection: based on direct user interactions
-    */
   $activeSymbols   : Var[Set[models.Symbol]] = Var(Set.empty),
   $options         : Var[Options] = Var(Options()),
   $canvasSelection : Var[Set[models.Symbol]] = Var(Set.empty),
@@ -39,11 +34,24 @@ case class InheritanceTabState(
     def extend(symbol: models.Symbol): Unit =
       $canvasSelection.update(_ + symbol)
 
-    def extend(symbols: collection.Seq[models.Symbol]): Unit =
+    def extend(symbols: Set[models.Symbol]): Unit =
       $canvasSelection.update(_ ++ symbols)
 
     def clear(): Unit =
       $canvasSelection.set(Set.empty)
+
+    def selectParents(fullDiagram: InheritanceDiagram, inheritanceSvgDiagram: InheritanceSvgDiagram): Unit =
+      selectRelated(_.parentsOfAll(_), fullDiagram, inheritanceSvgDiagram)
+
+    def selectChildren(fullDiagram: InheritanceDiagram, inheritanceSvgDiagram: InheritanceSvgDiagram): Unit =
+      selectRelated(_.childrenOfAll(_), fullDiagram, inheritanceSvgDiagram)
+
+    private def selectRelated(selector: (InheritanceDiagram, Set[models.Symbol]) => InheritanceDiagram, fullDiagram: InheritanceDiagram, inheritanceSvgDiagram: InheritanceSvgDiagram): Unit =
+      val subDiagram = fullDiagram.subdiagram($activeSymbols.now())
+      val newParents = selector(subDiagram, $canvasSelection.now()).symbols
+      extend(newParents)
+      inheritanceSvgDiagram.select(newParents)
+
 
 
   object activeSymbols:
@@ -71,13 +79,13 @@ case class InheritanceTabState(
     * Adds all children of the canvas selection to $activeSymbols
     */
   def addSelectionChildren[E <: dom.Event](ep: EventProp[E]) =
-    addSelectionWith(_.allChildren(_), ep)
+    addSelectionWith(_.childrenOf(_), ep)
 
   /**
     * Adds all parents of the canvas selection to $activeSymbols
     */
   def addSelectionParents[E <: dom.Event](ep: EventProp[E]) =
-    addSelectionWith(_.allParents(_), ep)
+    addSelectionWith(_.parentsOf(_), ep)
 
   /**
     * Updates $activeSymbols with the given function `f` and the current canvas selection.
