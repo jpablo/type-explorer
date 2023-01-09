@@ -47,8 +47,9 @@ case class InheritanceTabState(
       selectRelated(_.childrenOfAll(_), fullDiagram, inheritanceSvgDiagram)
 
     private def selectRelated(selector: (InheritanceDiagram, Set[models.Symbol]) => InheritanceDiagram, fullDiagram: InheritanceDiagram, inheritanceSvgDiagram: InheritanceSvgDiagram): Unit =
-      val subDiagram = fullDiagram.subdiagram($activeSymbols.now())
-      val newParents = selector(subDiagram, $canvasSelection.now()).symbols
+      val svgDiagram    = fullDiagram.subdiagram($activeSymbols.now())
+      val selection     = $canvasSelection.now()
+      val newParents    = selector(svgDiagram, selection).symbols
       extend(newParents)
       inheritanceSvgDiagram.select(newParents)
 
