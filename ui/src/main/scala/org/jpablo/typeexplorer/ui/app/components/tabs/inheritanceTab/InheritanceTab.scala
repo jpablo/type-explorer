@@ -24,7 +24,7 @@ import org.scalajs.dom.{DOMRect, EventTarget, console}
 object InheritanceTab:
 
   extension [A](a: A)
-    def orElse(b: Boolean, f: A => A): A =
+    private def orElse(b: Boolean, f: A => A): A =
       if b then a else f(a)
 
   def build =
@@ -36,7 +36,6 @@ object InheritanceTab:
       val $filterByNsKind     = Var(models.NamespaceKind.values.toSet)
       val $filterByActive     = Var(false)
       val $showOptions        = Var(false)
-      val $waitingAction      = Var(false)
       val modifySelection = modifyLens[Options]
       val $filteredDiagram =
         inheritanceTabState.$inheritanceDiagram
@@ -69,7 +68,7 @@ object InheritanceTab:
         )
 
       // --- container: two columns, two rows ---
-      div(cls := "grid h-full grid-cols-[1fr_4fr] grid-rows-[3em_auto]",
+      div(cls := "grid h-full grid-cols-[1fr_4fr_1fr] grid-rows-[3em_auto]",
         // --- packages tree ---
         div(cls := "overflow-auto p-1 row-start-1 row-end-3 border-r border-slate-300 flex flex-col",
           // --- controls ---
@@ -114,55 +113,38 @@ object InheritanceTab:
             Button("zoom +",
               composeEvents(onClick)(_.sample($inheritanceSvgDiagram)) --> (_.zoom(1.1))
             ).outline.secondary.tiny
-          ),
-
-          ul(
-            tabIndex := 0,
-            cls := "menu menu-horizontal menu-compact px-1",
-            li(
-              cls.toggle("disabled") <-- $selectionEmpty,
-              tabIndex := 0,
-
-              a(
-                "Selection",
-                svg.svg(
-                  svg.cls := "fill-current",
-                  svg.xmlns := "http://www.w3.org/2000/svg",
-                  svg.width := "20",
-                  svg.height := "20",
-                  svg.viewBox := "0 0 20 20",
-                  svg.path( svg.d := "M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z")
-                )
-              ),
-              ul(
-                cls := "menu-compact p-1 bg-base-100",
-                li(
-                  a("Remove", inheritanceTabState.removeSelection(onClick))
-                ),
-                li(
-                  a("Add parents", inheritanceTabState.addSelectionParents(onClick))
-                ),
-                li(
-                  a("Add children", inheritanceTabState.addSelectionChildren(onClick))
-                ),
-                li(
-                  a("Select parents",
-                    composeEvents(onClick)(_.sample(inheritanceTabState.$inheritanceDiagram, $inheritanceSvgDiagram)) -->
-                      inheritanceTabState.canvasSelection.selectParents.tupled
-                  )
-                ),
-                li(
-                  a(
-                    "Select children",
-                    composeEvents(onClick)(_.sample(inheritanceTabState.$inheritanceDiagram, $inheritanceSvgDiagram)) -->
-                      inheritanceTabState.canvasSelection.selectChildren.tupled
-                  )
-                )
+          )
+        ),
+        canvasContainer,
+        // --- options side bar ---
+        div(cls := "row-start-1 row-end-3 bg-red-100",
+          ul(cls := "menu menu-compact",
+            li(cls := "menu-title",
+              span("selection")
+            ),
+            li(cls.toggle("disabled") <-- $selectionEmpty,
+              a("Remove", disabled <-- $selectionEmpty, inheritanceTabState.removeSelection(onClick))
+            ),
+            li(cls.toggle("disabled") <-- $selectionEmpty,
+              a("Add parents", disabled <-- $selectionEmpty, inheritanceTabState.addSelectionParents(onClick))
+            ),
+            li(cls.toggle("disabled") <-- $selectionEmpty,
+              a("Add children", disabled <-- $selectionEmpty, inheritanceTabState.addSelectionChildren(onClick))
+            ),
+            li(cls.toggle("disabled") <-- $selectionEmpty,
+              a("Select parents", disabled <-- $selectionEmpty,
+                composeEvents(onClick)(_.sample(inheritanceTabState.$inheritanceDiagram, $inheritanceSvgDiagram)) -->
+                  inheritanceTabState.canvasSelection.selectParents.tupled
+              )
+            ),
+            li(cls.toggle("disabled") <-- $selectionEmpty,
+              a("Select children",
+                composeEvents(onClick)(_.sample(inheritanceTabState.$inheritanceDiagram, $inheritanceSvgDiagram)) -->
+                  inheritanceTabState.canvasSelection.selectChildren.tupled
               )
             )
           )
-        ),
-        canvasContainer
+        )
       )
 
   private def handleSvgClick
