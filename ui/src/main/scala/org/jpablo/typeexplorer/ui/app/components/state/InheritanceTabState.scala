@@ -72,11 +72,11 @@ case class InheritanceTabState(
       $activeSymbols.set(Set.empty)
 
   /**
-    * Removes all user-selected symbols (in the canvas) from $activeSymbols
+    * Modify `$canvasSelection` based on the given function `f`
     */
-  def removeSelection[E <: dom.Event](ep: EventProp[E]) =
+  def applyOnSelection[E <: dom.Event](f: (Set[models.Symbol], Set[models.Symbol]) => Set[models.Symbol])(ep: EventProp[E]) =
     composeEvents(ep)(_.sample($canvasSelection)) --> { selection =>
-      $activeSymbols.update(_ -- selection)
+      $activeSymbols.update(f(_, selection))
     }
 
   /**

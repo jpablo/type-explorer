@@ -129,7 +129,10 @@ object InheritanceTab:
               span("selection")
             ),
             li(cls.toggle("disabled") <-- $selectionEmpty,
-              a("Remove", disabled <-- $selectionEmpty, inheritanceTabState.removeSelection(onClick))
+              a("Remove", disabled <-- $selectionEmpty, inheritanceTabState.applyOnSelection((all, sel) => all -- sel)(onClick))
+            ),
+            li(cls.toggle("disabled") <-- $selectionEmpty,
+              a("Keep", disabled <-- $selectionEmpty, inheritanceTabState.applyOnSelection((_, sel) => sel)(onClick))
             ),
             li(cls.toggle("disabled") <-- $selectionEmpty,
               a("Add parents", disabled <-- $selectionEmpty, inheritanceTabState.addSelectionParents(onClick))
