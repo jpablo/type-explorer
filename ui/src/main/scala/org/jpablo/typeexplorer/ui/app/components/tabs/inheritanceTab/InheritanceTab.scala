@@ -74,28 +74,30 @@ object InheritanceTab:
         // --- packages tree ---
         div(cls := "overflow-auto p-1 row-start-1 row-end-3 border-r border-slate-300 flex flex-col",
           // --- controls ---
-          form(cls := "p-1",
-            LabeledCheckbox("show-options-toggle", "options",
-              $showOptions.signal,
-              Observer[Boolean](_ => $showOptions.update(!_)),
-              toggle = true
-            ),
-            $showOptions.signal.childWhenTrue(
-              div(
-                cls := "card p-1 mb-2 border-slate-300 border-[1px]",
-                div(cls := "card-body p-2",
-                  LabeledCheckbox(s"filter-by-active", "only active",
-                    $filterByActive.signal,
-                    Observer[Boolean](_ => $filterByActive.update(!_)),
-                    toggle = true
+          form(
+            div(cls := "card p-1 mb-2 border-slate-300 border-[1px]",
+              div(cls := "card-body p-2",
+                LabeledCheckbox("show-options-toggle", "options",
+                  $showOptions.signal,
+                  Observer[Boolean](_ => $showOptions.update(!_)),
+                  toggle = true
+                ),
+                $showOptions.signal.childWhenTrue(
+                  div(
+                    hr(),
+                    LabeledCheckbox(s"filter-by-active", "only active",
+                      $filterByActive.signal,
+                      Observer[Boolean](_ => $filterByActive.update(!_)),
+                      toggle = true
+                    ),
+                    hr(),
+                    for kind <- models.NamespaceKind.values.toList yield
+                      LabeledCheckbox(s"show-ns-kind-$kind", kind.toString,
+                        $filterByNsKind.signal.map(_.contains(kind)),
+                        $filterByNsKind.updater[Boolean]((set, b) => set.toggleWith(kind, b))
+                      )
                   ),
-                  hr(),
-                  for kind <- models.NamespaceKind.values.toList yield
-                    LabeledCheckbox(s"show-ns-kind-$kind", kind.toString,
-                      $filterByNsKind.signal.map(_.contains(kind)),
-                      $filterByNsKind.updater[Boolean]((set, b) => set.toggleWith(kind, b))
-                    )
-                )
+                ),
               ),
             ),
             Search(placeholder := "filter", controlled(value <-- $filterBySymbolName, onInput.mapToValue --> $filterBySymbolName)).small
