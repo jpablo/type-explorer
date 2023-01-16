@@ -47,11 +47,14 @@ case class InheritanceTabState(
       selectRelated(_.childrenOfAll(_), fullDiagram, inheritanceSvgDiagram)
 
     private def selectRelated(selector: (InheritanceDiagram, Set[models.Symbol]) => InheritanceDiagram, fullDiagram: InheritanceDiagram, inheritanceSvgDiagram: InheritanceSvgDiagram): Unit =
-      val svgDiagram    = fullDiagram.subdiagram($activeSymbols.now())
-      val selection     = $canvasSelection.now()
-      val newParents    = selector(svgDiagram, selection).symbols
-      extend(newParents)
-      inheritanceSvgDiagram.select(newParents)
+      val svgDiagram = fullDiagram.subdiagram($activeSymbols.now())
+      val selection  = $canvasSelection.now()
+      val relatedDiagram = selector(svgDiagram, selection)
+      val arrowSymbols = relatedDiagram.arrows.map((a, b) => models.Symbol(s"${b}_$a"))
+      extend(relatedDiagram.symbols)
+      extend(arrowSymbols)
+      inheritanceSvgDiagram.select(relatedDiagram.symbols)
+      inheritanceSvgDiagram.select(arrowSymbols)
 
 
 
