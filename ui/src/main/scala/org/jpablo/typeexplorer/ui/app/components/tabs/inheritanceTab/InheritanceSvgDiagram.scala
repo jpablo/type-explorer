@@ -6,7 +6,7 @@ import org.jpablo.typeexplorer.shared.models
 import org.scalajs.dom
 
 class InheritanceSvgDiagram(svg: dom.SVGElement):
-  svg.classList.add("bg-orange-100")
+  svg.removeStyle("background")
   // (more styles are set in style.scss)
 
   private def setDimensions(w: Int, h: Int) =

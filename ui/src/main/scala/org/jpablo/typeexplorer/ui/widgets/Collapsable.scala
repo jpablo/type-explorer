@@ -28,7 +28,7 @@ object Collapsable:
 
   def apply(nodeLabel: HtmlElement, nodeContents: Seq[HtmlElement], control: Control) =
     div(
-      cls := "collapsable-wrapper whitespace-nowrap bg-slate-100 cursor-pointer te-package-name",
+      cls := "collapsable-wrapper whitespace-nowrap cursor-pointer te-package-name",
       if nodeContents.isEmpty then
         span(cls := "bi inline-block w-5")
       else

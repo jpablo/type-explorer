@@ -35,7 +35,7 @@ object InheritanceTab:
       val $filterBySymbolName = Var("")
       val $filterByNsKind     = Var(models.NamespaceKind.values.toSet)
       val $filterByActive     = Var(false)
-      val $showOptions        = Var(false)
+      val $showOptions        = Var(true)
       val modifySelection = modifyLens[Options]
       val $filteredDiagram =
         inheritanceTabState.$inheritanceDiagram
@@ -55,7 +55,9 @@ object InheritanceTab:
           }
       val $selectionEmpty = inheritanceTabState.$canvasSelection.signal.map(_.isEmpty)
       val canvasContainer =
-        div(cls := "h-full overflow-auto border-t border-slate-300 p-1 row-start-2 row-end-3 bg-orange-100",
+        div(cls := "h-full overflow-auto border-t border-slate-300 p-1 row-start-2 row-end-3",
+          backgroundImage := "radial-gradient(hsla(var(--bc)/.2) .5px,hsla(var(--b2)/1) .5px)",
+          backgroundSize := "5px 5px",
           child <-- $inheritanceSvgDiagram.map { diagram =>
             val selection = inheritanceTabState.$canvasSelection.now()
             diagram.select(selection)
@@ -80,17 +82,20 @@ object InheritanceTab:
             ),
             $showOptions.signal.childWhenTrue(
               div(
-                cls := "bg-slate-200 p-1 mb-2",
-                LabeledCheckbox(s"filter-by-active", "only active",
-                  $filterByActive.signal,
-                  Observer[Boolean](_ => $filterByActive.update(!_)),
-                  toggle = true
-                ),
-                for kind <- models.NamespaceKind.values.toList yield
-                  LabeledCheckbox(s"show-ns-kind-$kind", kind.toString,
-                    $filterByNsKind.signal.map(_.contains(kind)),
-                    $filterByNsKind.updater[Boolean]((set, b) => set.toggleWith(kind, b))
-                  )
+                cls := "card p-1 mb-2 border-slate-300 border-[1px]",
+                div(cls := "card-body p-2",
+                  LabeledCheckbox(s"filter-by-active", "only active",
+                    $filterByActive.signal,
+                    Observer[Boolean](_ => $filterByActive.update(!_)),
+                    toggle = true
+                  ),
+                  hr(),
+                  for kind <- models.NamespaceKind.values.toList yield
+                    LabeledCheckbox(s"show-ns-kind-$kind", kind.toString,
+                      $filterByNsKind.signal.map(_.contains(kind)),
+                      $filterByNsKind.updater[Boolean]((set, b) => set.toggleWith(kind, b))
+                    )
+                )
               ),
             ),
             Search(placeholder := "filter", controlled(value <-- $filterBySymbolName, onInput.mapToValue --> $filterBySymbolName)).small
@@ -106,18 +111,18 @@ object InheritanceTab:
           ButtonGroup(
             Button("remove all",
               onClick --> (_ => inheritanceTabState.activeSymbols.clear())
-            ).outline.secondary.tiny,
+            ).tiny,
             Button("fit",
               composeEvents(onClick)(_.sample($inheritanceSvgDiagram)) --> (_.fitToRect(canvasContainer.ref.getBoundingClientRect()))
-            ).outline.secondary.tiny,
+            ).tiny,
             Button("zoom +",
               composeEvents(onClick)(_.sample($inheritanceSvgDiagram)) --> (_.zoom(1.1))
-            ).outline.secondary.tiny
+            ).tiny
           )
         ),
         canvasContainer,
-        // --- options side bar ---
-        div(cls := "row-start-1 row-end-3 bg-red-100",
+        // --- selection side bar ---
+        div(cls := "row-start-1 row-end-3 border-l border-slate-300 ",
           ul(cls := "menu menu-compact",
             li(cls := "menu-title",
               span("selection")
