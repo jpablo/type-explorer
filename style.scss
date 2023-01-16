@@ -27,5 +27,18 @@ svg {
       cursor: pointer;
     }
   }
+
+  g[id ^= link_] {
+    polygon {
+      fill: white;
+    }
+    &:hover {
+      path, polygon {
+        stroke: rgb(251 191 36) !important;
+        stroke-width: 3.0 !important;
+        cursor: pointer;
+      }
+    }
+  }
 }
 

@@ -10,8 +10,7 @@ class InheritanceSvgDiagram(svg: dom.SVGElement):
   // (more styles are set in style.scss)
 
   private def setDimensions(w: Int, h: Int) =
-    svg.setStyle("width",  s"${w}px")
-    svg.setStyle("height", s"${h}px")
+    svg.setStyle("width" -> s"${w}px", "height" -> s"${h}px")
 
   private def width = svg.getBoundingClientRect().width
   private def height = svg.getBoundingClientRect().height
@@ -22,25 +21,27 @@ class InheritanceSvgDiagram(svg: dom.SVGElement):
   def fitToRect(rect: dom.DOMRect) =
     zoom(scala.math.min(rect.width / width, rect.height / height))
 
+  private def selectableElements =
+    NamespaceElement.selectAll(svg) ++ LinkElement.selectAll(svg)
 
-  private def elements =
+  private def namespaceElements =
     NamespaceElement.selectAll(svg)
 
   def clusterElements(cluster: ClusterElement) =
-    elements.filter(_.id.startsWith(cluster.idWithSlashes))
+    namespaceElements.filter(_.id.startsWith(cluster.idWithSlashes))
 
   def clusters =
     ClusterElement.selectAll(svg)
 
   def elementSymbols: Set[models.Symbol] =
-    elements.map(_.symbol).toSet
+    namespaceElements.map(_.symbol).toSet
 
   def select(symbols: Set[models.Symbol]) =
-    for elem <- elements if symbols.contains(elem.symbol) do
+    for elem <- selectableElements if symbols.contains(elem.symbol) do
       elem.select()
 
   def unselectAll() =
-    elements.foreach(_.unselect())
+    selectableElements.foreach(_.unselect())
 
   def toLaminar =
     new ChildNode[dom.SVGElement] { val ref = svg }

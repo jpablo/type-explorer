@@ -9,21 +9,23 @@ import scala.util.matching.Regex
 sealed trait SvgGroupElement(val ref: dom.SVGGElement):
   def prefix : String
   def box: Option[dom.SVGElement]
+  private def selectKey = "outline"
+  private def selectStyle = "3px solid rgb(245 158 11)"
 
-  private val selectStyle = "3px solid rgb(245 158 11)"
   val id = ref.id.stripPrefix(prefix)
   val symbol = models.Symbol(id)
+  private val selectedClass = "selected"
 
   def select() =
-    ref.setStyle("outline", selectStyle)
+    ref.classList.add(selectedClass)
+    ref.setStyle(selectKey -> selectStyle)
 
   def unselect() =
-    ref.removeStyle("outline")
+    ref.classList.remove(selectedClass)
+    ref.removeStyle(selectKey)
 
   def toggle() =
-    ref.getStyle("outline") match
-      case Some(_) => unselect()
-      case None    => select()
+    if ref.classList.contains(selectedClass) then unselect() else select()
 
 
 class NamespaceElement(ref: dom.SVGGElement) extends SvgGroupElement(ref):
@@ -79,6 +81,34 @@ object ClusterElement:
     e.querySelectorAll(selector).flatMap(from)
 
 
+class LinkElement(ref: dom.SVGGElement) extends SvgGroupElement(ref):
+  def prefix = LinkElement.prefix
+  def box: Option[dom.SVGElement] = None
+
+  override def select() =
+    for el <- ref.children do
+      el.setStyle("stroke" -> "rgb(245 158 11)", "stroke-width" -> "3.0")
+
+  override def unselect() =
+    for el <- ref.children do
+      el.setStyle("stroke" -> "#181818", "stroke-width" -> "1.0")
+
+
+
+object LinkElement:
+  val prefix = "link_"
+  private val selector = s"g[id ^= $prefix]"
+
+  def from(e: dom.Element): Option[LinkElement] =
+    if e.isLink then
+      Some(LinkElement(e.asInstanceOf[dom.SVGGElement]))
+    else
+      None
+
+  def selectAll(e: dom.Element) =
+    e.querySelectorAll(selector).flatMap(from)
+
+
 extension (e: dom.Element)
   def path =
     e +: LazyList.unfold(e)(e => Option(e.parentNode.asInstanceOf[dom.Element]).map(e => (e, e)))
@@ -88,6 +118,7 @@ extension (e: dom.Element)
 
   def isNamespace = e.isDiagramElement(NamespaceElement.prefix)
   def isPackage = e.isDiagramElement(ClusterElement.prefix)
+  def isLink = e.isDiagramElement(LinkElement.prefix)
 
   def fill = e.getAttribute("fill")
   def fill_=(c: String) = e.setAttribute("fill", c)
@@ -96,22 +127,23 @@ extension (e: dom.Element)
   private def stylePattern(styleName: String): Regex =
     s"$styleName:([^;]*;)".r
 
-  def setStyle(styleName: String, styleValue: String): Unit =
-    val style: String | Null = e.getAttribute("style")
-    val pair = s"$styleName:$styleValue;"
-    e.setAttribute("style",
-      if style != null then
-        if style.contains(styleName + ":") then
-          style.replaceFirst(stylePattern(styleName).regex, pair)
+  def setStyle(keyValues: (String, String)*): Unit =
+    for (styleName, styleValue) <- keyValues do
+      val style: String | Null = e.getAttribute("style")
+      val pair = s"$styleName:$styleValue;"
+      e.setAttribute("style",
+        if style != null then
+          if style.contains(styleName + ":") then
+            style.replaceFirst(stylePattern(styleName).regex, pair)
+          else
+            style + ":" + pair
         else
-          style + ":" + pair
-      else
-        pair
-    )
+          pair
+      )
 
   def removeStyle(styleName: String): Unit =
     if getStyle(styleName).isDefined then
-      setStyle(styleName, "")
+      setStyle(styleName -> "")
 
   def getStyle(styleName: String): Option[String] =
     for

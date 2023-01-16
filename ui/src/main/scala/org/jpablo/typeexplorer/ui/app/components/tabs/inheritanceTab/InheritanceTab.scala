@@ -35,7 +35,7 @@ object InheritanceTab:
       val $filterBySymbolName = Var("")
       val $filterByNsKind     = Var(models.NamespaceKind.values.toSet)
       val $filterByActive     = Var(false)
-      val $showOptions        = Var(true)
+      val $showOptions        = Var(false)
       val modifySelection = modifyLens[Options]
       val $filteredDiagram =
         inheritanceTabState.$inheritanceDiagram
@@ -75,31 +75,30 @@ object InheritanceTab:
         div(cls := "overflow-auto p-1 row-start-1 row-end-3 border-r border-slate-300 flex flex-col",
           // --- controls ---
           form(
-            div(cls := "card p-1 mb-2 border-slate-300 border-[1px]",
-              div(cls := "card-body p-2",
-                LabeledCheckbox("show-options-toggle", "options",
-                  $showOptions.signal,
-                  Observer[Boolean](_ => $showOptions.update(!_)),
-                  toggle = true
-                ),
-                $showOptions.signal.childWhenTrue(
-                  div(
-                    hr(),
-                    LabeledCheckbox(s"filter-by-active", "only active",
-                      $filterByActive.signal,
-                      Observer[Boolean](_ => $filterByActive.update(!_)),
-                      toggle = true
-                    ),
-                    hr(),
-                    for kind <- models.NamespaceKind.values.toList yield
-                      LabeledCheckbox(s"show-ns-kind-$kind", kind.toString,
-                        $filterByNsKind.signal.map(_.contains(kind)),
-                        $filterByNsKind.updater[Boolean]((set, b) => set.toggleWith(kind, b))
-                      )
-                  ),
-                ),
-              ),
+            LabeledCheckbox("show-options-toggle", "options",
+              $showOptions.signal,
+              Observer[Boolean](_ => $showOptions.update(!_)),
+              toggle = true
             ),
+            $showOptions.signal.childWhenTrue {
+              div(cls := "card card-compact p-1 mb-2 border-slate-300 border-[1px]",
+                div(cls := "card-body p-1",
+                  LabeledCheckbox(s"filter-by-active", "only active",
+                    $filterByActive.signal,
+                    Observer[Boolean](_ => $filterByActive.update(!_)),
+                    toggle = true
+                  ),
+                  hr(),
+                  for kind <- models.NamespaceKind.values.toList yield
+                    LabeledCheckbox(
+                      id = s"show-ns-kind-$kind",
+                      kind.toString,
+                      $checked = $filterByNsKind.signal.map(_.contains(kind)),
+                      clickHandler = $filterByNsKind.updater[Boolean]((set, b) => set.toggleWith(kind, b))
+                    )
+                ),
+              )
+            },
             Search(placeholder := "filter", controlled(value <-- $filterBySymbolName, onInput.mapToValue --> $filterBySymbolName)).small
           ),
           div(cls := "overflow-auto", children <-- PackagesTree(inheritanceTabState, $filteredDiagram))
@@ -160,20 +159,20 @@ object InheritanceTab:
     val selectedElement: Option[SvgGroupElement] =
       e.target.path
         .takeWhile(_.isInstanceOf[dom.SVGElement])
-        .map(e => NamespaceElement.from(e) orElse ClusterElement.from(e))
+        .map(e => NamespaceElement.from(e) orElse ClusterElement.from(e) orElse LinkElement.from(e))
         .collectFirst { case Some(g) => g }
 
     selectedElement match
       case Some(g) => g match
 
-        case ns: NamespaceElement =>
+        case _: (LinkElement | NamespaceElement) =>
           if e.metaKey then
-            ns.toggle()
-            inheritanceTabState.canvasSelection.toggle(ns.symbol)
+            g.toggle()
+            inheritanceTabState.canvasSelection.toggle(g.symbol)
           else
             diagram.unselectAll()
-            ns.select()
-            inheritanceTabState.canvasSelection.replace(ns.symbol)
+            g.select()
+            inheritanceTabState.canvasSelection.replace(g.symbol)
 
         case cluster: ClusterElement =>
           if !e.metaKey then
