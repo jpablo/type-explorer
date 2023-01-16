@@ -4,15 +4,15 @@ label[for ^= show-ns-kind-] {
 }
 
 svg {
-
   // clusters are packages
   g[id ^= cluster_] {
     &:hover {
       outline: 3px solid rgb(251 191 36);
       cursor: pointer;
     }
-    path {
+    path, line {
       fill: #e6e6e6;
+      stroke-width: 1.0 !important;
     }
   }
 
