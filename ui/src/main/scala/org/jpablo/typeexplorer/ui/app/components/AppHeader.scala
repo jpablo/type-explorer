@@ -6,7 +6,6 @@ import io.laminext.syntax.core.*
 import org.jpablo.typeexplorer.ui.app.components.state.AppState
 import org.jpablo.typeexplorer.ui.daisyui.*
 import org.scalajs.dom
-import zio.prelude.fx.ZPure
 
 enum DiagramType:
   case Inheritance

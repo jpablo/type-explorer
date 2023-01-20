@@ -20,7 +20,6 @@ import scalajs.js.URIUtils.encodeURIComponent
 import org.jpablo.typeexplorer.ui.daisyui.*
 import org.scalajs.dom
 import org.scalajs.dom.html
-import zio.prelude.fx.ZPure
 
 object PackagesTree:
 

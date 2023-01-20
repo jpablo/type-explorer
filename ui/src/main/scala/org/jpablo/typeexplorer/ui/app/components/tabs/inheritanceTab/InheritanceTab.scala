@@ -27,11 +27,10 @@ object InheritanceTab:
     private def orElse(b: Boolean, f: A => A): A =
       if b then a else f(a)
 
-  def build =
-    for
-      $inheritanceSvgDiagram <- AppState.$inheritanceSvgDiagram
-      inheritanceTabState    <- AppState.inheritanceTabState
-    yield
+  def build(
+    inheritanceTabState: InheritanceTabState,
+    $inheritanceSvgDiagram: Signal[InheritanceSvgDiagram]
+  ) =
       val $filterBySymbolName = Var("")
       val $filterByNsKind     = Var(models.NamespaceKind.values.toSet)
       val $filterByActive     = Var(false)

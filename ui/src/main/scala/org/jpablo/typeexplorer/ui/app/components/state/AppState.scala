@@ -17,12 +17,12 @@ import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.Inheritance
 import org.scalajs.dom
 import zio.Tag
 import zio.json.*
-import zio.prelude.fx.ZPure
 
 
 case class AppState(
   inheritanceTabState: InheritanceTabState,
   projectPath        : StoredString,
+  $devMode           : Var[Boolean]
 ):
   val $projectPath: Signal[Path] =
     projectPath.signal.map(Path.apply)
@@ -49,12 +49,6 @@ case class AppState(
 end AppState
 
 
-type Service[A] =
-  ZPure[Nothing, Unit, Unit, A, Nothing, A]
-
-def service[A: Tag]: Service[A] =
-  ZPure.service[Unit, A]
-
 object AppState:
   def build(fetchDiagram: Path => Signal[InheritanceDiagram]) =
     val projectPath = storedString("projectPath", initial = "")
@@ -63,7 +57,8 @@ object AppState:
     val state0 =
       AppState(
         InheritanceTabState(activeSymbolsJson),
-        projectPath
+        projectPath,
+        Var(false)
       )
     // now update with some calculated values
     state0
@@ -71,9 +66,4 @@ object AppState:
       .modify(_.inheritanceTabState.$activeSymbols).setTo(Var(state0.storedActiveSymbols))
 
 
-  val $documents          = service[EventStream[List[TextDocumentsWithSource]]]
-  val $projectPath        = service[Signal[Path]]
-  val projectPath         = service[StoredString]
-  val inheritanceTabState = service[InheritanceTabState]
-  val $inheritanceSvgDiagram = service[Signal[InheritanceSvgDiagram]]
 

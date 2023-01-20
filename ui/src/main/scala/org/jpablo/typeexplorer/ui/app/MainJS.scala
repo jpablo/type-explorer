@@ -12,23 +12,9 @@ import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.Inheritance
 object MainJS:
 
   def main(args: Array[String]): Unit =
-    val appState     = AppState.build(fetchInheritanceDiagram)
-    val $documents   = fetchDocuments(appState.$projectPath)
+    val appState = AppState.build(fetchInheritanceDiagram)
+    val $documents = fetchDocuments(appState.$projectPath)
     val $inheritanceSvgDiagram = fetchInheritanceSVGDiagram(appState).startWith(InheritanceSvgDiagram.empty)
+    val app = TopLevel(appState, $inheritanceSvgDiagram, $documents)
 
-    val appEnv =
-      ZEnvironment(
-        appState.$projectPath,
-        $documents,
-        $inheritanceSvgDiagram,
-        appState.inheritanceTabState,
-        appState.projectPath
-      )
-
-    val app =
-      TopLevel.provideEnvironment(appEnv)
-
-    render(
-      document.querySelector("#app"),
-      app.run
-    )
+    render(document.querySelector("#app"), app)
