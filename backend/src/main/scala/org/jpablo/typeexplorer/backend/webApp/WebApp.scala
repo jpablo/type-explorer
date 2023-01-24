@@ -105,7 +105,7 @@ object WebApp extends ZIOAppDefault:
   def readTextDocumentsWithSource(path: Option[List[String]]): Option[TextDocumentsWithSourceSeq] =
     for p <- combinePaths(path) yield
       TextDocumentsWithSourceSeq(
-        All.scan(p).map { case (path, d) =>
+        All.scan(p).map { (path, d) =>
           TextDocumentsWithSource(path.toString).withDocuments(d.documents)
         }
       )

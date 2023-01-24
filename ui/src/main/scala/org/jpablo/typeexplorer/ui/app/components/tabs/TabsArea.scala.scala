@@ -34,7 +34,7 @@ def TabsArea(
     TabContent(
       cls := "flex-1 overflow-auto border-t border-slate-300",
       inheritance.Pane(inheritanceCanvas),
-      appState.$devMode.signal.childWhenTrue(inheritance.Pane(semanticDBTabContent))
+      appState.$devMode.signal.childWhenTrue(semanticDB.Pane(semanticDBTabContent))
     )
   )
 

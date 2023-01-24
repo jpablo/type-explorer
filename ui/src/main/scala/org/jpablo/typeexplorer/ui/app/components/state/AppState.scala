@@ -58,7 +58,7 @@ object AppState:
       AppState(
         InheritanceTabState(activeSymbolsJson),
         projectPath,
-        Var(false)
+        Var(true)
       )
     // now update with some calculated values
     state0

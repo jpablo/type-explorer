@@ -7,7 +7,7 @@ import zio.prelude.{Commutative, Identity}
 
 import scala.meta.internal.semanticdb.SymbolInformation.Kind
 import scala.meta.internal.semanticdb.{ClassSignature, MethodSignature, Scope, Signature, SymbolInformation, SymbolOccurrence, TextDocument, TextDocuments, Type, TypeRef, TypeSignature, ValueSignature}
-import org.jpablo.typeexplorer.shared.models.{Method, Namespace, NamespaceKind, Symbol}
+import org.jpablo.typeexplorer.shared.models.{Method, Namespace, NamespaceKind, Symbol, SymbolRange}
 
 import scala.meta.internal.semanticdb
 import java.util.jar.Attributes.Name
@@ -172,37 +172,43 @@ object InheritanceDiagram:
   val empty: InheritanceDiagram = new InheritanceDiagram(Set.empty)
 
   def fromTextDocuments(textDocuments: TextDocuments): InheritanceDiagram =
-    val allSymbols: Map[Symbol, SymbolInformation] =
-      textDocuments.documents
-        .flatMap(_.symbols)
-        .distinct
-        .filterNot(si => excluded.exists(si.symbol.contains))
-        .map(s => Symbol(s.symbol) -> s)
-        .toMap
+    val allSymbols =
+      for
+        doc <- textDocuments.documents
+        occs = doc.occurrences.map(so => (so.symbol, so)).toMap
+        si <- doc.symbols
+        if !excluded.exists(si.symbol.contains)
+      yield
+        Symbol(si.symbol) -> (si, doc.uri, occs.get(si.symbol))
+
+    val symbolInfosMap = allSymbols.map { case (s, (si, _, _)) => s -> si }.toMap
 
     val namespaces =
       for
-        (symbol, symbolInfo) <- allSymbols
+        (symbol, (symbolInfo, docURI, symbolOcc: Option[SymbolOccurrence])) <- allSymbols
         signature    <- symbolInfo.signature.asNonEmpty.toSeq
         clsSignature <- signature match
           case cs: ClassSignature => List(cs)
           case _ =>  List.empty
-        nsKind       = translateKind(symbolInfo.kind)
+        nsKind = translateKind(symbolInfo.kind)
         declarations = clsSignature
           .declarations
-          .map(_.symlinks
-            .filterNot(si => excluded.exists(si.contains))
-            .map(Symbol(_))
-          )
+          .map {
+            _.symlinks
+              .filterNot(si => excluded.exists(si.contains))
+              .map(Symbol(_))
+          }
           .toSeq.flatten
 
-        methods      = declarations.map(method(allSymbols))
-        namespace    =
+        methods = declarations.map(method(symbolInfosMap))
+        namespace =
           Namespace(
             symbol      = symbol,
             displayName = symbolInfo.displayName,
             kind        = nsKind,
-            methods     = methods.toList.sortBy(_.displayName)
+            methods     = methods.toList.sortBy(_.displayName),
+            documentURI = Some(docURI),
+            range       = symbolOcc.map(SymbolRange.from)
           )
       yield
         namespace -> clsSignature.parents
@@ -221,7 +227,7 @@ object InheritanceDiagram:
 
     InheritanceDiagram(
       arrows     = arrows.toSet,
-      namespaces = namespaces.keys.toSet ++ missingSymbols(arrows.map(_._2).toList, allSymbols)
+      namespaces = namespaces.map(_._1).toSet ++ missingSymbols(arrows.map(_._2).toList, symbolInfosMap)
     )
 
   end fromTextDocuments

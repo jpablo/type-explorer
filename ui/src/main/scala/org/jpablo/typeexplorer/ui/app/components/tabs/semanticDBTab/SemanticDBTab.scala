@@ -16,7 +16,7 @@ import org.jpablo.typeexplorer.ui.app.components.state.AppState
 
     val $selectedDocument =
       $selectedSemanticDb.events.combineWith($documents)
-        .map { (path, documents) =>
+        .map { (path, documents: List[TextDocumentsWithSource]) =>
           path -> documents.find(_.semanticDbUri == path.toString)
         }
 
