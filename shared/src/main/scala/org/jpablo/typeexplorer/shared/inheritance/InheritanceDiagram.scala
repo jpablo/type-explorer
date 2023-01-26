@@ -143,6 +143,9 @@ case class InheritanceDiagram(
   def filterBySymbolName(str: String): InheritanceDiagram =
     subdiagram(symbols.filter(_.toString.toLowerCase.contains(str.toLowerCase)))
 
+  def filterBy(p: Namespace => Boolean): InheritanceDiagram =
+    subdiagram(namespaces.filter(p).map(_.symbol))
+
 
 end InheritanceDiagram
 

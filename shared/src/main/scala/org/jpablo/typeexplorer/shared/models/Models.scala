@@ -48,7 +48,7 @@ case class Namespace(
   range      : Option[SymbolRange] = None
 ):
   lazy val inTest =
-    documentURI.map(_.contains("src/test"))
+    documentURI.exists(_.contains("src/test"))
 
 object Namespace:
   given JsonCodec[SymbolRange] = DeriveJsonCodec.gen

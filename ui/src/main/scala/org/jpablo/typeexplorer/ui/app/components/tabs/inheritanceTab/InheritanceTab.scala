@@ -34,6 +34,7 @@ object InheritanceTab:
       val $filterBySymbolName = Var("")
       val $filterByNsKind     = Var(models.NamespaceKind.values.toSet)
       val $filterByActive     = Var(false)
+      val $filterByTestScope  = Var(false)
       val $showOptions        = Var(false)
       val modifySelection = modifyLens[Options]
       val $filteredDiagram =
@@ -42,15 +43,17 @@ object InheritanceTab:
             $filterBySymbolName.signal,
             $filterByNsKind.signal,
             $filterByActive.signal,
+            $filterByTestScope.signal,
             inheritanceTabState.$activeSymbols.signal
           )
           .changes
           .debounce(300)
-          .map { (diagram: InheritanceDiagram, w, nsKind, filterByActive, activeSymbols) =>
+          .map { (diagram: InheritanceDiagram, w, nsKind, filterByActive, filterByTestScope, activeSymbols) =>
             diagram
               .orElse(w.isBlank, _.filterBySymbolName(w))
               .subdiagramByKinds(nsKind)
               .orElse(!filterByActive, _.subdiagram(activeSymbols))
+              .orElse(filterByTestScope, _.filterBy(!_.inTest))
           }
       val $selectionEmpty = inheritanceTabState.$canvasSelection.signal.map(_.isEmpty)
       val canvasContainer =
@@ -85,6 +88,12 @@ object InheritanceTab:
                   LabeledCheckbox(s"filter-by-active", "only active",
                     $filterByActive.signal,
                     Observer[Boolean](_ => $filterByActive.update(!_)),
+                    toggle = true
+                  ),
+                  hr(),
+                  LabeledCheckbox(s"filter-by-scope", "Tests",
+                    $filterByTestScope.signal,
+                    Observer[Boolean](_ => $filterByTestScope.update(!_)),
                     toggle = true
                   ),
                   hr(),
