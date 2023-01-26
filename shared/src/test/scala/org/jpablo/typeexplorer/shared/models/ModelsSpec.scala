@@ -5,7 +5,7 @@ import zio.test.Assertion.*
 import zio.Scope
 import zio.json.*
 
-import org.jpablo.typeexplorer.shared.webApp.InheritanceReq
+import org.jpablo.typeexplorer.shared.webApp.InheritanceRequest
 import org.jpablo.typeexplorer.shared.models
 
 object ModelsSpec extends ZIOSpecDefault {
@@ -28,11 +28,11 @@ object ModelsSpec extends ZIOSpecDefault {
       }
       """
       val expected =
-        InheritanceReq(
+        InheritanceRequest(
           List("/Users/jpablo/GitHub/Airstream"),
           Set(models.Symbol("com/raquo/airstream/core/EventStream#"))
         )
-      assertTrue(json.fromJson[InheritanceReq] == Right(expected))
+      assertTrue(json.fromJson[InheritanceRequest] == Right(expected))
     },
 
     test("Serialize InheritanceReq without options") {
@@ -47,12 +47,12 @@ object ModelsSpec extends ZIOSpecDefault {
       }
       """
       val expected =
-        InheritanceReq(
+        InheritanceRequest(
           List("/Users/jpablo/GitHub/Airstream"),
           Set(models.Symbol("com/raquo/airstream/core/EventStream#"))
         )
 
-      assertTrue(json.fromJson[InheritanceReq] == Right(expected))
+      assertTrue(json.fromJson[InheritanceRequest] == Right(expected))
     }
   )
 

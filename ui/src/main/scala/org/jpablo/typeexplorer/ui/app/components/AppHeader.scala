@@ -12,7 +12,7 @@ enum DiagramType:
   case CallGraph
 
 
-def AppHeader(projectPath: StoredString) =
+def AppHeader(projectPath: StoredString): Div =
   val onEnterPress  = onKeyPress.filter(_.keyCode == dom.KeyCode.Enter)
   val onEscapePress = onKeyDown.filter(_.keyCode == dom.KeyCode.Escape)
   val editBasePath  = Var(false)

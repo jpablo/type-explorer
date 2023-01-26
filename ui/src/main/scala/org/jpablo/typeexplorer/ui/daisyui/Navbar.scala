@@ -10,7 +10,7 @@ import com.raquo.domtypes.generic.codecs.BooleanAsIsCodec
 import org.scalajs.dom.html.LI
 import com.raquo.laminar.nodes.ReactiveHtmlElement
 
-def Navbar(brand: String, items: Li*): Element =
+def Navbar(brand: String, items: Li*): Div =
   div(
     cls := "navbar bg-base-100",
     div(

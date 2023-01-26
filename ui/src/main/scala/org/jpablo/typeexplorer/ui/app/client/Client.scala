@@ -8,7 +8,7 @@ import org.jpablo.typeexplorer.protos.{TextDocumentsWithSource, TextDocumentsWit
 import org.jpablo.typeexplorer.shared.inheritance.PlantumlInheritance.Options
 import org.jpablo.typeexplorer.shared.inheritance.InheritanceDiagram
 import org.jpablo.typeexplorer.shared.models.{Namespace, Symbol}
-import org.jpablo.typeexplorer.shared.webApp.InheritanceReq
+import org.jpablo.typeexplorer.shared.webApp.InheritanceRequest
 import org.jpablo.typeexplorer.ui.app.Path
 import org.jpablo.typeexplorer.ui.app.components.DiagramType
 import org.jpablo.typeexplorer.ui.app.components.state.AppState
@@ -68,7 +68,7 @@ def fetchInheritanceSVGDiagram(appState: AppState): EventStream[InheritanceSvgDi
       if projectPath.toString.isEmpty then
         EventStream.fromValue(svg.svg().ref)
       else
-        val body = InheritanceReq(List(projectPath.toString), symbols, InheritanceReq.Config(options.fields, options.signatures))
+        val body = InheritanceRequest(List(projectPath.toString), symbols, InheritanceRequest.Config(options.fields, options.signatures))
         val req = Fetch.post(basePath + "inheritance", body.toJson)
         req.text.map { fetchResponse =>
           parser

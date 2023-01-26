@@ -5,7 +5,7 @@ import org.jpablo.typeexplorer.backend.semanticdb.All
 import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, InheritanceExamples}
 import org.jpablo.typeexplorer.shared.inheritance.{PlantUML, PlantumlInheritance}
 import org.jpablo.typeexplorer.shared.models
-import org.jpablo.typeexplorer.shared.webApp.InheritanceReq
+import org.jpablo.typeexplorer.shared.webApp.InheritanceRequest
 
 import io.github.arainko.ducktape.*
 import java.net.URI
@@ -34,7 +34,7 @@ object WebApp extends ZIOAppDefault:
   val appZ = Http.collectZIO[Request] {
     case req @ Method.POST -> !! / "inheritance" =>
 
-      def createDiagram(ireq: InheritanceReq): Task[PlantUML] =
+      def createDiagram(ireq: InheritanceRequest): Task[PlantUML] =
         for
           docs <- toTask(readTextDocumentsWithSource(Some(ireq.paths)), error = "No path provided")
           diagram = InheritanceDiagram.fromTextDocuments(toTextDocuments(docs))
@@ -45,7 +45,7 @@ object WebApp extends ZIOAppDefault:
 
       for
         body <- req.body.asString
-        ireq <- toTask(body.fromJson[InheritanceReq])
+        ireq <- toTask(body.fromJson[InheritanceRequest])
         puml <- createDiagram(ireq)
         svgText <- puml.toSVG("laminar")
       yield
@@ -53,7 +53,7 @@ object WebApp extends ZIOAppDefault:
   } @@ cors(corsConfig)
 
 
-  val app: Http[Any, Nothing, Request, Response] = Http.collect[Request] {
+  val app = Http.collect[Request] {
 
     case req @ Method.GET -> !! / "semanticdb" =>
       (req |> getPath |> readTextDocumentsWithSource)
