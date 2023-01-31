@@ -23,6 +23,8 @@ object Symbol:
   def empty: Symbol = ""
   extension (s: Symbol) def toString: String = s
   given JsonCodec[Symbol] = JsonCodec.string
+  given JsonFieldDecoder[Symbol] = JsonFieldDecoder.string
+  given JsonFieldEncoder[Symbol] = JsonFieldEncoder.string
 
 
 case class Package(name: String)

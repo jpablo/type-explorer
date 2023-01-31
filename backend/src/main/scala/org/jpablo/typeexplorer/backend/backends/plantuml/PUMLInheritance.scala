@@ -47,7 +47,7 @@ def plantumlExample(): Unit =
         models.Symbol("org/scalajs/dom/EventTarget#")
       )
     )
-  val diagramStr = PlantumlInheritance.fromInheritanceDiagram(diagram)
+  val diagramStr = PlantumlInheritance.fromInheritanceDiagram(diagram, Map.empty)
   println(diagramStr.diagram)
 //  println("-------------------")
 //  var svg = renderDiagram("laminar", diagram)

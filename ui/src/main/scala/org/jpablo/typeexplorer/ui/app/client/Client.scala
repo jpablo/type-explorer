@@ -5,8 +5,8 @@ import concurrent.ExecutionContext.Implicits.global
 import io.laminext.fetch.*
 import io.laminext.syntax.core.StoredString
 import org.jpablo.typeexplorer.protos.{TextDocumentsWithSource, TextDocumentsWithSourceSeq}
-import org.jpablo.typeexplorer.shared.inheritance.PlantumlInheritance.Options
-import org.jpablo.typeexplorer.shared.inheritance.InheritanceDiagram
+import org.jpablo.typeexplorer.shared.inheritance.PlantumlInheritance.DiagramOptions
+import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, PlantumlInheritance}
 import org.jpablo.typeexplorer.shared.models.{Namespace, Symbol}
 import org.jpablo.typeexplorer.shared.webApp.InheritanceRequest
 import org.jpablo.typeexplorer.ui.app.Path
@@ -62,13 +62,13 @@ def fetchInheritanceSVGDiagram(appState: AppState): EventStream[InheritanceSvgDi
         appState.inheritanceTabState.$options.signal
       )
   for
-    (projectPath, symbols, options) <- combined
+    (projectPath, symbols: Map[Symbol, Option[PlantumlInheritance.SymbolOptions]], options) <- combined
     parser = dom.DOMParser()
     svgElement <-
       if projectPath.toString.isEmpty then
         EventStream.fromValue(svg.svg().ref)
       else
-        val body = InheritanceRequest(List(projectPath.toString), symbols, InheritanceRequest.Config(options.fields, options.signatures))
+        val body = InheritanceRequest(List(projectPath.toString), symbols.toList, options)
         val req = Fetch.post(basePath + "inheritance", body.toJson)
         req.text.map { fetchResponse =>
           parser

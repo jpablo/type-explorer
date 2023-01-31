@@ -10,7 +10,7 @@ import com.raquo.laminar.api.L.*
 import com.softwaremill.quicklens.*
 import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
 import org.jpablo.typeexplorer.shared.inheritance.InheritanceDiagram
-import org.jpablo.typeexplorer.shared.inheritance.PlantumlInheritance.Options
+import org.jpablo.typeexplorer.shared.inheritance.PlantumlInheritance.DiagramOptions
 import org.jpablo.typeexplorer.shared.models
 import org.jpablo.typeexplorer.ui.app.components.state.{AppState, InheritanceTabState}
 import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.PackagesTree
@@ -36,7 +36,7 @@ object InheritanceTab:
       val $filterByActive     = Var(false)
       val $filterByTestScope  = Var(false)
       val $showOptions        = Var(false)
-      val modifySelection = modifyLens[Options]
+      val modifySelection = modifyLens[DiagramOptions]
       val $filteredDiagram =
         inheritanceTabState.$inheritanceDiagram
           .combineWith(
@@ -52,7 +52,7 @@ object InheritanceTab:
             diagram
               .orElse(w.isBlank, _.filterBySymbolName(w))
               .subdiagramByKinds(nsKind)
-              .orElse(!filterByActive, _.subdiagram(activeSymbols))
+              .orElse(!filterByActive, _.subdiagram(activeSymbols.keySet))
               .orElse(filterByTestScope, _.filterBy(!_.inTest))
           }
       val $selectionEmpty = inheritanceTabState.$canvasSelection.signal.map(_.isEmpty)
@@ -114,8 +114,8 @@ object InheritanceTab:
         // --- toolbar ---
         div(cls := "flex gap-4 ml-2",
           ButtonGroup(
-            OptionsToggle("fields-checkbox-1", "fields",     _.fields,     modifySelection(_.fields), inheritanceTabState),
-            OptionsToggle("fields-checkbox-2", "signatures", _.signatures, modifySelection(_.signatures), inheritanceTabState),
+            OptionsToggle("fields-checkbox-1", "fields",     _.showFields,     modifySelection(_.showFields), inheritanceTabState),
+            OptionsToggle("fields-checkbox-2", "signatures", _.showSignatures, modifySelection(_.showSignatures), inheritanceTabState),
           ),
           ButtonGroup(
             Button("remove all",
@@ -140,7 +140,7 @@ object InheritanceTab:
               a("Remove", disabled <-- $selectionEmpty, inheritanceTabState.applyOnSelection((all, sel) => all -- sel)(onClick))
             ),
             li(cls.toggle("disabled") <-- $selectionEmpty,
-              a("Keep", disabled <-- $selectionEmpty, inheritanceTabState.applyOnSelection((_, sel) => sel)(onClick))
+              a("Keep", disabled <-- $selectionEmpty, inheritanceTabState.applyOnSelection((all, sel) => all.filter((k, _) => sel.contains(k)))(onClick))
             ),
             li(cls.toggle("disabled") <-- $selectionEmpty,
               a("Add parents", disabled <-- $selectionEmpty, inheritanceTabState.addSelectionParents(onClick))
@@ -199,7 +199,7 @@ object InheritanceTab:
         inheritanceTabState.canvasSelection.clear()
 
 
-  private def OptionsToggle(id: String, labelStr: String, field: Options => Boolean, modifyField: PathLazyModify[Options, Boolean], selectedSymbols: InheritanceTabState) =
+  private def OptionsToggle(id: String, labelStr: String, field: DiagramOptions => Boolean, modifyField: PathLazyModify[DiagramOptions, Boolean], selectedSymbols: InheritanceTabState) =
     LabeledCheckbox(
       id = id,
       labelStr = labelStr,

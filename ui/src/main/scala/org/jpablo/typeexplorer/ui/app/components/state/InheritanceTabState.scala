@@ -7,8 +7,8 @@ import com.raquo.airstream.state.Var
 import com.raquo.laminar.api.L.*
 import com.softwaremill.quicklens.*
 import io.laminext.syntax.core.{StoredString, storedString}
-import org.jpablo.typeexplorer.shared.inheritance.PlantumlInheritance.Options
-import org.jpablo.typeexplorer.shared.inheritance.InheritanceDiagram
+import org.jpablo.typeexplorer.shared.inheritance.PlantumlInheritance.DiagramOptions
+import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, PlantumlInheritance}
 import org.jpablo.typeexplorer.shared.models
 import org.jpablo.typeexplorer.ui.app.Path
 import org.scalajs.dom
@@ -16,11 +16,17 @@ import zio.json.*
 import org.jpablo.typeexplorer.ui.app.toggle
 import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.InheritanceSvgDiagram
 
+
+object InheritanceTabState:
+  type ActiveSymbols = Map[models.Symbol, Option[PlantumlInheritance.SymbolOptions]]
+
+import InheritanceTabState.ActiveSymbols
+
 case class InheritanceTabState(
   activeSymbolsJson  : StoredString,
   $inheritanceDiagram: Signal[InheritanceDiagram] = Signal.fromValue(InheritanceDiagram.empty),
-  $activeSymbols   : Var[Set[models.Symbol]] = Var(Set.empty),
-  $options         : Var[Options] = Var(Options()),
+  $activeSymbols   : Var[ActiveSymbols] = Var(Map.empty),
+  $options         : Var[DiagramOptions] = Var(DiagramOptions()),
   $canvasSelection : Var[Set[models.Symbol]] = Var(Set.empty),
 ):
 
@@ -47,7 +53,7 @@ case class InheritanceTabState(
       selectRelated(_.childrenOfAll(_), fullDiagram, inheritanceSvgDiagram)
 
     private def selectRelated(selector: (InheritanceDiagram, Set[models.Symbol]) => InheritanceDiagram, fullDiagram: InheritanceDiagram, inheritanceSvgDiagram: InheritanceSvgDiagram): Unit =
-      val svgDiagram = fullDiagram.subdiagram($activeSymbols.now())
+      val svgDiagram = fullDiagram.subdiagram($activeSymbols.now().keySet)
       val selection  = $canvasSelection.now()
       val relatedDiagram = selector(svgDiagram, selection)
       val arrowSymbols = relatedDiagram.arrows.map((a, b) => models.Symbol(s"${b}_$a"))
@@ -60,21 +66,26 @@ case class InheritanceTabState(
 
   object activeSymbols:
     def toggle(symbol: models.Symbol): Unit =
-      $activeSymbols.update(_.toggle(symbol))
+      $activeSymbols.update { symbols =>
+        if symbols.contains(symbol) then
+          symbols - symbol
+        else
+          symbols + (symbol -> None)
+      }
 
     def extend(symbol: models.Symbol): Unit =
-      $activeSymbols.update(_ + symbol)
+      $activeSymbols.update(_ + (symbol -> None))
 
     def extend(symbols: collection.Seq[models.Symbol]): Unit =
-      $activeSymbols.update(_ ++ symbols)
+      $activeSymbols.update(_ ++ symbols.map(_ -> None))
 
     def clear() =
-      $activeSymbols.set(Set.empty)
+      $activeSymbols.set(Map.empty)
 
   /**
     * Modify `$canvasSelection` based on the given function `f`
     */
-  def applyOnSelection[E <: dom.Event](f: (Set[models.Symbol], Set[models.Symbol]) => Set[models.Symbol])(ep: EventProp[E]) =
+  def applyOnSelection[E <: dom.Event](f: (ActiveSymbols, Set[models.Symbol]) => ActiveSymbols)(ep: EventProp[E]) =
     composeEvents(ep)(_.sample($canvasSelection)) --> { selection =>
       $activeSymbols.update(f(_, selection))
     }
@@ -99,7 +110,7 @@ case class InheritanceTabState(
     composeEvents(ep)(_.sample(combined)) --> { (diagram, selection) =>
       if selection.nonEmpty then
         val diagram1 = selection.foldLeft(InheritanceDiagram.empty)((acc, s) => f(diagram, s) ++ acc)
-        $activeSymbols.update(_ ++ diagram1.symbols)
+        activeSymbols.extend(diagram1.symbols.toSeq)
     }
 
 

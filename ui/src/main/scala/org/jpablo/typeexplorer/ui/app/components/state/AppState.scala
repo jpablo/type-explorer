@@ -9,8 +9,8 @@ import com.raquo.laminar.api.L.*
 import com.softwaremill.quicklens.*
 import io.laminext.syntax.core.{StoredString, storedString}
 import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
-import org.jpablo.typeexplorer.shared.inheritance.PlantumlInheritance.Options
-import org.jpablo.typeexplorer.shared.inheritance.InheritanceDiagram
+import org.jpablo.typeexplorer.shared.inheritance.PlantumlInheritance.DiagramOptions
+import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, PlantumlInheritance}
 import org.jpablo.typeexplorer.shared.models
 import org.jpablo.typeexplorer.ui.app.Path
 import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.InheritanceSvgDiagram
@@ -29,13 +29,13 @@ case class AppState(
 
   private val owner: Owner = OneTimeOwner(() => ())
 
-  private def storedActiveSymbols: Set[models.Symbol] =
+  private def storedActiveSymbols: InheritanceTabState.ActiveSymbols =
     val $storedActiveSymbols = inheritanceTabState.activeSymbolsJson.signal.map(parseStoredSymbols)
-    val $symbols = $projectPath.combineWith($storedActiveSymbols).map((path, map) => map.getOrElse(path, Set.empty))
+    val $symbols = $projectPath.combineWith($storedActiveSymbols).map((path, map) => map.getOrElse(path, Map.empty))
     $symbols.observe(owner).now()
 
-  private def parseStoredSymbols(json: String): Map[Path, Set[models.Symbol]] =
-    json.fromJson[Map[Path, Set[models.Symbol]]].getOrElse(Map.empty)
+  private def parseStoredSymbols(json: String): Map[Path, InheritanceTabState.ActiveSymbols] =
+    json.fromJson[Map[Path, InheritanceTabState.ActiveSymbols]].getOrElse(Map.empty)
 
   // ---------------------------------
   // Persist changes to $activeSymbols
@@ -48,9 +48,50 @@ case class AppState(
 
 end AppState
 
+case class InheritanceConfiguration(
+  showFields: Boolean,
+  showSignatures: Boolean
+)
+case class PackagesConfiguration(
+  showTests: Boolean,
+  showObjects: Boolean
+)
+
+case class AppConfiguration(
+  projectPath: Path,
+  activeSymbols: Map[Path, Set[models.Symbol]],
+  inheritanceConfiguration: InheritanceConfiguration,
+  packagesConfiguration: PackagesConfiguration
+)
+
+object AppConfiguration:
+  given JsonCodec[InheritanceConfiguration] = DeriveJsonCodec.gen
+  given JsonCodec[PackagesConfiguration] = DeriveJsonCodec.gen
+  given JsonCodec[AppConfiguration] = DeriveJsonCodec.gen
 
 object AppState:
+
+  private def parseStoredConfiguration(json: String): AppConfiguration =
+    json.fromJson[AppConfiguration].getOrElse(
+      AppConfiguration(
+        Path(""), Map.empty,
+        InheritanceConfiguration(true, true),
+        PackagesConfiguration(true, true)
+      )
+    )
+
+
   def build(fetchDiagram: Path => Signal[InheritanceDiagram]) =
+    val configJson = storedString("configuration", initial = "{}")
+
+    val owner: Owner = OneTimeOwner(() => ())
+
+    val appConfiguration: AppConfiguration =
+      val $appConfiguration = configJson.signal.map(parseStoredConfiguration)
+      $appConfiguration.observe(owner).now()
+
+    println(appConfiguration)
+
     val projectPath = storedString("projectPath", initial = "")
     val activeSymbolsJson = storedString("activeSymbols", initial = "{}")
     // first create an empty AppState with default values
