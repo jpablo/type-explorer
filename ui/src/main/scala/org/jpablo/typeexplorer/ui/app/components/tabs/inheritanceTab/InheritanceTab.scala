@@ -79,7 +79,7 @@ object InheritanceTab:
           form(
             LabeledCheckbox("show-options-toggle", "options",
               $showOptions.signal,
-              Observer[Boolean](_ => $showOptions.update(!_)),
+              clickHandler = Observer(_ => $showOptions.update(!_)),
               toggle = true
             ),
             $showOptions.signal.childWhenTrue {
@@ -87,13 +87,13 @@ object InheritanceTab:
                 div(cls := "card-body p-1",
                   LabeledCheckbox(s"filter-by-active", "only active",
                     $filterByActive.signal,
-                    Observer[Boolean](_ => $filterByActive.update(!_)),
+                    clickHandler = Observer(_ => $filterByActive.update(!_)),
                     toggle = true
                   ),
                   hr(),
                   LabeledCheckbox(s"filter-by-scope", "Tests",
                     $filterByTestScope.signal,
-                    Observer[Boolean](_ => $filterByTestScope.update(!_)),
+                    clickHandler = Observer(_ => $filterByTestScope.update(!_)),
                     toggle = true
                   ),
                   hr(),
@@ -173,6 +173,7 @@ object InheritanceTab:
                       activeSelection.nonEmpty && activeSelection.forall((_, o) => o.exists(_.showFields))
                     }
                 ,
+                $disabled = $selectionEmpty,
                 clickHandler = Observer { b =>
                   inheritanceTabState.activeSymbols.updateSelectionOptions(_.copy(showFields = b))
                 },

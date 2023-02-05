@@ -13,12 +13,13 @@ def Search(mods: Modifier[ReactiveHtmlElement.Base]*): Input =
 
 private val autocomplete = customProp("autocomplete", StringAsIsCodec)
 
-def LabeledCheckbox(id: String, labelStr: String, $checked: Signal[Boolean], clickHandler: Observer[Boolean], toggle: Boolean = false) =
-  div(cls := "form-control",
+def LabeledCheckbox(id: String, labelStr: String, $checked: Signal[Boolean], $disabled: Signal[Boolean] = Signal.fromValue(false), clickHandler: Observer[Boolean], toggle: Boolean = false) =
+  div(cls := "_form-control",
     label(forId := id, cls := "label cursor-pointer",
       span(cls := "label-text pr-1", labelStr),
       input(idAttr := id, autocomplete := "off",
         tpe := "checkbox",
+        disabled <-- $disabled,
         cls := (if toggle then "toggle toggle-xs" else "checkbox checkbox-xs"),
         controlled(
           checked <-- $checked,
