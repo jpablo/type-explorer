@@ -8,6 +8,7 @@ import org.jpablo.typeexplorer.ui.app.components.TopLevel
 import org.scalajs.dom.document
 import zio.ZEnvironment
 import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.InheritanceSvgDiagram
+import zio.json.*
 
 object MainJS:
 

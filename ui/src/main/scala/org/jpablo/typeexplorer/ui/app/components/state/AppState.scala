@@ -12,6 +12,7 @@ import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
 import org.jpablo.typeexplorer.shared.inheritance.PlantumlInheritance.DiagramOptions
 import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, PlantumlInheritance}
 import org.jpablo.typeexplorer.shared.models
+import org.jpablo.typeexplorer.shared.webApp.ActiveSymbolsSeq
 import org.jpablo.typeexplorer.ui.app.Path
 import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.InheritanceSvgDiagram
 import org.scalajs.dom
@@ -31,18 +32,18 @@ case class AppState(
 
   private def storedActiveSymbols: InheritanceTabState.ActiveSymbols =
     val $storedActiveSymbols = inheritanceTabState.activeSymbolsJson.signal.map(parseStoredSymbols)
-    val $symbols = $projectPath.combineWith($storedActiveSymbols).map((path, map) => map.getOrElse(path, Map.empty))
+    val $symbols = $projectPath.combineWith($storedActiveSymbols).map((path, map) => map.getOrElse(path, List.empty)).map(_.toMap)
     $symbols.observe(owner).now()
 
-  private def parseStoredSymbols(json: String): Map[Path, InheritanceTabState.ActiveSymbols] =
-    json.fromJson[Map[Path, InheritanceTabState.ActiveSymbols]].getOrElse(Map.empty)
+  private def parseStoredSymbols(json: String): Map[Path, ActiveSymbolsSeq] =
+    json.fromJson[Map[Path, ActiveSymbolsSeq]].getOrElse(Map.empty)
 
   // ---------------------------------
   // Persist changes to $activeSymbols
   // ---------------------------------
   inheritanceTabState.$activeSymbols.signal.withCurrentValueOf($projectPath).foreach { (symbols, path) =>
     inheritanceTabState.activeSymbolsJson.update { json =>
-      (parseStoredSymbols(json) + (path -> symbols)).toJson
+      (parseStoredSymbols(json) + (path -> symbols.toList)).toJson
     }
   }(owner)
 

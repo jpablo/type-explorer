@@ -9,7 +9,7 @@ import com.raquo.domtypes.jsdom.defs.events.TypedTargetMouseEvent
 import com.raquo.laminar.api.L.*
 import com.softwaremill.quicklens.*
 import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
-import org.jpablo.typeexplorer.shared.inheritance.InheritanceDiagram
+import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, PlantumlInheritance}
 import org.jpablo.typeexplorer.shared.inheritance.PlantumlInheritance.DiagramOptions
 import org.jpablo.typeexplorer.shared.models
 import org.jpablo.typeexplorer.ui.app.components.state.{AppState, InheritanceTabState}
@@ -159,7 +159,29 @@ object InheritanceTab:
                 composeEvents(onClick)(_.sample(inheritanceTabState.$inheritanceDiagram, $inheritanceSvgDiagram)) -->
                   inheritanceTabState.canvasSelection.selectChildren.tupled
               )
-            )
+            ),
+            li(cls.toggle("disabled") <-- $selectionEmpty,
+              LabeledCheckbox(
+                id = "fields-checkbox-3",
+                labelStr = "Show fields",
+                $checked =
+                  inheritanceTabState.$activeSymbols.signal
+                    .combineWith(inheritanceTabState.$canvasSelection.signal)
+                    .map { (activeSymbols, selection) =>
+                      val activeSelection = activeSymbols.filter((s, _) => selection.contains(s))
+                      // true when activeSelection is nonEmpty AND every option exists and showFields == true
+                      activeSelection.nonEmpty && activeSelection.forall((_, o) => o.exists(_.showFields))
+                    }
+                ,
+                clickHandler = Observer { b =>
+                  inheritanceTabState.activeSymbols.updateSelectionOptions(_.copy(showFields = b))
+                },
+                toggle = true
+              ),
+            ),
+//            li(cls.toggle("disabled") <-- $selectionEmpty,
+//              OptionsToggle("fields-checkbox-4", "Show signatures", _.showSignatures, modifySelection(_.showSignatures), inheritanceTabState),
+//            )
           )
         )
       )
@@ -203,9 +225,10 @@ object InheritanceTab:
     LabeledCheckbox(
       id = id,
       labelStr = labelStr,
-      $checked = selectedSymbols.$options.signal.map(field),
-      clickHandler = selectedSymbols.$options.updater[Boolean]((options, b) => modifyField.setTo(b)(options)),
+      $checked = selectedSymbols.$diagramOptions.signal.map(field),
+      clickHandler = selectedSymbols.$diagramOptions.updater[Boolean]((options, b) => modifyField.setTo(b)(options)),
       toggle = true
     )
 
 end InheritanceTab
+

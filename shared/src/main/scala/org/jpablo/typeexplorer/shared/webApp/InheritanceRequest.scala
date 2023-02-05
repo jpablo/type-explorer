@@ -5,9 +5,11 @@ import org.jpablo.typeexplorer.shared.inheritance.PlantumlInheritance
 import zio.json.*
 import org.jpablo.typeexplorer.shared.models.Symbol
 
+type ActiveSymbolsSeq = List[(Symbol, Option[PlantumlInheritance.SymbolOptions])]
+
 case class InheritanceRequest(
   paths  : List[String],
-  symbols: List[(Symbol, Option[PlantumlInheritance.SymbolOptions])],
+  symbols: ActiveSymbolsSeq,
   options: PlantumlInheritance.DiagramOptions = PlantumlInheritance.DiagramOptions(),
 )
 

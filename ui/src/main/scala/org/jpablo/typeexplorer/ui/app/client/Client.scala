@@ -12,6 +12,7 @@ import org.jpablo.typeexplorer.shared.webApp.InheritanceRequest
 import org.jpablo.typeexplorer.ui.app.Path
 import org.jpablo.typeexplorer.ui.app.components.DiagramType
 import org.jpablo.typeexplorer.ui.app.components.state.AppState
+import org.jpablo.typeexplorer.ui.app.components.state.InheritanceTabState.ActiveSymbols
 import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.InheritanceSvgDiagram
 import org.scalajs.dom
 import scala.scalajs.js.typedarray.Int8Array
@@ -59,10 +60,10 @@ def fetchInheritanceSVGDiagram(appState: AppState): EventStream[InheritanceSvgDi
     appState.$projectPath
       .combineWith(
         appState.inheritanceTabState.$activeSymbols.signal,
-        appState.inheritanceTabState.$options.signal
+        appState.inheritanceTabState.$diagramOptions.signal
       )
   for
-    (projectPath, symbols: Map[Symbol, Option[PlantumlInheritance.SymbolOptions]], options) <- combined
+    (projectPath, symbols: ActiveSymbols, options) <- combined
     parser = dom.DOMParser()
     svgElement <-
       if projectPath.toString.isEmpty then

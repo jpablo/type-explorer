@@ -7,7 +7,7 @@ import com.raquo.airstream.state.Var
 import com.raquo.laminar.api.L.*
 import com.softwaremill.quicklens.*
 import io.laminext.syntax.core.{StoredString, storedString}
-import org.jpablo.typeexplorer.shared.inheritance.PlantumlInheritance.DiagramOptions
+import org.jpablo.typeexplorer.shared.inheritance.PlantumlInheritance.{DiagramOptions, SymbolOptions}
 import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, PlantumlInheritance}
 import org.jpablo.typeexplorer.shared.models
 import org.jpablo.typeexplorer.ui.app.Path
@@ -18,16 +18,18 @@ import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.Inheritance
 
 
 object InheritanceTabState:
-  type ActiveSymbols = Map[models.Symbol, Option[PlantumlInheritance.SymbolOptions]]
+  type ActiveSymbols = Map[models.Symbol, Option[SymbolOptions]]
 
 import InheritanceTabState.ActiveSymbols
 
 case class InheritanceTabState(
   activeSymbolsJson  : StoredString,
   $inheritanceDiagram: Signal[InheritanceDiagram] = Signal.fromValue(InheritanceDiagram.empty),
-  $activeSymbols   : Var[ActiveSymbols] = Var(Map.empty),
-  $options         : Var[DiagramOptions] = Var(DiagramOptions()),
-  $canvasSelection : Var[Set[models.Symbol]] = Var(Set.empty),
+  // subset of $inheritanceDiagram.symbols that are currently visible in the canvas
+  $activeSymbols     : Var[ActiveSymbols] = Var(Map.empty),
+  $diagramOptions    : Var[DiagramOptions] = Var(DiagramOptions()),
+  // this should be a subset of $activeSymbols' keys
+  $canvasSelection   : Var[Set[models.Symbol]] = Var(Set.empty),
 ):
 
   object canvasSelection:
@@ -81,6 +83,19 @@ case class InheritanceTabState(
 
     def clear() =
       $activeSymbols.set(Map.empty)
+
+    /** Updates (selected) active symbol's options based on the given function `f`
+      */
+    def updateSelectionOptions(f: SymbolOptions => SymbolOptions): Unit =
+      val canvasSelection = $canvasSelection.now()
+      $activeSymbols.update {
+        _.transform { (sym, options) =>
+          if canvasSelection.contains(sym) then
+            Some(f(options.getOrElse(SymbolOptions())))
+          else
+            options
+        }
+      }
 
   /**
     * Modify `$canvasSelection` based on the given function `f`
