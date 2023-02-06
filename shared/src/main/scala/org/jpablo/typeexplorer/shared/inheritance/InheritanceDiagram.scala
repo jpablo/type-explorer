@@ -2,7 +2,6 @@ package org.jpablo.typeexplorer.shared.inheritance
 
 import org.jpablo.typeexplorer.shared.tree.Tree
 import zio.json.*
-import zio.Chunk
 import zio.prelude.{Commutative, Identity}
 
 import scala.meta.internal.semanticdb.SymbolInformation.Kind

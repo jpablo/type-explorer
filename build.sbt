@@ -1,6 +1,6 @@
 import org.scalajs.linker.interface.ModuleSplitStyle
 
-val scala3Version     = "3.2.2"
+val scala3Version     = "3.3.0-RC2"
 val scalametaVersion  = "4.6.0"
 val zioHttpVersion    = "2.0.0-RC11"
 val zioJsonVersion    = "0.3.0"
@@ -26,6 +26,7 @@ ThisBuild / scalacOptions ++= // Scala 3.x options
     "-language:implicitConversions",
     "-source:future",
     "-deprecation"
+//    "-Wunused:imports" // Not stable yet in 3.3.0-RC2
   )
 
 lazy val protos =

@@ -174,9 +174,9 @@ object InheritanceTab:
                     }
                 ,
                 $disabled = $selectionEmpty,
-                clickHandler = Observer { b =>
+                clickHandler = Observer: b =>
                   inheritanceTabState.activeSymbols.updateSelectionOptions(_.copy(showFields = b))
-                },
+                ,
                 toggle = true
               ),
             ),
