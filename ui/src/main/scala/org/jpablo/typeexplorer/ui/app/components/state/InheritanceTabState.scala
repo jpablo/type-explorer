@@ -15,22 +15,37 @@ import org.scalajs.dom
 import zio.json.*
 import org.jpablo.typeexplorer.ui.app.toggle
 import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.InheritanceSvgDiagram
-
+import org.jpablo.typeexplorer.shared.webApp.ActiveSymbolsSeq
 
 object InheritanceTabState:
   type ActiveSymbols = Map[models.Symbol, Option[SymbolOptions]]
 
 import InheritanceTabState.ActiveSymbols
 
-case class InheritanceTabState(
+class InheritanceTabState(
   activeSymbolsJson  : StoredString,
-  $inheritanceDiagram: Signal[InheritanceDiagram] = Signal.fromValue(InheritanceDiagram.empty),
+  $projectPath       : Signal[Path],
+  val $inheritanceDiagram: Signal[InheritanceDiagram] = Signal.fromValue(InheritanceDiagram.empty),
   // subset of $inheritanceDiagram.symbols that are currently visible in the canvas
-  $activeSymbols     : Var[ActiveSymbols] = Var(Map.empty),
-  $diagramOptions    : Var[DiagramOptions] = Var(DiagramOptions()),
+  val $diagramOptions    : Var[DiagramOptions] = Var(DiagramOptions()),
   // this should be a subset of $activeSymbols' keys
-  $canvasSelection   : Var[Set[models.Symbol]] = Var(Set.empty),
-):
+  val $canvasSelection   : Var[Set[models.Symbol]] = Var(Set.empty),
+)(using Owner):
+  private def parseStoredSymbols(json: String): Map[Path, ActiveSymbolsSeq] =
+    json.fromJson[Map[Path, ActiveSymbolsSeq]].getOrElse(Map.empty)
+
+  val $activeSymbols: Var[ActiveSymbols] =
+    Var {
+      val $storedActiveSymbols = activeSymbolsJson.signal.map(parseStoredSymbols)
+      val $symbols = $projectPath.combineWith($storedActiveSymbols).map((path, map) => map.getOrElse(path, List.empty)).map(_.toMap)
+      $symbols.observe.now()
+    }
+
+  // Make sure that the active symbols are stored in the local storage
+  $activeSymbols.signal.withCurrentValueOf($projectPath).foreach: (symbols, path) =>
+    activeSymbolsJson.update: json =>
+      (parseStoredSymbols(json) + (path -> symbols.toList)).toJson
+
 
   object canvasSelection:
     def toggle(symbol: models.Symbol): Unit =

@@ -80,7 +80,7 @@ object InheritanceTab:
               clickHandler = Observer(_ => $showOptions.update(!_)),
               toggle = true
             ),
-            $showOptions.signal.childWhenTrue {
+            $showOptions.signal.childWhenTrue:
               div(cls := "card card-compact p-1 mb-2 border-slate-300 border-[1px]",
                 div(cls := "card-body p-1",
                   LabeledCheckbox(s"filter-by-active", "only active",
@@ -103,8 +103,7 @@ object InheritanceTab:
                       clickHandler = $filterByNsKind.updater((set, b) => set.toggleWith(kind, b))
                     )
                 ),
-              )
-            },
+              ),
             Search(placeholder := "filter", controlled(value <-- $filterBySymbolName, onInput.mapToValue --> $filterBySymbolName)).small
           ),
           div(cls := "overflow-auto", children <-- PackagesTree(inheritanceTabState, $filteredDiagram))
