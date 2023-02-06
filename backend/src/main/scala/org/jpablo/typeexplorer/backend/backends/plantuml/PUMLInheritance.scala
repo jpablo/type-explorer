@@ -25,12 +25,10 @@ extension (puml: PlantUML)
       reader <- ZIO.from(SourceStringReader(puml.diagram))
       createStream = ZIO.succeed(new ByteArrayOutputStream)
       svg <-
-        ZIO.acquireReleaseWith(createStream)(os => ZIO.succeed(os.close())) { os =>
-          ZIO.attemptBlocking {
+        ZIO.acquireReleaseWith(createStream)(os => ZIO.succeed(os.close())): os =>
+          ZIO.attemptBlocking:
             reader.outputImage(os, FileFormatOption(FileFormat.SVG))
             os.toString(Charset.defaultCharset())
-          }
-        }
     yield
       svg
 

@@ -48,25 +48,23 @@ object InheritanceTab:
           )
           .changes
           .debounce(300)
-          .map { (diagram: InheritanceDiagram, w, nsKind, filterByActive, filterByTestScope, activeSymbols) =>
+          .map: (diagram: InheritanceDiagram, w, nsKind, filterByActive, filterByTestScope, activeSymbols) =>
             diagram
               .orElse(w.isBlank, _.filterBySymbolName(w))
               .subdiagramByKinds(nsKind)
               .orElse(!filterByActive, _.subdiagram(activeSymbols.keySet))
               .orElse(filterByTestScope, _.filterBy(!_.inTest))
-          }
       val $selectionEmpty = inheritanceTabState.$canvasSelection.signal.map(_.isEmpty)
       val canvasContainer =
         div(cls := "h-full overflow-auto border-t border-slate-300 p-1 row-start-2 row-end-3",
           backgroundImage := "radial-gradient(hsla(var(--bc)/.2) .5px,hsla(var(--b2)/1) .5px)",
           backgroundSize := "5px 5px",
-          child <-- $inheritanceSvgDiagram.map { diagram =>
+          child <-- $inheritanceSvgDiagram.map: diagram =>
             val selection = inheritanceTabState.$canvasSelection.now()
             diagram.select(selection)
             // remove elements not present in the new diagram (such elements did exist in the previous diagram)
             inheritanceTabState.$canvasSelection.update(_ -- (selection -- diagram.elementSymbols))
-            diagram.toLaminar
-          },
+            diagram.toLaminar,
           composeEvents(onClick.preventDefault)(_.withCurrentValueOf($inheritanceSvgDiagram)) -->
             handleSvgClick(inheritanceTabState).tupled,
         )
@@ -167,22 +165,16 @@ object InheritanceTab:
                 $checked =
                   inheritanceTabState.$activeSymbols.signal
                     .combineWith(inheritanceTabState.$canvasSelection.signal)
-                    .map { (activeSymbols, selection) =>
+                    .map: (activeSymbols, selection) =>
                       val activeSelection = activeSymbols.filter((s, _) => selection.contains(s))
                       // true when activeSelection is nonEmpty AND every option exists and showFields == true
-                      activeSelection.nonEmpty && activeSelection.forall((_, o) => o.exists(_.showFields))
-                    }
-                ,
+                      activeSelection.nonEmpty && activeSelection.forall((_, o) => o.exists(_.showFields)),
                 $disabled = $selectionEmpty,
                 clickHandler = Observer: b =>
-                  inheritanceTabState.activeSymbols.updateSelectionOptions(_.copy(showFields = b))
-                ,
+                  inheritanceTabState.activeSymbols.updateSelectionOptions(_.copy(showFields = b)),
                 toggle = true
-              ),
-            ),
-//            li(cls.toggle("disabled") <-- $selectionEmpty,
-//              OptionsToggle("fields-checkbox-4", "Show signatures", _.showSignatures, modifySelection(_.showSignatures), inheritanceTabState),
-//            )
+              )
+            )
           )
         )
       )

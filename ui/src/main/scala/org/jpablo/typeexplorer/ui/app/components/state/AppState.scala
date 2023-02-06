@@ -42,9 +42,8 @@ case class AppState(
   // Persist changes to $activeSymbols
   // ---------------------------------
   inheritanceTabState.$activeSymbols.signal.withCurrentValueOf($projectPath).foreach { (symbols, path) =>
-    inheritanceTabState.activeSymbolsJson.update { json =>
+    inheritanceTabState.activeSymbolsJson.update: json =>
       (parseStoredSymbols(json) + (path -> symbols.toList)).toJson
-    }
   }(owner)
 
 end AppState

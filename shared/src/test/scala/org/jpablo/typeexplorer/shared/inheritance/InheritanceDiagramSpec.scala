@@ -5,7 +5,7 @@ import zio.test.Assertion.*
 
 import org.jpablo.typeexplorer.shared.models
 
-object InheritanceDiagramSpec extends ZIOSpecDefault {
+object InheritanceDiagramSpec extends ZIOSpecDefault:
 
   // sbt> testOnly org.jpablo.typeexplorer.shared.inheritance.*
 
@@ -58,18 +58,18 @@ object InheritanceDiagramSpec extends ZIOSpecDefault {
   def spec =
     suite("Related symbols spec")(
 
-      test("unfold") {
+      test("unfold"):
         val ss = diagram.unfold(Set(classB.symbol), diagram.directParents)
         assertTrue(ss == Set(classA, base1, base2, base0).map(_.symbol))
-      },
+      ,
 
-      test("subdiagram - single symbol") {
+      test("subdiagram - single symbol"):
         val filtered = diagram.subdiagram(Set(classA.symbol))
         val expected = InheritanceDiagram(arrows = Set(), namespaces = Set(classA) )
         assertTrue(filtered == expected)
-      },
+      ,
 
-      test("subdiagram - multiple symbols") {
+      test("subdiagram - multiple symbols"):
         val filtered = diagram.subdiagram(Set(classA, classB, classC).map(_.symbol))
         val expected =
           InheritanceDiagram(
@@ -77,9 +77,9 @@ object InheritanceDiagramSpec extends ZIOSpecDefault {
             namespaces = Set(classA, classB, classC)
           )
         assertTrue(filtered == expected)
-      },
+      ,
 
-      test("Find all parents - simple case") {
+      test("Find all parents - simple case"):
         val filtered = diagram.parentsOf(classA.symbol)
 
         val expected =
@@ -93,9 +93,9 @@ object InheritanceDiagramSpec extends ZIOSpecDefault {
             namespaces = Set(base0, base1, base2, classA)
           )
         assertTrue(filtered == expected)
-      },
+      ,
 
-      test("Find all parents") {
+      test("Find all parents"):
         val filtered = diagram.parentsOf(classB.symbol)
 
         val expected =
@@ -110,9 +110,9 @@ object InheritanceDiagramSpec extends ZIOSpecDefault {
             namespaces = Set(base0, base1, base2, classA, classB)
           )
         assertTrue(filtered == expected)
-      },
+      ,
 
-      test("parentsOfAll") {
+      test("parentsOfAll"):
         val base3  = makeClass("base3")
         val base4  = makeClass("base4")
         val diagram2 = InheritanceDiagram(
@@ -127,9 +127,9 @@ object InheritanceDiagramSpec extends ZIOSpecDefault {
         )
 
         assertTrue(result == expected)
-      },
+      ,
 
-      test("childrenOfAll") {
+      test("childrenOfAll"):
         val base3  = makeClass("base3")
         val base4  = makeClass("base4")
         val diagram2 = InheritanceDiagram(
@@ -144,7 +144,5 @@ object InheritanceDiagramSpec extends ZIOSpecDefault {
         )
 
         assertTrue(result == expected)
-      }
     )
-}
 

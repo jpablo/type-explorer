@@ -108,9 +108,8 @@ object WebApp extends ZIOAppDefault:
   def readTextDocumentsWithSource(path: Option[List[String]]): Option[TextDocumentsWithSourceSeq] =
     for p <- combinePaths(path) yield
       TextDocumentsWithSourceSeq(
-        All.scan(p).map { (path, d) =>
+        All.scan(p).map: (path, d) =>
           TextDocumentsWithSource(path.toString).withDocuments(d.documents)
-        }
       )
 
   def readSource(paths: Option[List[String]]): Option[String] =
@@ -134,8 +133,8 @@ object WebApp extends ZIOAppDefault:
   def toTask[A](a: => A, error: String = "")(using ZIOConstructor[Nothing, Any, A], Trace) =
     ZIO.from(a).mapError(e => Throwable(if error.isEmpty then e.toString else error))
 
-  lazy val corsConfig =
+  private lazy val corsConfig =
     CorsConfig(allowedOrigins = _ => true)
 
-  lazy val badRequest =
+  private lazy val badRequest =
     Response.status(Status.BadRequest)

@@ -13,7 +13,6 @@ import scala.collection.mutable
 object All:
   def scan(p: Path): List[(Path, TextDocuments)] =
     val documents = mutable.ArrayBuffer.empty[(Path, TextDocuments)]
-    semanticdb.Locator(p) { (path, textDocuments) =>
+    semanticdb.Locator(p): (path, textDocuments) =>
       documents += ((path, textDocuments))
-    }
     documents.toList

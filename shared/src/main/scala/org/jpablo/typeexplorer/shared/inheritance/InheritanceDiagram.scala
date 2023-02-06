@@ -195,11 +195,10 @@ object InheritanceDiagram:
         nsKind = translateKind(symbolInfo.kind)
         declarations = clsSignature
           .declarations
-          .map {
+          .map:
             _.symlinks
               .filterNot(si => excluded.exists(si.contains))
               .map(Symbol(_))
-          }
           .toSeq.flatten
 
         methods = declarations.map(method(symbolInfosMap))

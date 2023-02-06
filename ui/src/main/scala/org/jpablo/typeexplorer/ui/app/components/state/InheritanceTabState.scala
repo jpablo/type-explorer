@@ -68,12 +68,11 @@ case class InheritanceTabState(
 
   object activeSymbols:
     def toggle(symbol: models.Symbol): Unit =
-      $activeSymbols.update { symbols =>
+      $activeSymbols.update: symbols =>
         if symbols.contains(symbol) then
           symbols - symbol
         else
           symbols + (symbol -> None)
-      }
 
     def extend(symbol: models.Symbol): Unit =
       $activeSymbols.update(_ + (symbol -> None))
@@ -88,14 +87,12 @@ case class InheritanceTabState(
       */
     def updateSelectionOptions(f: SymbolOptions => SymbolOptions): Unit =
       val canvasSelection = $canvasSelection.now()
-      $activeSymbols.update {
-        _.transform { (sym, options) =>
+      $activeSymbols.update:
+        _.transform: (sym, options) =>
           if canvasSelection.contains(sym) then
             Some(f(options.getOrElse(SymbolOptions())))
           else
             options
-        }
-      }
 
   /**
     * Modify `$canvasSelection` based on the given function `f`

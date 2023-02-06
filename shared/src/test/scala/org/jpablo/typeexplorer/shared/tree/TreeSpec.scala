@@ -5,7 +5,7 @@ import zio.test.*
 object TreeSpec extends ZIOSpecDefault:
   import Tree.*
   override def spec = suite("Tree Spec") (
-    test("single leaf") {
+    test("single leaf"):
       val tree = fromPaths(
         List(
           (List("a", "b", "c"), "d", 1)
@@ -16,9 +16,9 @@ object TreeSpec extends ZIOSpecDefault:
           Node("a/b/c", List("a", "b", "c"), List(Leaf("d", 1)))
         )
       assertTrue(expected == tree)
-    },
+    ,
 
-    test("multiple leaves with common sub path") {
+    test("multiple leaves with common sub path"):
       val tree = fromPaths(
         List(
           (List("a", "b", "c"), "d", 1),
@@ -47,5 +47,4 @@ object TreeSpec extends ZIOSpecDefault:
           )
         )
       assertTrue(expected == tree)
-    }
   )
