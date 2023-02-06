@@ -102,7 +102,7 @@ object InheritanceTab:
                       id = s"show-ns-kind-$kind",
                       kind.toString,
                       $checked = $filterByNsKind.signal.map(_.contains(kind)),
-                      clickHandler = $filterByNsKind.updater[Boolean]((set, b) => set.toggleWith(kind, b))
+                      clickHandler = $filterByNsKind.updater((set, b) => set.toggleWith(kind, b))
                     )
                 ),
               )
