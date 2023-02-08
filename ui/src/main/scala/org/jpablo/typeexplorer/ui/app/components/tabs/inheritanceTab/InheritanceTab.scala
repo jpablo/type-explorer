@@ -16,6 +16,7 @@ import org.jpablo.typeexplorer.ui.app.components.state.{AppState, InheritanceTab
 import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.PackagesTree
 import org.jpablo.typeexplorer.ui.daisyui.*
 import io.laminext.syntax.core.*
+import org.jpablo.typeexplorer.ui.app.components.state.InheritanceTabState.ActiveSymbols
 import org.jpablo.typeexplorer.ui.app.toggleWith
 import org.scalajs.dom
 import org.scalajs.dom.{DOMRect, EventTarget, console}
@@ -45,7 +46,7 @@ object InheritanceTab:
           )
           .changes
           .debounce(300)
-          .map: (diagram: InheritanceDiagram, packagesOptions: PackagesOptions, w, activeSymbols) =>
+          .map: (diagram: InheritanceDiagram, packagesOptions: PackagesOptions, w: String, activeSymbols: ActiveSymbols) =>
             diagram
               .orElse(w.isBlank, _.filterBySymbolName(w))
               .subdiagramByKinds(packagesOptions.nsKind)
@@ -83,16 +84,14 @@ object InheritanceTab:
                   LabeledCheckbox(s"filter-by-active", "only active",
                     $checked = appState.$appConfig.signal.map(_.packagesOptions.onlyActive),
                     clickHandler = Observer: _ =>
-                      appState.updateAppConfig: appConfig =>
-                        appConfig.modify(_.packagesOptions.onlyActive).using(!_),
+                      appState.updateAppConfig(_.modify(_.packagesOptions.onlyActive).using(!_)),
                     toggle = true
                   ),
                   hr(),
                   LabeledCheckbox(s"filter-by-scope", "Tests",
                     $checked = appState.$appConfig.signal.map(_.packagesOptions.onlyTests),
                     clickHandler = Observer: _ =>
-                      appState.updateAppConfig: appConfig =>
-                        appConfig.modify(_.packagesOptions.onlyTests).using(!_),
+                      appState.updateAppConfig(_.modify(_.packagesOptions.onlyTests).using(!_)),
                     toggle = true
                   ),
                   hr(),
@@ -102,8 +101,7 @@ object InheritanceTab:
                       kind.toString,
                       $checked = appState.$appConfig.signal.map(_.packagesOptions.nsKind).map(_.contains(kind)),
                       clickHandler = Observer: b =>
-                        appState.updateAppConfig: appConfig =>
-                          appConfig.modify(_.packagesOptions.nsKind).using(_.toggleWith(kind, b))
+                        appState.updateAppConfig(_.modify(_.packagesOptions.nsKind).using(_.toggleWith(kind, b)))
                     )
                 ),
               ),
