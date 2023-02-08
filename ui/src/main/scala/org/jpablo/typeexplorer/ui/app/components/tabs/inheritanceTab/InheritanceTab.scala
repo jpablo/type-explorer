@@ -12,7 +12,7 @@ import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
 import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, PlantumlInheritance}
 import org.jpablo.typeexplorer.shared.inheritance.PlantumlInheritance.DiagramOptions
 import org.jpablo.typeexplorer.shared.models
-import org.jpablo.typeexplorer.ui.app.components.state.{AppState, InheritanceTabState}
+import org.jpablo.typeexplorer.ui.app.components.state.{AppState, InheritanceTabState, PackagesOptions}
 import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.PackagesTree
 import org.jpablo.typeexplorer.ui.daisyui.*
 import io.laminext.syntax.core.*
@@ -28,32 +28,29 @@ object InheritanceTab:
       if b then a else f(a)
 
   def build(
-    inheritanceTabState: InheritanceTabState,
+    appState: AppState,
     $inheritanceSvgDiagram: Signal[InheritanceSvgDiagram]
   ) =
+      val inheritanceTabState = appState.inheritanceTabState
+
       val $filterBySymbolName = Var("")
-      val $filterByNsKind     = Var(models.NamespaceKind.values.toSet)
-      val $filterByActive     = Var(false)
-      val $filterByTestScope  = Var(false)
       val $showOptions        = Var(false)
       val modifySelection = modifyLens[DiagramOptions]
       val $filteredDiagram =
         inheritanceTabState.$inheritanceDiagram
           .combineWith(
+            appState.$appConfig.signal.map(_.packagesOptions),
             $filterBySymbolName.signal,
-            $filterByNsKind.signal,
-            $filterByActive.signal,
-            $filterByTestScope.signal,
             inheritanceTabState.$activeSymbols.signal
           )
           .changes
           .debounce(300)
-          .map: (diagram: InheritanceDiagram, w, nsKind, filterByActive, filterByTestScope, activeSymbols) =>
+          .map: (diagram: InheritanceDiagram, packagesOptions: PackagesOptions, w, activeSymbols) =>
             diagram
               .orElse(w.isBlank, _.filterBySymbolName(w))
-              .subdiagramByKinds(nsKind)
-              .orElse(!filterByActive, _.subdiagram(activeSymbols.keySet))
-              .orElse(filterByTestScope, _.filterBy(!_.inTest))
+              .subdiagramByKinds(packagesOptions.nsKind)
+              .orElse(!packagesOptions.onlyActive, _.subdiagram(activeSymbols.keySet))
+              .orElse(packagesOptions.onlyTests, _.filterBy(!_.inTest))
       val $selectionEmpty = inheritanceTabState.$canvasSelection.signal.map(_.isEmpty)
       val canvasContainer =
         div(cls := "h-full overflow-auto border-t border-slate-300 p-1 row-start-2 row-end-3",
@@ -84,14 +81,18 @@ object InheritanceTab:
               div(cls := "card card-compact p-1 mb-2 border-slate-300 border-[1px]",
                 div(cls := "card-body p-1",
                   LabeledCheckbox(s"filter-by-active", "only active",
-                    $filterByActive.signal,
-                    clickHandler = Observer(_ => $filterByActive.update(!_)),
+                    $checked = appState.$appConfig.signal.map(_.packagesOptions.onlyActive),
+                    clickHandler = Observer: _ =>
+                      appState.updateAppConfig: appConfig =>
+                        appConfig.modify(_.packagesOptions.onlyActive).using(!_),
                     toggle = true
                   ),
                   hr(),
                   LabeledCheckbox(s"filter-by-scope", "Tests",
-                    $filterByTestScope.signal,
-                    clickHandler = Observer(_ => $filterByTestScope.update(!_)),
+                    $checked = appState.$appConfig.signal.map(_.packagesOptions.onlyTests),
+                    clickHandler = Observer: _ =>
+                      appState.updateAppConfig: appConfig =>
+                        appConfig.modify(_.packagesOptions.onlyTests).using(!_),
                     toggle = true
                   ),
                   hr(),
@@ -99,8 +100,10 @@ object InheritanceTab:
                     LabeledCheckbox(
                       id = s"show-ns-kind-$kind",
                       kind.toString,
-                      $checked = $filterByNsKind.signal.map(_.contains(kind)),
-                      clickHandler = $filterByNsKind.updater((set, b) => set.toggleWith(kind, b))
+                      $checked = appState.$appConfig.signal.map(_.packagesOptions.nsKind).map(_.contains(kind)),
+                      clickHandler = Observer: b =>
+                        appState.updateAppConfig: appConfig =>
+                          appConfig.modify(_.packagesOptions.nsKind).using(_.toggleWith(kind, b))
                     )
                 ),
               ),

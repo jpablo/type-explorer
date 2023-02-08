@@ -6,7 +6,6 @@ import com.raquo.airstream.eventbus.EventBus
 import com.raquo.airstream.ownership.OneTimeOwner
 import com.raquo.airstream.state.Var
 import com.raquo.laminar.api.L.*
-import com.softwaremill.quicklens.*
 import io.laminext.syntax.core.{StoredString, storedString}
 import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
 import org.jpablo.typeexplorer.shared.inheritance.PlantumlInheritance.DiagramOptions
@@ -15,23 +14,53 @@ import org.jpablo.typeexplorer.shared.models
 import org.jpablo.typeexplorer.ui.app.Path
 import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.InheritanceSvgDiagram
 import org.scalajs.dom
-import zio.Tag
 import zio.json.*
+
+class Persistent[A: JsonCodec](json: StoredString, initial: A)(using Owner):
+  private val $var: Var[A] =
+    Var {
+      json.signal
+        .map(_.fromJson[A].getOrElse(initial))
+        .observe
+        .now()
+    }
+  def start() =
+    $var.signal.foreach: appConfig =>
+      json.set(appConfig.toJson)
+    $var
 
 
 case class AppState(
   inheritanceTabState: InheritanceTabState,
   projectPath        : StoredString,
+  appConfigJson      : StoredString,
   $devMode           : Var[Boolean],
-):
+)(using Owner):
   val $projectPath = projectPath.signal.map(Path.apply)
+
+  val $appConfig: Var[AppConfig] =
+    Persistent(appConfigJson, AppConfig()).start()
+
+  def updateAppConfig(f: AppConfig => AppConfig): Unit =
+    $appConfig.update(f)
+
 
 
 object AppState:
   def build(fetchDiagram: Path => Signal[InheritanceDiagram]) =
     given owner: Owner = OneTimeOwner(() => ())
+
+    val appConfigJson = storedString("appConfig", initial = "{}")
+
+    // TODO:
+//    val projectJson = storedString("project", initial = "{}")
+    // projectPath should be part of projectJson
     val projectPath = storedString("projectPath", initial = "")
+
+    //    val diagramJson = storedString("diagram", initial = "{}")
+    // activeSymbolsJson should be part of diagramJson
     val activeSymbolsJson = storedString("activeSymbols", initial = "{}")
+
     val $projectPath = projectPath.signal.map(Path.apply)
     AppState(
       inheritanceTabState = InheritanceTabState(
@@ -40,6 +69,7 @@ object AppState:
         $projectPath.flatMap(fetchDiagram),
       ),
       projectPath = projectPath,
+      appConfigJson = appConfigJson,
       $devMode = Var(true)
     )
 

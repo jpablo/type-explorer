@@ -31,17 +31,20 @@ class InheritanceTabState(
   // this should be a subset of $activeSymbols' keys
   val $canvasSelection   : Var[Set[models.Symbol]] = Var(Set.empty),
 )(using Owner):
+
   private def parseStoredSymbols(json: String): Map[Path, ActiveSymbolsSeq] =
     json.fromJson[Map[Path, ActiveSymbolsSeq]].getOrElse(Map.empty)
 
+  // 1. Initial value take from local storage
   val $activeSymbols: Var[ActiveSymbols] =
     Var {
-      val $storedActiveSymbols = activeSymbolsJson.signal.map(parseStoredSymbols)
-      val $symbols = $projectPath.combineWith($storedActiveSymbols).map((path, map) => map.getOrElse(path, List.empty)).map(_.toMap)
-      $symbols.observe.now()
+      $projectPath.combineWith(activeSymbolsJson.signal.map(parseStoredSymbols))
+        .map((path, map) => map.getOrElse(path, List.empty).toMap)
+        .observe
+        .now()
     }
 
-  // Make sure that the active symbols are stored in the local storage
+  // 2. Make sure that the active symbols are stored in the local storage
   $activeSymbols.signal.withCurrentValueOf($projectPath).foreach: (symbols, path) =>
     activeSymbolsJson.update: json =>
       (parseStoredSymbols(json) + (path -> symbols.toList)).toJson
