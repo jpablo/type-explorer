@@ -16,14 +16,17 @@ def TopLevel(
   $documents: EventStream[List[TextDocumentsWithSource]]
 ) =
   div(
-    cls := "flex flex-col h-full",
-    AppHeader(appState.projectPath),
-    TabsArea(appState, $inheritanceSvgDiagram, $documents),
-    AppFooter,
-    appState.$devMode.signal.childWhenTrue {
-      div(
-        div(child.text <-- appState.inheritanceTabState.$canvasSelection.signal.map(ds => s"canvasSelection: ${ds.size}")),
-        div(child.text <-- appState.inheritanceTabState.$activeSymbols.signal.map(ss => s"activeSymbols: ${ss.size}")),
-      )
-    }
+    cls := "drawer drawer-end",
+    input(idAttr := "drawer-1", tpe := "checkbox", cls := "drawer-toggle"),
+    div(cls := "drawer-content flex flex-col h-full",
+      AppHeader(appState.projectPath),
+      TabsArea(appState, $inheritanceSvgDiagram, $documents),
+      AppFooter,
+      appState.$devMode.signal.childWhenTrue:
+        div(
+          div(child.text <-- appState.inheritanceTabState.$canvasSelection.signal.map(ds => s"canvasSelection: ${ds.size}")),
+          div(child.text <-- appState.inheritanceTabState.$activeSymbols.signal.map(ss => s"activeSymbols: ${ss.size}")),
+        )
+    ),
+    AppConfigDrawer(appState.$appConfig),
   )

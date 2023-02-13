@@ -16,17 +16,17 @@ import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.Inheritance
 import org.scalajs.dom
 import zio.json.*
 
-class Persistent[A: JsonCodec](json: StoredString, initial: A)(using Owner):
+class Persistent[A: JsonCodec](storedString: StoredString, initial: A)(using Owner):
   private val $var: Var[A] =
     Var {
-      json.signal
+      storedString.signal
         .map(_.fromJson[A].getOrElse(initial))
         .observe
         .now()
     }
   def start() =
-    $var.signal.foreach: appConfig =>
-      json.set(appConfig.toJson)
+    $var.signal.foreach: a =>
+      storedString.set(a.toJson)
     $var
 
 
@@ -39,7 +39,8 @@ case class AppState(
   val $projectPath = projectPath.signal.map(Path.apply)
 
   val $appConfig: Var[AppConfig] =
-    Persistent(appConfigJson, AppConfig()).start()
+    Persistent(appConfigJson, AppConfig())
+      .start()
 
   def updateAppConfig(f: AppConfig => AppConfig): Unit =
     $appConfig.update(f)

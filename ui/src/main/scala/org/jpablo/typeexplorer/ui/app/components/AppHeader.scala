@@ -41,7 +41,7 @@ def AppHeader(projectPath: StoredString): Div =
         editBasePath.signal
           .combineWith(projectPath.signal.map(_.isEmpty))
           .map(_ || _)
-          .childWhenTrue {
+          .childWhenTrue:
             form(
               cls := "d-flex",
               searchInput,
@@ -52,16 +52,23 @@ def AppHeader(projectPath: StoredString): Div =
                 },
                 "Ok"
               ).small.outline.success
-            )
-        },
-
-        editBasePath.signal.childWhenFalse {
+            ),
+        editBasePath.signal.childWhenFalse:
           a(
             href := "#",
             child.text <-- projectPath.signal,
             onClick.mapTo(true) --> editBasePath
-          )
-        }
+          ),
+        NavItem(
+          label(
+            forId := "drawer-1",
+            cls := "drawer-button bi bi-gear"
+          ),
+//          Button(
+//            onClick.mapTo(true) --> showAppConfig,
+//            cls := "bi bi-gear"
+//          ).small.circle.ghost
+        )
       ),
     ),
       // li (cls := "nav-item",

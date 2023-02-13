@@ -4,13 +4,13 @@ import zio.json.*
 import org.jpablo.typeexplorer.shared.models
 
 case class PackagesOptions (
-  devMode   : Boolean = false,
   onlyActive: Boolean = false,
   onlyTests : Boolean = false,
   nsKind    : Set[models.NamespaceKind] = models.NamespaceKind.values.toSet
 )
 
 case class AppConfig (
+  devMode   : Boolean = false,
   packagesOptions: PackagesOptions = PackagesOptions()
 )
 

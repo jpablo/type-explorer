@@ -20,7 +20,7 @@ def Navbar(brand: String, items: Li*): Div =
     div(
       cls := "flex-none",
       ul(
-        cls := "menu menu-compact menu-horizontal px-1",
+        cls := "menu menu-compact menu-horizontal",
         items
       )
     )
