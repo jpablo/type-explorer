@@ -34,7 +34,6 @@ case class AppState(
   inheritanceTabState: InheritanceTabState,
   projectPath        : StoredString,
   appConfigJson      : StoredString,
-  $devMode           : Var[Boolean],
 )(using Owner):
   val $projectPath = projectPath.signal.map(Path.apply)
 
@@ -70,8 +69,7 @@ object AppState:
         $projectPath.flatMap(fetchDiagram),
       ),
       projectPath = projectPath,
-      appConfigJson = appConfigJson,
-      $devMode = Var(true)
+      appConfigJson = appConfigJson
     )
 
 

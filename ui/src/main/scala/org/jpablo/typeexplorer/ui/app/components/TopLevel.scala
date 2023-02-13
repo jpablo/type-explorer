@@ -22,7 +22,7 @@ def TopLevel(
       AppHeader(appState.projectPath),
       TabsArea(appState, $inheritanceSvgDiagram, $documents),
       AppFooter,
-      appState.$devMode.signal.childWhenTrue:
+      appState.$appConfig.signal.map(_.devMode).childWhenTrue:
         div(
           div(child.text <-- appState.inheritanceTabState.$canvasSelection.signal.map(ds => s"canvasSelection: ${ds.size}")),
           div(child.text <-- appState.inheritanceTabState.$activeSymbols.signal.map(ss => s"activeSymbols: ${ss.size}")),

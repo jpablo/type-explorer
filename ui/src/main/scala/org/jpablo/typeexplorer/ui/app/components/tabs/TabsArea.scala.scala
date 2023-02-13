@@ -27,14 +27,14 @@ def TabsArea(
     NavTabs(
       cls := "mt-2 -mb-px",
       inheritance.NavItem,
-      appState.$devMode.signal.childWhenTrue(semanticDB.NavItem),
+      appState.$appConfig.signal.map(_.devMode).childWhenTrue(semanticDB.NavItem),
       div(cls :="tab tab-lifted mr-6 flex-1 cursor-default [--tab-border-color:transparent]")
     ),
 
     TabContent(
       cls := "flex-1 overflow-auto border-t border-slate-300",
       inheritance.Pane(inheritanceCanvas),
-      appState.$devMode.signal.childWhenTrue(semanticDB.Pane(semanticDBTabContent))
+      appState.$appConfig.signal.map(_.devMode).childWhenTrue(semanticDB.Pane(semanticDBTabContent))
     )
   )
 
