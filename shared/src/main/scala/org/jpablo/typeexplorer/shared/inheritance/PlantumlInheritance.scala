@@ -1,5 +1,6 @@
 package org.jpablo.typeexplorer.shared.inheritance
 
+import org.jpablo.typeexplorer.shared.inheritance.PlantumlInheritance.DiagramOptions
 import zio.json.*
 import org.jpablo.typeexplorer.shared.tree.Tree
 import org.jpablo.typeexplorer.shared.models.{Method, Namespace, NamespaceKind, Symbol}
@@ -13,11 +14,24 @@ object PlantumlInheritance:
   case class DiagramOptions(
     showFields: Boolean = false,
     showSignatures: Boolean = false,
-    excludedFields: List[String] = List.empty
+    excludedFields: List[String] = DiagramOptions.excludedFields
   )
 
   object DiagramOptions:
     given JsonCodec[DiagramOptions] = DeriveJsonCodec.gen
+
+    private val excludedFields = List(
+      "canEqual",
+      "copy",
+      "equals",
+      "hashCode",
+      "productArity",
+      "productElement",
+      "productIterator",
+      "productPrefix",
+      "toString",
+    )
+
 
   case class SymbolOptions(showFields: Boolean = false, showSignatures: Boolean = false)
 
@@ -87,6 +101,7 @@ object PlantumlInheritance:
           ns.methods.map(renderField(0)).mkString(" {\n", "\n", "\n}\n")
         else
           ns.methods
+          .filterNot(m => diagramOptions.excludedFields.contains(m.displayName))
           .groupBy(_.displayName)
           .toList.sortBy(_._1)
           .map((_, ms) => renderField(ms.length)(ms.head)).mkString(" {\n", "\n", "\n}\n")

@@ -12,24 +12,12 @@ case class PackagesOptions (
 
 case class AppConfig (
   devMode         : Boolean         = false,
-  excludedFields  : List[String]    = AppConfig.excludedFields,
   packagesOptions : PackagesOptions = PackagesOptions(),
   diagramOptions  : DiagramOptions  = DiagramOptions()
 )
 
 object AppConfig:
   given JsonCodec[AppConfig] = DeriveJsonCodec.gen
-  private val excludedFields = List(
-    "canEqual",
-    "copy",
-    "equals",
-    "hashCode",
-    "productArity",
-    "productElement",
-    "productIterator",
-    "productPrefix",
-    "toString",
-  )
 
 object PackagesOptions:
   given JsonCodec[PackagesOptions] = DeriveJsonCodec.gen

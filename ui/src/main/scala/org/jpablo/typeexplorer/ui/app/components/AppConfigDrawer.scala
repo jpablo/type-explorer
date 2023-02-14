@@ -2,6 +2,7 @@ package org.jpablo.typeexplorer.ui.app.components
 
 import com.raquo.laminar.api.L.*
 import org.jpablo.typeexplorer.ui.app.components.state.AppConfig
+import com.softwaremill.quicklens.*
 
 def AppConfigDrawer($appConfig: Var[AppConfig]) =
   div(cls := "drawer-side",
@@ -14,9 +15,9 @@ def AppConfigDrawer($appConfig: Var[AppConfig]) =
           textArea(
             cls := "textarea textarea-bordered h-24",
             child.text <--
-              $appConfig.signal.map(_.excludedFields.mkString("\n")),
+              $appConfig.signal.map(_.diagramOptions.excludedFields.mkString("\n")),
             onInput.mapToValue --> { v =>
-              $appConfig.update(_.copy(excludedFields = v.split("\n").toList))
+              $appConfig.update(_.modify(_.diagramOptions.excludedFields).setTo(v.split("\n").toList))
             }
           )
         )
