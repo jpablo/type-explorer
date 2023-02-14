@@ -9,6 +9,7 @@ import org.jpablo.typeexplorer.shared.inheritance.PlantumlInheritance.DiagramOpt
 import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, PlantumlInheritance}
 import org.jpablo.typeexplorer.shared.models.{Namespace, Symbol}
 import org.jpablo.typeexplorer.shared.webApp.InheritanceRequest
+import org.jpablo.typeexplorer.shared.webApp.Routes
 import org.jpablo.typeexplorer.ui.app.Path
 import org.jpablo.typeexplorer.ui.app.components.DiagramType
 import org.jpablo.typeexplorer.ui.app.components.state.AppState
@@ -44,7 +45,7 @@ def fetchInheritanceDiagram(projectPath: Path): Signal[InheritanceDiagram] = {
     EventStream.empty
   else
     for
-      response <- fetchBase("classes?path=" + projectPath).text
+      response <- fetchBase(s"${Routes.classes}?path=" + projectPath).text
       classes  <- EventStream.fromTry {
         response.data
           .fromJson[InheritanceDiagram].left
@@ -60,7 +61,7 @@ def fetchInheritanceSVGDiagram(appState: AppState): EventStream[InheritanceSvgDi
     appState.$projectPath
       .combineWith(
         appState.inheritanceTabState.$activeSymbols.signal,
-        appState.inheritanceTabState.$diagramOptions.signal
+        appState.$appConfig.signal.map(_.diagramOptions)
       )
   for
     (projectPath, symbols: ActiveSymbols, options) <- combined
@@ -70,7 +71,7 @@ def fetchInheritanceSVGDiagram(appState: AppState): EventStream[InheritanceSvgDi
         EventStream.fromValue(svg.svg().ref)
       else
         val body = InheritanceRequest(List(projectPath.toString), symbols.toList, options)
-        val req = Fetch.post(basePath + "inheritance", body.toJson)
+        val req = Fetch.post(s"$basePath${Routes.inheritanceDiagram}", body.toJson)
         req.text.map { fetchResponse =>
           parser
             .parseFromString(fetchResponse.data, dom.MIMEType.`image/svg+xml`)

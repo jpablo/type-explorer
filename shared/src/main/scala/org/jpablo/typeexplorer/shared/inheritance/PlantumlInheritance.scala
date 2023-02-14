@@ -10,7 +10,11 @@ case class PlantUML(diagram: String)
 
 object PlantumlInheritance:
 
-  case class DiagramOptions(showFields: Boolean = false, showSignatures: Boolean = false)
+  case class DiagramOptions(
+    showFields: Boolean = false,
+    showSignatures: Boolean = false,
+    excludedFields: List[String] = List.empty
+  )
 
   object DiagramOptions:
     given JsonCodec[DiagramOptions] = DeriveJsonCodec.gen
@@ -21,7 +25,11 @@ object PlantumlInheritance:
     given JsonCodec[SymbolOptions] = DeriveJsonCodec.gen
 
 
-  def fromInheritanceDiagram(diagram: InheritanceDiagram, symbols: Map[Symbol, Option[SymbolOptions]], options: DiagramOptions = DiagramOptions()): PlantUML =
+  def fromInheritanceDiagram(
+    diagram: InheritanceDiagram,
+    symbols: Map[Symbol, Option[SymbolOptions]],
+    options: DiagramOptions = DiagramOptions()
+  ): PlantUML =
     val declarations =
       diagram.toTrees.map(renderTree(options, symbols))
 

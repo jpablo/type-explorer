@@ -26,8 +26,6 @@ class InheritanceTabState(
   activeSymbolsJson  : StoredString,
   $projectPath       : Signal[Path],
   val $inheritanceDiagram: Signal[InheritanceDiagram] = Signal.fromValue(InheritanceDiagram.empty),
-  // subset of $inheritanceDiagram.symbols that are currently visible in the canvas
-  val $diagramOptions    : Var[DiagramOptions] = Var(DiagramOptions()),
   // this should be a subset of $activeSymbols' keys
   val $canvasSelection   : Var[Set[models.Symbol]] = Var(Set.empty),
 )(using Owner):

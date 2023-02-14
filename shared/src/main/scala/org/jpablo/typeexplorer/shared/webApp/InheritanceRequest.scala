@@ -19,5 +19,9 @@ object InheritanceRequest:
   given JsonCodec[InheritanceRequest] = DeriveJsonCodec.gen
 
 
-
+object Routes:
+  val inheritanceDiagram = "inheritance"
+  val semanticdb = "semanticdb"
+  val classes = "classes"
+  val source = "source"
 

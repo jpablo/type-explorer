@@ -5,15 +5,16 @@ import org.jpablo.typeexplorer.backend.semanticdb.All
 import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, InheritanceExamples}
 import org.jpablo.typeexplorer.shared.inheritance.{PlantUML, PlantumlInheritance}
 import org.jpablo.typeexplorer.shared.models
-import org.jpablo.typeexplorer.shared.webApp.InheritanceRequest
-
+import org.jpablo.typeexplorer.shared.webApp.{InheritanceRequest, Routes}
 import io.github.arainko.ducktape.*
+
 import java.net.URI
 import java.nio.file
 import org.jpablo.typeexplorer.protos.{TextDocumentsWithSource, TextDocumentsWithSourceSeq}
 import org.json4s.*
 import org.json4s.native.Serialization
 import org.json4s.native.Serialization.{read, write}
+
 import scala.meta.internal.semanticdb.TextDocuments
 import scala.util.Using
 import zhttp.http.*
@@ -24,6 +25,7 @@ import zio.*
 import zio.json.*
 import zio.prelude.AnySyntax
 import zio.ZIO.ZIOConstructor
+import org.jpablo.typeexplorer.shared.webApp.Routes
 
 
 object WebApp extends ZIOAppDefault:
@@ -31,8 +33,8 @@ object WebApp extends ZIOAppDefault:
   // ----------
   // endpoints
   // ----------
-  val appZ = Http.collectZIO[Request] {
-    case req @ Method.POST -> !! / "inheritance" =>
+  private val appZ = Http.collectZIO[Request] {
+    case req @ Method.POST -> !! / Routes.inheritanceDiagram =>
 
       def createDiagram(ireq: InheritanceRequest): Task[PlantUML] =
         for
@@ -56,9 +58,9 @@ object WebApp extends ZIOAppDefault:
   } @@ cors(corsConfig)
 
 
-  val app = Http.collect[Request] {
+  private val app = Http.collect[Request] {
 
-    case req @ Method.GET -> !! / "semanticdb" =>
+    case req @ Method.GET -> !! / Routes.semanticdb =>
       (req |> getPath |> readTextDocumentsWithSource)
         .map(_.toByteArray)
         .map(arr => Response(body = Body.fromChunk(Chunk.fromArray(arr))))
@@ -76,7 +78,7 @@ object WebApp extends ZIOAppDefault:
         .map(Response.text)
         .getOrElse(badRequest)
 
-    case req @ Method.GET -> !! / "classes" =>
+    case req @ Method.GET -> !! / Routes.classes =>
       (req |> getPath |> readTextDocumentsWithSource)
         .map(toTextDocuments)
         .map(InheritanceDiagram.fromTextDocuments)
@@ -84,7 +86,7 @@ object WebApp extends ZIOAppDefault:
         .map(Response.json)
         .getOrElse(badRequest)
 
-    case req @ Method.GET -> !! / "source" =>
+    case req @ Method.GET -> !! / Routes.source =>
       (req |> getPath |> readSource)
         .map(Response.text)
         .map(_.withContentType("text/plain"))
@@ -102,17 +104,17 @@ object WebApp extends ZIOAppDefault:
   given formats: Formats =
     Serialization.formats(NoTypeHints)
 
-  def toTextDocuments(docs: TextDocumentsWithSourceSeq): TextDocuments =
+  private def toTextDocuments(docs: TextDocumentsWithSourceSeq): TextDocuments =
     TextDocuments.apply(docs.documentsWithSource.flatMap(_.documents))
 
-  def readTextDocumentsWithSource(path: Option[List[String]]): Option[TextDocumentsWithSourceSeq] =
+  private def readTextDocumentsWithSource(path: Option[List[String]]): Option[TextDocumentsWithSourceSeq] =
     for p <- combinePaths(path) yield
       TextDocumentsWithSourceSeq(
         All.scan(p).map: (path, d) =>
           TextDocumentsWithSource(path.toString).withDocuments(d.documents)
       )
 
-  def readSource(paths: Option[List[String]]): Option[String] =
+  private def readSource(paths: Option[List[String]]): Option[String] =
     for
       path <- paths.toList.flatten.headOption
     yield
@@ -120,17 +122,17 @@ object WebApp extends ZIOAppDefault:
         bufferedSource.getLines().mkString("\n")
       }
 
-  def combinePaths(path: Option[List[String]]): Option[file.Path] =
+  private def combinePaths(path: Option[List[String]]): Option[file.Path] =
     for case h :: t <- path if h.nonEmpty yield
       file.Paths.get(h, t*)
 
-  def getPath(req: Request): Option[List[String]] =
+  private def getPath(req: Request): Option[List[String]] =
     getParam(req, "path")
 
-  def getParam(req: Request, name: String) =
+  private def getParam(req: Request, name: String) =
     req.url.queryParams.get(name)
 
-  def toTask[A](a: => A, error: String = "")(using ZIOConstructor[Nothing, Any, A], Trace) =
+  private def toTask[A](a: => A, error: String = "")(using ZIOConstructor[Nothing, Any, A], Trace) =
     ZIO.from(a).mapError(e => Throwable(if error.isEmpty then e.toString else error))
 
   private lazy val corsConfig =

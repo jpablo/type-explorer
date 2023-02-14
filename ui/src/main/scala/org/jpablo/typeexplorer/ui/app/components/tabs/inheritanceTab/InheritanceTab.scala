@@ -12,7 +12,7 @@ import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
 import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, PlantumlInheritance}
 import org.jpablo.typeexplorer.shared.inheritance.PlantumlInheritance.DiagramOptions
 import org.jpablo.typeexplorer.shared.models
-import org.jpablo.typeexplorer.ui.app.components.state.{AppState, InheritanceTabState, PackagesOptions}
+import org.jpablo.typeexplorer.ui.app.components.state.{AppConfig, AppState, InheritanceTabState, PackagesOptions}
 import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.PackagesTree
 import org.jpablo.typeexplorer.ui.daisyui.*
 import io.laminext.syntax.core.*
@@ -36,7 +36,7 @@ object InheritanceTab:
 
       val $filterBySymbolName = Var("")
       val $showOptions        = Var(false)
-      val modifySelection = modifyLens[DiagramOptions]
+      val modifySelection = modifyLens[AppConfig]
       val $filteredDiagram =
         inheritanceTabState.$inheritanceDiagram
           .combineWith(
@@ -112,8 +112,8 @@ object InheritanceTab:
         // --- toolbar ---
         div(cls := "flex gap-4 ml-2",
           ButtonGroup(
-            OptionsToggle("fields-checkbox-1", "fields",     _.showFields,     modifySelection(_.showFields), inheritanceTabState),
-            OptionsToggle("fields-checkbox-2", "signatures", _.showSignatures, modifySelection(_.showSignatures), inheritanceTabState),
+            OptionsToggle("fields-checkbox-1", "fields",     _.diagramOptions.showFields,     modifySelection(_.diagramOptions.showFields), appState),
+            OptionsToggle("fields-checkbox-2", "signatures", _.diagramOptions.showSignatures, modifySelection(_.diagramOptions.showSignatures), appState),
           ),
           ButtonGroup(
             Button("remove all",
@@ -214,12 +214,18 @@ object InheritanceTab:
         inheritanceTabState.canvasSelection.clear()
 
 
-  private def OptionsToggle(id: String, labelStr: String, field: DiagramOptions => Boolean, modifyField: PathLazyModify[DiagramOptions, Boolean], selectedSymbols: InheritanceTabState) =
+  private def OptionsToggle(
+    id: String,
+    labelStr: String,
+    field: AppConfig => Boolean,
+    modifyField: PathLazyModify[AppConfig, Boolean],
+    appState: AppState
+  ) =
     LabeledCheckbox(
       id = id,
       labelStr = labelStr,
-      $checked = selectedSymbols.$diagramOptions.signal.map(field),
-      clickHandler = selectedSymbols.$diagramOptions.updater[Boolean]((options, b) => modifyField.setTo(b)(options)),
+      $checked = appState.$appConfig.signal.map(field),
+      clickHandler = appState.$appConfig.updater[Boolean]((config, b) => modifyField.setTo(b)(config)),
       toggle = true
     )
 

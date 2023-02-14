@@ -13,6 +13,11 @@ def AppConfigDrawer($appConfig: Var[AppConfig]) =
         label(cls := "label", span(cls := "label-text", "excluded fields"),
           textArea(
             cls := "textarea textarea-bordered h-24",
+            child.text <--
+              $appConfig.signal.map(_.excludedFields.mkString("\n")),
+            onInput.mapToValue --> { v =>
+              $appConfig.update(_.copy(excludedFields = v.split("\n").toList))
+            }
           )
         )
       ),
