@@ -18,36 +18,16 @@ import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.Inheritance
 import org.jpablo.typeexplorer.shared.webApp.ActiveSymbolsSeq
 
 object InheritanceTabState:
-  type ActiveSymbols = Map[models.Symbol, Option[SymbolOptions]]
+  type ActiveSymbols = Map[models.Symbol, (Option[SymbolOptions], Path)]
 
 import InheritanceTabState.ActiveSymbols
 
 class InheritanceTabState(
-  activeSymbolsJson  : StoredString,
-  $projectPath       : Signal[Path],
+  val $activeSymbols: Var[ActiveSymbols] = Var(Map.empty),
   val $inheritanceDiagram: Signal[InheritanceDiagram] = Signal.fromValue(InheritanceDiagram.empty),
   // this should be a subset of $activeSymbols' keys
   val $canvasSelection   : Var[Set[models.Symbol]] = Var(Set.empty),
-)(using Owner):
-
-  private def parseStoredSymbols(json: String): Map[Path, ActiveSymbolsSeq] =
-    json.fromJson[Map[Path, ActiveSymbolsSeq]].getOrElse(Map.empty)
-
-  // 1. Initial value take from local storage
-  val $activeSymbols: Var[ActiveSymbols] =
-    Var {
-      $projectPath.combineWith(activeSymbolsJson.signal.map(parseStoredSymbols))
-        .map((path, map) => map.getOrElse(path, List.empty).toMap)
-        .observe
-        .now()
-    }
-
-  // 2. Make sure that the active symbols are stored in the local storage
-  $activeSymbols.signal.withCurrentValueOf($projectPath).foreach: (symbols, path) =>
-    activeSymbolsJson.update: json =>
-      (parseStoredSymbols(json) + (path -> symbols.toList)).toJson
-
-
+):
   object canvasSelection:
     def toggle(symbol: models.Symbol): Unit =
       $canvasSelection.update(_.toggle(symbol))
@@ -81,20 +61,19 @@ class InheritanceTabState(
       inheritanceSvgDiagram.select(arrowSymbols)
 
 
-
   object activeSymbols:
     def toggle(symbol: models.Symbol): Unit =
       $activeSymbols.update: symbols =>
         if symbols.contains(symbol) then
           symbols - symbol
         else
-          symbols + (symbol -> None)
+          symbols + (symbol -> (None, ???))
 
     def extend(symbol: models.Symbol): Unit =
-      $activeSymbols.update(_ + (symbol -> None))
+      $activeSymbols.update(_ + (symbol -> (None, ???)))
 
     def extend(symbols: collection.Seq[models.Symbol]): Unit =
-      $activeSymbols.update(_ ++ symbols.map(_ -> None))
+      $activeSymbols.update(_ ++ symbols.map(_ -> (None, ???)))
 
     def clear() =
       $activeSymbols.set(Map.empty)
@@ -104,11 +83,12 @@ class InheritanceTabState(
     def updateSelectionOptions(f: SymbolOptions => SymbolOptions): Unit =
       val canvasSelection = $canvasSelection.now()
       $activeSymbols.update:
-        _.transform: (sym, options) =>
+        _.transform { case (sym, (options, p)) =>
           if canvasSelection.contains(sym) then
-            Some(f(options.getOrElse(SymbolOptions())))
+            (Some(f(options.getOrElse(SymbolOptions()))), p)
           else
-            options
+            (options, p)
+        }
 
   /**
     * Modify `$canvasSelection` based on the given function `f`

@@ -2,10 +2,11 @@ package org.jpablo.typeexplorer.shared.webApp
 
 
 import org.jpablo.typeexplorer.shared.inheritance.PlantumlInheritance
+import org.jpablo.typeexplorer.shared.inheritance.PlantumlInheritance.SymbolOptions
 import zio.json.*
 import org.jpablo.typeexplorer.shared.models.Symbol
 
-type ActiveSymbolsSeq = List[(Symbol, Option[PlantumlInheritance.SymbolOptions])]
+type ActiveSymbolsSeq = List[(Symbol, Option[SymbolOptions])]
 
 case class InheritanceRequest(
   paths  : List[String],

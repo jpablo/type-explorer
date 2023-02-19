@@ -15,61 +15,84 @@ import org.jpablo.typeexplorer.ui.app.Path
 import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.InheritanceSvgDiagram
 import org.scalajs.dom
 import zio.json.*
+import com.softwaremill.quicklens.*
+import org.jpablo.typeexplorer.shared.webApp.ActiveSymbolsSeq
+import InheritanceTabState.ActiveSymbols
 
-class Persistent[A: JsonCodec](storedString: StoredString, initial: A)(using Owner):
-  private val $var: Var[A] =
+
+def persistent[A: JsonCodec](storedString: StoredString, initial: A)(using Owner): Var[A] =
+  val $var: Var[A] =
     Var {
       storedString.signal
-        .map(_.fromJson[A].getOrElse(initial))
+        .map { str =>
+          str.fromJson[A] match
+            case Left(value) =>
+              dom.console.error(s"Error parsing json: $value")
+              initial
+            case Right(value) => value
+        }
         .observe
         .now()
     }
-  def start() =
-    $var.signal.foreach: a =>
-      storedString.set(a.toJson)
-    $var
+  $var.signal.foreach: a =>
+    storedString.set(a.toJson)
+  $var
 
 
 case class AppState(
   inheritanceTabState: InheritanceTabState,
-  projectPath        : StoredString,
   appConfigJson      : StoredString,
 )(using Owner):
-  val $projectPath = projectPath.signal.map(Path.apply)
 
   val $appConfig: Var[AppConfig] =
-    Persistent(appConfigJson, AppConfig())
-      .start()
+    persistent(appConfigJson, AppConfig())
 
   def updateAppConfig(f: AppConfig => AppConfig): Unit =
     $appConfig.update(f)
 
+  val $basePaths: Signal[List[Path]] =
+    $appConfig.signal.map(_.basePaths)
+
 
 
 object AppState:
-  def build(fetchDiagram: Path => Signal[InheritanceDiagram]) =
+  def build(fetchDiagram: List[Path] => Signal[InheritanceDiagram]) =
     given owner: Owner = OneTimeOwner(() => ())
 
     val appConfigJson = storedString("appConfig", initial = "{}")
+    val appState0 = AppState(InheritanceTabState(), appConfigJson)
 
-    // TODO:
-//    val projectJson = storedString("project", initial = "{}")
-    // projectPath should be part of projectJson
-    val projectPath = storedString("projectPath", initial = "")
+    val $activeSymbols: Var[ActiveSymbols] =
+      appState0.$appConfig
+        .zoom(appConfig =>
+          appConfig.basePaths
+            .flatMap { p =>
+              appConfig.allActiveSymbols.get(p).toList.flatMap(_.map((s, o) => s -> (o, p)))
+            }
+            .toMap
+        )((activeSymbols: ActiveSymbols) =>
 
-    //    val diagramJson = storedString("diagram", initial = "{}")
-    // activeSymbolsJson should be part of diagramJson
-    val activeSymbolsJson = storedString("activeSymbols", initial = "{}")
+          val appConfig = appState0.$appConfig.now()
 
-    val $projectPath = projectPath.signal.map(Path.apply)
-    AppState(
-      inheritanceTabState = InheritanceTabState(
-        activeSymbolsJson,
-        $projectPath,
-        $projectPath.flatMap(fetchDiagram),
-      ),
-      projectPath = projectPath,
-      appConfigJson = appConfigJson
+          appConfig
+            .modify(_.allActiveSymbols)
+            .using { (allActiveSymbols: Map[Path, ActiveSymbolsSeq]) =>
+              val as =
+                activeSymbols.toList
+                  .map { case (s, (o, p)) => p -> (s, o) }
+                  .groupBy(_._1)
+                  .transform((_, v) => v.map(_._2))
+
+              allActiveSymbols ++ as
+            }
+        )
+
+    appState0.copy(
+      inheritanceTabState =
+        InheritanceTabState(
+          $activeSymbols,
+          appState0.$basePaths.flatMap(fetchDiagram)
+        )
     )
 
 

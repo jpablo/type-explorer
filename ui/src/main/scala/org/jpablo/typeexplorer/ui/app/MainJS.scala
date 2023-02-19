@@ -16,7 +16,7 @@ object MainJS:
     
     val appState: AppState = AppState.build(fetchInheritanceDiagram)
     
-    val $documents = fetchDocuments(appState.$projectPath)
+    val $documents = fetchDocuments(appState.$basePaths)
     val $inheritanceSvgDiagram = fetchInheritanceSVGDiagram(appState).startWith(InheritanceSvgDiagram.empty)
     
     val app = TopLevel(appState, $inheritanceSvgDiagram, $documents)

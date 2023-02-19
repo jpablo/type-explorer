@@ -26,26 +26,27 @@ def fetchBase(path: String): FetchEventStreamBuilder =
   Fetch.get(basePath + path)
 
 
-def fetchDocuments($projectPath: Signal[Path]): EventStream[List[TextDocumentsWithSource]] =
+def fetchDocuments($projectPath: Signal[List[Path]]): EventStream[List[TextDocumentsWithSource]] =
   for
-    path <- $projectPath
+    paths <- $projectPath
     lst <-
-      if path.toString.isEmpty then
+      if paths.isEmpty then
         EventStream.fromValue(List.empty)
       else
-        for response <- fetchBase("semanticdb?path=" + path).arrayBuffer yield
+        val qs = paths.map(p => "path=" + p).mkString("&")
+        for response <- fetchBase("semanticdb?" + qs).arrayBuffer yield
           val ia = Int8Array(response.data, 0, length = response.data.byteLength)
           TextDocumentsWithSourceSeq.parseFrom(ia.toArray).documentsWithSource.toList.sortBy(_.semanticDbUri)
   yield
     lst
 
 
-def fetchInheritanceDiagram(projectPath: Path): Signal[InheritanceDiagram] = {
-  if projectPath.isEmpty then
+def fetchInheritanceDiagram(basePaths: List[Path]): Signal[InheritanceDiagram] = {
+  if basePaths.isEmpty then
     EventStream.empty
   else
     for
-      response <- fetchBase(s"${Routes.classes}?path=" + projectPath).text
+      response <- fetchBase(s"${Routes.classes}?" + basePaths.map("path=" + _).mkString("&")).text
       classes  <- EventStream.fromTry {
         response.data
           .fromJson[InheritanceDiagram].left
@@ -58,19 +59,19 @@ def fetchInheritanceDiagram(projectPath: Path): Signal[InheritanceDiagram] = {
 
 def fetchInheritanceSVGDiagram(appState: AppState): EventStream[InheritanceSvgDiagram] =
   val combined =
-    appState.$projectPath
+    appState.$basePaths
       .combineWith(
         appState.inheritanceTabState.$activeSymbols.signal,
         appState.$appConfig.signal.map(_.diagramOptions)
       )
   for
-    (projectPath, symbols: ActiveSymbols, options) <- combined
+    (basePaths: List[Path], symbols: ActiveSymbols, options) <- combined
     parser = dom.DOMParser()
     svgElement <-
-      if projectPath.toString.isEmpty then
+      if basePaths.isEmpty then
         EventStream.fromValue(svg.svg().ref)
       else
-        val body = InheritanceRequest(List(projectPath.toString), symbols.toList, options)
+        val body = InheritanceRequest(basePaths.map(_.toString), symbols.toList.map { case (s, (o, p)) => s -> o }, options)
         val req = Fetch.post(s"$basePath${Routes.inheritanceDiagram}", body.toJson)
         req.text.map { fetchResponse =>
           parser
@@ -100,9 +101,9 @@ def fetchCallGraphSVGDiagram($diagram: Signal[(DiagramType, Path)]): EventStream
 //      errorNode = doc.querySelector("parsererror")
   yield doc
 
-def fetchSourceCode($projectPath: Signal[Path])(docPath: Path) =
+def fetchSourceCode($basePath: Signal[Path])(docPath: Path) =
   for
-    projectPath <- $projectPath
+    projectPath <- $basePath
     response    <- fetchBase(s"source?path=${encodeURIComponent(projectPath.toString + "/" + docPath)}").text
   yield
     response.data

@@ -3,6 +3,7 @@ package org.jpablo.typeexplorer.ui.app.components
 import com.raquo.laminar.api.L.*
 import io.laminext.core.*
 import io.laminext.syntax.core.*
+import org.jpablo.typeexplorer.ui.app.Path
 import org.jpablo.typeexplorer.ui.app.components.state.AppState
 import org.jpablo.typeexplorer.ui.daisyui.*
 import org.scalajs.dom
@@ -12,7 +13,7 @@ enum DiagramType:
   case CallGraph
 
 
-def AppHeader(projectPath: StoredString): Div =
+def AppHeader(): Div =
   val onEnterPress  = onKeyPress.filter(_.keyCode == dom.KeyCode.Enter)
   val onEscapePress = onKeyDown.filter(_.keyCode == dom.KeyCode.Escape)
   val editBasePath  = Var(false)
@@ -21,12 +22,12 @@ def AppHeader(projectPath: StoredString): Div =
     Search(
       cls := "me-2",
       onMountFocus,
-      value <-- projectPath.signal,
-      onEnterPress.preventDefault.mapToValue --> { v =>
-        projectPath.set(v)
-        editBasePath.set(false)
-      },
-      onEscapePress.mapTo(false) --> editBasePath,
+//      value <-- $projectPath.signal,
+//      onEnterPress.preventDefault.mapToValue --> { v =>
+//        $projectPath.set(v)
+//        editBasePath.set(false)
+//      },
+//      onEscapePress.mapTo(false) --> editBasePath,
     )
   // ------- render -------
   div(
@@ -38,25 +39,25 @@ def AppHeader(projectPath: StoredString): Div =
       NavItem(span(b("base path:"))),
 
       NavItem(
-        editBasePath.signal
-          .combineWith(projectPath.signal.map(_.isEmpty))
-          .map(_ || _)
-          .childWhenTrue:
-            form(
-              cls := "d-flex",
-              searchInput,
-              Button(
-                onClick.mapTo(false) --> { b =>
-                  projectPath.set(searchInput.ref.value)
-                  editBasePath.set(b)
-                },
-                "Ok"
-              ).small.outline.success
-            ),
+//        editBasePath.signal
+//          .combineWith($projectPath.signal.map(_.isEmpty))
+//          .map(_ || _)
+//          .childWhenTrue:
+//            form(
+//              cls := "d-flex",
+//              searchInput,
+//              Button(
+//                onClick.mapTo(false) --> { b =>
+//                  $projectPath.set(searchInput.ref.value)
+//                  editBasePath.set(b)
+//                },
+//                "Ok"
+//              ).small.outline.success
+//            ),
         editBasePath.signal.childWhenFalse:
           a(
             href := "#",
-            child.text <-- projectPath.signal,
+//            child.text <-- $projectPath.signal,
             onClick.mapTo(true) --> editBasePath
           ),
         NavItem(

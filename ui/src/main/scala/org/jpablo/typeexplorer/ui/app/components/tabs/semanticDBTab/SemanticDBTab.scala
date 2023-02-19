@@ -10,7 +10,7 @@ import org.jpablo.typeexplorer.ui.app.components.state.AppState
 
   def SemanticDBTab(
     $documents: EventStream[List[TextDocumentsWithSource]],
-    $projectPath: Signal[Path]
+    $projectPath: Signal[List[Path]]
   ) =
     val $selectedSemanticDb = EventBus[Path]
 
@@ -24,7 +24,7 @@ import org.jpablo.typeexplorer.ui.app.components.state.AppState
       $selectedDocument
         .collect { case (_, Some(documentsWithSource)) => documentsWithSource.documents.headOption }
         .collect { case Some(doc) => Path(doc.uri) }
-        .flatMap(fetchSourceCode($projectPath))
+        .flatMap(fetchSourceCode($projectPath.map(_.head)))
 
     div(
       cls := "grid h-full grid-cols-3",
