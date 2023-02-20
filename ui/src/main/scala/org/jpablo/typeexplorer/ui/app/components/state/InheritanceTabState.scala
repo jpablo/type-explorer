@@ -18,7 +18,7 @@ import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.Inheritance
 import org.jpablo.typeexplorer.shared.webApp.ActiveSymbolsSeq
 
 object InheritanceTabState:
-  type ActiveSymbols = Map[models.Symbol, (Option[SymbolOptions], Path)]
+  type ActiveSymbols = Map[models.Symbol, Option[SymbolOptions]]
 
 import InheritanceTabState.ActiveSymbols
 
@@ -67,13 +67,13 @@ class InheritanceTabState(
         if activeSymbols.contains(symbol) then
           activeSymbols - symbol
         else
-          activeSymbols + (symbol -> (None, ???))
+          activeSymbols + (symbol -> None)
 
     def extend(symbol: models.Symbol): Unit =
-      $activeSymbols.update(_ + (symbol -> (None, ???)))
+      $activeSymbols.update(_ + (symbol -> None))
 
     def extend(symbols: collection.Seq[models.Symbol]): Unit =
-      $activeSymbols.update(_ ++ symbols.map(_ -> (None, ???)))
+      $activeSymbols.update(_ ++ symbols.map(_ -> None))
 
     def clear() =
       $activeSymbols.set(Map.empty)
@@ -83,11 +83,11 @@ class InheritanceTabState(
     def updateSelectionOptions(f: SymbolOptions => SymbolOptions): Unit =
       val canvasSelection = $canvasSelection.now()
       $activeSymbols.update:
-        _.transform { case (sym, (options, p)) =>
+        _.transform { case (sym, options) =>
           if canvasSelection.contains(sym) then
-            (Some(f(options.getOrElse(SymbolOptions()))), p)
+            Some(f(options.getOrElse(SymbolOptions())))
           else
-            (options, p)
+            options
         }
 
   /**

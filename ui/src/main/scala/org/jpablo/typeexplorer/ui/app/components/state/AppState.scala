@@ -59,31 +59,13 @@ object AppState:
   def build(fetchDiagram: List[Path] => Signal[InheritanceDiagram]) =
     given owner: Owner = OneTimeOwner(() => ())
 
-    val appConfigJson = storedString("appConfig", initial = "{}")
-    val appState0 = AppState(InheritanceTabState(), appConfigJson)
+    val appState0 =
+      AppState(InheritanceTabState(), storedString("appConfig", initial = "{}"))
 
     val $activeSymbols: Var[ActiveSymbols] =
       appState0.$appConfig
-        .zoom(appConfig =>
-          appConfig.basePaths
-            .flatMap { path =>
-              appConfig.allActiveSymbols.get(path).toList.flatMap(_.map((s, o) => s -> (o, path)))
-            }
-            .toMap
-        )((activeSymbols: ActiveSymbols) =>
-
-          appState0.$appConfig.now()
-            .modify(_.allActiveSymbols)
-            .using { (allActiveSymbols: Map[Path, ActiveSymbolsSeq]) =>
-              val as =
-                activeSymbols.toList
-                  .map { case (s, (o, p)) => p -> (s, o) }
-                  .groupBy(_._1)
-                  .transform((_, v) => v.map(_._2))
-
-              allActiveSymbols ++ as
-            }
-        )
+        .zoom(_.activeSymbols.toMap): activeSymbols =>
+          appState0.$appConfig.now().modify(_.activeSymbols).setTo(activeSymbols.toList)
 
     appState0.copy(
       inheritanceTabState =

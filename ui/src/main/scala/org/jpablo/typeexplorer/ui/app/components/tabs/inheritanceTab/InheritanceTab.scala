@@ -168,7 +168,7 @@ object InheritanceTab:
                     .map: (activeSymbols, selection) =>
                       val activeSelection = activeSymbols.filter((s, _) => selection.contains(s))
                       // true when activeSelection is nonEmpty AND every option exists and showFields == true
-                      activeSelection.nonEmpty && activeSelection.forall((_, o) => o._1.exists(_.showFields)),
+                      activeSelection.nonEmpty && activeSelection.forall((_, o) => o.exists(_.showFields)),
                 $disabled = $selectionEmpty,
                 clickHandler = Observer: b =>
                   inheritanceTabState.activeSymbols.updateSelectionOptions(_.copy(showFields = b)),

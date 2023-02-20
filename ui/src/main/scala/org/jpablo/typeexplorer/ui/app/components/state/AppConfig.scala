@@ -14,11 +14,12 @@ case class PackagesOptions (
 )
 
 case class AppConfig (
-  devMode         : Boolean         = false,
-  packagesOptions : PackagesOptions = PackagesOptions(),
-  diagramOptions  : DiagramOptions  = DiagramOptions(),
-  basePaths       : List[Path]    = List.empty,
-  allActiveSymbols: Map[Path, ActiveSymbolsSeq]  = Map.empty
+  devMode         : Boolean          = false,
+  packagesOptions : PackagesOptions  = PackagesOptions(),
+  diagramOptions  : DiagramOptions   = DiagramOptions(),
+  basePaths       : List[Path]       = List.empty,
+  // This can't be a Map[A, Option[B]], as zio-json will remove entries with None values
+  activeSymbols   : ActiveSymbolsSeq = List.empty
 )
 
 object AppConfig:

@@ -19,7 +19,7 @@ def TopLevel(
     cls := "drawer drawer-end",
     input(idAttr := "drawer-1", tpe := "checkbox", cls := "drawer-toggle"),
     div(cls := "drawer-content flex flex-col h-full",
-      AppHeader(),
+      AppHeader(appState.$basePaths),
       TabsArea(appState, $inheritanceSvgDiagram, $documents),
       AppFooter,
       appState.$appConfig.signal.map(_.devMode).childWhenTrue:

@@ -45,8 +45,9 @@ def fetchInheritanceDiagram(basePaths: List[Path]): Signal[InheritanceDiagram] =
   if basePaths.isEmpty then
     EventStream.empty
   else
+    val qs = basePaths.map("path=" + _).mkString("&")
     for
-      response <- fetchBase(s"${Routes.classes}?" + basePaths.map("path=" + _).mkString("&")).text
+      response <- fetchBase(s"${Routes.classes}?$qs").text
       classes  <- EventStream.fromTry {
         response.data
           .fromJson[InheritanceDiagram].left
@@ -71,7 +72,7 @@ def fetchInheritanceSVGDiagram(appState: AppState): EventStream[InheritanceSvgDi
       if basePaths.isEmpty then
         EventStream.fromValue(svg.svg().ref)
       else
-        val body = InheritanceRequest(basePaths.map(_.toString), symbols.toList.map { case (s, (o, p)) => s -> o }, options)
+        val body = InheritanceRequest(basePaths.map(_.toString), symbols.toList, options)
         val req = Fetch.post(s"$basePath${Routes.inheritanceDiagram}", body.toJson)
         req.text.map { fetchResponse =>
           parser
