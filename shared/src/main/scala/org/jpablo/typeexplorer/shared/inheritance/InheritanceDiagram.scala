@@ -11,6 +11,7 @@ import org.jpablo.typeexplorer.shared.models.{Method, Namespace, NamespaceKind, 
 import scala.meta.internal.semanticdb
 import java.util.jar.Attributes.Name
 import scala.annotation.{tailrec, targetName}
+import org.jpablo.typeexplorer.protos.{TextDocumentsWithSource, TextDocumentsWithSourceSeq}
 
 type Arrow = (Symbol, Symbol)
 
@@ -173,21 +174,22 @@ object InheritanceDiagram:
   // In Scala 3.2 the type annotation is needed.
   val empty: InheritanceDiagram = new InheritanceDiagram(Set.empty)
 
-  def fromTextDocuments(textDocuments: TextDocuments): InheritanceDiagram =
+  def fromTextDocumentsWithSource(textDocuments: TextDocumentsWithSourceSeq): InheritanceDiagram =
     val allSymbols =
       for
-        doc <- textDocuments.documents
+        docWithSource <- textDocuments.documentsWithSource
+        doc <- docWithSource.documents
         occs = doc.occurrences.map(so => (so.symbol, so)).toMap
         si <- doc.symbols
         if !excluded.exists(si.symbol.contains)
       yield
-        Symbol(si.symbol) -> (si, doc.uri, occs.get(si.symbol))
+        Symbol(si.symbol) -> (si, docWithSource.semanticDbUri, doc.uri, docWithSource.basePath, occs.get(si.symbol))
 
-    val symbolInfosMap = allSymbols.map { case (s, (si, _, _)) => s -> si }.toMap
+    val symbolInfosMap = allSymbols.map { case (s, (si, _, _, _, _)) => s -> si }.toMap
 
     val namespaces =
       for
-        (symbol, (symbolInfo, docURI, symbolOcc: Option[SymbolOccurrence])) <- allSymbols
+        (symbol, (symbolInfo, semanticDbUri, docURI, basePath, symbolOcc: Option[SymbolOccurrence])) <- allSymbols
         signature    <- symbolInfo.signature.asNonEmpty.toSeq
         clsSignature <- signature match
           case cs: ClassSignature => List(cs)
@@ -204,12 +206,14 @@ object InheritanceDiagram:
         methods = declarations.map(method(symbolInfosMap))
         namespace =
           Namespace(
-            symbol      = symbol,
-            displayName = symbolInfo.displayName,
-            kind        = nsKind,
-            methods     = methods.toList.sortBy(_.displayName),
-            documentURI = Some(docURI),
-            range       = symbolOcc.map(SymbolRange.from)
+            symbol        = symbol,
+            displayName   = symbolInfo.displayName,
+            kind          = nsKind,
+            methods       = methods.toList.sortBy(_.displayName),
+            documentURI   = Some(docURI),
+            semanticDbUri = Some(semanticDbUri),
+            basePath      = Some(basePath),
+            range         = symbolOcc.map(SymbolRange.from)
           )
       yield
         namespace -> clsSignature.parents
@@ -231,7 +235,7 @@ object InheritanceDiagram:
       namespaces = namespaces.map(_._1).toSet ++ missingSymbols(arrows.map(_._2).toList, symbolInfosMap)
     )
 
-  end fromTextDocuments
+  end fromTextDocumentsWithSource
 
   private def missingSymbols(parents: List[Symbol], allSymbols: Map[Symbol, SymbolInformation]) =
     for

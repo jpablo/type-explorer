@@ -34,19 +34,19 @@ extension (puml: PlantUML)
 
 
 
-@main
-def plantumlExample(): Unit =
-  val path = file.Paths.get("/Users/jpablo/GitHub/scala-js-dom")
-  val docs = TextDocuments(All.scan(path).flatMap(_._2.documents))
-  val diagram = InheritanceDiagram.fromTextDocuments(docs)
-    .subdiagram(
-      Set(
-        models.Symbol("org/scalajs/dom/experimental/domparser/package."),
-        models.Symbol("org/scalajs/dom/EventTarget#")
-      )
-    )
-  val diagramStr = PlantumlInheritance.fromInheritanceDiagram(diagram, Map.empty)
-  println(diagramStr.diagram)
+//@main
+//def plantumlExample(): Unit =
+//  val path = file.Paths.get("/Users/jpablo/GitHub/scala-js-dom")
+//  val docs = TextDocuments(All.scan(path).flatMap(_._2.documents))
+//  val diagram = InheritanceDiagram.fromTextDocumentsWithSource(docs)
+//    .subdiagram(
+//      Set(
+//        models.Symbol("org/scalajs/dom/experimental/domparser/package."),
+//        models.Symbol("org/scalajs/dom/EventTarget#")
+//      )
+//    )
+//  val diagramStr = PlantumlInheritance.fromInheritanceDiagram(diagram, Map.empty)
+//  println(diagramStr.diagram)
 //  println("-------------------")
 //  var svg = renderDiagram("laminar", diagram)
 //  println(svg)

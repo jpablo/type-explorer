@@ -66,15 +66,13 @@ object AppState:
       appState0.$appConfig
         .zoom(appConfig =>
           appConfig.basePaths
-            .flatMap { p =>
-              appConfig.allActiveSymbols.get(p).toList.flatMap(_.map((s, o) => s -> (o, p)))
+            .flatMap { path =>
+              appConfig.allActiveSymbols.get(path).toList.flatMap(_.map((s, o) => s -> (o, path)))
             }
             .toMap
         )((activeSymbols: ActiveSymbols) =>
 
-          val appConfig = appState0.$appConfig.now()
-
-          appConfig
+          appState0.$appConfig.now()
             .modify(_.allActiveSymbols)
             .using { (allActiveSymbols: Map[Path, ActiveSymbolsSeq]) =>
               val as =

@@ -63,11 +63,11 @@ class InheritanceTabState(
 
   object activeSymbols:
     def toggle(symbol: models.Symbol): Unit =
-      $activeSymbols.update: symbols =>
-        if symbols.contains(symbol) then
-          symbols - symbol
+      $activeSymbols.update: activeSymbols =>
+        if activeSymbols.contains(symbol) then
+          activeSymbols - symbol
         else
-          symbols + (symbol -> (None, ???))
+          activeSymbols + (symbol -> (None, ???))
 
     def extend(symbol: models.Symbol): Unit =
       $activeSymbols.update(_ + (symbol -> (None, ???)))

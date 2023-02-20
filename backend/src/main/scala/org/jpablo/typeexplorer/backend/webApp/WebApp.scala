@@ -38,8 +38,8 @@ object WebApp extends ZIOAppDefault:
 
       def createDiagram(ireq: InheritanceRequest): Task[PlantUML] =
         for
-          docs <- toTask(readTextDocumentsWithSource(Some(ireq.paths)), error = "No path provided")
-          diagram = InheritanceDiagram.fromTextDocuments(toTextDocuments(docs))
+          docs <- toTask(readTextDocumentsWithSource(ireq.paths), error = "No path provided")
+          diagram = InheritanceDiagram.fromTextDocumentsWithSource(docs)
           puml = PlantumlInheritance.fromInheritanceDiagram(
             diagram.subdiagram(ireq.symbols.map(_._1).toSet),
             ireq.symbols.toMap,
@@ -61,33 +61,37 @@ object WebApp extends ZIOAppDefault:
   private val app = Http.collect[Request] {
 
     case req @ Method.GET -> !! / Routes.semanticdb =>
-      (req |> getPath |> readTextDocumentsWithSource)
+      getPath(req)
+        .map(readTextDocumentsWithSource)
         .map(_.toByteArray)
         .map(arr => Response(body = Body.fromChunk(Chunk.fromArray(arr))))
         .getOrElse(badRequest)
 
     case req @ Method.GET -> !! / "semanticdb.json" =>
-      (req |> getPath |> readTextDocumentsWithSource)
+      getPath(req)
+        .map(readTextDocumentsWithSource)
         .map(write)
         .map(Response.json)
         .getOrElse(badRequest)
 
     case req @ Method.GET -> !! / "semanticdb.textproto" =>
-      (req |> getPath |> readTextDocumentsWithSource)
+      getPath(req)
+        .map(readTextDocumentsWithSource)
         .map(_.toProtoString)
         .map(Response.text)
         .getOrElse(badRequest)
 
     case req @ Method.GET -> !! / Routes.classes =>
-      (req |> getPath |> readTextDocumentsWithSource)
-        .map(toTextDocuments)
-        .map(InheritanceDiagram.fromTextDocuments)
+      getPath(req)
+        .map(readTextDocumentsWithSource)
+        .map(InheritanceDiagram.fromTextDocumentsWithSource)
         .map(_.toJson)
         .map(Response.json)
         .getOrElse(badRequest)
 
     case req @ Method.GET -> !! / Routes.source =>
-      (req |> getPath |> readSource)
+      getPath(req).flatMap(_.headOption)
+        .map(readSource)
         .map(Response.text)
         .map(_.withContentType("text/plain"))
         .getOrElse(badRequest)
@@ -104,27 +108,23 @@ object WebApp extends ZIOAppDefault:
   given formats: Formats =
     Serialization.formats(NoTypeHints)
 
-  private def toTextDocuments(docs: TextDocumentsWithSourceSeq): TextDocuments =
-    TextDocuments.apply(docs.documentsWithSource.flatMap(_.documents))
+  private def readTextDocumentsWithSource(basePaths: List[String]): TextDocumentsWithSourceSeq =
+    TextDocumentsWithSourceSeq {
+      for
+        basePath <- basePaths.map(file.Paths.get(_))
+        (semanticDbUri, textDocuments) <- All.scan(basePath)
+      yield
+        TextDocumentsWithSource(
+          basePath = basePath.toString,
+          semanticDbUri = semanticDbUri.toString,
+          documents = textDocuments.documents
+        )
+    }
 
-  private def readTextDocumentsWithSource(path: Option[List[String]]): Option[TextDocumentsWithSourceSeq] =
-    for p <- combinePaths(path) yield
-      TextDocumentsWithSourceSeq(
-        All.scan(p).map: (path, d) =>
-          TextDocumentsWithSource(path.toString).withDocuments(d.documents)
-      )
-
-  private def readSource(paths: Option[List[String]]): Option[String] =
-    for
-      path <- paths.toList.flatten.headOption
-    yield
-      Using.resource(scala.io.Source.fromFile(path)) { bufferedSource =>
-        bufferedSource.getLines().mkString("\n")
-      }
-
-  private def combinePaths(path: Option[List[String]]): Option[file.Path] =
-    for case h :: t <- path if h.nonEmpty yield
-      file.Paths.get(h, t*)
+  private def readSource(path: String): String =
+    Using.resource(scala.io.Source.fromFile(path)) { bufferedSource =>
+      bufferedSource.getLines().mkString("\n")
+    }
 
   private def getPath(req: Request): Option[List[String]] =
     getParam(req, "path")

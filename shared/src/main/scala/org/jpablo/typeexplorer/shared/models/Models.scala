@@ -42,12 +42,14 @@ object SymbolRange:
     SymbolRange(r.startLine, r.startCharacter, r.endLine, r.endCharacter)
 
 case class Namespace(
-  symbol     : Symbol,
-  displayName: String,
-  kind       : NamespaceKind = NamespaceKind.Class,
-  methods    : List[Method] = List.empty,
-  documentURI: Option[String] = None,
-  range      : Option[SymbolRange] = None
+  symbol        : Symbol,
+  displayName   : String,
+  kind          : NamespaceKind       = NamespaceKind.Class,
+  methods       : List[Method]        = List.empty,
+  documentURI   : Option[String]      = None,
+  semanticDbUri : Option[String]      = None,
+  basePath      : Option[String]      = None,
+  range         : Option[SymbolRange] = None
 ):
   lazy val inTest =
     documentURI.exists(_.contains("src/test"))

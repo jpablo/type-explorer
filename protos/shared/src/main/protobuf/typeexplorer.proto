@@ -17,6 +17,7 @@ message TextDocumentsWithSourceSeq {
 
 
 message TextDocumentsWithSource {
-  string semanticDbUri = 1;
-  repeated scala.meta.internal.semanticdb.TextDocument documents = 2;
+  string basePath = 1;
+  string semanticDbUri = 2;
+  repeated scala.meta.internal.semanticdb.TextDocument documents = 3;
 }

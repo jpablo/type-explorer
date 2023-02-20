@@ -83,6 +83,7 @@ lazy val shared =
   crossProject(JSPlatform, JVMPlatform)
     .crossType(CrossType.Pure)
     .in(file("shared"))
+    .dependsOn(protos)
     .settings(
       name := "type-explorer-shared",
       version := "0.1.0",

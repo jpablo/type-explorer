@@ -14,7 +14,7 @@ object InheritanceDiagramSpec2 extends ZIOSpecDefault:
       test("fromTextDocuments"):
         val path = Paths.get("backend/src/test/resources")
         val doc = All.scan(path.toAbsolutePath).map(_._2).head
-        val diagram = InheritanceDiagram.fromTextDocuments(doc)
+        val diagram = InheritanceDiagram.fromTextDocumentsWithSource(???)
         val ns = diagram.namespaces.find(_.symbol.toString == "libretto/examples/canteen/Customer.").get
         val names = ns.methods.map(_.displayName)
         // ensure some internal names are not present in the output
