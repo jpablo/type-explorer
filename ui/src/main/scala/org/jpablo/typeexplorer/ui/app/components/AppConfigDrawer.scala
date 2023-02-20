@@ -4,6 +4,7 @@ import com.raquo.laminar.api.L.*
 import org.jpablo.typeexplorer.ui.app.components.state.AppConfig
 import com.softwaremill.quicklens.*
 import org.jpablo.typeexplorer.ui.app.Path
+import org.jpablo.typeexplorer.shared.models
 
 def AppConfigDrawer($appConfig: Var[AppConfig]) =
   div(cls := "drawer-side",
@@ -29,11 +30,28 @@ def AppConfigDrawer($appConfig: Var[AppConfig]) =
         cls := "form-control",
         label(cls := "label", span(cls := "label-text", "Hidden fields"),
           textArea(
-            cls := "textarea textarea-bordered h-24",
-            child.text <--
+            cls := "textarea textarea-bordered h-24 whitespace-nowrap",
+            value <--
               $appConfig.signal.map(_.diagramOptions.hiddenFields.mkString("\n")),
             onInput.mapToValue --> { v =>
               $appConfig.update(_.modify(_.diagramOptions.hiddenFields).setTo(v.split("\n").toList))
+            }
+          )
+        )
+      ),
+
+      div(
+        cls := "form-control",
+        label(cls := "label", span(cls := "label-text", "Hidden symbols"),
+          textArea(
+            cls := "textarea textarea-bordered h-24 whitespace-nowrap",
+            value <--
+              $appConfig.signal.map { config =>
+                println(config.diagramOptions.hiddenSymbols)
+                config.diagramOptions.hiddenSymbols.map(_.toString).mkString("\n")
+              },
+            onInput.mapToValue --> { v =>
+              $appConfig.update(_.modify(_.diagramOptions.hiddenSymbols).setTo(v.split("\n").toList.map(models.Symbol.apply)))
             }
           )
         )
