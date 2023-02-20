@@ -12,15 +12,16 @@ case class PlantUML(diagram: String)
 object PlantumlInheritance:
 
   case class DiagramOptions(
-    showFields: Boolean = false,
+    showFields    : Boolean = false,
     showSignatures: Boolean = false,
-    excludedFields: List[String] = DiagramOptions.excludedFields
+    hiddenFields  : List[String] = DiagramOptions.hiddenFields,
+    hiddenSymbols : List[Symbol] = DiagramOptions.hiddenSymbols
   )
 
   object DiagramOptions:
     given JsonCodec[DiagramOptions] = DeriveJsonCodec.gen
 
-    private val excludedFields = List(
+    private val hiddenFields = List(
       "canEqual",
       "copy",
       "equals",
@@ -30,6 +31,9 @@ object PlantumlInheritance:
       "productIterator",
       "productPrefix",
       "toString",
+    )
+
+    private val hiddenSymbols = List(
     )
 
 
@@ -42,13 +46,15 @@ object PlantumlInheritance:
   def fromInheritanceDiagram(
     diagram: InheritanceDiagram,
     symbols: Map[Symbol, Option[SymbolOptions]],
-    options: DiagramOptions = DiagramOptions()
+    diagramOptions: DiagramOptions = DiagramOptions()
   ): PlantUML =
+    val filteredDiagram =
+      diagram.filterBy(ns => !diagramOptions.hiddenSymbols.contains(ns.symbol))
     val declarations =
-      diagram.toTrees.map(renderTree(options, symbols))
+      filteredDiagram.toTrees.map(renderTree(diagramOptions, symbols))
 
     val inheritance =
-      for (source, target) <- diagram.arrows yield
+      for (source, target) <- filteredDiagram.arrows yield
         s""""${target}" <|-- "${source}""""
 
     PlantUML(
@@ -61,7 +67,7 @@ object PlantumlInheritance:
 
   // ----------------------------------------------------
 
-  private def renderTree(options: DiagramOptions, symbols: Map[Symbol, Option[SymbolOptions]]): Tree[Namespace] => String =
+  private def renderTree(diagramOptions: DiagramOptions, symbols: Map[Symbol, Option[SymbolOptions]]): Tree[Namespace] => String =
     case Tree.Node(label, path, children) =>
       s"""
          |skinparam class {
@@ -70,11 +76,11 @@ object PlantumlInheritance:
          |}
          |
          |namespace "$label" as ${path.mkString(".")} {
-         |  ${children.map(renderTree(options, symbols)) mkString "\n"}
+         |  ${children.map(renderTree(diagramOptions, symbols)) mkString "\n"}
          |}
          |""".stripMargin
     case Tree.Leaf(_, ns) =>
-      renderNamespace(ns, options, symbols(ns.symbol))
+      renderNamespace(ns, diagramOptions, symbols(ns.symbol))
 
   // certain characters are interpreted by plantuml, so we use unicode codes instead
   private val replacementTable = Map(
@@ -101,7 +107,7 @@ object PlantumlInheritance:
           ns.methods.map(renderField(0)).mkString(" {\n", "\n", "\n}\n")
         else
           ns.methods
-          .filterNot(m => diagramOptions.excludedFields.contains(m.displayName))
+          .filterNot(m => diagramOptions.hiddenFields.contains(m.displayName))
           .groupBy(_.displayName)
           .toList.sortBy(_._1)
           .map((_, ms) => renderField(ms.length)(ms.head)).mkString(" {\n", "\n", "\n}\n")

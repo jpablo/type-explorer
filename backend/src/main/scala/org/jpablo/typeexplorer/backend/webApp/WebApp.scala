@@ -40,11 +40,12 @@ object WebApp extends ZIOAppDefault:
         for
           docs <- toTask(readTextDocumentsWithSource(ireq.paths), error = "No path provided")
           diagram = InheritanceDiagram.fromTextDocumentsWithSource(docs)
-          puml = PlantumlInheritance.fromInheritanceDiagram(
-            diagram.subdiagram(ireq.symbols.map(_._1).toSet),
-            ireq.symbols.toMap,
-            ireq.options
-          )
+          puml =
+            PlantumlInheritance.fromInheritanceDiagram(
+              diagram.subdiagram(ireq.symbols.map(_._1).toSet),
+              ireq.symbols.toMap,
+              ireq.options
+            )
         yield
           puml
 

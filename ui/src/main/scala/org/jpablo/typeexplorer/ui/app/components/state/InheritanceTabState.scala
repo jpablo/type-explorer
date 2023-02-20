@@ -60,6 +60,7 @@ class InheritanceTabState(
       inheritanceSvgDiagram.select(relatedDiagram.symbols)
       inheritanceSvgDiagram.select(arrowSymbols)
 
+  end canvasSelection
 
   object activeSymbols:
     def toggle(symbol: models.Symbol): Unit =
@@ -91,7 +92,7 @@ class InheritanceTabState(
         }
 
   /**
-    * Modify `$canvasSelection` based on the given function `f`
+    * Modify `$activeSymbols` based on the given function `f`
     */
   def applyOnSelection[E <: dom.Event](f: (ActiveSymbols, Set[models.Symbol]) => ActiveSymbols)(ep: EventProp[E]) =
     composeEvents(ep)(_.sample($canvasSelection)) --> { selection =>

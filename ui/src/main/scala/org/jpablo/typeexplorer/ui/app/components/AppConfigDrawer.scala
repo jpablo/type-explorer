@@ -15,7 +15,7 @@ def AppConfigDrawer($appConfig: Var[AppConfig]) =
         cls := "form-control",
         label(cls := "label", span(cls := "label-text", "basePath"),
           textArea(
-            cls := "textarea textarea-bordered h-24",
+            cls := "textarea textarea-bordered h-24 whitespace-nowrap",
             child.text <--
               $appConfig.signal.map(_.basePaths.mkString("\n")),
             onInput.mapToValue --> { v =>
@@ -27,13 +27,13 @@ def AppConfigDrawer($appConfig: Var[AppConfig]) =
 
       div(
         cls := "form-control",
-        label(cls := "label", span(cls := "label-text", "excluded fields"),
+        label(cls := "label", span(cls := "label-text", "Hidden fields"),
           textArea(
             cls := "textarea textarea-bordered h-24",
             child.text <--
-              $appConfig.signal.map(_.diagramOptions.excludedFields.mkString("\n")),
+              $appConfig.signal.map(_.diagramOptions.hiddenFields.mkString("\n")),
             onInput.mapToValue --> { v =>
-              $appConfig.update(_.modify(_.diagramOptions.excludedFields).setTo(v.split("\n").toList))
+              $appConfig.update(_.modify(_.diagramOptions.hiddenFields).setTo(v.split("\n").toList))
             }
           )
         )
@@ -46,9 +46,9 @@ def AppConfigDrawer($appConfig: Var[AppConfig]) =
             tpe := "checkbox",
             cls := "toggle toggle-xs",
             controlled(
-              checked <-- $appConfig.signal.map(_.devMode),
+              checked <-- $appConfig.signal.map(_.advancedMode),
               onClick.mapToChecked --> { b =>
-                $appConfig.update(_.copy(devMode = b))
+                $appConfig.update(_.copy(advancedMode = b))
               }
             )
           ),

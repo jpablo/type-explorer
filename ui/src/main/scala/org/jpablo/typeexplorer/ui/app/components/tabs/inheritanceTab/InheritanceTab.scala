@@ -147,6 +147,15 @@ object InheritanceTab:
               a("Add children", disabled <-- $selectionEmpty, inheritanceTabState.addSelectionChildren(onClick))
             ),
             li(cls.toggle("disabled") <-- $selectionEmpty,
+              a("Hide", disabled <-- $selectionEmpty,
+                onClick --> { _ =>
+                  appState.$appConfig.update:
+                    _.modify(_.diagramOptions.hiddenSymbols)
+                      .using(_ ++ inheritanceTabState.$canvasSelection.now())
+                }
+              )
+            ),
+            li(cls.toggle("disabled") <-- $selectionEmpty,
               a("Select parents", disabled <-- $selectionEmpty,
                 composeEvents(onClick)(_.sample(inheritanceTabState.$inheritanceDiagram, $inheritanceSvgDiagram)) -->
                   inheritanceTabState.canvasSelection.selectParents.tupled
