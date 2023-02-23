@@ -31,6 +31,7 @@ object PlantumlInheritance:
       "productIterator",
       "productPrefix",
       "toString",
+      "_1", "_2", "_3", "_4",
     )
 
     private val hiddenSymbols = List(
