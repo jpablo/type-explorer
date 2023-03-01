@@ -185,7 +185,7 @@ object InheritanceDiagram:
       yield
         Symbol(si.symbol) -> (si, docWithSource.semanticDbUri, doc.uri, docWithSource.basePath, occs.get(si.symbol))
 
-    val symbolInfosMap = allSymbols.map { case (s, (si, _, _, _, _)) => s -> si }.toMap
+    val symbolInfosMap = allSymbols.map { case (s, t) => s -> t._1 }.toMap
 
     val namespaces =
       for

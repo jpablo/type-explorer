@@ -1,7 +1,7 @@
 import org.scalajs.linker.interface.ModuleSplitStyle
 
-val scala3Version     = "3.3.0-RC2"
-val scalametaVersion  = "4.6.0"
+val scala3Version     = "3.3.0-RC3"
+val scalametaVersion  = "4.7.5"
 val zioHttpVersion    = "2.0.0-RC11"
 val zioJsonVersion    = "0.3.0"
 val zioPreludeVersion = "1.0.0-RC16"
@@ -108,14 +108,14 @@ lazy val backend =
       reStart / mainClass := Some("org.jpablo.typeexplorer.backend.webApp.WebApp"),
       libraryDependencies ++= Seq(
       "io.d11"                   %% "zhttp"             % zioHttpVersion,
-      "dev.zio"                  %% "zio-logging"       % "2.1.5",
-      "dev.zio"                  %% "zio-logging-slf4j" % "2.1.5",
-      "dev.zio"                  %% "zio-logging-slf4j-bridge" % "2.1.5",
+      "dev.zio"                  %% "zio-logging"       % "2.1.9",
+      "dev.zio"                  %% "zio-logging-slf4j" % "2.1.9",
+      "dev.zio"                  %% "zio-logging-slf4j-bridge" % "2.1.9",
       "org.json4s"               %% "json4s-native"     % "4.0.6",
       "guru.nidi"                %  "graphviz-java"     % "0.18.1",
       "net.sourceforge.plantuml" %  "plantuml"          % "1.2022.14",
       "com.lihaoyi"              %% "scalatags"         % "0.11.1" cross CrossVersion.for3Use2_13, // Needed until org.scalameta-common upgrades to 3.x
-       "io.github.arainko"       %% "ducktape"          % "0.1.0-RC2"
+       "io.github.arainko"       %% "ducktape"          % "0.1.3"
       ),
       excludeDependencies ++= Seq(
         "com.thesamet.scalapb"   %% "scalapb-runtime",
