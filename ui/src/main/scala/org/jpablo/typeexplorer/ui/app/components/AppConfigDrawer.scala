@@ -45,10 +45,9 @@ def AppConfigDrawer($appConfig: Var[AppConfig]) =
         cls := "form-control",
         label(cls := "label", span(cls := "label-text", "basePath"),
           textArea(
-            rows := 10,
-            cols := 30,
             cls := "textarea textarea-bordered h-24 whitespace-nowrap",
-            controlled(value <-- basePathUpdater.signal, onInput.mapToValue --> basePathUpdater.update)
+            value <-- basePathUpdater.signal,
+            onBlur.mapToValue --> basePathUpdater.update,
           )
         )
       ),
