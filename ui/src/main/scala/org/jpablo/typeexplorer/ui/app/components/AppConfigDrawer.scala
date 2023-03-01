@@ -30,7 +30,7 @@ def AppConfigDrawer($appConfig: Var[AppConfig]) =
 
   val hiddenSymbolsUpdater =
     updater($appConfig, modifyLens(_.diagramOptions.hiddenSymbols))(
-      to = _.diagramOptions.hiddenSymbols.map(_.toString).mkString("\n"),
+      to = _.diagramOptions.hiddenSymbols.mkString("\n"),
       from = _.split("\n").map(models.Symbol.apply).toList
     )
 
@@ -45,6 +45,8 @@ def AppConfigDrawer($appConfig: Var[AppConfig]) =
         cls := "form-control",
         label(cls := "label", span(cls := "label-text", "basePath"),
           textArea(
+            rows := 10,
+            cols := 30,
             cls := "textarea textarea-bordered h-24 whitespace-nowrap",
             controlled(value <-- basePathUpdater.signal, onInput.mapToValue --> basePathUpdater.update)
           )
