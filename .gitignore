@@ -3,7 +3,7 @@ node_modules/
 
 # bloop and metals
 .bloop
-.bsp
+.bsp/
 
 # metals
 project/metals.sbt
