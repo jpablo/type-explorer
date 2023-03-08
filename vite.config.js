@@ -30,7 +30,10 @@ const replacementForPublic = isDev()
   : printSbtTask("publicProd");
 
 export default defineConfig({
-  build: { sourcemap: true },
+  build: {
+    sourcemap: true,
+    outDir: "backend/src/universal"
+  },
   resolve: {
     alias: [
       {
@@ -38,5 +41,5 @@ export default defineConfig({
         replacement: replacementForPublic,
       },
     ],
-  },
+  }
 });

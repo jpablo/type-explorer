@@ -98,14 +98,19 @@ lazy val shared =
       scalaJSUseMainModuleInitializer := false
     )
 
+val mainBackendApp = "org.jpablo.typeexplorer.backend.webApp.WebApp"
+
 lazy val backend =
   project
     .in(file("backend"))
     .dependsOn(shared.jvm, protos.jvm)
+    .enablePlugins(JavaAppPackaging)
     .settings(
       name := "type-explorer-backend",
       version := "0.1.0",
-      reStart / mainClass := Some("org.jpablo.typeexplorer.backend.webApp.WebApp"),
+      reStart / mainClass := Some(mainBackendApp),
+      Compile / mainClass := Some(mainBackendApp),
+      Compile / discoveredMainClasses := Seq(),
       libraryDependencies ++= Seq(
       "io.d11"                   %% "zhttp"             % zioHttpVersion,
       "dev.zio"                  %% "zio-logging"       % "2.1.9",
