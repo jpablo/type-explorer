@@ -26,9 +26,46 @@ import zio.json.*
 import zio.prelude.AnySyntax
 import zio.ZIO.ZIOConstructor
 import org.jpablo.typeexplorer.shared.webApp.Routes
+import zio.stream.ZStream
+
+import java.nio.file.Paths
+import java.io.File
 
 
 object WebApp extends ZIOAppDefault:
+  private val staticRoutes = Http.collectHttp[Request] {
+    case req @ Method.GET -> !! =>
+      // read pwd
+//      val pwd = Paths.get("").toAbsolutePath.toString
+      // find the path of the current jar file
+//      val p = new File(getClass.getProtectionDomain.getCodeSource.getLocation.toURI.getPath)
+//      println(p)
+      // find the path of the current jar file
+      println("before")
+      val f = try {
+        // load the file from the jar
+//        val res = getClass.getResource("/resources/static/index.html")
+        getClass.getClassLoader match {
+          case cl: java.net.URLClassLoader =>
+            cl.getURLs.foreach(println)
+          case e: ClassLoader =>
+            println(e)
+        }
+
+        val res = getClass.getResource("/webjars/viz.js-graphviz-java/2.1.3/README.md")
+        println(s"res: $res")
+        new File(res.toURI.getPath)
+      } catch {
+        case e =>
+          println(e)
+          throw e
+      }
+      println("after")
+      println(f)
+
+      Http.fromStream(ZStream.fromFile(f))
+
+  }
 
   // ----------
   // endpoints
@@ -100,7 +137,7 @@ object WebApp extends ZIOAppDefault:
   } @@ cors(corsConfig)
 
   val run =
-    Server.start(8090, appZ ++ app)
+    Server.start(8090, staticRoutes ++ appZ ++ app)
 
   // -----------------
   // helper functions

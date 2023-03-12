@@ -32,7 +32,7 @@ const replacementForPublic = isDev()
 export default defineConfig({
   build: {
     sourcemap: true,
-    outDir: "backend/src/universal"
+    outDir: "backend/src/universal/static"
   },
   resolve: {
     alias: [

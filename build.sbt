@@ -29,6 +29,8 @@ ThisBuild / scalacOptions ++= // Scala 3.x options
 //    "-Wunused:imports" // Not stable yet in 3.3.0-RC2
   )
 
+ThisBuild / assemblyMergeStrategy := { _ => MergeStrategy.first }
+
 lazy val protos =
   crossProject(JSPlatform, JVMPlatform)
     .crossType(CrossType.Full)
@@ -110,6 +112,8 @@ lazy val backend =
       version := "0.1.0",
       reStart / mainClass := Some(mainBackendApp),
       Compile / mainClass := Some(mainBackendApp),
+      assembly / mainClass := Some(mainBackendApp),
+      assembly/assemblyJarName := "type-explorer-uber-backend.jar",
       Compile / discoveredMainClasses := Seq(),
       libraryDependencies ++= Seq(
       "io.d11"                   %% "zhttp"             % zioHttpVersion,
