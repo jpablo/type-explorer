@@ -16,10 +16,9 @@ object PlantumlInheritance:
     showSignatures: Boolean = false,
     hiddenFields  : List[String] = DiagramOptions.hiddenFields,
     hiddenSymbols : List[Symbol] = DiagramOptions.hiddenSymbols
-  )
+  ) derives JsonCodec
 
   object DiagramOptions:
-    given JsonCodec[DiagramOptions] = DeriveJsonCodec.gen
 
     private val hiddenFields = List(
       "canEqual",
@@ -38,10 +37,7 @@ object PlantumlInheritance:
     )
 
 
-  case class SymbolOptions(showFields: Boolean = false, showSignatures: Boolean = false)
-
-  object SymbolOptions:
-    given JsonCodec[SymbolOptions] = DeriveJsonCodec.gen
+  case class SymbolOptions(showFields: Boolean = false, showSignatures: Boolean = false) derives JsonCodec
 
 
   def fromInheritanceDiagram(

@@ -11,7 +11,7 @@ case class PackagesOptions (
   onlyActive: Boolean = false,
   onlyTests : Boolean = false,
   nsKind    : Set[models.NamespaceKind] = models.NamespaceKind.values.toSet
-)
+) derives JsonCodec
 
 case class AppConfig (
   advancedMode   : Boolean          = false,
@@ -20,11 +20,5 @@ case class AppConfig (
   basePaths      : List[Path]       = List.empty,
   // This can't be a Map[A, Option[B]], as zio-json will remove entries with None values
   activeSymbols  : ActiveSymbolsSeq = List.empty
-)
-
-object AppConfig:
-  given JsonCodec[AppConfig] = DeriveJsonCodec.gen
-
-object PackagesOptions:
-  given JsonCodec[PackagesOptions] = DeriveJsonCodec.gen
+) derives JsonCodec
 

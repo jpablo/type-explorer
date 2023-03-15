@@ -4,7 +4,7 @@ import zio.json.*
 
 import scala.meta.internal.semanticdb.SymbolOccurrence
 
-enum NamespaceKind:
+enum NamespaceKind derives JsonCodec:
   case Object
   case PackageObject
   case Package
@@ -12,9 +12,6 @@ enum NamespaceKind:
   case Trait
   case Unknown
 //  case Other(name: String)
-
-object NamespaceKind:
-  given JsonCodec[NamespaceKind] = DeriveJsonCodec.gen
 
 opaque type Symbol = String
 
@@ -34,7 +31,7 @@ case class SymbolRange(
   startChar : Int,
   endLine   : Int,
   endChar   : Int
-)
+) derives JsonCodec
 
 object SymbolRange:
   def from(so: SymbolOccurrence): SymbolRange =
@@ -50,21 +47,15 @@ case class Namespace(
   semanticDbUri : Option[String]      = None,
   basePath      : Option[String]      = None,
   range         : Option[SymbolRange] = None
-):
+) derives JsonCodec:
   lazy val inTest =
     documentURI.exists(_.contains("src/test"))
 
-object Namespace:
-  given JsonCodec[SymbolRange] = DeriveJsonCodec.gen
-  given JsonCodec[Namespace] = DeriveJsonCodec.gen
 
-
-case class Method(symbol: Symbol, displayName: String, returnType: Option[Namespace])
+case class Method(symbol: Symbol, displayName: String, returnType: Option[Namespace]) derives JsonCodec
 
 
 object Method:
   def apply(name: String, returnType: Option[Namespace] = None): Method =
     Method(Symbol(name), name, returnType)
-
-  given JsonCodec[Method] = DeriveJsonCodec.gen
 

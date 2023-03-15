@@ -4,7 +4,7 @@ import zio.prelude.NonEmptyList
 import zio.json.*
 import com.softwaremill.quicklens.*
 
-enum Tree[+A]:
+enum Tree[+A] derives JsonCodec:
   case Node(label: Tree.Label, path: List[Tree.Label], children: List[Tree[A]])
   case Leaf(label: Tree.Label, data: A)
 
@@ -12,8 +12,6 @@ enum Tree[+A]:
 
 object Tree:
   type Label = String
-  given [A: JsonCodec]: JsonCodec[Tree[A]] = DeriveJsonCodec.gen
-
   type LeafWithPath[A] = (List[Label], Label, A)
 
   def fromPaths[A](paths: List[LeafWithPath[A]], sep: String = "/", prefix: List[Tree.Label] = List.empty): List[Tree[A]] =

@@ -24,7 +24,7 @@ type Arrow = (Symbol, Symbol)
 case class InheritanceDiagram(
   arrows    : Set[Arrow],
   namespaces: Set[Namespace] = Set.empty,
-):
+) derives JsonCodec:
   lazy val symbols =
     namespaces.map(_.symbol)
 
@@ -168,8 +168,6 @@ object InheritanceDiagram:
       "local",
       "<init>"
     )
-
-  given JsonCodec[InheritanceDiagram] = DeriveJsonCodec.gen
 
   // In Scala 3.2 the type annotation is needed.
   val empty: InheritanceDiagram = new InheritanceDiagram(Set.empty)
