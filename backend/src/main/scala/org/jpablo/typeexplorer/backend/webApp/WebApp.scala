@@ -33,37 +33,16 @@ import java.io.File
 
 
 object WebApp extends ZIOAppDefault:
+  // find the path of the current jar file
+  val jarPath = new File(getClass.getProtectionDomain.getCodeSource.getLocation.toURI.getPath)
+  val root = jarPath.getParentFile.getParentFile
+
   private val staticRoutes = Http.collectHttp[Request] {
     case req @ Method.GET -> !! =>
-      // read pwd
-//      val pwd = Paths.get("").toAbsolutePath.toString
-      // find the path of the current jar file
-//      val p = new File(getClass.getProtectionDomain.getCodeSource.getLocation.toURI.getPath)
-//      println(p)
-      // find the path of the current jar file
-      println("before")
-      val f = try {
-        // load the file from the jar
-//        val res = getClass.getResource("/resources/static/index.html")
-        getClass.getClassLoader match {
-          case cl: java.net.URLClassLoader =>
-            cl.getURLs.foreach(println)
-          case e: ClassLoader =>
-            println(e)
-        }
+      Http.fromStream(ZStream.fromFile(new File(root, "/static/index.html")))
 
-        val res = getClass.getResource("/webjars/viz.js-graphviz-java/2.1.3/README.md")
-        println(s"res: $res")
-        new File(res.toURI.getPath)
-      } catch {
-        case e =>
-          println(e)
-          throw e
-      }
-      println("after")
-      println(f)
-
-      Http.fromStream(ZStream.fromFile(f))
+    case req @ Method.GET -> !! / "assets" / path =>
+      Http.fromStream(ZStream.fromFile(new File(root, "/static/assets/" + path)))
 
   }
 
