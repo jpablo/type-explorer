@@ -145,6 +145,7 @@ lazy val ui =
     .enablePlugins(ScalablyTypedConverterExternalNpmPlugin)
     .settings(
       scalaJSUseMainModuleInitializer := true,
+      Compile / mainClass := Some("org.jpablo.typeexplorer.ui.app.MainJS"),
       scalaJSLinkerConfig ~= {
         _.withModuleKind(ModuleKind.ESModule)
 //          .withModuleSplitStyle(ModuleSplitStyle.SmallModulesFor(List("org.jpablo.typeexplorer.ui")))
@@ -158,16 +159,16 @@ lazy val ui =
       //   "@types/bootstrap" -> "5.2.2"
       // ),
       libraryDependencies ++= Seq(
-        "org.scala-js"  %%% "scalajs-dom"       % "2.2.0",
-        "com.raquo"     %%% "laminar"           % "0.14.5",
-        "io.laminext"   %%% "fetch"             % "0.14.4"
+        "org.scala-js" %%% "scalajs-dom" % "2.2.0",
+        "com.raquo" %%% "laminar" % "0.14.5",
+        "io.laminext" %%% "fetch" % "0.14.4"
       ),
       excludeDependencies ++= Seq(
         "org.scala-lang.modules" %% "scala-collection-compat_sjs1"
       ),
       publicDev := linkerOutputDirectory((Compile / fastLinkJS).value).getAbsolutePath,
       publicProd := linkerOutputDirectory((Compile / fullLinkJS).value).getAbsolutePath,
-       Compile / semanticdbTargetRoot := projectPath.value
+      Compile / semanticdbTargetRoot := projectPath.value
     )
     .settings(sharedSettings)
 

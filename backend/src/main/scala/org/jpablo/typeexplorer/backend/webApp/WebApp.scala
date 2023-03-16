@@ -2,47 +2,49 @@ package org.jpablo.typeexplorer.backend.webApp
 
 import org.jpablo.typeexplorer.backend.backends.plantuml.toSVG
 import org.jpablo.typeexplorer.backend.semanticdb.All
-import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, InheritanceExamples}
-import org.jpablo.typeexplorer.shared.inheritance.{PlantUML, PlantumlInheritance}
+import org.jpablo.typeexplorer.protos.{TextDocumentsWithSource, TextDocumentsWithSourceSeq}
+import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, InheritanceExamples, PlantUML, PlantumlInheritance}
 import org.jpablo.typeexplorer.shared.models
 import org.jpablo.typeexplorer.shared.webApp.{InheritanceRequest, Routes}
-import io.github.arainko.ducktape.*
-
-import java.net.URI
-import java.nio.file
-import org.jpablo.typeexplorer.protos.{TextDocumentsWithSource, TextDocumentsWithSourceSeq}
 import org.json4s.*
 import org.json4s.native.Serialization
 import org.json4s.native.Serialization.{read, write}
-
-import scala.meta.internal.semanticdb.TextDocuments
-import scala.util.Using
 import zhttp.http.*
 import zhttp.http.Middleware.cors
 import zhttp.http.middleware.Cors.CorsConfig
 import zhttp.service.Server
 import zio.*
+import zio.ZIO.ZIOConstructor
 import zio.json.*
 import zio.prelude.AnySyntax
-import zio.ZIO.ZIOConstructor
-import org.jpablo.typeexplorer.shared.webApp.Routes
 import zio.stream.ZStream
 
-import java.nio.file.Paths
 import java.io.File
-
+import java.net.URI
+import java.nio.file
+import java.nio.file.Paths
+import scala.meta.internal.semanticdb.TextDocuments
+import scala.util.Using
+import scala.util.matching.Regex
 
 object WebApp extends ZIOAppDefault:
+  val extension: Regex = """.*\.(css|js)$""".r
   // find the path of the current jar file
-  val jarPath = new File(getClass.getProtectionDomain.getCodeSource.getLocation.toURI.getPath)
-  val root = jarPath.getParentFile.getParentFile
+  val jarPath = Paths.get(getClass.getProtectionDomain.getCodeSource.getLocation.toURI.getPath)
+  val static = jarPath.getParent.getParent.resolve("static")
 
   private val staticRoutes = Http.collectHttp[Request] {
-    case req @ Method.GET -> !! =>
-      Http.fromStream(ZStream.fromFile(new File(root, "/static/index.html")))
+    case Method.GET -> !! =>
+      Http.fromFile(static.resolve("index.html").toFile)
 
-    case req @ Method.GET -> !! / "assets" / path =>
-      Http.fromStream(ZStream.fromFile(new File(root, "/static/assets/" + path)))
+    case Method.GET -> !! / "assets" / path =>
+      val file = static.resolve(s"assets/$path").toFile
+      val response = Http.fromStream(ZStream.fromFile(file))
+
+      path match
+        case extension("css") => response.withContentType("text/css")
+        case extension("js")  => response.withContentType("application/javascript")
+        case _ => response
 
   }
 
@@ -51,7 +53,6 @@ object WebApp extends ZIOAppDefault:
   // ----------
   private val appZ = Http.collectZIO[Request] {
     case req @ Method.POST -> !! / Routes.inheritanceDiagram =>
-
       def createDiagram(ireq: InheritanceRequest): Task[PlantUML] =
         for
           docs <- toTask(readTextDocumentsWithSource(ireq.paths), error = "No path provided")
@@ -73,7 +74,6 @@ object WebApp extends ZIOAppDefault:
       yield
         Response.text(svgText).withContentType("image/svg+xml")
   } @@ cors(corsConfig)
-
 
   private val app = Http.collect[Request] {
 
@@ -107,7 +107,8 @@ object WebApp extends ZIOAppDefault:
         .getOrElse(badRequest)
 
     case req @ Method.GET -> !! / Routes.source =>
-      getPath(req).flatMap(_.headOption)
+      getPath(req)
+        .flatMap(_.headOption)
         .map(readSource)
         .map(Response.text)
         .map(_.withContentType("text/plain"))
