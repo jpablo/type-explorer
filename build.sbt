@@ -4,7 +4,7 @@ val scala3Version     = "3.3.0-RC3"
 val scalametaVersion  = "4.7.5"
 val zioHttpVersion    = "2.0.0-RC11"
 val zioPreludeVersion = "1.0.0-RC16"
-val zioVersion        = "2.0.5"
+val zioVersion        = "2.0.10"
 
 // TODO:
 // - Maybe create a plugin to correctly set semanticdbTargetRoot for each subproject?
@@ -115,10 +115,10 @@ lazy val backend =
       assembly/assemblyJarName := "type-explorer-uber-backend.jar",
       Compile / discoveredMainClasses := Seq(),
       libraryDependencies ++= Seq(
-      "io.d11"                   %% "zhttp"             % zioHttpVersion,
-      "dev.zio"                  %% "zio-logging"       % "2.1.9",
-      "dev.zio"                  %% "zio-logging-slf4j" % "2.1.9",
-      "dev.zio"                  %% "zio-logging-slf4j-bridge" % "2.1.9",
+      "io.d11"                   %% "zhttp"             % "2.0.0-RC11",
+      "dev.zio"                  %% "zio-logging"       % "2.1.11",
+      "dev.zio"                  %% "zio-logging-slf4j" % "2.1.11",
+      "dev.zio"                  %% "zio-logging-slf4j-bridge" % "2.1.11",
       "org.json4s"               %% "json4s-native"     % "4.0.6",
       "guru.nidi"                %  "graphviz-java"     % "0.18.1",
       "net.sourceforge.plantuml" %  "plantuml"          % "1.2022.14",
