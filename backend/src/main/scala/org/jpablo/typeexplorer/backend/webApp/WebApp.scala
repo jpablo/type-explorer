@@ -6,6 +6,7 @@ import org.jpablo.typeexplorer.protos.{TextDocumentsWithSource, TextDocumentsWit
 import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, InheritanceExamples, PlantUML, PlantumlInheritance}
 import org.jpablo.typeexplorer.shared.models
 import org.jpablo.typeexplorer.shared.webApp.{InheritanceRequest, Routes}
+import org.jpablo.typeexplorer.backend.textDocuments.readTextDocumentsWithSource
 import org.json4s.*
 import org.json4s.native.Serialization
 import org.json4s.native.Serialization.{read, write}
@@ -33,6 +34,9 @@ object WebApp extends ZIOAppDefault:
   val jarPath = Paths.get(getClass.getProtectionDomain.getCodeSource.getLocation.toURI.getPath)
   val static = jarPath.getParent.getParent.resolve("static")
 
+  given JsonCodec[file.Path] =
+    JsonCodec.string.transform(file.Path.of(_), _.toString)
+
   private val staticRoutes = Http.collectHttp[Request] {
     case Method.GET -> !! =>
       Http.fromFile(static.resolve("index.html").toFile)
@@ -53,7 +57,7 @@ object WebApp extends ZIOAppDefault:
   // ----------
   private val appZ = Http.collectZIO[Request] {
     case req @ Method.POST -> !! / Routes.inheritanceDiagram =>
-      def createDiagram(ireq: InheritanceRequest): Task[PlantUML] =
+      def createDiagram(ireq: InheritanceRequest[file.Path]): Task[PlantUML] =
         for
           docs <- toTask(readTextDocumentsWithSource(ireq.paths), error = "No path provided")
           diagram = InheritanceDiagram.fromTextDocumentsWithSource(docs)
@@ -68,7 +72,7 @@ object WebApp extends ZIOAppDefault:
 
       for
         body <- req.body.asString
-        ireq <- toTask(body.fromJson[InheritanceRequest])
+        ireq <- toTask(body.fromJson[InheritanceRequest[file.Path]])
         puml <- createDiagram(ireq)
         svgText <- puml.toSVG("laminar")
       yield
@@ -126,28 +130,15 @@ object WebApp extends ZIOAppDefault:
   given formats: Formats =
     Serialization.formats(NoTypeHints)
 
-  private def readTextDocumentsWithSource(basePaths: List[String]): TextDocumentsWithSourceSeq =
-    TextDocumentsWithSourceSeq {
-      for
-        basePath <- basePaths.map(file.Paths.get(_))
-        (semanticDbUri, textDocuments) <- All.scan(basePath)
-      yield
-        TextDocumentsWithSource(
-          basePath = basePath.toString,
-          semanticDbUri = semanticDbUri.toString,
-          documents = textDocuments.documents
-        )
-    }
-
-  private def readSource(path: String): String =
-    Using.resource(scala.io.Source.fromFile(path)) { bufferedSource =>
+  private def readSource(path: file.Path): String =
+    Using.resource(scala.io.Source.fromFile(path.toFile)) { bufferedSource =>
       bufferedSource.getLines().mkString("\n")
     }
 
-  private def getPath(req: Request): Option[List[String]] =
-    getParam(req, "path")
+  private def getPath(req: Request): Option[List[file.Path]] =
+    getParam(req, "path").map(_.map(file.Path.of(_)))
 
-  private def getParam(req: Request, name: String) =
+  private def getParam(req: Request, name: String): Option[List[String]] =
     req.url.queryParams.get(name)
 
   private def toTask[A](a: => A, error: String = "")(using ZIOConstructor[Nothing, Any, A], Trace) =
