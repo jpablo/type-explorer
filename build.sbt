@@ -142,7 +142,7 @@ lazy val ui =
     .in(file("ui"))
     .dependsOn(shared.js, protos.js)
     .enablePlugins(ScalaJSPlugin)
-    .enablePlugins(ScalablyTypedConverterExternalNpmPlugin)
+//    .enablePlugins(ScalablyTypedConverterExternalNpmPlugin)
     .settings(
       scalaJSUseMainModuleInitializer := true,
       Compile / mainClass := Some("org.jpablo.typeexplorer.ui.app.MainJS"),
