@@ -44,14 +44,14 @@ case class AppState(
   appConfigJson      : StoredString,
 )(using Owner):
 
-  val $appConfig: Var[AppConfig] =
+  val appConfigs: Var[AppConfig] =
     persistent(appConfigJson, AppConfig())
 
   def updateAppConfig(f: AppConfig => AppConfig): Unit =
-    $appConfig.update(f)
+    appConfigs.update(f)
 
   val basePaths: Signal[List[Path]] =
-    $appConfig.signal.map(_.basePaths)
+    appConfigs.signal.map(_.basePaths)
 
 
 
@@ -62,15 +62,15 @@ object AppState:
     val appState0 =
       AppState(InheritanceTabState(), storedString("appConfig", initial = "{}"))
 
-    val $activeSymbols: Var[ActiveSymbols] =
-      appState0.$appConfig
+    val activeSymbols: Var[ActiveSymbols] =
+      appState0.appConfigs
         .zoom(_.activeSymbols.toMap): (appConfig, activeSymbols) =>
           appConfig.modify(_.activeSymbols).setTo(activeSymbols.toList)
 
     appState0.copy(
       inheritanceTabState =
         InheritanceTabState(
-          $activeSymbols,
+          activeSymbols,
           appState0.basePaths.flatMap(fetchDiagram)
         )
     )

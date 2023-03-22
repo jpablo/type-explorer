@@ -15,9 +15,9 @@ object MainJS:
   def main(args: Array[String]): Unit =
     val appState: AppState = AppState.build(fetchInheritanceDiagram)
 
-    val $documents = fetchDocuments(appState.basePaths)
-    val $inheritanceSvgDiagram = fetchInheritanceSVGDiagram(appState).startWith(InheritanceSvgDiagram.empty)
+    val documents = fetchDocuments(appState.basePaths)
+    val inheritanceSvgDiagram = fetchInheritanceSVGDiagram(appState).startWith(InheritanceSvgDiagram.empty)
 
-    val app = TopLevel(appState, $inheritanceSvgDiagram, $documents)
+    val app = TopLevel(appState, inheritanceSvgDiagram, documents)
 
     render(document.querySelector("#app"), app)

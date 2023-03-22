@@ -14,16 +14,16 @@ import org.jpablo.typeexplorer.ui.app.components.state.AppState
 object SemanticDBTree:
 
   def build(
-    $documents: EventStream[List[TextDocumentsWithSource]],
-    $selectedSemanticDb: EventBus[Path]
+    documents          : EventStream[List[TextDocumentsWithSource]],
+    selectedSemanticDb : EventBus[Path]
   ) =
-    for documentsWithSource <- $documents yield
-      val $open = Var(Map.empty[String, Boolean])
+    for documentsWithSource <- documents yield
+      val open = Var(Map.empty[String, Boolean])
       for fileTree <- Tree.fromPaths(documentsWithSource.map(buildPath)) yield
-        val mkControl = Collapsable.Control(false, $open)
+        val mkControl = Collapsable.Control(false, open)
         CollapsableTree(fileTree)(
           renderNode = (b, path) => span(cls := "whitespace-nowrap", b),
-          renderLeaf = renderDocWithSource($selectedSemanticDb, mkControl),
+          renderLeaf = renderDocWithSource(selectedSemanticDb, mkControl),
           mkControl
         )
 

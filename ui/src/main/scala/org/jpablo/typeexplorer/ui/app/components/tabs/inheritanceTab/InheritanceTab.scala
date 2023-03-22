@@ -32,14 +32,14 @@ object InheritanceTab:
   ) =
       val inheritanceTabState = appState.inheritanceTabState
 
-      val $filterBySymbolName = Var("")
-      val $showOptions        = Var(false)
+      val filterBySymbolName = Var("")
+      val showOptions        = Var(false)
       val modifySelection = modifyLens[AppConfig]
-      val $filteredDiagram =
+      val filteredDiagram =
         inheritanceTabState.inheritanceDiagramR
           .combineWith(
-            appState.$appConfig.signal.map(_.packagesOptions),
-            $filterBySymbolName.signal,
+            appState.appConfigs.signal.map(_.packagesOptions),
+            filterBySymbolName.signal,
             inheritanceTabState.activeSymbolsR.signal
           )
           .changes
@@ -50,7 +50,7 @@ object InheritanceTab:
               .subdiagramByKinds(packagesOptions.nsKind)
               .orElse(!packagesOptions.onlyActive, _.subdiagram(activeSymbols.keySet))
               .orElse(packagesOptions.onlyTests, _.filterBy(!_.inTest))
-      val $selectionEmpty = inheritanceTabState.canvasSelectionR.signal.map(_.isEmpty)
+      val selectionEmpty = inheritanceTabState.canvasSelectionR.signal.map(_.isEmpty)
       val canvasContainer =
         div(cls := "h-full overflow-auto border-t border-slate-300 p-1 row-start-2 row-end-3",
           backgroundImage := "radial-gradient(hsla(var(--bc)/.2) .5px,hsla(var(--b2)/1) .5px)",
@@ -72,22 +72,22 @@ object InheritanceTab:
           // --- controls ---
           form(
             LabeledCheckbox("show-options-toggle", "options",
-              $showOptions.signal,
-              clickHandler = Observer(_ => $showOptions.update(!_)),
+              showOptions.signal,
+              clickHandler = Observer(_ => showOptions.update(!_)),
               toggle = true
             ),
-            $showOptions.signal.childWhenTrue:
+            showOptions.signal.childWhenTrue:
               div(cls := "card card-compact p-1 mb-2 border-slate-300 border-[1px]",
                 div(cls := "card-body p-1",
                   LabeledCheckbox(s"filter-by-active", "only active",
-                    $checked = appState.$appConfig.signal.map(_.packagesOptions.onlyActive),
+                    isChecked = appState.appConfigs.signal.map(_.packagesOptions.onlyActive),
                     clickHandler = Observer: _ =>
                       appState.updateAppConfig(_.modify(_.packagesOptions.onlyActive).using(!_)),
                     toggle = true
                   ),
                   hr(),
                   LabeledCheckbox(s"filter-by-scope", "Tests",
-                    $checked = appState.$appConfig.signal.map(_.packagesOptions.onlyTests),
+                    isChecked = appState.appConfigs.signal.map(_.packagesOptions.onlyTests),
                     clickHandler = Observer: _ =>
                       appState.updateAppConfig(_.modify(_.packagesOptions.onlyTests).using(!_)),
                     toggle = true
@@ -97,15 +97,15 @@ object InheritanceTab:
                     LabeledCheckbox(
                       id = s"show-ns-kind-$kind",
                       kind.toString,
-                      $checked = appState.$appConfig.signal.map(_.packagesOptions.nsKind).map(_.contains(kind)),
+                      isChecked = appState.appConfigs.signal.map(_.packagesOptions.nsKind).map(_.contains(kind)),
                       clickHandler = Observer: b =>
                         appState.updateAppConfig(_.modify(_.packagesOptions.nsKind).using(_.toggleWith(kind, b)))
                     )
                 ),
               ),
-            Search(placeholder := "filter", controlled(value <-- $filterBySymbolName, onInput.mapToValue --> $filterBySymbolName)).small
+            Search(placeholder := "filter", controlled(value <-- filterBySymbolName, onInput.mapToValue --> filterBySymbolName)).small
           ),
-          div(cls := "overflow-auto", children <-- PackagesTree(inheritanceTabState, $filteredDiagram))
+          div(cls := "overflow-auto", children <-- PackagesTree(inheritanceTabState, filteredDiagram))
         ),
         // --- toolbar ---
         div(cls := "flex gap-4 ml-2",
@@ -132,50 +132,50 @@ object InheritanceTab:
             li(cls := "menu-title",
               span("selection")
             ),
-            li(cls.toggle("disabled") <-- $selectionEmpty,
-              a("Remove", disabled <-- $selectionEmpty, inheritanceTabState.applyOnSelection((all, sel) => all -- sel)(onClick))
+            li(cls.toggle("disabled") <-- selectionEmpty,
+              a("Remove", disabled <-- selectionEmpty, inheritanceTabState.applyOnSelection((all, sel) => all -- sel)(onClick))
             ),
-            li(cls.toggle("disabled") <-- $selectionEmpty,
-              a("Keep", disabled <-- $selectionEmpty, inheritanceTabState.applyOnSelection((all, sel) => all.filter((k, _) => sel.contains(k)))(onClick))
+            li(cls.toggle("disabled") <-- selectionEmpty,
+              a("Keep", disabled <-- selectionEmpty, inheritanceTabState.applyOnSelection((all, sel) => all.filter((k, _) => sel.contains(k)))(onClick))
             ),
-            li(cls.toggle("disabled") <-- $selectionEmpty,
-              a("Add parents", disabled <-- $selectionEmpty, inheritanceTabState.addSelectionParents(onClick))
+            li(cls.toggle("disabled") <-- selectionEmpty,
+              a("Add parents", disabled <-- selectionEmpty, inheritanceTabState.addSelectionParents(onClick))
             ),
-            li(cls.toggle("disabled") <-- $selectionEmpty,
-              a("Add children", disabled <-- $selectionEmpty, inheritanceTabState.addSelectionChildren(onClick))
+            li(cls.toggle("disabled") <-- selectionEmpty,
+              a("Add children", disabled <-- selectionEmpty, inheritanceTabState.addSelectionChildren(onClick))
             ),
-            li(cls.toggle("disabled") <-- $selectionEmpty,
-              a("Hide", disabled <-- $selectionEmpty,
+            li(cls.toggle("disabled") <-- selectionEmpty,
+              a("Hide", disabled <-- selectionEmpty,
                 onClick -->
-                  appState.$appConfig.update:
+                  appState.appConfigs.update:
                     _.modify(_.diagramOptions.hiddenSymbols)
                       .using(_ ++ inheritanceTabState.canvasSelectionR.now())
               )
             ),
-            li(cls.toggle("disabled") <-- $selectionEmpty,
-              a("Select parents", disabled <-- $selectionEmpty,
+            li(cls.toggle("disabled") <-- selectionEmpty,
+              a("Select parents", disabled <-- selectionEmpty,
                 onClick.compose(_.sample(inheritanceTabState.inheritanceDiagramR, inheritanceSvgDiagram)) -->
                   inheritanceTabState.canvasSelection.selectParents.tupled
               )
             ),
-            li(cls.toggle("disabled") <-- $selectionEmpty,
+            li(cls.toggle("disabled") <-- selectionEmpty,
               a("Select children",
                 onClick.compose(_.sample(inheritanceTabState.inheritanceDiagramR, inheritanceSvgDiagram)) -->
                   inheritanceTabState.canvasSelection.selectChildren.tupled
               )
             ),
-            li(cls.toggle("disabled") <-- $selectionEmpty,
+            li(cls.toggle("disabled") <-- selectionEmpty,
               LabeledCheckbox(
                 id = "fields-checkbox-3",
                 labelStr = "Show fields",
-                $checked =
+                isChecked =
                   inheritanceTabState.activeSymbolsR.signal
                     .combineWith(inheritanceTabState.canvasSelectionR.signal)
                     .map: (activeSymbols, selection) =>
                       val activeSelection = activeSymbols.filter((s, _) => selection.contains(s))
                       // true when activeSelection is nonEmpty AND every option exists and showFields == true
                       activeSelection.nonEmpty && activeSelection.forall((_, o) => o.exists(_.showFields)),
-                $disabled = $selectionEmpty,
+                isDisabled = selectionEmpty,
                 clickHandler = Observer: b =>
                   inheritanceTabState.activeSymbols.updateSelectionOptions(_.copy(showFields = b)),
                 toggle = true
@@ -230,8 +230,8 @@ object InheritanceTab:
     LabeledCheckbox(
       id = id,
       labelStr = labelStr,
-      $checked = appState.$appConfig.signal.map(field),
-      clickHandler = appState.$appConfig.updater[Boolean]((config, b) => modifyField.setTo(b)(config)),
+      isChecked = appState.appConfigs.signal.map(field),
+      clickHandler = appState.appConfigs.updater[Boolean]((config, b) => modifyField.setTo(b)(config)),
       toggle = true
     )
 

@@ -27,17 +27,17 @@ object PackagesTree:
 
   /** Builds a collapsable tree based on the given inheritance diagram.
     *
-    * @param $diagram The diagram
+    * @param diagrams The diagram
     * @return A List of trees, one for each top level package in the diagram: e.g. ["com..., ", "java.io..."]
     */
-  def apply(inheritanceTabState: InheritanceTabState, $diagram: EventStream[InheritanceDiagram]): EventStream[List[HtmlElement]] =
-    val $openState = Var(Map.empty[String, Boolean])
-    for diagram <- $diagram yield
+  def apply(inheritanceTabState: InheritanceTabState, diagrams: EventStream[InheritanceDiagram]): EventStream[List[HtmlElement]] =
+    val openState = Var(Map.empty[String, Boolean])
+    for diagram <- diagrams yield
       for tree <- diagram.toTrees yield
         CollapsableTree(tree)(
           renderNode = renderPackage(inheritanceTabState),
-          renderLeaf = renderNamespace(inheritanceTabState, Collapsable.Control(startOpen = false, $openState)),
-          Collapsable.Control(startOpen = true, $openState)
+          renderLeaf = renderNamespace(inheritanceTabState, Collapsable.Control(startOpen = false, openState)),
+          Collapsable.Control(startOpen = true, openState)
         )
 
   private def renderPackage(inheritanceTabState: InheritanceTabState)(packageLabel: String, packagePath: List[String]) =
@@ -63,7 +63,7 @@ object PackagesTree:
   private def renderNamespace(inheritanceTabState: InheritanceTabState, mkControl: String => Collapsable.Control)(s: String, ns: Namespace) =
     val symStr = ns.symbol.toString
     val uri = encodeURIComponent(symStr)
-    val $isActive = inheritanceTabState.activeSymbolsR.signal.map(_.contains(ns.symbol))
+    val isActive = inheritanceTabState.activeSymbolsR.signal.map(_.contains(ns.symbol))
 
     Collapsable(
       nodeLabel =
@@ -77,7 +77,7 @@ object PackagesTree:
           ),
           a(
             cls := "p-0.5 font-['JetBrains_Mono']",
-            cls.toggle("bg-blue-200 rounded") <-- $isActive,
+            cls.toggle("bg-blue-200 rounded") <-- isActive,
             href  := "#elem_" + uri,
             title := symStr,
             ns.displayName,
