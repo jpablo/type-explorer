@@ -5,20 +5,20 @@ import com.raquo.airstream.core.{EventStream, Observer, Signal}
 import com.raquo.airstream.eventbus.WriteBus
 import com.raquo.airstream.state.StrictSignal
 import com.raquo.laminar.api.L.*
+import com.raquo.laminar.api.features.unitArrows
 import com.softwaremill.quicklens.*
+import io.laminext.syntax.core.*
 import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
-import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, PlantumlInheritance}
 import org.jpablo.typeexplorer.shared.inheritance.PlantumlInheritance.DiagramOptions
+import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, PlantumlInheritance}
 import org.jpablo.typeexplorer.shared.models
+import org.jpablo.typeexplorer.ui.app.components.state.InheritanceTabState.ActiveSymbols
 import org.jpablo.typeexplorer.ui.app.components.state.{AppConfig, AppState, InheritanceTabState, PackagesOptions}
 import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.PackagesTree
-import org.jpablo.typeexplorer.ui.daisyui.*
-import io.laminext.syntax.core.*
-import org.jpablo.typeexplorer.ui.app.components.state.InheritanceTabState.ActiveSymbols
 import org.jpablo.typeexplorer.ui.app.toggleWith
+import org.jpablo.typeexplorer.ui.daisyui.*
 import org.scalajs.dom
 import org.scalajs.dom.{DOMRect, EventTarget, console}
-
 
 object InheritanceTab:
 
@@ -115,13 +115,13 @@ object InheritanceTab:
           ),
           ButtonGroup(
             Button("remove all",
-              onClick --> (_ => inheritanceTabState.activeSymbols.clear())
+              onClick --> inheritanceTabState.activeSymbols.clear()
             ).tiny,
             Button("fit",
-              composeEvents(onClick)(_.sample($inheritanceSvgDiagram)) --> (_.fitToRect(canvasContainer.ref.getBoundingClientRect()))
+              onClick.compose(_.sample($inheritanceSvgDiagram)) --> (_.fitToRect(canvasContainer.ref.getBoundingClientRect()))
             ).tiny,
             Button("zoom +",
-              composeEvents(onClick)(_.sample($inheritanceSvgDiagram)) --> (_.zoom(1.1))
+              onClick.compose(_.sample($inheritanceSvgDiagram)) --> (_.zoom(1.1))
             ).tiny
           )
         ),
@@ -146,22 +146,21 @@ object InheritanceTab:
             ),
             li(cls.toggle("disabled") <-- $selectionEmpty,
               a("Hide", disabled <-- $selectionEmpty,
-                onClick --> { _ =>
+                onClick -->
                   appState.$appConfig.update:
                     _.modify(_.diagramOptions.hiddenSymbols)
                       .using(_ ++ inheritanceTabState.$canvasSelection.now())
-                }
               )
             ),
             li(cls.toggle("disabled") <-- $selectionEmpty,
               a("Select parents", disabled <-- $selectionEmpty,
-                composeEvents(onClick)(_.sample(inheritanceTabState.$inheritanceDiagram, $inheritanceSvgDiagram)) -->
+                onClick.compose(_.sample(inheritanceTabState.$inheritanceDiagram, $inheritanceSvgDiagram)) -->
                   inheritanceTabState.canvasSelection.selectParents.tupled
               )
             ),
             li(cls.toggle("disabled") <-- $selectionEmpty,
               a("Select children",
-                composeEvents(onClick)(_.sample(inheritanceTabState.$inheritanceDiagram, $inheritanceSvgDiagram)) -->
+                onClick.compose(_.sample(inheritanceTabState.$inheritanceDiagram, $inheritanceSvgDiagram)) -->
                   inheritanceTabState.canvasSelection.selectChildren.tupled
               )
             ),

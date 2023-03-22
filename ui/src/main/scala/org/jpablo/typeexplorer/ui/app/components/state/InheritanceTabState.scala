@@ -76,7 +76,7 @@ class InheritanceTabState(
     def extend(symbols: collection.Seq[models.Symbol]): Unit =
       $activeSymbols.update(_ ++ symbols.map(_ -> None))
 
-    def clear() =
+    def clear(): Unit =
       $activeSymbols.set(Map.empty)
 
     /** Updates (selected) active symbol's options based on the given function `f`
@@ -95,7 +95,7 @@ class InheritanceTabState(
     * Modify `$activeSymbols` based on the given function `f`
     */
   def applyOnSelection[E <: dom.Event](f: (ActiveSymbols, Set[models.Symbol]) => ActiveSymbols)(ep: EventProp[E]) =
-    composeEvents(ep)(_.sample($canvasSelection)) --> { selection =>
+    ep.compose(_.sample($canvasSelection)) --> { selection =>
       $activeSymbols.update(f(_, selection))
     }
 
@@ -116,7 +116,7 @@ class InheritanceTabState(
     */
   private def addSelectionWith[E <: dom.Event](f: (InheritanceDiagram, models.Symbol) => InheritanceDiagram, ep: EventProp[E]) =
     val combined = $inheritanceDiagram.combineWith($canvasSelection.signal)
-    composeEvents(ep)(_.sample(combined)) --> { (diagram, selection) =>
+    ep.compose(_.sample(combined)) --> { (diagram, selection) =>
       if selection.nonEmpty then
         val diagram1 = selection.foldLeft(InheritanceDiagram.empty)((acc, s) => f(diagram, s) ++ acc)
         activeSymbols.extend(diagram1.symbols.toSeq)
