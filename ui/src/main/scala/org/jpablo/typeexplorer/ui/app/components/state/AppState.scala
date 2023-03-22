@@ -21,7 +21,7 @@ import InheritanceTabState.ActiveSymbols
 
 
 def persistent[A: JsonCodec](storedString: StoredString, initial: A)(using Owner): Var[A] =
-  val $var: Var[A] =
+  val aVar: Var[A] =
     Var {
       storedString.signal
         .map { str =>
@@ -34,9 +34,9 @@ def persistent[A: JsonCodec](storedString: StoredString, initial: A)(using Owner
         .observe
         .now()
     }
-  $var.signal.foreach: a =>
+  aVar.signal.foreach: a =>
     storedString.set(a.toJson)
-  $var
+  aVar
 
 
 case class AppState(
@@ -44,14 +44,14 @@ case class AppState(
   appConfigJson      : StoredString,
 )(using Owner):
 
-  val appConfigs: Var[AppConfig] =
+  val appConfig: Var[AppConfig] =
     persistent(appConfigJson, AppConfig())
 
   def updateAppConfig(f: AppConfig => AppConfig): Unit =
-    appConfigs.update(f)
+    appConfig.update(f)
 
   val basePaths: Signal[List[Path]] =
-    appConfigs.signal.map(_.basePaths)
+    appConfig.signal.map(_.basePaths)
 
 
 
@@ -63,7 +63,7 @@ object AppState:
       AppState(InheritanceTabState(), storedString("appConfig", initial = "{}"))
 
     val activeSymbols: Var[ActiveSymbols] =
-      appState0.appConfigs
+      appState0.appConfig
         .zoom(_.activeSymbols.toMap): (appConfig, activeSymbols) =>
           appConfig.modify(_.activeSymbols).setTo(activeSymbols.toList)
 
