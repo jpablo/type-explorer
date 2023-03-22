@@ -64,8 +64,8 @@ object AppState:
 
     val $activeSymbols: Var[ActiveSymbols] =
       appState0.$appConfig
-        .zoom(_.activeSymbols.toMap): activeSymbols =>
-          appState0.$appConfig.now().modify(_.activeSymbols).setTo(activeSymbols.toList)
+        .zoom(_.activeSymbols.toMap): (appConfig, activeSymbols) =>
+          appConfig.modify(_.activeSymbols).setTo(activeSymbols.toList)
 
     appState0.copy(
       inheritanceTabState =

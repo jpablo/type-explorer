@@ -2,7 +2,7 @@ package org.jpablo.typeexplorer.ui.daisyui
 
 import com.raquo.laminar.api.L.*
 import com.raquo.laminar.nodes.ReactiveHtmlElement
-import com.raquo.domtypes.generic.codecs.StringAsIsCodec
+import com.raquo.laminar.codecs.StringAsIsCodec
 
 
 def Checkbox(mods: Modifier[ReactiveHtmlElement.Base]*): Input =

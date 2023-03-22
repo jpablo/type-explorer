@@ -14,12 +14,13 @@ import org.jpablo.typeexplorer.shared.inheritance.InheritanceDiagram
 import org.jpablo.typeexplorer.shared.models.{Namespace, NamespaceKind, Symbol}
 import org.jpablo.typeexplorer.ui.app.components.state.AppState
 import org.jpablo.typeexplorer.ui.app.components.state.InheritanceTabState
-import org.jpablo.typeexplorer.ui.widgets.{CollapsableTree, Collapsable}
+import org.jpablo.typeexplorer.ui.widgets.{Collapsable, CollapsableTree}
+
 import scalajs.js
 import scalajs.js.URIUtils.encodeURIComponent
 import org.jpablo.typeexplorer.ui.daisyui.*
 import org.scalajs.dom
-import org.scalajs.dom.html
+import org.scalajs.dom.{HTMLAnchorElement, MouseEvent, html}
 
 object PackagesTree:
 
@@ -45,14 +46,16 @@ object PackagesTree:
       tabIndex := 0,
       a(
         packageLabel,
-        onClick --> { ev =>
-          // TODO: move "/" to a named constant
-          val prefix = packagePath.mkString("/")
-          // Rather hacky: find visible children with the given prefix
-          for parent <- ev.target.path.find(_.classList.contains("te-package-name")) do
-            val symbols = parent.querySelectorAll(s"[id ^= '$prefix']").map(e => Symbol(e.id))
-            inheritanceTabState.activeSymbols.extend(symbols)
-            inheritanceTabState.canvasSelection.extend(symbols.toSet)
+        inContext { thisNode =>
+          onClick --> { _ =>
+            // TODO: move "/" to a named constant
+            val prefix = packagePath.mkString("/")
+            // Rather hacky: find visible children with the given prefix
+            for parent <- thisNode.ref.path.find(_.classList.contains("te-package-name")) do
+              val symbols = parent.querySelectorAll(s"[id ^= '$prefix']").map(e => Symbol(e.id))
+              inheritanceTabState.activeSymbols.extend(symbols)
+              inheritanceTabState.canvasSelection.extend(symbols.toSet)
+          }
         }
       )
     )

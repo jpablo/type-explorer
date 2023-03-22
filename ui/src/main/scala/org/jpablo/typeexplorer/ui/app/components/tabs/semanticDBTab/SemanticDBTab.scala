@@ -12,7 +12,7 @@ import org.jpablo.typeexplorer.ui.app.components.state.AppState
     $documents: EventStream[List[TextDocumentsWithSource]],
     $projectPath: Signal[List[Path]]
   ) =
-    val $selectedSemanticDb = EventBus[Path]
+    val $selectedSemanticDb = EventBus[Path]()
 
     val $selectedDocument =
       $selectedSemanticDb.events.combineWith($documents)
