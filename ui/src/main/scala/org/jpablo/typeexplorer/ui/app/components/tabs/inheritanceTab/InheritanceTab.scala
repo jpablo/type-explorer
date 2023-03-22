@@ -28,7 +28,7 @@ object InheritanceTab:
 
   def build(
     appState: AppState,
-    $inheritanceSvgDiagram: Signal[InheritanceSvgDiagram]
+    inheritanceSvgDiagram: Signal[InheritanceSvgDiagram]
   ) =
       val inheritanceTabState = appState.inheritanceTabState
 
@@ -36,11 +36,11 @@ object InheritanceTab:
       val $showOptions        = Var(false)
       val modifySelection = modifyLens[AppConfig]
       val $filteredDiagram =
-        inheritanceTabState.$inheritanceDiagram
+        inheritanceTabState.inheritanceDiagramR
           .combineWith(
             appState.$appConfig.signal.map(_.packagesOptions),
             $filterBySymbolName.signal,
-            inheritanceTabState.$activeSymbols.signal
+            inheritanceTabState.activeSymbolsR.signal
           )
           .changes
           .debounce(300)
@@ -50,18 +50,18 @@ object InheritanceTab:
               .subdiagramByKinds(packagesOptions.nsKind)
               .orElse(!packagesOptions.onlyActive, _.subdiagram(activeSymbols.keySet))
               .orElse(packagesOptions.onlyTests, _.filterBy(!_.inTest))
-      val $selectionEmpty = inheritanceTabState.$canvasSelection.signal.map(_.isEmpty)
+      val $selectionEmpty = inheritanceTabState.canvasSelectionR.signal.map(_.isEmpty)
       val canvasContainer =
         div(cls := "h-full overflow-auto border-t border-slate-300 p-1 row-start-2 row-end-3",
           backgroundImage := "radial-gradient(hsla(var(--bc)/.2) .5px,hsla(var(--b2)/1) .5px)",
           backgroundSize := "5px 5px",
-          child <-- $inheritanceSvgDiagram.map: diagram =>
-            val selection = inheritanceTabState.$canvasSelection.now()
+          child <-- inheritanceSvgDiagram.map: diagram =>
+            val selection = inheritanceTabState.canvasSelectionR.now()
             diagram.select(selection)
             // remove elements not present in the new diagram (such elements did exist in the previous diagram)
-            inheritanceTabState.$canvasSelection.update(_ -- (selection -- diagram.elementSymbols))
+            inheritanceTabState.canvasSelectionR.update(_ -- (selection -- diagram.elementSymbols))
             diagram.toLaminar,
-          onClick.preventDefault.compose(_.withCurrentValueOf($inheritanceSvgDiagram)) -->
+          onClick.preventDefault.compose(_.withCurrentValueOf(inheritanceSvgDiagram)) -->
             handleSvgClick(inheritanceTabState).tupled,
         )
 
@@ -118,10 +118,10 @@ object InheritanceTab:
               onClick --> inheritanceTabState.activeSymbols.clear()
             ).tiny,
             Button("fit",
-              onClick.compose(_.sample($inheritanceSvgDiagram)) --> (_.fitToRect(canvasContainer.ref.getBoundingClientRect()))
+              onClick.compose(_.sample(inheritanceSvgDiagram)) --> (_.fitToRect(canvasContainer.ref.getBoundingClientRect()))
             ).tiny,
             Button("zoom +",
-              onClick.compose(_.sample($inheritanceSvgDiagram)) --> (_.zoom(1.1))
+              onClick.compose(_.sample(inheritanceSvgDiagram)) --> (_.zoom(1.1))
             ).tiny
           )
         ),
@@ -149,18 +149,18 @@ object InheritanceTab:
                 onClick -->
                   appState.$appConfig.update:
                     _.modify(_.diagramOptions.hiddenSymbols)
-                      .using(_ ++ inheritanceTabState.$canvasSelection.now())
+                      .using(_ ++ inheritanceTabState.canvasSelectionR.now())
               )
             ),
             li(cls.toggle("disabled") <-- $selectionEmpty,
               a("Select parents", disabled <-- $selectionEmpty,
-                onClick.compose(_.sample(inheritanceTabState.$inheritanceDiagram, $inheritanceSvgDiagram)) -->
+                onClick.compose(_.sample(inheritanceTabState.inheritanceDiagramR, inheritanceSvgDiagram)) -->
                   inheritanceTabState.canvasSelection.selectParents.tupled
               )
             ),
             li(cls.toggle("disabled") <-- $selectionEmpty,
               a("Select children",
-                onClick.compose(_.sample(inheritanceTabState.$inheritanceDiagram, $inheritanceSvgDiagram)) -->
+                onClick.compose(_.sample(inheritanceTabState.inheritanceDiagramR, inheritanceSvgDiagram)) -->
                   inheritanceTabState.canvasSelection.selectChildren.tupled
               )
             ),
@@ -169,8 +169,8 @@ object InheritanceTab:
                 id = "fields-checkbox-3",
                 labelStr = "Show fields",
                 $checked =
-                  inheritanceTabState.$activeSymbols.signal
-                    .combineWith(inheritanceTabState.$canvasSelection.signal)
+                  inheritanceTabState.activeSymbolsR.signal
+                    .combineWith(inheritanceTabState.canvasSelectionR.signal)
                     .map: (activeSymbols, selection) =>
                       val activeSelection = activeSymbols.filter((s, _) => selection.contains(s))
                       // true when activeSelection is nonEmpty AND every option exists and showFields == true

@@ -23,26 +23,26 @@ object InheritanceTabState:
 import InheritanceTabState.ActiveSymbols
 
 class InheritanceTabState(
-  val $activeSymbols: Var[ActiveSymbols] = Var(Map.empty),
-  val $inheritanceDiagram: Signal[InheritanceDiagram] = Signal.fromValue(InheritanceDiagram.empty),
+  val activeSymbolsR     : Var[ActiveSymbols] = Var(Map.empty),
+  val inheritanceDiagramR: Signal[InheritanceDiagram] = Signal.fromValue(InheritanceDiagram.empty),
   // this should be a subset of $activeSymbols' keys
-  val $canvasSelection   : Var[Set[models.Symbol]] = Var(Set.empty),
+  val canvasSelectionR   : Var[Set[models.Symbol]] = Var(Set.empty),
 ):
   object canvasSelection:
     def toggle(symbol: models.Symbol): Unit =
-      $canvasSelection.update(_.toggle(symbol))
+      canvasSelectionR.update(_.toggle(symbol))
 
     def replace(symbol: models.Symbol): Unit =
-      $canvasSelection.set(Set(symbol))
+      canvasSelectionR.set(Set(symbol))
 
     def extend(symbol: models.Symbol): Unit =
-      $canvasSelection.update(_ + symbol)
+      canvasSelectionR.update(_ + symbol)
 
     def extend(symbols: Set[models.Symbol]): Unit =
-      $canvasSelection.update(_ ++ symbols)
+      canvasSelectionR.update(_ ++ symbols)
 
     def clear(): Unit =
-      $canvasSelection.set(Set.empty)
+      canvasSelectionR.set(Set.empty)
 
     def selectParents(fullDiagram: InheritanceDiagram, inheritanceSvgDiagram: InheritanceSvgDiagram): Unit =
       selectRelated(_.parentsOfAll(_), fullDiagram, inheritanceSvgDiagram)
@@ -51,8 +51,8 @@ class InheritanceTabState(
       selectRelated(_.childrenOfAll(_), fullDiagram, inheritanceSvgDiagram)
 
     private def selectRelated(selector: (InheritanceDiagram, Set[models.Symbol]) => InheritanceDiagram, fullDiagram: InheritanceDiagram, inheritanceSvgDiagram: InheritanceSvgDiagram): Unit =
-      val svgDiagram = fullDiagram.subdiagram($activeSymbols.now().keySet)
-      val selection  = $canvasSelection.now()
+      val svgDiagram = fullDiagram.subdiagram(activeSymbolsR.now().keySet)
+      val selection  = canvasSelectionR.now()
       val relatedDiagram = selector(svgDiagram, selection)
       val arrowSymbols = relatedDiagram.arrows.map((a, b) => models.Symbol(s"${b}_$a"))
       extend(relatedDiagram.symbols)
@@ -64,26 +64,26 @@ class InheritanceTabState(
 
   object activeSymbols:
     def toggle(symbol: models.Symbol): Unit =
-      $activeSymbols.update: activeSymbols =>
+      activeSymbolsR.update: activeSymbols =>
         if activeSymbols.contains(symbol) then
           activeSymbols - symbol
         else
           activeSymbols + (symbol -> None)
 
     def extend(symbol: models.Symbol): Unit =
-      $activeSymbols.update(_ + (symbol -> None))
+      activeSymbolsR.update(_ + (symbol -> None))
 
     def extend(symbols: collection.Seq[models.Symbol]): Unit =
-      $activeSymbols.update(_ ++ symbols.map(_ -> None))
+      activeSymbolsR.update(_ ++ symbols.map(_ -> None))
 
     def clear(): Unit =
-      $activeSymbols.set(Map.empty)
+      activeSymbolsR.set(Map.empty)
 
     /** Updates (selected) active symbol's options based on the given function `f`
       */
     def updateSelectionOptions(f: SymbolOptions => SymbolOptions): Unit =
-      val canvasSelection = $canvasSelection.now()
-      $activeSymbols.update:
+      val canvasSelection = canvasSelectionR.now()
+      activeSymbolsR.update:
         _.transform { case (sym, options) =>
           if canvasSelection.contains(sym) then
             Some(f(options.getOrElse(SymbolOptions())))
@@ -95,8 +95,8 @@ class InheritanceTabState(
     * Modify `$activeSymbols` based on the given function `f`
     */
   def applyOnSelection[E <: dom.Event](f: (ActiveSymbols, Set[models.Symbol]) => ActiveSymbols)(ep: EventProp[E]) =
-    ep.compose(_.sample($canvasSelection)) --> { selection =>
-      $activeSymbols.update(f(_, selection))
+    ep.compose(_.sample(canvasSelectionR)) --> { selection =>
+      activeSymbolsR.update(f(_, selection))
     }
 
   /**
@@ -115,7 +115,7 @@ class InheritanceTabState(
     * Updates $activeSymbols with the given function `f` and the current canvas selection.
     */
   private def addSelectionWith[E <: dom.Event](f: (InheritanceDiagram, models.Symbol) => InheritanceDiagram, ep: EventProp[E]) =
-    val combined = $inheritanceDiagram.combineWith($canvasSelection.signal)
+    val combined = inheritanceDiagramR.combineWith(canvasSelectionR.signal)
     ep.compose(_.sample(combined)) --> { (diagram, selection) =>
       if selection.nonEmpty then
         val diagram1 = selection.foldLeft(InheritanceDiagram.empty)((acc, s) => f(diagram, s) ++ acc)

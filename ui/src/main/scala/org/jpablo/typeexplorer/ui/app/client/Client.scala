@@ -26,14 +26,14 @@ def fetchBase(path: String): FetchEventStreamBuilder =
   Fetch.get(basePath + path)
 
 
-def fetchDocuments($projectPath: Signal[List[Path]]): EventStream[List[TextDocumentsWithSource]] =
+def fetchDocuments(paths: Signal[List[Path]]): EventStream[List[TextDocumentsWithSource]] =
   for
-    paths <- $projectPath
+    path <- paths
     lst <-
-      if paths.isEmpty then
+      if path.isEmpty then
         EventStream.fromValue(List.empty)
       else
-        val qs = paths.map(p => "path=" + p).mkString("&")
+        val qs = path.map(p => "path=" + p).mkString("&")
         for response <- fetchBase("semanticdb?" + qs).arrayBuffer yield
           val ia = Int8Array(response.data, 0, length = response.data.byteLength)
           TextDocumentsWithSourceSeq.parseFrom(ia.toArray).documentsWithSource.toList.sortBy(_.semanticDbUri)
@@ -60,9 +60,9 @@ def fetchInheritanceDiagram(basePaths: List[Path]): Signal[InheritanceDiagram] =
 
 def fetchInheritanceSVGDiagram(appState: AppState): EventStream[InheritanceSvgDiagram] =
   val combined =
-    appState.$basePaths
+    appState.basePaths
       .combineWith(
-        appState.inheritanceTabState.$activeSymbols.signal,
+        appState.inheritanceTabState.activeSymbolsR.signal,
         appState.$appConfig.signal.map(_.diagramOptions)
       )
   for
@@ -84,10 +84,10 @@ def fetchInheritanceSVGDiagram(appState: AppState): EventStream[InheritanceSvgDi
     InheritanceSvgDiagram(svgElement)
 
 
-def fetchCallGraphSVGDiagram($diagram: Signal[(DiagramType, Path)]): EventStream[dom.Element] =
+def fetchCallGraphSVGDiagram(diagram: Signal[(DiagramType, Path)]): EventStream[dom.Element] =
   val parser = dom.DOMParser()
   for
-    (diagramType, path) <- $diagram
+    (diagramType, path) <- diagram
     doc <- if path.toString.isEmpty
     then
       EventStream.fromValue(div().ref)
@@ -102,9 +102,9 @@ def fetchCallGraphSVGDiagram($diagram: Signal[(DiagramType, Path)]): EventStream
 //      errorNode = doc.querySelector("parsererror")
   yield doc
 
-def fetchSourceCode($basePath: Signal[Path])(docPath: Path) =
+def fetchSourceCode(paths: Signal[Path])(docPath: Path) =
   for
-    projectPath <- $basePath
-    response    <- fetchBase(s"source?path=${encodeURIComponent(projectPath.toString + "/" + docPath)}").text
+    path <- paths
+    response    <- fetchBase(s"source?path=${encodeURIComponent(path.toString + "/" + docPath)}").text
   yield
     response.data

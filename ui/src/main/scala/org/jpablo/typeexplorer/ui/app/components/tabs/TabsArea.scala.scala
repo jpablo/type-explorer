@@ -19,7 +19,7 @@ def TabsArea(
   $documents: EventStream[List[TextDocumentsWithSource]]
 ): List[Div] =
   val inheritanceCanvas    = InheritanceTab.build(appState, $inheritanceSvgDiagram)
-  val semanticDBTabContent = SemanticDBTab($documents, appState.$basePaths)
+  val semanticDBTabContent = SemanticDBTab($documents, appState.basePaths)
   val tabs = Tabs("Inheritance", "SemanticDB")
   val inheritance = tabs(0)
   val semanticDB  = tabs(1)

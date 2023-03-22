@@ -63,7 +63,7 @@ object PackagesTree:
   private def renderNamespace(inheritanceTabState: InheritanceTabState, mkControl: String => Collapsable.Control)(s: String, ns: Namespace) =
     val symStr = ns.symbol.toString
     val uri = encodeURIComponent(symStr)
-    val $isActive = inheritanceTabState.$activeSymbols.signal.map(_.contains(ns.symbol))
+    val $isActive = inheritanceTabState.activeSymbolsR.signal.map(_.contains(ns.symbol))
 
     Collapsable(
       nodeLabel =
