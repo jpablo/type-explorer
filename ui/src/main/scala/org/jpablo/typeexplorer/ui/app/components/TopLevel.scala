@@ -11,21 +11,21 @@ import io.laminext.syntax.core.*
 import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
 
 def TopLevel(
-  appState: AppState,
-  $inheritanceSvgDiagram: Signal[InheritanceSvgDiagram],
-  $documents: EventStream[List[TextDocumentsWithSource]]
+  appState             : AppState,
+  inheritanceSvgDiagram: Signal[InheritanceSvgDiagram],
+  documents: EventStream[List[TextDocumentsWithSource]]
 ) =
   div(
     cls := "drawer drawer-end",
     input(idAttr := "drawer-1", tpe := "checkbox", cls := "drawer-toggle"),
     div(cls := "drawer-content flex flex-col h-full",
-      AppHeader(appState.$basePaths),
-      TabsArea(appState, $inheritanceSvgDiagram, $documents),
+      AppHeader(appState.basePaths),
+      TabsArea(appState, inheritanceSvgDiagram, documents),
       AppFooter,
       appState.$appConfig.signal.map(_.advancedMode).childWhenTrue:
         div(
-          div(child.text <-- appState.inheritanceTabState.$canvasSelection.signal.map(ds => s"canvasSelection: ${ds.size}")),
-          div(child.text <-- appState.inheritanceTabState.$activeSymbols.signal.map(ss => s"activeSymbols: ${ss.size}")),
+          div(child.text <-- appState.inheritanceTabState.canvasSelectionR.signal.map(ds => s"canvasSelection: ${ds.size}")),
+          div(child.text <-- appState.inheritanceTabState.activeSymbolsR.signal.map(ss => s"activeSymbols: ${ss.size}")),
         )
     ),
     AppConfigDrawer(appState.$appConfig),

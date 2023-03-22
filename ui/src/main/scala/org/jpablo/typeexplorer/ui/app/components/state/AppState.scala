@@ -50,7 +50,7 @@ case class AppState(
   def updateAppConfig(f: AppConfig => AppConfig): Unit =
     $appConfig.update(f)
 
-  val $basePaths: Signal[List[Path]] =
+  val basePaths: Signal[List[Path]] =
     $appConfig.signal.map(_.basePaths)
 
 
@@ -71,7 +71,7 @@ object AppState:
       inheritanceTabState =
         InheritanceTabState(
           $activeSymbols,
-          appState0.$basePaths.flatMap(fetchDiagram)
+          appState0.basePaths.flatMap(fetchDiagram)
         )
     )
 

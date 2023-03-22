@@ -9,22 +9,22 @@ import org.jpablo.typeexplorer.ui.app.components.state.AppState
 
 
   def SemanticDBTab(
-    $documents: EventStream[List[TextDocumentsWithSource]],
-    $projectPath: Signal[List[Path]]
+    documentsR  : EventStream[List[TextDocumentsWithSource]],
+    projectPathR: Signal[List[Path]]
   ) =
-    val $selectedSemanticDb = EventBus[Path]()
+    val selectedSemanticDbR = EventBus[Path]()
 
-    val $selectedDocument =
-      $selectedSemanticDb.events.combineWith($documents)
+    val selectedDocumentR =
+      selectedSemanticDbR.events.combineWith(documentsR)
         .map { (path, documents: List[TextDocumentsWithSource]) =>
           path -> documents.find(_.semanticDbUri == path.toString)
         }
 
-    val $sourceCode =
-      $selectedDocument
+    val sourceCodeR =
+      selectedDocumentR
         .collect { case (_, Some(documentsWithSource)) => documentsWithSource.documents.headOption }
         .collect { case Some(doc) => Path(doc.uri) }
-        .flatMap(fetchSourceCode($projectPath.map(_.head)))
+        .flatMap(fetchSourceCode(projectPathR.map(_.head)))
 
     div(
       cls := "grid h-full grid-cols-3",
@@ -32,13 +32,13 @@ import org.jpablo.typeexplorer.ui.app.components.state.AppState
       div(
         cls := "overflow-auto h-full p-1",
         div(""), // TODO: add controls to expand / collapse all
-        children <-- SemanticDBTree.build($documents, $selectedSemanticDb)
+        children <-- SemanticDBTree.build(documentsR, selectedSemanticDbR)
       ),
 
       div(
         cls := "h-full overflow-auto border-l border-slate-300",
         child <--
-          $selectedDocument.map {
+          selectedDocumentR.map {
             case (_, Some(document)) => SemanticDBText(document)
             case (path, None) => li(s"Document not found: $path")
           }
@@ -46,6 +46,6 @@ import org.jpablo.typeexplorer.ui.app.components.state.AppState
 
       div(
         cls := "semanticdb-source-container h-full overflow-auto border-l border-slate-300",
-        SourceCodeTab($sourceCode)
+        SourceCodeTab(sourceCodeR)
       )
     )
