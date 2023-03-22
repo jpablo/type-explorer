@@ -14,13 +14,13 @@ object InheritanceDiagramSpec2 extends ZIOSpecDefault:
   def spec =
     suite("fromDocuments suite"):
       test("fromTextDocuments"):
-        val path = Paths.get("src/test/resources")
+        val path = Paths.get("backend/src/test/resources")
         val diagram =
           InheritanceDiagram.fromTextDocumentsWithSource(
             readTextDocumentsWithSource(List(path.toAbsolutePath))
           )
-        val ns = diagram.namespaces.find(_.symbol.toString == "libretto/examples/canteen/Customer.").get
-        val names = ns.methods.map(_.displayName)
+        val ns = diagram.namespaces.find(_.symbol.toString == "libretto/examples/canteen/Customer.")
+        val names = ns.get.methods.map(_.displayName)
         // ensure some internal names are not present in the output
         assertTrue(
           names forall (!_.contains("<init>")),

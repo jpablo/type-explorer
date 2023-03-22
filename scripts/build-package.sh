@@ -6,6 +6,6 @@ sbt "ui/fullLinkJS"
 # Bundle JS code with Vite
 npm run build
 
- Server
+# Server
 sbt "backend/Universal/packageBin"
 #sbt "backend/stage"
