@@ -4,10 +4,9 @@ import com.raquo.laminar.api.L.*
 import com.raquo.laminar.api.L.svg as S
 import org.scalajs.dom
 import io.laminext.core.*
-import org.scalajs.dom.html.LI
 import com.raquo.laminar.nodes.ReactiveHtmlElement
 
-def Navbar(brand: String, items: Li*): Div =
+def Navbar(brand: String, items: LI*): Div =
   div(
     cls := "navbar bg-base-100",
     div(
