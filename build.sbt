@@ -160,8 +160,8 @@ lazy val ui =
       // ),
       libraryDependencies ++= Seq(
         "org.scala-js" %%% "scalajs-dom" % "2.2.0",
-        "com.raquo" %%% "laminar" % "0.14.5",
-        "io.laminext" %%% "fetch" % "0.14.4"
+        "com.raquo" %%% "laminar" % "15.0.0",
+        "io.laminext" %%% "fetch" % "0.15.0"
       ),
       excludeDependencies ++= Seq(
         "org.scala-lang.modules" %% "scala-collection-compat_sjs1"
@@ -191,11 +191,8 @@ lazy val root =
 
 def welcomeMessage = onLoadMessage := {
   import scala.Console
-
   def header(text: String): String = s"${Console.RED}$text${Console.RESET}"
-
   def item(text: String): String = s"${Console.GREEN}> ${Console.CYAN}$text${Console.RESET}"
-
   def subItem(text: String): String = s"  ${Console.YELLOW}> ${Console.CYAN}$text${Console.RESET}"
 
   s"""|${header(s"Type Explorer ${version.value}")}

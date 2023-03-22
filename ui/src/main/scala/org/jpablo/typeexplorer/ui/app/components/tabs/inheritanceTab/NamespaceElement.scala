@@ -2,7 +2,6 @@ package org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab
 
 import org.jpablo.typeexplorer.shared.models
 import org.scalajs.dom
-import org.scalajs.dom.console
 import scala.util.matching.Regex
 
 

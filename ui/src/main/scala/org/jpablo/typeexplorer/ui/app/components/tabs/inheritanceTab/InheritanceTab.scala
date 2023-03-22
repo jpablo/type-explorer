@@ -4,8 +4,6 @@ package org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab
 import com.raquo.airstream.core.{EventStream, Observer, Signal}
 import com.raquo.airstream.eventbus.WriteBus
 import com.raquo.airstream.state.StrictSignal
-import com.raquo.domtypes.generic.codecs.StringAsIsCodec
-import com.raquo.domtypes.jsdom.defs.events.TypedTargetMouseEvent
 import com.raquo.laminar.api.L.*
 import com.softwaremill.quicklens.*
 import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
@@ -63,7 +61,7 @@ object InheritanceTab:
             // remove elements not present in the new diagram (such elements did exist in the previous diagram)
             inheritanceTabState.$canvasSelection.update(_ -- (selection -- diagram.elementSymbols))
             diagram.toLaminar,
-          composeEvents(onClick.preventDefault)(_.withCurrentValueOf($inheritanceSvgDiagram)) -->
+          onClick.preventDefault.compose(_.withCurrentValueOf($inheritanceSvgDiagram)) -->
             handleSvgClick(inheritanceTabState).tupled,
         )
 
@@ -190,9 +188,9 @@ object InheritanceTab:
 
   private def handleSvgClick
     (inheritanceTabState: InheritanceTabState)
-    (e: TypedTargetMouseEvent[dom.Element], diagram: InheritanceSvgDiagram) =
+    (ev: dom.MouseEvent, diagram: InheritanceSvgDiagram): Unit =
     val selectedElement: Option[SvgGroupElement] =
-      e.target.path
+      ev.target.asInstanceOf[dom.Element].path
         .takeWhile(_.isInstanceOf[dom.SVGElement])
         .map(e => NamespaceElement.from(e) orElse ClusterElement.from(e) orElse LinkElement.from(e))
         .collectFirst { case Some(g) => g }
@@ -201,7 +199,7 @@ object InheritanceTab:
       case Some(g) => g match
 
         case _: (LinkElement | NamespaceElement) =>
-          if e.metaKey then
+          if ev.metaKey then
             g.toggle()
             inheritanceTabState.canvasSelection.toggle(g.symbol)
           else
@@ -210,7 +208,7 @@ object InheritanceTab:
             inheritanceTabState.canvasSelection.replace(g.symbol)
 
         case cluster: ClusterElement =>
-          if !e.metaKey then
+          if !ev.metaKey then
             diagram.unselectAll()
             inheritanceTabState.canvasSelection.clear()
           // select all boxes inside this cluster
