@@ -38,7 +38,7 @@ object InheritanceTab:
       val filteredDiagram =
         inheritanceTabState.inheritanceDiagramR
           .combineWith(
-            appState.appConfigs.signal.map(_.packagesOptions),
+            appState.appConfig.signal.map(_.packagesOptions),
             filterBySymbolName.signal,
             inheritanceTabState.activeSymbolsR.signal
           )
@@ -80,14 +80,14 @@ object InheritanceTab:
               div(cls := "card card-compact p-1 mb-2 border-slate-300 border-[1px]",
                 div(cls := "card-body p-1",
                   LabeledCheckbox(s"filter-by-active", "only active",
-                    isChecked = appState.appConfigs.signal.map(_.packagesOptions.onlyActive),
+                    isChecked = appState.appConfig.signal.map(_.packagesOptions.onlyActive),
                     clickHandler = Observer: _ =>
                       appState.updateAppConfig(_.modify(_.packagesOptions.onlyActive).using(!_)),
                     toggle = true
                   ),
                   hr(),
                   LabeledCheckbox(s"filter-by-scope", "Tests",
-                    isChecked = appState.appConfigs.signal.map(_.packagesOptions.onlyTests),
+                    isChecked = appState.appConfig.signal.map(_.packagesOptions.onlyTests),
                     clickHandler = Observer: _ =>
                       appState.updateAppConfig(_.modify(_.packagesOptions.onlyTests).using(!_)),
                     toggle = true
@@ -97,7 +97,7 @@ object InheritanceTab:
                     LabeledCheckbox(
                       id = s"show-ns-kind-$kind",
                       kind.toString,
-                      isChecked = appState.appConfigs.signal.map(_.packagesOptions.nsKind).map(_.contains(kind)),
+                      isChecked = appState.appConfig.signal.map(_.packagesOptions.nsKind).map(_.contains(kind)),
                       clickHandler = Observer: b =>
                         appState.updateAppConfig(_.modify(_.packagesOptions.nsKind).using(_.toggleWith(kind, b)))
                     )
@@ -147,7 +147,7 @@ object InheritanceTab:
             li(cls.toggle("disabled") <-- selectionEmpty,
               a("Hide", disabled <-- selectionEmpty,
                 onClick -->
-                  appState.appConfigs.update:
+                  appState.appConfig.update:
                     _.modify(_.diagramOptions.hiddenSymbols)
                       .using(_ ++ inheritanceTabState.canvasSelectionR.now())
               )
@@ -230,8 +230,8 @@ object InheritanceTab:
     LabeledCheckbox(
       id = id,
       labelStr = labelStr,
-      isChecked = appState.appConfigs.signal.map(field),
-      clickHandler = appState.appConfigs.updater[Boolean]((config, b) => modifyField.setTo(b)(config)),
+      isChecked = appState.appConfig.signal.map(field),
+      clickHandler = appState.appConfig.updater[Boolean]((config, b) => modifyField.setTo(b)(config)),
       toggle = true
     )
 
