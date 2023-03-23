@@ -22,7 +22,13 @@ function printSbtTask(task) {
     throw result.error;
   if (result.status !== 0)
     throw new Error(`sbt process failed with exit code ${result.status}`);
-  return result.stdout.toString('utf8').trim();
+  let data = result.stdout.toString('utf8');
+  console.log("--- before ---")
+  let ret = data.substring(0, data.indexOf('\n')).trim();
+  console.log(data.split(''))
+  console.log(ret.split(''))
+  console.log("--- after ---")
+  return ret;
 }
 
 const replacementForPublic = isDev()
