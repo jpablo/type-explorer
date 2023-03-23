@@ -32,3 +32,13 @@ jobs:
       # Optional: This step uploads information to the GitHub dependency graph and unblocking Dependabot alerts for the repository
 #    - name: Upload dependency graph
 #      uses: scalacenter/sbt-dependency-submission@ab086b50c947c9774b70f39fc7f6e20ca2706c91
+    - name: Create Artifact
+      run: |
+        ./scripts/build-package.sh
+      shell: bash
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: backend-zip
+        path: backend/target/universal/type-explorer-backend-*.zip
