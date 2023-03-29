@@ -17,26 +17,45 @@ import org.jpablo.typeexplorer.ui.app.components.state.{AppConfig, AppState, Inh
 import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.PackagesTree
 import org.jpablo.typeexplorer.ui.app.toggleWith
 import org.jpablo.typeexplorer.ui.daisyui.*
+import org.jpablo.typeexplorer.ui.widgets.Icons
 import org.scalajs.dom
 import org.scalajs.dom.{DOMRect, EventTarget, HTMLDivElement, console}
 
 object InheritanceTab:
 
-  extension [A](a: A)
-    private def orElse(b: Boolean, f: A => A): A =
-      if b then a else f(a)
-
   def apply(appState: AppState, inheritanceSvgDiagram: Signal[InheritanceSvgDiagram]) =
     val canvasContainer = CanvasContainer(inheritanceSvgDiagram, appState.inheritanceTabState)
-    // --- container: 3 columns, 1 row ---
-    div(cls := "grid h-full grid-cols-[1fr_4fr_1fr] grid-rows-[3em_auto]",
-      PackagesComponent(appState),
-      Toolbar(appState, inheritanceSvgDiagram, canvasContainer),
-      canvasContainer,
+
+    val showPackagesTree = Var(true)
+    val setColumns =
+      cls <-- showPackagesTree.signal
+        .switch((3, 4), (2, 4))
+        .map((s, e) => s"col-start-$s col-end-$e")
+
+    // --- grid container: 4 columns, 2 rows ---
+    div(cls := "grid h-full grid-cols-[46px_1fr_4fr_1fr] grid-rows-[3em_auto]",
+      LeftSideMenu(showPackagesTree),
+      PackagesTreeComponent(appState).amend(cls.toggle("hidden") <-- !showPackagesTree.signal),
+      Toolbar(appState, inheritanceSvgDiagram, canvasContainer.ref.getBoundingClientRect()).amend(setColumns),
+      canvasContainer.amend(setColumns),
       SelectionSidebar(appState, inheritanceSvgDiagram)
     )
 
-  private def PackagesComponent(appState: AppState) =
+  private def LeftSideMenu(active: Var[Boolean]) =
+    div(cls := "row-start-1 row-end-3 flex justify-center bg-slate-100 border-r border-slate-300",
+      ul(cls := "menu menu-compact",
+        li(cls.toggle("bg-primary") <-- active.signal,
+          Icons.folder.amend(onClick --> active.toggle()),
+        )
+      )
+    )
+
+  extension[A] (a: A)
+    private def orElse(b: Boolean, f: A => A): A =
+      if b then a else f(a)
+
+
+  private def PackagesTreeComponent(appState: AppState) =
     val showOptions = Var(false)
     val filterBySymbolName = Var("")
     val filteredDiagram: EventStream[InheritanceDiagram] =
@@ -55,7 +74,7 @@ object InheritanceTab:
             .orElse(!packagesOptions.onlyActive, _.subdiagram(activeSymbols.keySet))
             .orElse(packagesOptions.onlyTests, _.filterBy(!_.inTest))
 
-    div(cls := "overflow-auto p-1 row-start-1 row-end-3 border-r border-slate-300 flex flex-col",
+    div(cls := "overflow-auto p-1 row-start-1 row-end-3 col-start-2 col-end-3 border-r border-slate-300 flex flex-col",
       // --- controls ---
       form(
         LabeledCheckbox("show-options-toggle", "options",
@@ -95,7 +114,7 @@ object InheritanceTab:
       div(cls := "overflow-auto", children <-- PackagesTree(appState.inheritanceTabState, filteredDiagram))
     )
 
-  private def Toolbar(appState: AppState, inheritanceSvgDiagram: Signal[InheritanceSvgDiagram], canvasContainer: Div) =
+  private def Toolbar(appState: AppState, inheritanceSvgDiagram: Signal[InheritanceSvgDiagram], containerBoundingClientRect: => dom.DOMRect) =
     val modifySelection = modifyLens[AppConfig]
     div(cls := "flex gap-4 ml-2",
       ButtonGroup(
@@ -107,7 +126,7 @@ object InheritanceTab:
           onClick --> appState.inheritanceTabState.activeSymbols.clear()
         ).tiny,
         Button("fit",
-          onClick.compose(_.sample(inheritanceSvgDiagram)) --> (_.fitToRect(canvasContainer.ref.getBoundingClientRect()))
+          onClick.compose(_.sample(inheritanceSvgDiagram)) --> (_.fitToRect(containerBoundingClientRect))
         ).tiny,
         Button("zoom +",
           onClick.compose(_.sample(inheritanceSvgDiagram)) --> (_.zoom(1.1))
@@ -132,7 +151,7 @@ object InheritanceTab:
   private def SelectionSidebar(appState: AppState, inheritanceSvgDiagram: Signal[InheritanceSvgDiagram]) =
     val inheritanceTabState = appState.inheritanceTabState
     val selectionEmpty = inheritanceTabState.canvasSelectionR.signal.map(_.isEmpty)
-    div(cls := "row-start-1 row-end-3 border-l border-slate-300 ",
+    div(cls := "row-start-1 row-end-3 border-l border-slate-300 col-start-4 col-end-5",
       ul(cls := "menu menu-compact",
         li(cls := "menu-title",
           span("selection")

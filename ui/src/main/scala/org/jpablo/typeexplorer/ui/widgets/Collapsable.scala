@@ -51,9 +51,7 @@ object Icons:
       cls <-- $isOpen.map(o => if o then "bi-chevron-down" else "bi-chevron-right"),
     ).amend(mods)
 
-  def fileBinary =
-    i(cls := "bi bi-file-binary")
-
-  def fileCode =
-    i(cls := "bi bi-file-code")
+  def fileBinary = i(cls := "bi bi-file-binary")
+  def fileCode = i(cls := "bi bi-file-code")
+  def folder = a(cls := "bi bi-folder")
 
