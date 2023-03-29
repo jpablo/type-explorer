@@ -15,15 +15,15 @@ sealed trait SvgGroupElement(val ref: dom.SVGGElement):
   val symbol = models.Symbol(id)
   private val selectedClass = "selected"
 
-  def select() =
+  def select(): Unit =
     ref.classList.add(selectedClass)
     ref.setStyle(selectKey -> selectStyle)
 
-  def unselect() =
+  def unselect(): Unit =
     ref.classList.remove(selectedClass)
     ref.removeStyle(selectKey)
 
-  def toggle() =
+  def toggle(): Unit =
     if ref.classList.contains(selectedClass) then unselect() else select()
 
 
@@ -84,11 +84,11 @@ class LinkElement(ref: dom.SVGGElement) extends SvgGroupElement(ref):
   def prefix = LinkElement.prefix
   def box: Option[dom.SVGElement] = None
 
-  override def select() =
+  override def select(): Unit =
     for el <- ref.children do
       el.setStyle("stroke" -> "rgb(245 158 11)", "stroke-width" -> "3.0")
 
-  override def unselect() =
+  override def unselect(): Unit =
     for el <- ref.children do
       el.setStyle("stroke" -> "#181818", "stroke-width" -> "1.0")
 
