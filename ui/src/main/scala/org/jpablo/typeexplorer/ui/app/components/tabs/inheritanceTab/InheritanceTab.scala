@@ -23,21 +23,20 @@ import org.scalajs.dom.{DOMRect, EventTarget, HTMLDivElement, console}
 
 object InheritanceTab:
 
+  val gridColumn = styleProp("grid-column")
+
   def apply(appState: AppState, inheritanceSvgDiagram: Signal[InheritanceSvgDiagram]) =
     val canvasContainer = CanvasContainer(inheritanceSvgDiagram, appState.inheritanceTabState)
 
     val showPackagesTree = Var(false)
-    val setColumns =
-      showPackagesTree.signal
-        .switch((3, 4), (2, 4))
-        .map((s, e) => s"col-start-$s col-end-$e")
+    val middleColumn = showPackagesTree.signal.switch("3 / 4", "2 / 4")
 
     // --- grid container: 4 columns, 2 rows ---
     div(cls := "grid h-full grid-cols-[46px_1fr_4fr_0.75fr] grid-rows-[3em_auto]",
       LeftSideMenu(showPackagesTree),
       PackagesTreeComponent(appState).amend(cls.toggle("hidden") <-- !showPackagesTree.signal),
-      Toolbar(appState, inheritanceSvgDiagram, canvasContainer.ref.getBoundingClientRect()).amend(cls <-- setColumns),
-      canvasContainer.amend(cls <-- setColumns),
+      Toolbar(appState, inheritanceSvgDiagram, canvasContainer.ref.getBoundingClientRect()).amend(gridColumn <-- middleColumn),
+      canvasContainer.amend(gridColumn <-- middleColumn),
       SelectionSidebar(appState, inheritanceSvgDiagram)
     )
 
