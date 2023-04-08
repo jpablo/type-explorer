@@ -1,5 +1,5 @@
-import { spawnSync } from "child_process";
-import { defineConfig } from "vite";
+import {spawnSync} from "child_process";
+import {defineConfig} from "vite";
 
 function isDev() {
   return process.env.NODE_ENV !== "production";
@@ -22,13 +22,8 @@ function printSbtTask(task) {
     throw result.error;
   if (result.status !== 0)
     throw new Error(`sbt process failed with exit code ${result.status}`);
-  let data = result.stdout.toString('utf8');
-  console.log("--- before ---")
-  let ret = data.substring(0, data.indexOf('\n')).trim();
-  console.log(data.split(''))
-  console.log(ret.split(''))
-  console.log("--- after ---")
-  return ret;
+  let str = result.stdout.toString('utf8');
+  return str.substring(0, str.indexOf('\n')).trim();
 }
 
 const replacementForPublic = isDev()
