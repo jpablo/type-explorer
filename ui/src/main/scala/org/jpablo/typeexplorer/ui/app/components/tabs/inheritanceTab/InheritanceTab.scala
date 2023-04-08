@@ -33,7 +33,7 @@ object InheritanceTab:
         .map((s, e) => s"col-start-$s col-end-$e")
 
     // --- grid container: 4 columns, 2 rows ---
-    div(cls := "grid h-full grid-cols-[46px_1fr_4fr_1fr] grid-rows-[3em_auto]",
+    div(cls := "grid h-full grid-cols-[46px_1fr_4fr_0.75fr] grid-rows-[3em_auto]",
       LeftSideMenu(showPackagesTree),
       PackagesTreeComponent(appState).amend(cls.toggle("hidden") <-- !showPackagesTree.signal),
       Toolbar(appState, inheritanceSvgDiagram, canvasContainer.ref.getBoundingClientRect()).amend(cls <-- setColumns),
