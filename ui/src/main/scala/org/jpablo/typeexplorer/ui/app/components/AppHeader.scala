@@ -18,9 +18,16 @@ def AppHeader(basePaths: Signal[List[Path]]): Div =
     cls := "border-b border-slate-300",
     Navbar(
       brand = "Type Explorer",
+      NavItem(b("base path:")),
       NavItem(
-        span(b("base path:")),
-        code(child.text <-- basePaths.map(_.mkString(", "))),
+        span(
+          child.text <--
+            basePaths.map: ps =>
+              ps.headOption.map(_.toString).getOrElse("None") + (if ps.size > 1 then s" (+${ps.size - 1})" else "")
+        ),
+        ul(cls := "menu-compact rounded-box",
+          children <-- basePaths.map(_.tail.map(s => li(a(s.toString))))
+        ),
       ),
       NavItem(
         label(
