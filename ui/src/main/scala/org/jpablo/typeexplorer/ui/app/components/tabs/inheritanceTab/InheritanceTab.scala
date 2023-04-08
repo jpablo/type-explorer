@@ -26,9 +26,9 @@ object InheritanceTab:
   def apply(appState: AppState, inheritanceSvgDiagram: Signal[InheritanceSvgDiagram]) =
     val canvasContainer = CanvasContainer(inheritanceSvgDiagram, appState.inheritanceTabState)
 
-    val showPackagesTree = Var(true)
+    val showPackagesTree = Var(false)
     val setColumns =
-      cls <-- showPackagesTree.signal
+      showPackagesTree.signal
         .switch((3, 4), (2, 4))
         .map((s, e) => s"col-start-$s col-end-$e")
 
@@ -36,8 +36,8 @@ object InheritanceTab:
     div(cls := "grid h-full grid-cols-[46px_1fr_4fr_1fr] grid-rows-[3em_auto]",
       LeftSideMenu(showPackagesTree),
       PackagesTreeComponent(appState).amend(cls.toggle("hidden") <-- !showPackagesTree.signal),
-      Toolbar(appState, inheritanceSvgDiagram, canvasContainer.ref.getBoundingClientRect()).amend(setColumns),
-      canvasContainer.amend(setColumns),
+      Toolbar(appState, inheritanceSvgDiagram, canvasContainer.ref.getBoundingClientRect()).amend(cls <-- setColumns),
+      canvasContainer.amend(cls <-- setColumns),
       SelectionSidebar(appState, inheritanceSvgDiagram)
     )
 
