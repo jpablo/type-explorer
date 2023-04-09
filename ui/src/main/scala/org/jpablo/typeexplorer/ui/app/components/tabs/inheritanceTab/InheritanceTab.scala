@@ -124,6 +124,11 @@ object InheritanceTab:
         Button("remove all",
           onClick --> appState.inheritanceTabState.activeSymbols.clear()
         ).tiny,
+        Button("Copy to clipboard",
+          onClick.compose(_.sample(inheritanceSvgDiagram)) --> { diagram =>
+            dom.window.navigator.clipboard.writeText(diagram.toSVG)
+          }
+        ).tiny,
         Button("fit",
           onClick.compose(_.sample(inheritanceSvgDiagram)) --> (_.fitToRect(containerBoundingClientRect))
         ).tiny,
