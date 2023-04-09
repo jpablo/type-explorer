@@ -28,7 +28,7 @@ object InheritanceTab:
   def apply(appState: AppState, inheritanceSvgDiagram: Signal[InheritanceSvgDiagram]) =
     val canvasContainer = CanvasContainer(inheritanceSvgDiagram, appState.inheritanceTabState)
 
-    val showPackagesTree = Var(false)
+    val showPackagesTree = Var(true)
     val middleColumn = showPackagesTree.signal.switch("3 / 4", "2 / 4")
 
     // --- grid container: 4 columns, 2 rows ---
@@ -123,13 +123,13 @@ object InheritanceTab:
       ButtonGroup(
         Button("remove all",
           onClick --> appState.inheritanceTabState.activeSymbols.clear()
-        ).tiny,
+        ).tiny.outline,
         Button("fit",
           onClick.compose(_.sample(inheritanceSvgDiagram)) --> (_.fitToRect(containerBoundingClientRect))
-        ).tiny,
+        ).tiny.outline,
         Button("zoom +",
           onClick.compose(_.sample(inheritanceSvgDiagram)) --> (_.zoom(1.1))
-        ).tiny
+        ).tiny.outline
       )
     )
 
