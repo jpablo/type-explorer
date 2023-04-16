@@ -79,8 +79,10 @@ object WebApp extends ZIOAppDefault:
         readTextDocumentsWithSource(paths)
           .map(_.toByteArray)
           .map(Body.fromChunk compose Chunk.fromArray)
-          .map(ch => Response(body = ch))
-          .map(_.withContentType("application/octet-stream"))
+          .map(ch => 
+            Response(body = ch)
+              .withContentType(HeaderValues.applicationOctetStream)
+          )
 
     case req@Method.GET -> !! / "semanticdb.json" =>
       toTaskOrBadRequest(getPath(req)): paths =>
@@ -106,9 +108,7 @@ object WebApp extends ZIOAppDefault:
     case req@Method.GET -> !! / Routes.source =>
       val firstPath = getPath(req).flatMap(_.headOption)
       toTaskOrBadRequest(firstPath): path =>
-        readSource(path)
-          .map(Response.text)
-          .map(_.withContentType("text/plain"))
+        readSource(path).map(Response.text)
 
   } @@ cors(corsConfig)
 
