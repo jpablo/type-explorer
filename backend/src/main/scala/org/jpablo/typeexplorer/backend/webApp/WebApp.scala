@@ -4,6 +4,7 @@ import org.jpablo.typeexplorer.backend.backends.plantuml.toSVG
 import org.jpablo.typeexplorer.backend.semanticdb.All
 import org.jpablo.typeexplorer.protos.{TextDocumentsWithSource, TextDocumentsWithSourceSeq}
 import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, InheritanceExamples, PlantUML, PlantumlInheritance}
+import org.jpablo.typeexplorer.shared.inheritance.toPlantUML
 import org.jpablo.typeexplorer.shared.models
 import org.jpablo.typeexplorer.shared.webApp.{InheritanceRequest, Routes}
 import org.jpablo.typeexplorer.backend.textDocuments.readTextDocumentsWithSource
@@ -24,25 +25,30 @@ import java.io.File
 import java.net.URI
 import java.nio.file
 import java.nio.file.Paths
+import scala.io.Source
 import scala.meta.internal.semanticdb.TextDocuments
 import scala.util.Using
 import scala.util.matching.Regex
 
 object WebApp extends ZIOAppDefault:
+  // ----------
+  // static files
+  // ----------
+
   val extension: Regex = """.*\.(css|js)$""".r
   // find the path of the current jar file
   val jarPath = Paths.get(getClass.getProtectionDomain.getCodeSource.getLocation.toURI.getPath)
-  val static = jarPath.getParent.getParent.resolve("static")
+  val staticPath = jarPath.getParent.getParent.resolve("static")
 
   given JsonCodec[file.Path] =
     JsonCodec.string.transform(file.Path.of(_), _.toString)
 
   private val staticRoutes = Http.collectHttp[Request] {
     case Method.GET -> !! =>
-      Http.fromFile(static.resolve("index.html").toFile)
+      Http.fromFile(staticPath.resolve("index.html").toFile)
 
     case Method.GET -> !! / "assets" / path =>
-      val file = static.resolve(s"assets/$path").toFile
+      val file = staticPath.resolve(s"assets/$path").toFile
       val response = Http.fromStream(ZStream.fromFile(file))
 
       path match
@@ -57,71 +63,57 @@ object WebApp extends ZIOAppDefault:
   // ----------
   private val appZ = Http.collectZIO[Request] {
     case req @ Method.POST -> !! / Routes.inheritanceDiagram =>
-      def createDiagram(ireq: InheritanceRequest[file.Path]): Task[PlantUML] =
-        for
-          docs <- toTask(readTextDocumentsWithSource(ireq.paths), error = "No path provided")
-          diagram = InheritanceDiagram.fromTextDocumentsWithSource(docs)
-          puml =
-            PlantumlInheritance.fromInheritanceDiagram(
-              diagram.subdiagram(ireq.symbols.map(_._1).toSet),
-              ireq.symbols.toMap,
-              ireq.options
-            )
-        yield
-          puml
-
       for
         body <- req.body.asString
-        ireq <- toTask(body.fromJson[InheritanceRequest[file.Path]])
-        puml <- createDiagram(ireq)
+        ireq <- ZIO.from(body.fromJson[InheritanceRequest[file.Path]]).mapError(Throwable(_))
+        docs <- readTextDocumentsWithSource(ireq.paths)
+        symbols = ireq.symbols.map(_._1).toSet
+        diagram = InheritanceDiagram.from(docs).subdiagram(symbols)
+        puml = diagram.toPlantUML(ireq.symbols.toMap, ireq.options)
         svgText <- puml.toSVG("laminar")
       yield
         Response.text(svgText).withContentType("image/svg+xml")
-  } @@ cors(corsConfig)
-
-  private val app = Http.collect[Request] {
 
     case req @ Method.GET -> !! / Routes.semanticdb =>
-      getPath(req)
-        .map(readTextDocumentsWithSource)
-        .map(_.toByteArray)
-        .map(arr => Response(body = Body.fromChunk(Chunk.fromArray(arr))))
-        .getOrElse(badRequest)
+      toTaskOrBadRequest(getPath(req)): paths =>
+        readTextDocumentsWithSource(paths)
+          .map(_.toByteArray)
+          .map(Body.fromChunk compose Chunk.fromArray)
+          .map(ch => Response(body = ch))
+          .map(_.withContentType("application/octet-stream"))
 
-    case req @ Method.GET -> !! / "semanticdb.json" =>
-      getPath(req)
-        .map(readTextDocumentsWithSource)
-        .map(write)
-        .map(Response.json)
-        .getOrElse(badRequest)
+    case req@Method.GET -> !! / "semanticdb.json" =>
+      toTaskOrBadRequest(getPath(req)): paths =>
+        readTextDocumentsWithSource(paths)
+          .map(write)
+          .map(Response.json)
 
-    case req @ Method.GET -> !! / "semanticdb.textproto" =>
-      getPath(req)
-        .map(readTextDocumentsWithSource)
-        .map(_.toProtoString)
-        .map(Response.text)
-        .getOrElse(badRequest)
 
-    case req @ Method.GET -> !! / Routes.classes =>
-      getPath(req)
-        .map(readTextDocumentsWithSource)
-        .map(InheritanceDiagram.fromTextDocumentsWithSource)
-        .map(_.toJson)
-        .map(Response.json)
-        .getOrElse(badRequest)
+    case req@Method.GET -> !! / "semanticdb.textproto" =>
+      toTaskOrBadRequest(getPath(req)): paths =>
+        readTextDocumentsWithSource(paths)
+          .map(_.toProtoString)
+          .map(Response.text)
 
-    case req @ Method.GET -> !! / Routes.source =>
-      getPath(req)
-        .flatMap(_.headOption)
-        .map(readSource)
-        .map(Response.text)
-        .map(_.withContentType("text/plain"))
-        .getOrElse(badRequest)
+
+    case req@Method.GET -> !! / Routes.classes =>
+      toTaskOrBadRequest(getPath(req)): paths =>
+        readTextDocumentsWithSource(paths)
+          .map(InheritanceDiagram.from)
+          .map(_.toJson)
+          .map(Response.json)
+
+    case req@Method.GET -> !! / Routes.source =>
+      val firstPath = getPath(req).flatMap(_.headOption)
+      toTaskOrBadRequest(firstPath): path =>
+        readSource(path)
+          .map(Response.text)
+          .map(_.withContentType("text/plain"))
 
   } @@ cors(corsConfig)
 
   val run =
-    Server.start(8090, staticRoutes ++ appZ ++ app)
+    Server.start(8090, staticRoutes ++ appZ)
 
   // -----------------
   // helper functions
@@ -130,10 +122,10 @@ object WebApp extends ZIOAppDefault:
   given formats: Formats =
     Serialization.formats(NoTypeHints)
 
-  private def readSource(path: file.Path): String =
-    Using.resource(scala.io.Source.fromFile(path.toFile)) { bufferedSource =>
-      bufferedSource.getLines().mkString("\n")
-    }
+  private def readSource(path: file.Path): Task[String] = ZIO.scoped:
+    ZIO
+      .acquireRelease(ZIO.attemptBlocking(Source.fromFile(path.toFile)))(s => ZIO.succeedBlocking(s.close()))
+      .map(_.getLines().mkString("\n"))
 
   private def getPath(req: Request): Option[List[file.Path]] =
     getParam(req, "path").map(_.map(file.Path.of(_)))
@@ -141,8 +133,10 @@ object WebApp extends ZIOAppDefault:
   private def getParam(req: Request, name: String): Option[List[String]] =
     req.url.queryParams.get(name)
 
-  private def toTask[A](a: => A, error: String = "")(using ZIOConstructor[Nothing, Any, A], Trace) =
-    ZIO.from(a).mapError(e => Throwable(if error.isEmpty then e.toString else error))
+  private def toTaskOrBadRequest[A](oa: Option[A])(f: A => Task[Response]): Task[Response] =
+    oa match
+      case None => ZIO.succeed(badRequest)
+      case Some(a) => f(a)
 
   private lazy val corsConfig =
     CorsConfig(allowedOrigins = _ => true)

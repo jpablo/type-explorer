@@ -8,11 +8,12 @@ import java.nio.file.Paths
 import java.net.URI
 import scala.meta.internal.semanticdb.SymbolInformation.Kind
 import scala.collection.mutable
-
+import zio.*
 
 object All:
-  def scan(p: Path): List[(Path, TextDocuments)] =
-    val documents = mutable.ArrayBuffer.empty[(Path, TextDocuments)]
-    semanticdb.Locator(p): (path, textDocuments) =>
-      documents += ((path, textDocuments))
-    documents.toList
+  def scan(p: Path): Task[List[(Path, TextDocuments)]] =
+    ZIO.attempt:
+      val documents = mutable.ArrayBuffer.empty[(Path, TextDocuments)]
+      semanticdb.Locator(p): (path, textDocuments) =>
+        documents += ((path, textDocuments))
+      documents.toList

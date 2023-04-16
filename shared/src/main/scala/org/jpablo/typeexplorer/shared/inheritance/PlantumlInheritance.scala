@@ -9,6 +9,13 @@ import org.jpablo.typeexplorer.shared.models.{Method, Namespace, NamespaceKind, 
 case class PlantUML(diagram: String)
 
 
+extension (diagram: InheritanceDiagram)
+  def toPlantUML(
+    symbols: Map[Symbol, Option[PlantumlInheritance.SymbolOptions]],
+    diagramOptions: DiagramOptions = DiagramOptions()
+  ): PlantUML =
+    PlantumlInheritance.toPlantUML(diagram, symbols, diagramOptions)
+
 object PlantumlInheritance:
 
   case class DiagramOptions(
@@ -40,7 +47,7 @@ object PlantumlInheritance:
   case class SymbolOptions(showFields: Boolean = false, showSignatures: Boolean = false) derives JsonCodec
 
 
-  def fromInheritanceDiagram(
+  def toPlantUML(
     diagram: InheritanceDiagram,
     symbols: Map[Symbol, Option[SymbolOptions]],
     diagramOptions: DiagramOptions = DiagramOptions()

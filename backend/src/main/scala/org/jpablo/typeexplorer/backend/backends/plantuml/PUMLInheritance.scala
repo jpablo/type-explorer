@@ -20,15 +20,13 @@ import zio.ZIO.ZIOConstructor
 type SvgText = String
 
 extension (puml: PlantUML)
-  def toSVG(name: String): Task[String] =
+  def toSVG(name: String): Task[String] = ZIO.scoped:
     for
-      reader <- ZIO.from(SourceStringReader(puml.diagram))
-      createStream = ZIO.succeed(new ByteArrayOutputStream)
-      svg <-
-        ZIO.acquireReleaseWith(createStream)(os => ZIO.succeed(os.close())): os =>
-          ZIO.attemptBlocking:
-            reader.outputImage(os, FileFormatOption(FileFormat.SVG))
-            os.toString(Charset.defaultCharset())
+      os <- ZIO.acquireRelease(ZIO.succeed(new ByteArrayOutputStream))(os => ZIO.succeedBlocking(os.close()))
+      reader <- ZIO.attempt(SourceStringReader(puml.diagram))
+      svg <- ZIO.attemptBlockingIO:
+        reader.outputImage(os, FileFormatOption(FileFormat.SVG))
+        os.toString(Charset.defaultCharset())
     yield
       svg
 

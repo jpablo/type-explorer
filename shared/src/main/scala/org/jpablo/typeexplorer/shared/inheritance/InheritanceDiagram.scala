@@ -172,16 +172,16 @@ object InheritanceDiagram:
   // In Scala 3.2 the type annotation is needed.
   val empty: InheritanceDiagram = new InheritanceDiagram(Set.empty)
 
-  def fromTextDocumentsWithSource(textDocuments: TextDocumentsWithSourceSeq): InheritanceDiagram =
+  def from(textDocuments: TextDocumentsWithSourceSeq): InheritanceDiagram =
     val allSymbols =
       for
         docWithSource <- textDocuments.documentsWithSource
         doc <- docWithSource.documents
-        occs = doc.occurrences.map(so => (so.symbol, so)).toMap
+        occurrences = doc.occurrences.map(so => (so.symbol, so)).toMap
         si <- doc.symbols
         if !excluded.exists(si.symbol.contains)
       yield
-        Symbol(si.symbol) -> (si, docWithSource.semanticDbUri, doc.uri, docWithSource.basePath, occs.get(si.symbol))
+        Symbol(si.symbol) -> (si, docWithSource.semanticDbUri, doc.uri, docWithSource.basePath, occurrences.get(si.symbol))
 
     val symbolInfosMap = allSymbols.map { case (s, t) => s -> t._1 }.toMap
 
@@ -233,7 +233,7 @@ object InheritanceDiagram:
       namespaces = namespaces.map(_._1).toSet ++ missingSymbols(arrows.map(_._2).toList, symbolInfosMap)
     )
 
-  end fromTextDocumentsWithSource
+  end from
 
   private def missingSymbols(parents: List[Symbol], allSymbols: Map[Symbol, SymbolInformation]) =
     for
