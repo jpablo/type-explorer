@@ -7,7 +7,7 @@ import com.raquo.airstream.state.Var
 import com.raquo.laminar.api.L.*
 import com.softwaremill.quicklens.*
 import io.laminext.syntax.core.{StoredString, storedString}
-import org.jpablo.typeexplorer.shared.inheritance.PlantumlInheritance.{DiagramOptions, SymbolOptions}
+import org.jpablo.typeexplorer.shared.inheritance.{DiagramOptions, SymbolOptions}
 import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, PlantumlInheritance}
 import org.jpablo.typeexplorer.shared.models
 import org.jpablo.typeexplorer.ui.app.Path

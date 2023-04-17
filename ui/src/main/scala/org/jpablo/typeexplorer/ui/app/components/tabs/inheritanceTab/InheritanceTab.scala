@@ -9,7 +9,7 @@ import com.raquo.laminar.api.features.unitArrows
 import com.softwaremill.quicklens.*
 import io.laminext.syntax.core.*
 import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
-import org.jpablo.typeexplorer.shared.inheritance.PlantumlInheritance.DiagramOptions
+import org.jpablo.typeexplorer.shared.inheritance.DiagramOptions
 import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, PlantumlInheritance}
 import org.jpablo.typeexplorer.shared.models
 import org.jpablo.typeexplorer.ui.app.components.state.InheritanceTabState.ActiveSymbols

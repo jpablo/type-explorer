@@ -1,6 +1,6 @@
 package org.jpablo.typeexplorer.ui.app.components.state
 
-import org.jpablo.typeexplorer.shared.inheritance.PlantumlInheritance.DiagramOptions
+import org.jpablo.typeexplorer.shared.inheritance.DiagramOptions
 import zio.json.*
 import org.jpablo.typeexplorer.shared.models
 import InheritanceTabState.ActiveSymbols

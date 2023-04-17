@@ -79,10 +79,9 @@ object WebApp extends ZIOAppDefault:
         readTextDocumentsWithSource(paths)
           .map(_.toByteArray)
           .map(Body.fromChunk compose Chunk.fromArray)
-          .map(ch => 
+          .map: ch =>
             Response(body = ch)
               .withContentType(HeaderValues.applicationOctetStream)
-          )
 
     case req@Method.GET -> !! / "semanticdb.json" =>
       toTaskOrBadRequest(getPath(req)): paths =>

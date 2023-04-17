@@ -8,8 +8,7 @@ import com.raquo.airstream.state.Var
 import com.raquo.laminar.api.L.*
 import io.laminext.syntax.core.{StoredString, storedString}
 import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
-import org.jpablo.typeexplorer.shared.inheritance.PlantumlInheritance.DiagramOptions
-import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, PlantumlInheritance}
+import org.jpablo.typeexplorer.shared.inheritance.{DiagramOptions, InheritanceDiagram, PlantumlInheritance}
 import org.jpablo.typeexplorer.shared.models
 import org.jpablo.typeexplorer.ui.app.Path
 import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.InheritanceSvgDiagram

@@ -5,7 +5,7 @@ import concurrent.ExecutionContext.Implicits.global
 import io.laminext.fetch.*
 import io.laminext.syntax.core.StoredString
 import org.jpablo.typeexplorer.protos.{TextDocumentsWithSource, TextDocumentsWithSourceSeq}
-import org.jpablo.typeexplorer.shared.inheritance.PlantumlInheritance.DiagramOptions
+import org.jpablo.typeexplorer.shared.inheritance.DiagramOptions
 import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, PlantumlInheritance}
 import org.jpablo.typeexplorer.shared.models.{Namespace, Symbol}
 import org.jpablo.typeexplorer.shared.webApp.InheritanceRequest
