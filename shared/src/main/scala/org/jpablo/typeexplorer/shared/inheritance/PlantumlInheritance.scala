@@ -1,6 +1,5 @@
 package org.jpablo.typeexplorer.shared.inheritance
 
-import org.jpablo.typeexplorer.shared.inheritance.PlantumlInheritance.DiagramOptions
 import zio.json.*
 import org.jpablo.typeexplorer.shared.tree.Tree
 import org.jpablo.typeexplorer.shared.models.{Method, Namespace, NamespaceKind, Symbol}
@@ -11,41 +10,12 @@ case class PlantUML(diagram: String)
 
 extension (diagram: InheritanceDiagram)
   def toPlantUML(
-    symbols: Map[Symbol, Option[PlantumlInheritance.SymbolOptions]],
+    symbols: Map[Symbol, Option[SymbolOptions]],
     diagramOptions: DiagramOptions = DiagramOptions()
   ): PlantUML =
     PlantumlInheritance.toPlantUML(diagram, symbols, diagramOptions)
 
 object PlantumlInheritance:
-
-  case class DiagramOptions(
-    showFields    : Boolean = false,
-    showSignatures: Boolean = false,
-    hiddenFields  : List[String] = DiagramOptions.hiddenFields,
-    hiddenSymbols : List[Symbol] = DiagramOptions.hiddenSymbols
-  ) derives JsonCodec
-
-  object DiagramOptions:
-
-    private val hiddenFields = List(
-      "canEqual",
-      "copy",
-      "equals",
-      "hashCode",
-      "productArity",
-      "productElement",
-      "productIterator",
-      "productPrefix",
-      "toString",
-      "_1", "_2", "_3", "_4",
-    )
-
-    private val hiddenSymbols = List(
-    )
-
-
-  case class SymbolOptions(showFields: Boolean = false, showSignatures: Boolean = false) derives JsonCodec
-
 
   def toPlantUML(
     diagram: InheritanceDiagram,
