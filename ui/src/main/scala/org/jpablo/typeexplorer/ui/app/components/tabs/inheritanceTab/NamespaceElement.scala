@@ -127,18 +127,17 @@ extension (e: dom.Element)
     s"$styleName:([^;]*;)".r
 
   def setStyle(keyValues: (String, String)*): Unit =
-    for (styleName, styleValue) <- keyValues do
-      val style: String | Null = e.getAttribute("style")
-      val pair = s"$styleName:$styleValue;"
-      e.setAttribute("style",
-        if style != null then
-          if style.contains(styleName + ":") then
-            style.replaceFirst(stylePattern(styleName).regex, pair)
-          else
-            style + ":" + pair
-        else
-          pair
-      )
+    val style0: String | Null = e.getAttribute("style")
+    val style = if style0 == null then "" else style0
+    val styleMap =
+      style.split(";").filterNot(_.isEmpty).map { str =>
+        val Array(k, v) = str.split(":")
+        k -> v
+      }.toMap
+    val m2 = styleMap ++ keyValues.toMap
+    val newStyle = m2.map { case (k, v) => s"$k:$v" }.mkString(";")
+    e.setAttribute("style", newStyle)
+
 
   def removeStyle(styleName: String): Unit =
     if getStyle(styleName).isDefined then
