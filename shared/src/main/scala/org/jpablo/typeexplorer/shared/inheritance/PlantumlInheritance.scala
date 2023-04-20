@@ -1,6 +1,5 @@
 package org.jpablo.typeexplorer.shared.inheritance
 
-import zio.json.*
 import org.jpablo.typeexplorer.shared.tree.Tree
 import org.jpablo.typeexplorer.shared.models.{Method, Namespace, NamespaceKind, Symbol}
 
@@ -9,11 +8,7 @@ case class PlantUML(diagram: String)
 
 
 extension (diagram: InheritanceDiagram)
-  def toPlantUML(
-    symbols: Map[Symbol, Option[SymbolOptions]],
-    diagramOptions: DiagramOptions = DiagramOptions()
-  ): PlantUML =
-    PlantumlInheritance.toPlantUML(diagram, symbols, diagramOptions)
+  def toPlantUML = PlantumlInheritance.toPlantUML(diagram, _, _)
 
 object PlantumlInheritance:
 
@@ -93,5 +88,5 @@ object PlantumlInheritance:
     val countStr = if count > 1 then s"($count)" else ""
     s"""  ${m.displayName}$countStr ${m.returnType.map(o => " : " + o.displayName).getOrElse("")}  \n' ${m.symbol} """
 
-
+end PlantumlInheritance
 

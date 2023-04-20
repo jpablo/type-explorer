@@ -1,47 +1,444 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentStyleType="text/css" height="824px" preserveAspectRatio="none" style="width:673px;height:824px;background:#FFFFFF;" version="1.1" viewBox="0 0 673 824" width="673px" zoomAndPan="magnify"><defs/><g><!--MD5=[43d3c0ba1d3b9c6f5e40c8769cc5b343]
-class Source--><g id="elem_Source"><rect fill="#F1F1F1" height="64.4883" id="Source" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="192" x="93.5" y="7"/><ellipse cx="161.75" cy="23" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M164.2231,29.1431 Q163.6421,29.4419 163.0029,29.5913 Q162.3638,29.7407 161.6582,29.7407 Q159.1514,29.7407 157.8315,28.0889 Q156.5117,26.437 156.5117,23.3159 Q156.5117,20.1865 157.8315,18.5347 Q159.1514,16.8828 161.6582,16.8828 Q162.3638,16.8828 163.0112,17.0322 Q163.6587,17.1816 164.2231,17.4805 L164.2231,20.2031 Q163.5923,19.6221 162.9988,19.3523 Q162.4053,19.0825 161.7744,19.0825 Q160.4297,19.0825 159.7449,20.1492 Q159.0601,21.2158 159.0601,23.3159 Q159.0601,25.4077 159.7449,26.4744 Q160.4297,27.541 161.7744,27.541 Q162.4053,27.541 162.9988,27.2712 Q163.5923,27.0015 164.2231,26.4204 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="47" x="182.25" y="28.291">Source</text><line style="stroke:#181818;stroke-width:0.5;" x1="94.5" x2="284.5" y1="39" y2="39"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="180" x="99.5" y="56.5352">toObservable : Observable</text><line style="stroke:#181818;stroke-width:0.5;" x1="94.5" x2="284.5" y1="63.4883" y2="63.4883"/></g><!--MD5=[dbdbb6ce6ecb3babc8879faa4f84544c]
-class BaseObservable--><g id="elem_BaseObservable"><rect fill="#F1F1F1" height="97.4648" id="BaseObservable" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="140" x="115.5" y="255"/><ellipse cx="130.5" cy="271" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M132.9731,277.1431 Q132.3921,277.4419 131.7529,277.5913 Q131.1138,277.7407 130.4082,277.7407 Q127.9014,277.7407 126.5815,276.0889 Q125.2617,274.437 125.2617,271.3159 Q125.2617,268.1865 126.5815,266.5347 Q127.9014,264.8828 130.4082,264.8828 Q131.1138,264.8828 131.7612,265.0322 Q132.4087,265.1816 132.9731,265.4805 L132.9731,268.2031 Q132.3423,267.6221 131.7488,267.3523 Q131.1553,267.0825 130.5244,267.0825 Q129.1797,267.0825 128.4949,268.1492 Q127.8101,269.2158 127.8101,271.3159 Q127.8101,273.4077 128.4949,274.4744 Q129.1797,275.541 130.5244,275.541 Q131.1553,275.541 131.7488,275.2712 Q132.3423,275.0015 132.9731,274.4204 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="108" x="144.5" y="276.291">BaseObservable</text><line style="stroke:#181818;stroke-width:0.5;" x1="116.5" x2="254.5" y1="287" y2="287"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="30" x="121.5" y="304.5352">map</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="48" x="121.5" y="321.0234">mapTo</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="51" x="121.5" y="337.5117">flatMap</text><line style="stroke:#181818;stroke-width:0.5;" x1="116.5" x2="254.5" y1="344.4648" y2="344.4648"/></g><!--MD5=[7c5c88a606935469d5f89b0b5794816c]
-class Named--><g id="elem_Named"><rect fill="#F1F1F1" height="64.4883" id="Named" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="162" x="251.5" y="131"/><ellipse cx="304.25" cy="147" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M306.7231,153.1431 Q306.1421,153.4419 305.5029,153.5913 Q304.8638,153.7407 304.1582,153.7407 Q301.6514,153.7407 300.3315,152.0889 Q299.0117,150.437 299.0117,147.3159 Q299.0117,144.1865 300.3315,142.5347 Q301.6514,140.8828 304.1582,140.8828 Q304.8638,140.8828 305.5112,141.0322 Q306.1587,141.1816 306.7231,141.4805 L306.7231,144.2031 Q306.0923,143.6221 305.4988,143.3523 Q304.9053,143.0825 304.2744,143.0825 Q302.9297,143.0825 302.2449,144.1492 Q301.5601,145.2158 301.5601,147.3159 Q301.5601,149.4077 302.2449,150.4744 Q302.9297,151.541 304.2744,151.541 Q304.9053,151.541 305.4988,151.2712 Q306.0923,151.0015 306.7231,150.4204 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="48" x="324.75" y="152.291">Named</text><line style="stroke:#181818;stroke-width:0.5;" x1="252.5" x2="412.5" y1="163" y2="163"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="150" x="257.5" y="180.5352">toObserver : Observer</text><line style="stroke:#181818;stroke-width:0.5;" x1="252.5" x2="412.5" y1="187.4883" y2="187.4883"/></g><!--MD5=[6cf3d8591323c7dcc68cab28b77f738d]
-class EventSource--><g id="elem_EventSource"><rect fill="#F1F1F1" height="48" id="EventSource" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="116" x="20.5" y="139"/><ellipse cx="35.5" cy="155" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M37.9731,161.1431 Q37.3921,161.4419 36.7529,161.5913 Q36.1138,161.7407 35.4082,161.7407 Q32.9014,161.7407 31.5815,160.0889 Q30.2617,158.437 30.2617,155.3159 Q30.2617,152.1865 31.5815,150.5347 Q32.9014,148.8828 35.4082,148.8828 Q36.1138,148.8828 36.7612,149.0322 Q37.4087,149.1816 37.9731,149.4805 L37.9731,152.2031 Q37.3423,151.6221 36.7488,151.3523 Q36.1553,151.0825 35.5244,151.0825 Q34.1797,151.0825 33.4949,152.1492 Q32.8101,153.2158 32.8101,155.3159 Q32.8101,157.4077 33.4949,158.4744 Q34.1797,159.541 35.5244,159.541 Q36.1553,159.541 36.7488,159.2712 Q37.3423,159.0015 37.9731,158.4204 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="84" x="49.5" y="160.291">EventSource</text><line style="stroke:#181818;stroke-width:0.5;" x1="21.5" x2="135.5" y1="171" y2="171"/><line style="stroke:#181818;stroke-width:0.5;" x1="21.5" x2="135.5" y1="179" y2="179"/></g><!--MD5=[0fb1c91794054276d5ac2032bb76ece5]
-class SignalSource--><g id="elem_SignalSource"><rect fill="#F1F1F1" height="48" id="SignalSource" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="121" x="545" y="139"/><ellipse cx="560" cy="155" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M562.4731,161.1431 Q561.8921,161.4419 561.2529,161.5913 Q560.6138,161.7407 559.9082,161.7407 Q557.4014,161.7407 556.0815,160.0889 Q554.7617,158.437 554.7617,155.3159 Q554.7617,152.1865 556.0815,150.5347 Q557.4014,148.8828 559.9082,148.8828 Q560.6138,148.8828 561.2612,149.0322 Q561.9087,149.1816 562.4731,149.4805 L562.4731,152.2031 Q561.8423,151.6221 561.2488,151.3523 Q560.6553,151.0825 560.0244,151.0825 Q558.6797,151.0825 557.9949,152.1492 Q557.3101,153.2158 557.3101,155.3159 Q557.3101,157.4077 557.9949,158.4744 Q558.6797,159.541 560.0244,159.541 Q560.6553,159.541 561.2488,159.2712 Q561.8423,159.0015 562.4731,158.4204 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="89" x="574" y="160.291">SignalSource</text><line style="stroke:#181818;stroke-width:0.5;" x1="546" x2="665" y1="171" y2="171"/><line style="stroke:#181818;stroke-width:0.5;" x1="546" x2="665" y1="179" y2="179"/></g><!--MD5=[d40932010816485ec57b44b6eea2392a]
-class Observer--><g id="elem_Observer"><rect fill="#F1F1F1" height="48" id="Observer" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="94" x="419.5" y="279.5"/><ellipse cx="434.5" cy="295.5" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M436.9731,301.6431 Q436.3921,301.9419 435.7529,302.0913 Q435.1138,302.2407 434.4082,302.2407 Q431.9014,302.2407 430.5815,300.5889 Q429.2617,298.937 429.2617,295.8159 Q429.2617,292.6865 430.5815,291.0347 Q431.9014,289.3828 434.4082,289.3828 Q435.1138,289.3828 435.7612,289.5322 Q436.4087,289.6816 436.9731,289.9805 L436.9731,292.7031 Q436.3423,292.1221 435.7488,291.8523 Q435.1553,291.5825 434.5244,291.5825 Q433.1797,291.5825 432.4949,292.6492 Q431.8101,293.7158 431.8101,295.8159 Q431.8101,297.9077 432.4949,298.9744 Q433.1797,300.041 434.5244,300.041 Q435.1553,300.041 435.7488,299.7712 Q436.3423,299.5015 436.9731,298.9204 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="62" x="448.5" y="300.791">Observer</text><line style="stroke:#181818;stroke-width:0.5;" x1="420.5" x2="512.5" y1="311.5" y2="311.5"/><line style="stroke:#181818;stroke-width:0.5;" x1="420.5" x2="512.5" y1="319.5" y2="319.5"/></g><!--MD5=[bb0076f36699579ceee0ebce73764b72]
-class Sink--><g id="elem_Sink"><rect fill="#F1F1F1" height="48" id="Sink" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="61" x="449" y="139"/><ellipse cx="464" cy="155" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M466.4731,161.1431 Q465.8921,161.4419 465.2529,161.5913 Q464.6138,161.7407 463.9082,161.7407 Q461.4014,161.7407 460.0815,160.0889 Q458.7617,158.437 458.7617,155.3159 Q458.7617,152.1865 460.0815,150.5347 Q461.4014,148.8828 463.9082,148.8828 Q464.6138,148.8828 465.2612,149.0322 Q465.9087,149.1816 466.4731,149.4805 L466.4731,152.2031 Q465.8423,151.6221 465.2488,151.3523 Q464.6553,151.0825 464.0244,151.0825 Q462.6797,151.0825 461.9949,152.1492 Q461.3101,153.2158 461.3101,155.3159 Q461.3101,157.4077 461.9949,158.4744 Q462.6797,159.541 464.0244,159.541 Q464.6553,159.541 465.2488,159.2712 Q465.8423,159.0015 466.4731,158.4204 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="29" x="478" y="160.291">Sink</text><line style="stroke:#181818;stroke-width:0.5;" x1="450" x2="509" y1="171" y2="171"/><line style="stroke:#181818;stroke-width:0.5;" x1="450" x2="509" y1="179" y2="179"/></g><!--MD5=[c0bd9f44073f1a51428d87d6a9cf071b]
-class Observable--><g id="elem_Observable"><rect fill="#F1F1F1" height="48" id="Observable" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="109" x="187" y="412"/><ellipse cx="202" cy="428" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M204.4731,434.1431 Q203.8921,434.4419 203.2529,434.5913 Q202.6138,434.7407 201.9082,434.7407 Q199.4014,434.7407 198.0815,433.0889 Q196.7617,431.437 196.7617,428.3159 Q196.7617,425.1865 198.0815,423.5347 Q199.4014,421.8828 201.9082,421.8828 Q202.6138,421.8828 203.2612,422.0322 Q203.9087,422.1816 204.4731,422.4805 L204.4731,425.2031 Q203.8423,424.6221 203.2488,424.3523 Q202.6553,424.0825 202.0244,424.0825 Q200.6797,424.0825 199.9949,425.1492 Q199.3101,426.2158 199.3101,428.3159 Q199.3101,430.4077 199.9949,431.4744 Q200.6797,432.541 202.0244,432.541 Q202.6553,432.541 203.2488,432.2712 Q203.8423,432.0015 204.4731,431.4204 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="77" x="216" y="433.291">Observable</text><line style="stroke:#181818;stroke-width:0.5;" x1="188" x2="295" y1="444" y2="444"/><line style="stroke:#181818;stroke-width:0.5;" x1="188" x2="295" y1="452" y2="452"/></g><!--MD5=[c35f79b668e19d1c0bb8c2fa20d25922]
-class EventBus--><g id="elem_EventBus"><rect fill="#F1F1F1" height="48" id="EventBus" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="93" x="291" y="279.5"/><ellipse cx="306" cy="295.5" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M308.4731,301.6431 Q307.8921,301.9419 307.2529,302.0913 Q306.6138,302.2407 305.9082,302.2407 Q303.4014,302.2407 302.0815,300.5889 Q300.7617,298.937 300.7617,295.8159 Q300.7617,292.6865 302.0815,291.0347 Q303.4014,289.3828 305.9082,289.3828 Q306.6138,289.3828 307.2612,289.5322 Q307.9087,289.6816 308.4731,289.9805 L308.4731,292.7031 Q307.8423,292.1221 307.2488,291.8523 Q306.6553,291.5825 306.0244,291.5825 Q304.6797,291.5825 303.9949,292.6492 Q303.3101,293.7158 303.3101,295.8159 Q303.3101,297.9077 303.9949,298.9744 Q304.6797,300.041 306.0244,300.041 Q306.6553,300.041 307.2488,299.7712 Q307.8423,299.5015 308.4731,298.9204 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="61" x="320" y="300.791">EventBus</text><line style="stroke:#181818;stroke-width:0.5;" x1="292" x2="383" y1="311.5" y2="311.5"/><line style="stroke:#181818;stroke-width:0.5;" x1="292" x2="383" y1="319.5" y2="319.5"/></g><!--MD5=[731225e2007e13f9ac67fff186258580]
-class Var--><g id="elem_Var"><rect fill="#F1F1F1" height="48" id="Var" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="55" x="549" y="279.5"/><ellipse cx="564" cy="295.5" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M566.4731,301.6431 Q565.8921,301.9419 565.2529,302.0913 Q564.6138,302.2407 563.9082,302.2407 Q561.4014,302.2407 560.0815,300.5889 Q558.7617,298.937 558.7617,295.8159 Q558.7617,292.6865 560.0815,291.0347 Q561.4014,289.3828 563.9082,289.3828 Q564.6138,289.3828 565.2612,289.5322 Q565.9087,289.6816 566.4731,289.9805 L566.4731,292.7031 Q565.8423,292.1221 565.2488,291.8523 Q564.6553,291.5825 564.0244,291.5825 Q562.6797,291.5825 561.9949,292.6492 Q561.3101,293.7158 561.3101,295.8159 Q561.3101,297.9077 561.9949,298.9744 Q562.6797,300.041 564.0244,300.041 Q564.6553,300.041 565.2488,299.7712 Q565.8423,299.5015 566.4731,298.9204 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="23" x="578" y="300.791">Var</text><line style="stroke:#181818;stroke-width:0.5;" x1="550" x2="603" y1="311.5" y2="311.5"/><line style="stroke:#181818;stroke-width:0.5;" x1="550" x2="603" y1="319.5" y2="319.5"/></g><!--MD5=[a62af4ef4082f4b372f0d8265a8e9578]
-class WriteBus--><g id="elem_WriteBus"><rect fill="#F1F1F1" height="48" id="WriteBus" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="91" x="421" y="412"/><ellipse cx="436" cy="428" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M438.4731,434.1431 Q437.8921,434.4419 437.2529,434.5913 Q436.6138,434.7407 435.9082,434.7407 Q433.4014,434.7407 432.0815,433.0889 Q430.7617,431.437 430.7617,428.3159 Q430.7617,425.1865 432.0815,423.5347 Q433.4014,421.8828 435.9082,421.8828 Q436.6138,421.8828 437.2612,422.0322 Q437.9087,422.1816 438.4731,422.4805 L438.4731,425.2031 Q437.8423,424.6221 437.2488,424.3523 Q436.6553,424.0825 436.0244,424.0825 Q434.6797,424.0825 433.9949,425.1492 Q433.3101,426.2158 433.3101,428.3159 Q433.3101,430.4077 433.9949,431.4744 Q434.6797,432.541 436.0244,432.541 Q436.6553,432.541 437.2488,432.2712 Q437.8423,432.0015 438.4731,431.4204 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="59" x="450" y="433.291">WriteBus</text><line style="stroke:#181818;stroke-width:0.5;" x1="422" x2="511" y1="444" y2="444"/><line style="stroke:#181818;stroke-width:0.5;" x1="422" x2="511" y1="452" y2="452"/></g><!--MD5=[37ce66f30b506d075c7da6251450c5ae]
-class WritableObservable--><g id="elem_WritableObservable"><rect fill="#F1F1F1" height="48" id="WritableObservable" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="165" x="159" y="536.5"/><ellipse cx="174" cy="552.5" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M176.4731,558.6431 Q175.8921,558.9419 175.2529,559.0913 Q174.6138,559.2407 173.9082,559.2407 Q171.4014,559.2407 170.0815,557.5889 Q168.7617,555.937 168.7617,552.8159 Q168.7617,549.6865 170.0815,548.0347 Q171.4014,546.3828 173.9082,546.3828 Q174.6138,546.3828 175.2612,546.5322 Q175.9087,546.6816 176.4731,546.9805 L176.4731,549.7031 Q175.8423,549.1221 175.2488,548.8523 Q174.6553,548.5825 174.0244,548.5825 Q172.6797,548.5825 171.9949,549.6492 Q171.3101,550.7158 171.3101,552.8159 Q171.3101,554.9077 171.9949,555.9744 Q172.6797,557.041 174.0244,557.041 Q174.6553,557.041 175.2488,556.7712 Q175.8423,556.5015 176.4731,555.9204 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="133" x="188" y="557.791">WritableObservable</text><line style="stroke:#181818;stroke-width:0.5;" x1="160" x2="323" y1="568.5" y2="568.5"/><line style="stroke:#181818;stroke-width:0.5;" x1="160" x2="323" y1="576.5" y2="576.5"/></g><!--MD5=[be487b3bb751466a4a7bf5087ababc69]
-class EventStream--><g id="elem_EventStream"><rect fill="#F1F1F1" height="80.9766" id="EventStream" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="117" x="7" y="520"/><ellipse cx="22" cy="536" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M24.4731,542.1431 Q23.8921,542.4419 23.2529,542.5913 Q22.6138,542.7407 21.9082,542.7407 Q19.4014,542.7407 18.0815,541.0889 Q16.7617,539.437 16.7617,536.3159 Q16.7617,533.1865 18.0815,531.5347 Q19.4014,529.8828 21.9082,529.8828 Q22.6138,529.8828 23.2612,530.0322 Q23.9087,530.1816 24.4731,530.4805 L24.4731,533.2031 Q23.8423,532.6221 23.2488,532.3523 Q22.6553,532.0825 22.0244,532.0825 Q20.6797,532.0825 19.9949,533.1492 Q19.3101,534.2158 19.3101,536.3159 Q19.3101,538.4077 19.9949,539.4744 Q20.6797,540.541 22.0244,540.541 Q22.6553,540.541 23.2488,540.2712 Q23.8423,540.0015 24.4731,539.4204 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="85" x="36" y="541.291">EventStream</text><line style="stroke:#181818;stroke-width:0.5;" x1="8" x2="123" y1="552" y2="552"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="32" x="13" y="569.5352">filter</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="36" x="13" y="586.0234">delay</text><line style="stroke:#181818;stroke-width:0.5;" x1="8" x2="123" y1="592.9766" y2="592.9766"/></g><!--MD5=[0e770a5826b894b8746f65a5ff995c24]
-class Signal--><g id="elem_Signal"><rect fill="#F1F1F1" height="80.9766" id="Signal" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="74" x="359.5" y="520"/><ellipse cx="374.5" cy="536" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M376.9731,542.1431 Q376.3921,542.4419 375.7529,542.5913 Q375.1138,542.7407 374.4082,542.7407 Q371.9014,542.7407 370.5815,541.0889 Q369.2617,539.437 369.2617,536.3159 Q369.2617,533.1865 370.5815,531.5347 Q371.9014,529.8828 374.4082,529.8828 Q375.1138,529.8828 375.7612,530.0322 Q376.4087,530.1816 376.9731,530.4805 L376.9731,533.2031 Q376.3423,532.6221 375.7488,532.3523 Q375.1553,532.0825 374.5244,532.0825 Q373.1797,532.0825 372.4949,533.1492 Q371.8101,534.2158 371.8101,536.3159 Q371.8101,538.4077 372.4949,539.4744 Q373.1797,540.541 374.5244,540.541 Q375.1553,540.541 375.7488,540.2712 Q376.3423,540.0015 376.9731,539.4204 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="42" x="388.5" y="541.291">Signal</text><line style="stroke:#181818;stroke-width:0.5;" x1="360.5" x2="432.5" y1="552" y2="552"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="29" x="365.5" y="569.5352">now</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="62" x="365.5" y="586.0234">compose</text><line style="stroke:#181818;stroke-width:0.5;" x1="360.5" x2="432.5" y1="592.9766" y2="592.9766"/></g><!--MD5=[2fc84194897eac36bc073c4241e40cd5]
-class WritableSignal--><g id="elem_WritableSignal"><rect fill="#F1F1F1" height="48" id="WritableSignal" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="130" x="176.5" y="661"/><ellipse cx="191.5" cy="677" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M193.9731,683.1431 Q193.3921,683.4419 192.7529,683.5913 Q192.1138,683.7407 191.4082,683.7407 Q188.9014,683.7407 187.5815,682.0889 Q186.2617,680.437 186.2617,677.3159 Q186.2617,674.1865 187.5815,672.5347 Q188.9014,670.8828 191.4082,670.8828 Q192.1138,670.8828 192.7612,671.0322 Q193.4087,671.1816 193.9731,671.4805 L193.9731,674.2031 Q193.3423,673.6221 192.7488,673.3523 Q192.1553,673.0825 191.5244,673.0825 Q190.1797,673.0825 189.4949,674.1492 Q188.8101,675.2158 188.8101,677.3159 Q188.8101,679.4077 189.4949,680.4744 Q190.1797,681.541 191.5244,681.541 Q192.1553,681.541 192.7488,681.2712 Q193.3423,681.0015 193.9731,680.4204 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="98" x="205.5" y="682.291">WritableSignal</text><line style="stroke:#181818;stroke-width:0.5;" x1="177.5" x2="305.5" y1="693" y2="693"/><line style="stroke:#181818;stroke-width:0.5;" x1="177.5" x2="305.5" y1="701" y2="701"/></g><!--MD5=[75d7a518e376e7f2a04c6b30865a7644]
-class StrictSignal--><g id="elem_StrictSignal"><rect fill="#F1F1F1" height="48" id="StrictSignal" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="109" x="342" y="661"/><ellipse cx="357" cy="677" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M359.4731,683.1431 Q358.8921,683.4419 358.2529,683.5913 Q357.6138,683.7407 356.9082,683.7407 Q354.4014,683.7407 353.0815,682.0889 Q351.7617,680.437 351.7617,677.3159 Q351.7617,674.1865 353.0815,672.5347 Q354.4014,670.8828 356.9082,670.8828 Q357.6138,670.8828 358.2612,671.0322 Q358.9087,671.1816 359.4731,671.4805 L359.4731,674.2031 Q358.8423,673.6221 358.2488,673.3523 Q357.6553,673.0825 357.0244,673.0825 Q355.6797,673.0825 354.9949,674.1492 Q354.3101,675.2158 354.3101,677.3159 Q354.3101,679.4077 354.9949,680.4744 Q355.6797,681.541 357.0244,681.541 Q357.6553,681.541 358.2488,681.2712 Q358.8423,681.0015 359.4731,680.4204 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="77" x="371" y="682.291">StrictSignal</text><line style="stroke:#181818;stroke-width:0.5;" x1="343" x2="450" y1="693" y2="693"/><line style="stroke:#181818;stroke-width:0.5;" x1="343" x2="450" y1="701" y2="701"/></g><!--MD5=[43fbf57120ad8775fec71a13d670d035]
-class Val--><g id="elem_Val"><rect fill="#F1F1F1" height="48" id="Val" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="53" x="292" y="769"/><ellipse cx="307" cy="785" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M309.4731,791.1431 Q308.8921,791.4419 308.2529,791.5913 Q307.6138,791.7407 306.9082,791.7407 Q304.4014,791.7407 303.0815,790.0889 Q301.7617,788.437 301.7617,785.3159 Q301.7617,782.1865 303.0815,780.5347 Q304.4014,778.8828 306.9082,778.8828 Q307.6138,778.8828 308.2612,779.0322 Q308.9087,779.1816 309.4731,779.4805 L309.4731,782.2031 Q308.8423,781.6221 308.2488,781.3523 Q307.6553,781.0825 307.0244,781.0825 Q305.6797,781.0825 304.9949,782.1492 Q304.3101,783.2158 304.3101,785.3159 Q304.3101,787.4077 304.9949,788.4744 Q305.6797,789.541 307.0244,789.541 Q307.6553,789.541 308.2488,789.2712 Q308.8423,789.0015 309.4731,788.4204 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="21" x="321" y="790.291">Val</text><line style="stroke:#181818;stroke-width:0.5;" x1="293" x2="344" y1="801" y2="801"/><line style="stroke:#181818;stroke-width:0.5;" x1="293" x2="344" y1="809" y2="809"/></g><!--MD5=[86aa17a1e3c75d9c292351cab2d788cb]
-reverse link Source to BaseObservable--><g id="link_Source_BaseObservable"><path codeLine="1" d="M188.72,91.19 C188,138.66 186.93,208.73 186.22,254.98 " fill="none" id="Source-backto-BaseObservable" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="none" points="181.72,91.03,189.03,71.14,195.72,91.25,181.72,91.03" style="stroke:#181818;stroke-width:1.0;"/></g><!--MD5=[7a510d4a0aafbececd0b8cc73ee90651]
-reverse link Named to BaseObservable--><g id="link_Named_BaseObservable"><path codeLine="2" d="M284.65,209.08 C269.08,223.76 251.75,240.08 235.99,254.93 " fill="none" id="Named-backto-BaseObservable" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="none" points="280.15,203.7,299.51,195.08,289.75,213.89,280.15,203.7" style="stroke:#181818;stroke-width:1.0;"/></g><!--MD5=[5e6d43c4d5e2ca4b0cb2c76ea14854a2]
-reverse link Source to EventSource--><g id="link_Source_EventSource"><path codeLine="3" d="M147.71,85.93 C131.35,103.91 113.3,123.75 99.73,138.66 " fill="none" id="Source-backto-EventSource" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="none" points="142.57,81.18,161.2,71.1,152.92,90.61,142.57,81.18" style="stroke:#181818;stroke-width:1.0;"/></g><!--MD5=[8f2f4cf793c98a7783095f312f3695ce]
-reverse link Source to SignalSource--><g id="link_Source_SignalSource"><path codeLine="4" d="M305.59,67.73 C371.26,84.29 454.59,106.79 527.5,131 C534.69,133.39 542.18,136.09 549.55,138.87 " fill="none" id="Source-backto-SignalSource" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="none" points="303.51,74.43,285.8,62.78,306.9,60.84,303.51,74.43" style="stroke:#181818;stroke-width:1.0;"/></g><!--MD5=[f7614692df644132b2d1e583dd3a0064]
-reverse link Named to Observer--><g id="link_Named_Observer"><path codeLine="5" d="M376.7,209.68 C399.25,232.99 425.7,260.33 444.03,279.28 " fill="none" id="Named-backto-Observer" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="none" points="371.45,214.32,362.57,195.08,381.51,204.59,371.45,214.32" style="stroke:#181818;stroke-width:1.0;"/></g><!--MD5=[42c2c62a3620e6389f618472f5befae2]
-reverse link Sink to Observer--><g id="link_Sink_Observer"><path codeLine="6" d="M475.44,207.29 C473.2,231.08 470.52,259.65 468.68,279.24 " fill="none" id="Sink-backto-Observer" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="none" points="468.49,206.44,477.32,187.18,482.42,207.75,468.49,206.44" style="stroke:#181818;stroke-width:1.0;"/></g><!--MD5=[bc961b1de6feb58a0cae784b37777070]
-reverse link BaseObservable to Observable--><g id="link_BaseObservable_Observable"><path codeLine="7" d="M213.94,370.77 C220.24,385.47 226.52,400.09 231.49,411.66 " fill="none" id="BaseObservable-backto-Observable" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="none" points="207.49,373.49,206.03,352.35,220.35,367.97,207.49,373.49" style="stroke:#181818;stroke-width:1.0;"/></g><!--MD5=[121fff7c9a6bbd9c53ece0538f1dd719]
-reverse link EventSource to EventBus--><g id="link_EventSource_EventBus"><path codeLine="8" d="M153.58,195.16 C190.29,211.41 234.61,232.56 272.5,255 C284.65,262.2 297.32,271.11 308.23,279.26 " fill="none" id="EventSource-backto-EventBus" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="none" points="150.69,201.54,135.15,187.13,156.28,188.71,150.69,201.54" style="stroke:#181818;stroke-width:1.0;"/></g><!--MD5=[eb64a794d7ce75ec689773658aa955df]
-reverse link Named to EventBus--><g id="link_Named_EventBus"><path codeLine="9" d="M334.34,215.07 C335.14,237.11 336.03,261.78 336.66,279.28 " fill="none" id="Named-backto-EventBus" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="none" points="327.35,215.32,333.62,195.08,341.34,214.82,327.35,215.32" style="stroke:#181818;stroke-width:1.0;"/></g><!--MD5=[9a5b145bea4a1283398234aee1db3b2f]
-reverse link Sink to EventBus--><g id="link_Sink_EventBus"><path codeLine="10" d="M441.34,201.22 C415.88,226.06 383.18,257.95 361.35,279.24 " fill="none" id="Sink-backto-EventBus" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="none" points="436.53,196.14,455.73,187.18,446.3,206.16,436.53,196.14" style="stroke:#181818;stroke-width:1.0;"/></g><!--MD5=[6f038b301c72b6199bfec15c123e3ae3]
-reverse link SignalSource to Var--><g id="link_SignalSource_Var"><path codeLine="11" d="M596.51,206.93 C591.52,230.79 585.49,259.55 581.37,279.24 " fill="none" id="SignalSource-backto-Var" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="none" points="589.7,205.32,600.65,187.18,603.4,208.19,589.7,205.32" style="stroke:#181818;stroke-width:1.0;"/></g><!--MD5=[f12bd80428117508c5190ad387f358d2]
-reverse link Named to Var--><g id="link_Named_Var"><path codeLine="12" d="M432.32,200.72 C465.38,215.16 501.39,233.48 531.5,255 C541.11,261.87 550.34,271 557.91,279.42 " fill="none" id="Named-backto-Var" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="none" points="429.48,207.12,413.79,192.89,434.93,194.22,429.48,207.12" style="stroke:#181818;stroke-width:1.0;"/></g><!--MD5=[188f8e25b2d59712d0d1b9d6150d16e2]
-reverse link Sink to Var--><g id="link_Sink_Var"><path codeLine="13" d="M507.3,203.69 C524.42,228.14 545.79,258.65 560.21,279.24 " fill="none" id="Sink-backto-Var" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="none" points="501.48,207.58,495.74,187.18,512.94,199.55,501.48,207.58" style="stroke:#181818;stroke-width:1.0;"/></g><!--MD5=[31f334d8b6320693beb57d8c7d5597dc]
-reverse link Observer to WriteBus--><g id="link_Observer_WriteBus"><path codeLine="14" d="M466.5,347.68 C466.5,369.06 466.5,394.02 466.5,411.76 " fill="none" id="Observer-backto-WriteBus" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="none" points="459.5,347.53,466.5,327.53,473.5,347.53,459.5,347.53" style="stroke:#181818;stroke-width:1.0;"/></g><!--MD5=[d6630169a1de53240ab10de5f3c983fc]
-reverse link Observable to WritableObservable--><g id="link_Observable_WritableObservable"><path codeLine="15" d="M241.5,480.17 C241.5,499 241.5,520.34 241.5,536.15 " fill="none" id="Observable-backto-WritableObservable" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="none" points="234.5,480.04,241.5,460.04,248.5,480.04,234.5,480.04" style="stroke:#181818;stroke-width:1.0;"/></g><!--MD5=[c4c1924e47ce2c1eaeaf2aa095d4e9cf]
-reverse link Observable to EventStream--><g id="link_Observable_EventStream"><path codeLine="16" d="M191.66,471.69 C170.07,486.72 144.67,504.39 122.35,519.93 " fill="none" id="Observable-backto-EventStream" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="none" points="187.98,465.72,208.4,460.04,195.98,477.21,187.98,465.72" style="stroke:#181818;stroke-width:1.0;"/></g><!--MD5=[1ec37c62c766dfedd62306145f049898]
-reverse link BaseObservable to EventStream--><g id="link_BaseObservable_EventStream"><path codeLine="17" d="M154.48,370.42 C132.25,417.65 103.05,479.71 84.27,519.61 " fill="none" id="BaseObservable-backto-EventStream" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="none" points="148.22,367.28,163.07,352.16,160.89,373.24,148.22,367.28" style="stroke:#181818;stroke-width:1.0;"/></g><!--MD5=[d0d7173cb112c61e93128ecd6dc0320b]
-reverse link EventSource to EventStream--><g id="link_EventSource_EventStream"><path codeLine="18" d="M77.07,207.59 C74.52,284.96 69.26,445.13 66.81,519.69 " fill="none" id="EventSource-backto-EventStream" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="none" points="70.08,207.02,77.74,187.26,84.07,207.48,70.08,207.02" style="stroke:#181818;stroke-width:1.0;"/></g><!--MD5=[789dbf218c2de3e733f71a0998fc3374]
-reverse link Observable to Signal--><g id="link_Observable_Signal"><path codeLine="19" d="M286.49,472.55 C309.58,490.8 337.37,512.77 359.25,530.06 " fill="none" id="Observable-backto-Signal" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="none" points="282.01,477.93,270.65,460.04,290.69,466.95,282.01,477.93" style="stroke:#181818;stroke-width:1.0;"/></g><!--MD5=[a2e65222895fb44bd41f1bcbdbbf0634]
-reverse link BaseObservable to Signal--><g id="link_BaseObservable_Signal"><path codeLine="20" d="M266.63,365.03 C283.19,379.4 299.74,395.41 313.5,412 C340.98,445.13 364.19,488.65 379.02,519.81 " fill="none" id="BaseObservable-backto-Signal" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="none" points="261.99,370.27,251.17,352.05,270.99,359.55,261.99,370.27" style="stroke:#181818;stroke-width:1.0;"/></g><!--MD5=[79ca2b38168fc0d0403dd29f71be2b6c]
-reverse link SignalSource to Signal--><g id="link_SignalSource_Signal"><path codeLine="21" d="M619.23,206.58 C629.5,245.62 639.02,304.41 621.5,352 C588.09,442.75 488.46,509.34 433.66,540.26 " fill="none" id="SignalSource-backto-Signal" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="none" points="612.44,208.28,613.62,187.12,625.89,204.4,612.44,208.28" style="stroke:#181818;stroke-width:1.0;"/></g><!--MD5=[e0ca269875ceadfb8c32eec5fbf5e0e5]
-reverse link WritableObservable to WritableSignal--><g id="link_WritableObservable_WritableSignal"><path codeLine="22" d="M241.5,604.67 C241.5,623.5 241.5,644.84 241.5,660.65 " fill="none" id="WritableObservable-backto-WritableSignal" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="none" points="234.5,604.54,241.5,584.54,248.5,604.54,234.5,604.54" style="stroke:#181818;stroke-width:1.0;"/></g><!--MD5=[6f90b6ea249446798615e9d55165ae26]
-reverse link Signal to WritableSignal--><g id="link_Signal_WritableSignal"><path codeLine="23" d="M343.63,603.29 C319.28,622.52 291.33,644.62 270.82,660.83 " fill="none" id="Signal-backto-WritableSignal" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="none" points="339.34,597.75,359.37,590.84,348.02,608.73,339.34,597.75" style="stroke:#181818;stroke-width:1.0;"/></g><!--MD5=[a47e2883e05f03fd99700521a54d4639]
-reverse link Signal to StrictSignal--><g id="link_Signal_StrictSignal"><path codeLine="24" d="M396.5,621.42 C396.5,635.45 396.5,649.57 396.5,660.84 " fill="none" id="Signal-backto-StrictSignal" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="none" points="389.5,621.27,396.5,601.27,403.5,621.27,389.5,621.27" style="stroke:#181818;stroke-width:1.0;"/></g><!--MD5=[4e67f4c58faa708f6fbae152ea1de0b7]
-reverse link WritableSignal to Val--><g id="link_WritableSignal_Val"><path codeLine="25" d="M270.31,725.66 C280.84,740.15 292.4,756.07 301.56,768.68 " fill="none" id="WritableSignal-backto-Val" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="none" points="264.3,729.3,258.21,709,275.63,721.07,264.3,729.3" style="stroke:#181818;stroke-width:1.0;"/></g><!--MD5=[e9c34ca36157bdcaebb49494ba76e630]
-reverse link StrictSignal to Val--><g id="link_StrictSignal_Val"><path codeLine="26" d="M367.67,725.18 C356.91,739.8 345.04,755.93 335.66,768.68 " fill="none" id="StrictSignal-backto-Val" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="none" points="362.08,720.96,379.58,709,373.36,729.26,362.08,720.96" style="stroke:#181818;stroke-width:1.0;"/></g><!--MD5=[a0df353561e3f6dcddefe2b405a5d0a4]
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentStyleType="text/css"
+     height="824px" preserveAspectRatio="none" style="width:673px;height:824px;background:#FFFFFF;" version="1.1"
+     viewBox="0 0 673 824" width="673px" zoomAndPan="magnify">
+    <defs/>
+    <g><!--MD5=[43d3c0ba1d3b9c6f5e40c8769cc5b343]
+class Source-->
+        <g id="elem_Source">
+            <rect fill="#F1F1F1" height="64.4883" id="Source" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;"
+                  width="192" x="93.5" y="7"/>
+            <ellipse cx="161.75" cy="23" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/>
+            <path d="M164.2231,29.1431 Q163.6421,29.4419 163.0029,29.5913 Q162.3638,29.7407 161.6582,29.7407 Q159.1514,29.7407 157.8315,28.0889 Q156.5117,26.437 156.5117,23.3159 Q156.5117,20.1865 157.8315,18.5347 Q159.1514,16.8828 161.6582,16.8828 Q162.3638,16.8828 163.0112,17.0322 Q163.6587,17.1816 164.2231,17.4805 L164.2231,20.2031 Q163.5923,19.6221 162.9988,19.3523 Q162.4053,19.0825 161.7744,19.0825 Q160.4297,19.0825 159.7449,20.1492 Q159.0601,21.2158 159.0601,23.3159 Q159.0601,25.4077 159.7449,26.4744 Q160.4297,27.541 161.7744,27.541 Q162.4053,27.541 162.9988,27.2712 Q163.5923,27.0015 164.2231,26.4204 Z "
+                  fill="#000000"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="47"
+                  x="182.25" y="28.291">Source
+            </text>
+            <line style="stroke:#181818;stroke-width:0.5;" x1="94.5" x2="284.5" y1="39" y2="39"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="180"
+                  x="99.5" y="56.5352">toObservable : Observable
+            </text>
+            <line style="stroke:#181818;stroke-width:0.5;" x1="94.5" x2="284.5" y1="63.4883" y2="63.4883"/>
+        </g><!--MD5=[dbdbb6ce6ecb3babc8879faa4f84544c]
+class BaseObservable-->
+        <g id="elem_BaseObservable">
+            <rect fill="#F1F1F1" height="97.4648" id="BaseObservable" rx="2.5" ry="2.5"
+                  style="stroke:#181818;stroke-width:0.5;" width="140" x="115.5" y="255"/>
+            <ellipse cx="130.5" cy="271" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/>
+            <path d="M132.9731,277.1431 Q132.3921,277.4419 131.7529,277.5913 Q131.1138,277.7407 130.4082,277.7407 Q127.9014,277.7407 126.5815,276.0889 Q125.2617,274.437 125.2617,271.3159 Q125.2617,268.1865 126.5815,266.5347 Q127.9014,264.8828 130.4082,264.8828 Q131.1138,264.8828 131.7612,265.0322 Q132.4087,265.1816 132.9731,265.4805 L132.9731,268.2031 Q132.3423,267.6221 131.7488,267.3523 Q131.1553,267.0825 130.5244,267.0825 Q129.1797,267.0825 128.4949,268.1492 Q127.8101,269.2158 127.8101,271.3159 Q127.8101,273.4077 128.4949,274.4744 Q129.1797,275.541 130.5244,275.541 Q131.1553,275.541 131.7488,275.2712 Q132.3423,275.0015 132.9731,274.4204 Z "
+                  fill="#000000"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="108"
+                  x="144.5" y="276.291">BaseObservable
+            </text>
+            <line style="stroke:#181818;stroke-width:0.5;" x1="116.5" x2="254.5" y1="287" y2="287"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="30"
+                  x="121.5" y="304.5352">map
+            </text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="48"
+                  x="121.5" y="321.0234">mapTo
+            </text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="51"
+                  x="121.5" y="337.5117">flatMap
+            </text>
+            <line style="stroke:#181818;stroke-width:0.5;" x1="116.5" x2="254.5" y1="344.4648" y2="344.4648"/>
+        </g><!--MD5=[7c5c88a606935469d5f89b0b5794816c]
+class Named-->
+        <g id="elem_Named">
+            <rect fill="#F1F1F1" height="64.4883" id="Named" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;"
+                  width="162" x="251.5" y="131"/>
+            <ellipse cx="304.25" cy="147" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/>
+            <path d="M306.7231,153.1431 Q306.1421,153.4419 305.5029,153.5913 Q304.8638,153.7407 304.1582,153.7407 Q301.6514,153.7407 300.3315,152.0889 Q299.0117,150.437 299.0117,147.3159 Q299.0117,144.1865 300.3315,142.5347 Q301.6514,140.8828 304.1582,140.8828 Q304.8638,140.8828 305.5112,141.0322 Q306.1587,141.1816 306.7231,141.4805 L306.7231,144.2031 Q306.0923,143.6221 305.4988,143.3523 Q304.9053,143.0825 304.2744,143.0825 Q302.9297,143.0825 302.2449,144.1492 Q301.5601,145.2158 301.5601,147.3159 Q301.5601,149.4077 302.2449,150.4744 Q302.9297,151.541 304.2744,151.541 Q304.9053,151.541 305.4988,151.2712 Q306.0923,151.0015 306.7231,150.4204 Z "
+                  fill="#000000"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="48"
+                  x="324.75" y="152.291">Named
+            </text>
+            <line style="stroke:#181818;stroke-width:0.5;" x1="252.5" x2="412.5" y1="163" y2="163"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="150"
+                  x="257.5" y="180.5352">toObserver : Observer
+            </text>
+            <line style="stroke:#181818;stroke-width:0.5;" x1="252.5" x2="412.5" y1="187.4883" y2="187.4883"/>
+        </g><!--MD5=[6cf3d8591323c7dcc68cab28b77f738d]
+class EventSource-->
+        <g id="elem_EventSource">
+            <rect fill="#F1F1F1" height="48" id="EventSource" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;"
+                  width="116" x="20.5" y="139"/>
+            <ellipse cx="35.5" cy="155" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/>
+            <path d="M37.9731,161.1431 Q37.3921,161.4419 36.7529,161.5913 Q36.1138,161.7407 35.4082,161.7407 Q32.9014,161.7407 31.5815,160.0889 Q30.2617,158.437 30.2617,155.3159 Q30.2617,152.1865 31.5815,150.5347 Q32.9014,148.8828 35.4082,148.8828 Q36.1138,148.8828 36.7612,149.0322 Q37.4087,149.1816 37.9731,149.4805 L37.9731,152.2031 Q37.3423,151.6221 36.7488,151.3523 Q36.1553,151.0825 35.5244,151.0825 Q34.1797,151.0825 33.4949,152.1492 Q32.8101,153.2158 32.8101,155.3159 Q32.8101,157.4077 33.4949,158.4744 Q34.1797,159.541 35.5244,159.541 Q36.1553,159.541 36.7488,159.2712 Q37.3423,159.0015 37.9731,158.4204 Z "
+                  fill="#000000"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="84" x="49.5"
+                  y="160.291">EventSource
+            </text>
+            <line style="stroke:#181818;stroke-width:0.5;" x1="21.5" x2="135.5" y1="171" y2="171"/>
+            <line style="stroke:#181818;stroke-width:0.5;" x1="21.5" x2="135.5" y1="179" y2="179"/>
+        </g><!--MD5=[0fb1c91794054276d5ac2032bb76ece5]
+class SignalSource-->
+        <g id="elem_SignalSource">
+            <rect fill="#F1F1F1" height="48" id="SignalSource" rx="2.5" ry="2.5"
+                  style="stroke:#181818;stroke-width:0.5;" width="121" x="545" y="139"/>
+            <ellipse cx="560" cy="155" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/>
+            <path d="M562.4731,161.1431 Q561.8921,161.4419 561.2529,161.5913 Q560.6138,161.7407 559.9082,161.7407 Q557.4014,161.7407 556.0815,160.0889 Q554.7617,158.437 554.7617,155.3159 Q554.7617,152.1865 556.0815,150.5347 Q557.4014,148.8828 559.9082,148.8828 Q560.6138,148.8828 561.2612,149.0322 Q561.9087,149.1816 562.4731,149.4805 L562.4731,152.2031 Q561.8423,151.6221 561.2488,151.3523 Q560.6553,151.0825 560.0244,151.0825 Q558.6797,151.0825 557.9949,152.1492 Q557.3101,153.2158 557.3101,155.3159 Q557.3101,157.4077 557.9949,158.4744 Q558.6797,159.541 560.0244,159.541 Q560.6553,159.541 561.2488,159.2712 Q561.8423,159.0015 562.4731,158.4204 Z "
+                  fill="#000000"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="89" x="574"
+                  y="160.291">SignalSource
+            </text>
+            <line style="stroke:#181818;stroke-width:0.5;" x1="546" x2="665" y1="171" y2="171"/>
+            <line style="stroke:#181818;stroke-width:0.5;" x1="546" x2="665" y1="179" y2="179"/>
+        </g><!--MD5=[d40932010816485ec57b44b6eea2392a]
+class Observer-->
+        <g id="elem_Observer">
+            <rect fill="#F1F1F1" height="48" id="Observer" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;"
+                  width="94" x="419.5" y="279.5"/>
+            <ellipse cx="434.5" cy="295.5" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/>
+            <path d="M436.9731,301.6431 Q436.3921,301.9419 435.7529,302.0913 Q435.1138,302.2407 434.4082,302.2407 Q431.9014,302.2407 430.5815,300.5889 Q429.2617,298.937 429.2617,295.8159 Q429.2617,292.6865 430.5815,291.0347 Q431.9014,289.3828 434.4082,289.3828 Q435.1138,289.3828 435.7612,289.5322 Q436.4087,289.6816 436.9731,289.9805 L436.9731,292.7031 Q436.3423,292.1221 435.7488,291.8523 Q435.1553,291.5825 434.5244,291.5825 Q433.1797,291.5825 432.4949,292.6492 Q431.8101,293.7158 431.8101,295.8159 Q431.8101,297.9077 432.4949,298.9744 Q433.1797,300.041 434.5244,300.041 Q435.1553,300.041 435.7488,299.7712 Q436.3423,299.5015 436.9731,298.9204 Z "
+                  fill="#000000"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="62"
+                  x="448.5" y="300.791">Observer
+            </text>
+            <line style="stroke:#181818;stroke-width:0.5;" x1="420.5" x2="512.5" y1="311.5" y2="311.5"/>
+            <line style="stroke:#181818;stroke-width:0.5;" x1="420.5" x2="512.5" y1="319.5" y2="319.5"/>
+        </g><!--MD5=[bb0076f36699579ceee0ebce73764b72]
+class Sink-->
+        <g id="elem_Sink">
+            <rect fill="#F1F1F1" height="48" id="Sink" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;"
+                  width="61" x="449" y="139"/>
+            <ellipse cx="464" cy="155" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/>
+            <path d="M466.4731,161.1431 Q465.8921,161.4419 465.2529,161.5913 Q464.6138,161.7407 463.9082,161.7407 Q461.4014,161.7407 460.0815,160.0889 Q458.7617,158.437 458.7617,155.3159 Q458.7617,152.1865 460.0815,150.5347 Q461.4014,148.8828 463.9082,148.8828 Q464.6138,148.8828 465.2612,149.0322 Q465.9087,149.1816 466.4731,149.4805 L466.4731,152.2031 Q465.8423,151.6221 465.2488,151.3523 Q464.6553,151.0825 464.0244,151.0825 Q462.6797,151.0825 461.9949,152.1492 Q461.3101,153.2158 461.3101,155.3159 Q461.3101,157.4077 461.9949,158.4744 Q462.6797,159.541 464.0244,159.541 Q464.6553,159.541 465.2488,159.2712 Q465.8423,159.0015 466.4731,158.4204 Z "
+                  fill="#000000"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="29" x="478"
+                  y="160.291">Sink
+            </text>
+            <line style="stroke:#181818;stroke-width:0.5;" x1="450" x2="509" y1="171" y2="171"/>
+            <line style="stroke:#181818;stroke-width:0.5;" x1="450" x2="509" y1="179" y2="179"/>
+        </g><!--MD5=[c0bd9f44073f1a51428d87d6a9cf071b]
+class Observable-->
+        <g id="elem_Observable">
+            <rect fill="#F1F1F1" height="48" id="Observable" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;"
+                  width="109" x="187" y="412"/>
+            <ellipse cx="202" cy="428" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/>
+            <path d="M204.4731,434.1431 Q203.8921,434.4419 203.2529,434.5913 Q202.6138,434.7407 201.9082,434.7407 Q199.4014,434.7407 198.0815,433.0889 Q196.7617,431.437 196.7617,428.3159 Q196.7617,425.1865 198.0815,423.5347 Q199.4014,421.8828 201.9082,421.8828 Q202.6138,421.8828 203.2612,422.0322 Q203.9087,422.1816 204.4731,422.4805 L204.4731,425.2031 Q203.8423,424.6221 203.2488,424.3523 Q202.6553,424.0825 202.0244,424.0825 Q200.6797,424.0825 199.9949,425.1492 Q199.3101,426.2158 199.3101,428.3159 Q199.3101,430.4077 199.9949,431.4744 Q200.6797,432.541 202.0244,432.541 Q202.6553,432.541 203.2488,432.2712 Q203.8423,432.0015 204.4731,431.4204 Z "
+                  fill="#000000"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="77" x="216"
+                  y="433.291">Observable
+            </text>
+            <line style="stroke:#181818;stroke-width:0.5;" x1="188" x2="295" y1="444" y2="444"/>
+            <line style="stroke:#181818;stroke-width:0.5;" x1="188" x2="295" y1="452" y2="452"/>
+        </g><!--MD5=[c35f79b668e19d1c0bb8c2fa20d25922]
+class EventBus-->
+        <g id="elem_EventBus">
+            <rect fill="#F1F1F1" height="48" id="EventBus" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;"
+                  width="93" x="291" y="279.5"/>
+            <ellipse cx="306" cy="295.5" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/>
+            <path d="M308.4731,301.6431 Q307.8921,301.9419 307.2529,302.0913 Q306.6138,302.2407 305.9082,302.2407 Q303.4014,302.2407 302.0815,300.5889 Q300.7617,298.937 300.7617,295.8159 Q300.7617,292.6865 302.0815,291.0347 Q303.4014,289.3828 305.9082,289.3828 Q306.6138,289.3828 307.2612,289.5322 Q307.9087,289.6816 308.4731,289.9805 L308.4731,292.7031 Q307.8423,292.1221 307.2488,291.8523 Q306.6553,291.5825 306.0244,291.5825 Q304.6797,291.5825 303.9949,292.6492 Q303.3101,293.7158 303.3101,295.8159 Q303.3101,297.9077 303.9949,298.9744 Q304.6797,300.041 306.0244,300.041 Q306.6553,300.041 307.2488,299.7712 Q307.8423,299.5015 308.4731,298.9204 Z "
+                  fill="#000000"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="61" x="320"
+                  y="300.791">EventBus
+            </text>
+            <line style="stroke:#181818;stroke-width:0.5;" x1="292" x2="383" y1="311.5" y2="311.5"/>
+            <line style="stroke:#181818;stroke-width:0.5;" x1="292" x2="383" y1="319.5" y2="319.5"/>
+        </g><!--MD5=[731225e2007e13f9ac67fff186258580]
+class Var-->
+        <g id="elem_Var">
+            <rect fill="#F1F1F1" height="48" id="Var" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;"
+                  width="55" x="549" y="279.5"/>
+            <ellipse cx="564" cy="295.5" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/>
+            <path d="M566.4731,301.6431 Q565.8921,301.9419 565.2529,302.0913 Q564.6138,302.2407 563.9082,302.2407 Q561.4014,302.2407 560.0815,300.5889 Q558.7617,298.937 558.7617,295.8159 Q558.7617,292.6865 560.0815,291.0347 Q561.4014,289.3828 563.9082,289.3828 Q564.6138,289.3828 565.2612,289.5322 Q565.9087,289.6816 566.4731,289.9805 L566.4731,292.7031 Q565.8423,292.1221 565.2488,291.8523 Q564.6553,291.5825 564.0244,291.5825 Q562.6797,291.5825 561.9949,292.6492 Q561.3101,293.7158 561.3101,295.8159 Q561.3101,297.9077 561.9949,298.9744 Q562.6797,300.041 564.0244,300.041 Q564.6553,300.041 565.2488,299.7712 Q565.8423,299.5015 566.4731,298.9204 Z "
+                  fill="#000000"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="23" x="578"
+                  y="300.791">Var
+            </text>
+            <line style="stroke:#181818;stroke-width:0.5;" x1="550" x2="603" y1="311.5" y2="311.5"/>
+            <line style="stroke:#181818;stroke-width:0.5;" x1="550" x2="603" y1="319.5" y2="319.5"/>
+        </g><!--MD5=[a62af4ef4082f4b372f0d8265a8e9578]
+class WriteBus-->
+        <g id="elem_WriteBus">
+            <rect fill="#F1F1F1" height="48" id="WriteBus" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;"
+                  width="91" x="421" y="412"/>
+            <ellipse cx="436" cy="428" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/>
+            <path d="M438.4731,434.1431 Q437.8921,434.4419 437.2529,434.5913 Q436.6138,434.7407 435.9082,434.7407 Q433.4014,434.7407 432.0815,433.0889 Q430.7617,431.437 430.7617,428.3159 Q430.7617,425.1865 432.0815,423.5347 Q433.4014,421.8828 435.9082,421.8828 Q436.6138,421.8828 437.2612,422.0322 Q437.9087,422.1816 438.4731,422.4805 L438.4731,425.2031 Q437.8423,424.6221 437.2488,424.3523 Q436.6553,424.0825 436.0244,424.0825 Q434.6797,424.0825 433.9949,425.1492 Q433.3101,426.2158 433.3101,428.3159 Q433.3101,430.4077 433.9949,431.4744 Q434.6797,432.541 436.0244,432.541 Q436.6553,432.541 437.2488,432.2712 Q437.8423,432.0015 438.4731,431.4204 Z "
+                  fill="#000000"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="59" x="450"
+                  y="433.291">WriteBus
+            </text>
+            <line style="stroke:#181818;stroke-width:0.5;" x1="422" x2="511" y1="444" y2="444"/>
+            <line style="stroke:#181818;stroke-width:0.5;" x1="422" x2="511" y1="452" y2="452"/>
+        </g><!--MD5=[37ce66f30b506d075c7da6251450c5ae]
+class WritableObservable-->
+        <g id="elem_WritableObservable">
+            <rect fill="#F1F1F1" height="48" id="WritableObservable" rx="2.5" ry="2.5"
+                  style="stroke:#181818;stroke-width:0.5;" width="165" x="159" y="536.5"/>
+            <ellipse cx="174" cy="552.5" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/>
+            <path d="M176.4731,558.6431 Q175.8921,558.9419 175.2529,559.0913 Q174.6138,559.2407 173.9082,559.2407 Q171.4014,559.2407 170.0815,557.5889 Q168.7617,555.937 168.7617,552.8159 Q168.7617,549.6865 170.0815,548.0347 Q171.4014,546.3828 173.9082,546.3828 Q174.6138,546.3828 175.2612,546.5322 Q175.9087,546.6816 176.4731,546.9805 L176.4731,549.7031 Q175.8423,549.1221 175.2488,548.8523 Q174.6553,548.5825 174.0244,548.5825 Q172.6797,548.5825 171.9949,549.6492 Q171.3101,550.7158 171.3101,552.8159 Q171.3101,554.9077 171.9949,555.9744 Q172.6797,557.041 174.0244,557.041 Q174.6553,557.041 175.2488,556.7712 Q175.8423,556.5015 176.4731,555.9204 Z "
+                  fill="#000000"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="133" x="188"
+                  y="557.791">WritableObservable
+            </text>
+            <line style="stroke:#181818;stroke-width:0.5;" x1="160" x2="323" y1="568.5" y2="568.5"/>
+            <line style="stroke:#181818;stroke-width:0.5;" x1="160" x2="323" y1="576.5" y2="576.5"/>
+        </g><!--MD5=[be487b3bb751466a4a7bf5087ababc69]
+class EventStream-->
+        <g id="elem_EventStream">
+            <rect fill="#F1F1F1" height="80.9766" id="EventStream" rx="2.5" ry="2.5"
+                  style="stroke:#181818;stroke-width:0.5;" width="117" x="7" y="520"/>
+            <ellipse cx="22" cy="536" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/>
+            <path d="M24.4731,542.1431 Q23.8921,542.4419 23.2529,542.5913 Q22.6138,542.7407 21.9082,542.7407 Q19.4014,542.7407 18.0815,541.0889 Q16.7617,539.437 16.7617,536.3159 Q16.7617,533.1865 18.0815,531.5347 Q19.4014,529.8828 21.9082,529.8828 Q22.6138,529.8828 23.2612,530.0322 Q23.9087,530.1816 24.4731,530.4805 L24.4731,533.2031 Q23.8423,532.6221 23.2488,532.3523 Q22.6553,532.0825 22.0244,532.0825 Q20.6797,532.0825 19.9949,533.1492 Q19.3101,534.2158 19.3101,536.3159 Q19.3101,538.4077 19.9949,539.4744 Q20.6797,540.541 22.0244,540.541 Q22.6553,540.541 23.2488,540.2712 Q23.8423,540.0015 24.4731,539.4204 Z "
+                  fill="#000000"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="85" x="36"
+                  y="541.291">EventStream
+            </text>
+            <line style="stroke:#181818;stroke-width:0.5;" x1="8" x2="123" y1="552" y2="552"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="32" x="13"
+                  y="569.5352">filter
+            </text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="36" x="13"
+                  y="586.0234">delay
+            </text>
+            <line style="stroke:#181818;stroke-width:0.5;" x1="8" x2="123" y1="592.9766" y2="592.9766"/>
+        </g><!--MD5=[0e770a5826b894b8746f65a5ff995c24]
+class Signal-->
+        <g id="elem_Signal">
+            <rect fill="#F1F1F1" height="80.9766" id="Signal" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;"
+                  width="74" x="359.5" y="520"/>
+            <ellipse cx="374.5" cy="536" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/>
+            <path d="M376.9731,542.1431 Q376.3921,542.4419 375.7529,542.5913 Q375.1138,542.7407 374.4082,542.7407 Q371.9014,542.7407 370.5815,541.0889 Q369.2617,539.437 369.2617,536.3159 Q369.2617,533.1865 370.5815,531.5347 Q371.9014,529.8828 374.4082,529.8828 Q375.1138,529.8828 375.7612,530.0322 Q376.4087,530.1816 376.9731,530.4805 L376.9731,533.2031 Q376.3423,532.6221 375.7488,532.3523 Q375.1553,532.0825 374.5244,532.0825 Q373.1797,532.0825 372.4949,533.1492 Q371.8101,534.2158 371.8101,536.3159 Q371.8101,538.4077 372.4949,539.4744 Q373.1797,540.541 374.5244,540.541 Q375.1553,540.541 375.7488,540.2712 Q376.3423,540.0015 376.9731,539.4204 Z "
+                  fill="#000000"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="42"
+                  x="388.5" y="541.291">Signal
+            </text>
+            <line style="stroke:#181818;stroke-width:0.5;" x1="360.5" x2="432.5" y1="552" y2="552"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="29"
+                  x="365.5" y="569.5352">now
+            </text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="62"
+                  x="365.5" y="586.0234">compose
+            </text>
+            <line style="stroke:#181818;stroke-width:0.5;" x1="360.5" x2="432.5" y1="592.9766" y2="592.9766"/>
+        </g><!--MD5=[2fc84194897eac36bc073c4241e40cd5]
+class WritableSignal-->
+        <g id="elem_WritableSignal">
+            <rect fill="#F1F1F1" height="48" id="WritableSignal" rx="2.5" ry="2.5"
+                  style="stroke:#181818;stroke-width:0.5;" width="130" x="176.5" y="661"/>
+            <ellipse cx="191.5" cy="677" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/>
+            <path d="M193.9731,683.1431 Q193.3921,683.4419 192.7529,683.5913 Q192.1138,683.7407 191.4082,683.7407 Q188.9014,683.7407 187.5815,682.0889 Q186.2617,680.437 186.2617,677.3159 Q186.2617,674.1865 187.5815,672.5347 Q188.9014,670.8828 191.4082,670.8828 Q192.1138,670.8828 192.7612,671.0322 Q193.4087,671.1816 193.9731,671.4805 L193.9731,674.2031 Q193.3423,673.6221 192.7488,673.3523 Q192.1553,673.0825 191.5244,673.0825 Q190.1797,673.0825 189.4949,674.1492 Q188.8101,675.2158 188.8101,677.3159 Q188.8101,679.4077 189.4949,680.4744 Q190.1797,681.541 191.5244,681.541 Q192.1553,681.541 192.7488,681.2712 Q193.3423,681.0015 193.9731,680.4204 Z "
+                  fill="#000000"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="98"
+                  x="205.5" y="682.291">WritableSignal
+            </text>
+            <line style="stroke:#181818;stroke-width:0.5;" x1="177.5" x2="305.5" y1="693" y2="693"/>
+            <line style="stroke:#181818;stroke-width:0.5;" x1="177.5" x2="305.5" y1="701" y2="701"/>
+        </g><!--MD5=[75d7a518e376e7f2a04c6b30865a7644]
+class StrictSignal-->
+        <g id="elem_StrictSignal">
+            <rect fill="#F1F1F1" height="48" id="StrictSignal" rx="2.5" ry="2.5"
+                  style="stroke:#181818;stroke-width:0.5;" width="109" x="342" y="661"/>
+            <ellipse cx="357" cy="677" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/>
+            <path d="M359.4731,683.1431 Q358.8921,683.4419 358.2529,683.5913 Q357.6138,683.7407 356.9082,683.7407 Q354.4014,683.7407 353.0815,682.0889 Q351.7617,680.437 351.7617,677.3159 Q351.7617,674.1865 353.0815,672.5347 Q354.4014,670.8828 356.9082,670.8828 Q357.6138,670.8828 358.2612,671.0322 Q358.9087,671.1816 359.4731,671.4805 L359.4731,674.2031 Q358.8423,673.6221 358.2488,673.3523 Q357.6553,673.0825 357.0244,673.0825 Q355.6797,673.0825 354.9949,674.1492 Q354.3101,675.2158 354.3101,677.3159 Q354.3101,679.4077 354.9949,680.4744 Q355.6797,681.541 357.0244,681.541 Q357.6553,681.541 358.2488,681.2712 Q358.8423,681.0015 359.4731,680.4204 Z "
+                  fill="#000000"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="77" x="371"
+                  y="682.291">StrictSignal
+            </text>
+            <line style="stroke:#181818;stroke-width:0.5;" x1="343" x2="450" y1="693" y2="693"/>
+            <line style="stroke:#181818;stroke-width:0.5;" x1="343" x2="450" y1="701" y2="701"/>
+        </g><!--MD5=[43fbf57120ad8775fec71a13d670d035]
+class Val-->
+        <g id="elem_Val">
+            <rect fill="#F1F1F1" height="48" id="Val" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;"
+                  width="53" x="292" y="769"/>
+            <ellipse cx="307" cy="785" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/>
+            <path d="M309.4731,791.1431 Q308.8921,791.4419 308.2529,791.5913 Q307.6138,791.7407 306.9082,791.7407 Q304.4014,791.7407 303.0815,790.0889 Q301.7617,788.437 301.7617,785.3159 Q301.7617,782.1865 303.0815,780.5347 Q304.4014,778.8828 306.9082,778.8828 Q307.6138,778.8828 308.2612,779.0322 Q308.9087,779.1816 309.4731,779.4805 L309.4731,782.2031 Q308.8423,781.6221 308.2488,781.3523 Q307.6553,781.0825 307.0244,781.0825 Q305.6797,781.0825 304.9949,782.1492 Q304.3101,783.2158 304.3101,785.3159 Q304.3101,787.4077 304.9949,788.4744 Q305.6797,789.541 307.0244,789.541 Q307.6553,789.541 308.2488,789.2712 Q308.8423,789.0015 309.4731,788.4204 Z "
+                  fill="#000000"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="21" x="321"
+                  y="790.291">Val
+            </text>
+            <line style="stroke:#181818;stroke-width:0.5;" x1="293" x2="344" y1="801" y2="801"/>
+            <line style="stroke:#181818;stroke-width:0.5;" x1="293" x2="344" y1="809" y2="809"/>
+        </g><!--MD5=[86aa17a1e3c75d9c292351cab2d788cb]
+reverse link Source to BaseObservable-->
+        <g id="link_Source_BaseObservable">
+            <path codeLine="1" d="M188.72,91.19 C188,138.66 186.93,208.73 186.22,254.98 " fill="none"
+                  id="Source-backto-BaseObservable" style="stroke:#181818;stroke-width:1.0;"/>
+            <polygon fill="none" points="181.72,91.03,189.03,71.14,195.72,91.25,181.72,91.03"
+                     style="stroke:#181818;stroke-width:1.0;"/>
+        </g><!--MD5=[7a510d4a0aafbececd0b8cc73ee90651]
+reverse link Named to BaseObservable-->
+        <g id="link_Named_BaseObservable">
+            <path codeLine="2" d="M284.65,209.08 C269.08,223.76 251.75,240.08 235.99,254.93 " fill="none"
+                  id="Named-backto-BaseObservable" style="stroke:#181818;stroke-width:1.0;"/>
+            <polygon fill="none" points="280.15,203.7,299.51,195.08,289.75,213.89,280.15,203.7"
+                     style="stroke:#181818;stroke-width:1.0;"/>
+        </g><!--MD5=[5e6d43c4d5e2ca4b0cb2c76ea14854a2]
+reverse link Source to EventSource-->
+        <g id="link_Source_EventSource">
+            <path codeLine="3" d="M147.71,85.93 C131.35,103.91 113.3,123.75 99.73,138.66 " fill="none"
+                  id="Source-backto-EventSource" style="stroke:#181818;stroke-width:1.0;"/>
+            <polygon fill="none" points="142.57,81.18,161.2,71.1,152.92,90.61,142.57,81.18"
+                     style="stroke:#181818;stroke-width:1.0;"/>
+        </g><!--MD5=[8f2f4cf793c98a7783095f312f3695ce]
+reverse link Source to SignalSource-->
+        <g id="link_Source_SignalSource">
+            <path codeLine="4"
+                  d="M305.59,67.73 C371.26,84.29 454.59,106.79 527.5,131 C534.69,133.39 542.18,136.09 549.55,138.87 "
+                  fill="none" id="Source-backto-SignalSource" style="stroke:#181818;stroke-width:1.0;"/>
+            <polygon fill="none" points="303.51,74.43,285.8,62.78,306.9,60.84,303.51,74.43"
+                     style="stroke:#181818;stroke-width:1.0;"/>
+        </g><!--MD5=[f7614692df644132b2d1e583dd3a0064]
+reverse link Named to Observer-->
+        <g id="link_Named_Observer">
+            <path codeLine="5" d="M376.7,209.68 C399.25,232.99 425.7,260.33 444.03,279.28 " fill="none"
+                  id="Named-backto-Observer" style="stroke:#181818;stroke-width:1.0;"/>
+            <polygon fill="none" points="371.45,214.32,362.57,195.08,381.51,204.59,371.45,214.32"
+                     style="stroke:#181818;stroke-width:1.0;"/>
+        </g><!--MD5=[42c2c62a3620e6389f618472f5befae2]
+reverse link Sink to Observer-->
+        <g id="link_Sink_Observer">
+            <path codeLine="6" d="M475.44,207.29 C473.2,231.08 470.52,259.65 468.68,279.24 " fill="none"
+                  id="Sink-backto-Observer" style="stroke:#181818;stroke-width:1.0;"/>
+            <polygon fill="none" points="468.49,206.44,477.32,187.18,482.42,207.75,468.49,206.44"
+                     style="stroke:#181818;stroke-width:1.0;"/>
+        </g><!--MD5=[bc961b1de6feb58a0cae784b37777070]
+reverse link BaseObservable to Observable-->
+        <g id="link_BaseObservable_Observable">
+            <path codeLine="7" d="M213.94,370.77 C220.24,385.47 226.52,400.09 231.49,411.66 " fill="none"
+                  id="BaseObservable-backto-Observable" style="stroke:#181818;stroke-width:1.0;"/>
+            <polygon fill="none" points="207.49,373.49,206.03,352.35,220.35,367.97,207.49,373.49"
+                     style="stroke:#181818;stroke-width:1.0;"/>
+        </g><!--MD5=[121fff7c9a6bbd9c53ece0538f1dd719]
+reverse link EventSource to EventBus-->
+        <g id="link_EventSource_EventBus">
+            <path codeLine="8"
+                  d="M153.58,195.16 C190.29,211.41 234.61,232.56 272.5,255 C284.65,262.2 297.32,271.11 308.23,279.26 "
+                  fill="none" id="EventSource-backto-EventBus" style="stroke:#181818;stroke-width:1.0;"/>
+            <polygon fill="none" points="150.69,201.54,135.15,187.13,156.28,188.71,150.69,201.54"
+                     style="stroke:#181818;stroke-width:1.0;"/>
+        </g><!--MD5=[eb64a794d7ce75ec689773658aa955df]
+reverse link Named to EventBus-->
+        <g id="link_Named_EventBus">
+            <path codeLine="9" d="M334.34,215.07 C335.14,237.11 336.03,261.78 336.66,279.28 " fill="none"
+                  id="Named-backto-EventBus" style="stroke:#181818;stroke-width:1.0;"/>
+            <polygon fill="none" points="327.35,215.32,333.62,195.08,341.34,214.82,327.35,215.32"
+                     style="stroke:#181818;stroke-width:1.0;"/>
+        </g><!--MD5=[9a5b145bea4a1283398234aee1db3b2f]
+reverse link Sink to EventBus-->
+        <g id="link_Sink_EventBus">
+            <path codeLine="10" d="M441.34,201.22 C415.88,226.06 383.18,257.95 361.35,279.24 " fill="none"
+                  id="Sink-backto-EventBus" style="stroke:#181818;stroke-width:1.0;"/>
+            <polygon fill="none" points="436.53,196.14,455.73,187.18,446.3,206.16,436.53,196.14"
+                     style="stroke:#181818;stroke-width:1.0;"/>
+        </g><!--MD5=[6f038b301c72b6199bfec15c123e3ae3]
+reverse link SignalSource to Var-->
+        <g id="link_SignalSource_Var">
+            <path codeLine="11" d="M596.51,206.93 C591.52,230.79 585.49,259.55 581.37,279.24 " fill="none"
+                  id="SignalSource-backto-Var" style="stroke:#181818;stroke-width:1.0;"/>
+            <polygon fill="none" points="589.7,205.32,600.65,187.18,603.4,208.19,589.7,205.32"
+                     style="stroke:#181818;stroke-width:1.0;"/>
+        </g><!--MD5=[f12bd80428117508c5190ad387f358d2]
+reverse link Named to Var-->
+        <g id="link_Named_Var">
+            <path codeLine="12"
+                  d="M432.32,200.72 C465.38,215.16 501.39,233.48 531.5,255 C541.11,261.87 550.34,271 557.91,279.42 "
+                  fill="none" id="Named-backto-Var" style="stroke:#181818;stroke-width:1.0;"/>
+            <polygon fill="none" points="429.48,207.12,413.79,192.89,434.93,194.22,429.48,207.12"
+                     style="stroke:#181818;stroke-width:1.0;"/>
+        </g><!--MD5=[188f8e25b2d59712d0d1b9d6150d16e2]
+reverse link Sink to Var-->
+        <g id="link_Sink_Var">
+            <path codeLine="13" d="M507.3,203.69 C524.42,228.14 545.79,258.65 560.21,279.24 " fill="none"
+                  id="Sink-backto-Var" style="stroke:#181818;stroke-width:1.0;"/>
+            <polygon fill="none" points="501.48,207.58,495.74,187.18,512.94,199.55,501.48,207.58"
+                     style="stroke:#181818;stroke-width:1.0;"/>
+        </g><!--MD5=[31f334d8b6320693beb57d8c7d5597dc]
+reverse link Observer to WriteBus-->
+        <g id="link_Observer_WriteBus">
+            <path codeLine="14" d="M466.5,347.68 C466.5,369.06 466.5,394.02 466.5,411.76 " fill="none"
+                  id="Observer-backto-WriteBus" style="stroke:#181818;stroke-width:1.0;"/>
+            <polygon fill="none" points="459.5,347.53,466.5,327.53,473.5,347.53,459.5,347.53"
+                     style="stroke:#181818;stroke-width:1.0;"/>
+        </g><!--MD5=[d6630169a1de53240ab10de5f3c983fc]
+reverse link Observable to WritableObservable-->
+        <g id="link_Observable_WritableObservable">
+            <path codeLine="15" d="M241.5,480.17 C241.5,499 241.5,520.34 241.5,536.15 " fill="none"
+                  id="Observable-backto-WritableObservable" style="stroke:#181818;stroke-width:1.0;"/>
+            <polygon fill="none" points="234.5,480.04,241.5,460.04,248.5,480.04,234.5,480.04"
+                     style="stroke:#181818;stroke-width:1.0;"/>
+        </g><!--MD5=[c4c1924e47ce2c1eaeaf2aa095d4e9cf]
+reverse link Observable to EventStream-->
+        <g id="link_Observable_EventStream">
+            <path codeLine="16" d="M191.66,471.69 C170.07,486.72 144.67,504.39 122.35,519.93 " fill="none"
+                  id="Observable-backto-EventStream" style="stroke:#181818;stroke-width:1.0;"/>
+            <polygon fill="none" points="187.98,465.72,208.4,460.04,195.98,477.21,187.98,465.72"
+                     style="stroke:#181818;stroke-width:1.0;"/>
+        </g><!--MD5=[1ec37c62c766dfedd62306145f049898]
+reverse link BaseObservable to EventStream-->
+        <g id="link_BaseObservable_EventStream">
+            <path codeLine="17" d="M154.48,370.42 C132.25,417.65 103.05,479.71 84.27,519.61 " fill="none"
+                  id="BaseObservable-backto-EventStream" style="stroke:#181818;stroke-width:1.0;"/>
+            <polygon fill="none" points="148.22,367.28,163.07,352.16,160.89,373.24,148.22,367.28"
+                     style="stroke:#181818;stroke-width:1.0;"/>
+        </g><!--MD5=[d0d7173cb112c61e93128ecd6dc0320b]
+reverse link EventSource to EventStream-->
+        <g id="link_EventSource_EventStream">
+            <path codeLine="18" d="M77.07,207.59 C74.52,284.96 69.26,445.13 66.81,519.69 " fill="none"
+                  id="EventSource-backto-EventStream" style="stroke:#181818;stroke-width:1.0;"/>
+            <polygon fill="none" points="70.08,207.02,77.74,187.26,84.07,207.48,70.08,207.02"
+                     style="stroke:#181818;stroke-width:1.0;"/>
+        </g><!--MD5=[789dbf218c2de3e733f71a0998fc3374]
+reverse link Observable to Signal-->
+        <g id="link_Observable_Signal">
+            <path codeLine="19" d="M286.49,472.55 C309.58,490.8 337.37,512.77 359.25,530.06 " fill="none"
+                  id="Observable-backto-Signal" style="stroke:#181818;stroke-width:1.0;"/>
+            <polygon fill="none" points="282.01,477.93,270.65,460.04,290.69,466.95,282.01,477.93"
+                     style="stroke:#181818;stroke-width:1.0;"/>
+        </g><!--MD5=[a2e65222895fb44bd41f1bcbdbbf0634]
+reverse link BaseObservable to Signal-->
+        <g id="link_BaseObservable_Signal">
+            <path codeLine="20"
+                  d="M266.63,365.03 C283.19,379.4 299.74,395.41 313.5,412 C340.98,445.13 364.19,488.65 379.02,519.81 "
+                  fill="none" id="BaseObservable-backto-Signal" style="stroke:#181818;stroke-width:1.0;"/>
+            <polygon fill="none" points="261.99,370.27,251.17,352.05,270.99,359.55,261.99,370.27"
+                     style="stroke:#181818;stroke-width:1.0;"/>
+        </g><!--MD5=[79ca2b38168fc0d0403dd29f71be2b6c]
+reverse link SignalSource to Signal-->
+        <g id="link_SignalSource_Signal">
+            <path codeLine="21"
+                  d="M619.23,206.58 C629.5,245.62 639.02,304.41 621.5,352 C588.09,442.75 488.46,509.34 433.66,540.26 "
+                  fill="none" id="SignalSource-backto-Signal" style="stroke:#181818;stroke-width:1.0;"/>
+            <polygon fill="none" points="612.44,208.28,613.62,187.12,625.89,204.4,612.44,208.28"
+                     style="stroke:#181818;stroke-width:1.0;"/>
+        </g><!--MD5=[e0ca269875ceadfb8c32eec5fbf5e0e5]
+reverse link WritableObservable to WritableSignal-->
+        <g id="link_WritableObservable_WritableSignal">
+            <path codeLine="22" d="M241.5,604.67 C241.5,623.5 241.5,644.84 241.5,660.65 " fill="none"
+                  id="WritableObservable-backto-WritableSignal" style="stroke:#181818;stroke-width:1.0;"/>
+            <polygon fill="none" points="234.5,604.54,241.5,584.54,248.5,604.54,234.5,604.54"
+                     style="stroke:#181818;stroke-width:1.0;"/>
+        </g><!--MD5=[6f90b6ea249446798615e9d55165ae26]
+reverse link Signal to WritableSignal-->
+        <g id="link_Signal_WritableSignal">
+            <path codeLine="23" d="M343.63,603.29 C319.28,622.52 291.33,644.62 270.82,660.83 " fill="none"
+                  id="Signal-backto-WritableSignal" style="stroke:#181818;stroke-width:1.0;"/>
+            <polygon fill="none" points="339.34,597.75,359.37,590.84,348.02,608.73,339.34,597.75"
+                     style="stroke:#181818;stroke-width:1.0;"/>
+        </g><!--MD5=[a47e2883e05f03fd99700521a54d4639]
+reverse link Signal to StrictSignal-->
+        <g id="link_Signal_StrictSignal">
+            <path codeLine="24" d="M396.5,621.42 C396.5,635.45 396.5,649.57 396.5,660.84 " fill="none"
+                  id="Signal-backto-StrictSignal" style="stroke:#181818;stroke-width:1.0;"/>
+            <polygon fill="none" points="389.5,621.27,396.5,601.27,403.5,621.27,389.5,621.27"
+                     style="stroke:#181818;stroke-width:1.0;"/>
+        </g><!--MD5=[4e67f4c58faa708f6fbae152ea1de0b7]
+reverse link WritableSignal to Val-->
+        <g id="link_WritableSignal_Val">
+            <path codeLine="25" d="M270.31,725.66 C280.84,740.15 292.4,756.07 301.56,768.68 " fill="none"
+                  id="WritableSignal-backto-Val" style="stroke:#181818;stroke-width:1.0;"/>
+            <polygon fill="none" points="264.3,729.3,258.21,709,275.63,721.07,264.3,729.3"
+                     style="stroke:#181818;stroke-width:1.0;"/>
+        </g><!--MD5=[e9c34ca36157bdcaebb49494ba76e630]
+reverse link StrictSignal to Val-->
+        <g id="link_StrictSignal_Val">
+            <path codeLine="26" d="M367.67,725.18 C356.91,739.8 345.04,755.93 335.66,768.68 " fill="none"
+                  id="StrictSignal-backto-Val" style="stroke:#181818;stroke-width:1.0;"/>
+            <polygon fill="none" points="362.08,720.96,379.58,709,373.36,729.26,362.08,720.96"
+                     style="stroke:#181818;stroke-width:1.0;"/>
+        </g><!--MD5=[a0df353561e3f6dcddefe2b405a5d0a4]
 @startuml
 Source <|- - BaseObservable
 Named <|- - BaseObservable
@@ -88,4 +485,5 @@ Default Encoding: UTF-8
 Language: en
 Country: US
 -->
-</g></svg>
+    </g>
+</svg>

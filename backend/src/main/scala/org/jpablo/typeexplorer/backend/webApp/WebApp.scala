@@ -1,9 +1,11 @@
 package org.jpablo.typeexplorer.backend.webApp
 
-import org.jpablo.typeexplorer.backend.backends.plantuml.toSVG
+import org.jpablo.typeexplorer.backend.backends.graphviz.toSVG
+import org.jpablo.typeexplorer.backend.backends.graphviz.toGraphviz
+import org.jpablo.typeexplorer.backend.backends.plantuml.toSVGText
 import org.jpablo.typeexplorer.backend.semanticdb.All
 import org.jpablo.typeexplorer.protos.{TextDocumentsWithSource, TextDocumentsWithSourceSeq}
-import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, InheritanceExamples, PlantUML, PlantumlInheritance}
+import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, InheritanceExamples, PlantUML, PlantumlInheritance, DiagramOptions}
 import org.jpablo.typeexplorer.shared.inheritance.toPlantUML
 import org.jpablo.typeexplorer.shared.models
 import org.jpablo.typeexplorer.shared.webApp.{InheritanceRequest, Routes}
@@ -61,18 +63,25 @@ object WebApp extends ZIOAppDefault:
   // ----------
   // endpoints
   // ----------
+
+  def inheritanceDiagram(body: String, render: (InheritanceRequest[file.Path], InheritanceDiagram) => Task[String]) =
+    for
+      ireq <- ZIO.from(body.fromJson[InheritanceRequest[file.Path]]).mapError(Throwable(_))
+      docs <- readTextDocumentsWithSource(ireq.paths)
+      symbols = ireq.symbols.map(_._1).toSet
+      diagram = InheritanceDiagram.from(docs).subdiagram(symbols)
+      svgText <- render(ireq, diagram)
+    yield
+      Response.text(svgText).withContentType("image/svg+xml")
+
+
   private val appZ = Http.collectZIO[Request] {
     case req @ Method.POST -> !! / Routes.inheritanceDiagram =>
       for
         body <- req.body.asString
-        ireq <- ZIO.from(body.fromJson[InheritanceRequest[file.Path]]).mapError(Throwable(_))
-        docs <- readTextDocumentsWithSource(ireq.paths)
-        symbols = ireq.symbols.map(_._1).toSet
-        diagram = InheritanceDiagram.from(docs).subdiagram(symbols)
-        puml = diagram.toPlantUML(ireq.symbols.toMap, ireq.options)
-        svgText <- puml.toSVG("laminar")
-      yield
-        Response.text(svgText).withContentType("image/svg+xml")
+        response <- inheritanceDiagram(body, (_, diagram) => diagram.toGraphviz("name").toSVG)
+//        response <- inheritanceDiagram(body, (ireq, diagram) => diagram.toPlantUML(ireq.symbols.toMap, ireq.options).toSVGText)
+      yield response
 
     case req @ Method.GET -> !! / Routes.semanticdb =>
       toTaskOrBadRequest(getPath(req)): paths =>

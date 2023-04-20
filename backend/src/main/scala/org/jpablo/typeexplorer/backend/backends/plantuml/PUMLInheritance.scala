@@ -20,7 +20,7 @@ import zio.ZIO.ZIOConstructor
 type SvgText = String
 
 extension (puml: PlantUML)
-  def toSVG(name: String): Task[String] = ZIO.scoped:
+  def toSVGText: Task[String] = ZIO.scoped:
     for
       os <- ZIO.acquireRelease(ZIO.succeed(new ByteArrayOutputStream))(os => ZIO.succeedBlocking(os.close()))
       reader <- ZIO.attempt(SourceStringReader(puml.diagram))

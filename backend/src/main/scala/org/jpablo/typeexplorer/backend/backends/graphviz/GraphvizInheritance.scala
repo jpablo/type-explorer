@@ -16,6 +16,9 @@ import org.jpablo.typeexplorer.shared.models.Namespace
 import java.io.File
 
 
+extension (diagram: InheritanceDiagram)
+  def toGraphviz(name: String) = GraphvizInheritance.toGraph(name, diagram)
+
 object GraphvizInheritance:
 
   def toGraph(name: String, diagram: InheritanceDiagram): Graph =
@@ -64,8 +67,7 @@ object GraphvizInheritance:
 
 end GraphvizInheritance
 
-
 @main
 def graphVizInheritanceExample: File =
   val g = toGraph("laminar",  InheritanceExamples.laminar)
-  Graphviz.fromGraph(g).height(500).render(Format.SVG_STANDALONE).toFile(new File("examples/laminar.svg"))
+  Graphviz.fromGraph(g).height(500).render(Format.SVG_STANDALONE).toFile(new File("examples/laminar1.svg"))
