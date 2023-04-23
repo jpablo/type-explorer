@@ -1,7 +1,6 @@
 package org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab
 
 import com.raquo.laminar.api.L.*
-import com.raquo.laminar.nodes.ChildNode
 import org.jpablo.typeexplorer.shared.models
 import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.svgGroupElement.*
 import org.scalajs.dom
@@ -11,7 +10,7 @@ class InheritanceSvgDiagram(svg: dom.SVGElement):
   // (more styles are set in style.scss)
 
   private def setDimensions(w: Int, h: Int): Unit =
-    svg.setStyle("width" -> s"${w}px", "height" -> s"${h}px")
+    svg.updateStyle("width" -> s"${w}px", "height" -> s"${h}px")
 
   private def width = svg.getBoundingClientRect().width
   private def height = svg.getBoundingClientRect().height

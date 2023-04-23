@@ -19,8 +19,9 @@ private def CanvasContainer(inheritanceSvgDiagram: Signal[InheritanceSvgDiagram]
       // remove elements not present in the new diagram (such elements did exist in the previous diagram)
       state.canvasSelectionR.update(_ -- (selection -- diagram.elementSymbols))
       diagram.toLaminar,
-    onClick.preventDefault.compose(_.withCurrentValueOf(inheritanceSvgDiagram)) -->
-      handleSvgClick(state).tupled,
+
+    onClick.preventDefault
+      .compose(_.withCurrentValueOf(inheritanceSvgDiagram)) --> handleSvgClick(state).tupled,
   )
 
 private def handleSvgClick
@@ -29,13 +30,10 @@ private def handleSvgClick
 
   // 1. Identify and parse the element that was clicked
   val selectedElement: Option[SvgGroupElement] =
-    ev.target.asInstanceOf[dom.Element].path
+    ev.target.asInstanceOf[dom.Element]
+      .path
       .takeWhile(_.isInstanceOf[dom.SVGElement])
-      .map { e =>
-        val r = SvgGroupElement.fromPlantUMLSVG(e)
-        println(r)
-        r
-      }
+      .map(SvgGroupElement.fromDomSvgElement)
       .collectFirst { case Some(g) => g }
 
   // 2. Update selected element's appearance
