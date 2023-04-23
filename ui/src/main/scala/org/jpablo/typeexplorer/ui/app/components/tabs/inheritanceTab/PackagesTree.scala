@@ -3,6 +3,8 @@ package org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab
 
 import com.raquo.airstream.core.EventStream
 import com.raquo.laminar.api.L.*
+import com.raquo.laminar.api.features.unitArrows
+import com.raquo.laminar.nodes.ReactiveHtmlElement
 import org.jpablo.typeexplorer.shared.inheritance.InheritanceDiagram
 import org.jpablo.typeexplorer.shared.models.{Namespace, NamespaceKind, Symbol}
 import org.jpablo.typeexplorer.ui.app.components.state.InheritanceTabState
@@ -10,49 +12,50 @@ import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.svgGroupEle
 import org.jpablo.typeexplorer.ui.widgets.{Collapsable, CollapsableTree}
 
 import scala.scalajs.js.URIUtils.encodeURIComponent
+import org.scalajs.dom
+import org.scalajs.dom.HTMLAnchorElement
 
 object PackagesTree:
-
-
   /** Builds a collapsable tree based on the given inheritance diagram.
     *
     * @param diagrams The diagram
     * @return A List of trees, one for each top level package in the diagram: e.g. ["com..., ", "java.io..."]
     */
-  def apply(inheritanceTabState: InheritanceTabState, diagrams: EventStream[InheritanceDiagram]): EventStream[List[HtmlElement]] =
+  def apply(state: InheritanceTabState, diagrams: EventStream[InheritanceDiagram]): EventStream[List[HtmlElement]] =
     val openState = Var(Map.empty[String, Boolean])
     for diagram <- diagrams yield
       for tree <- diagram.toTrees yield
         CollapsableTree(tree)(
-          renderNode = renderPackage(inheritanceTabState),
-          renderLeaf = renderNamespace(inheritanceTabState, Collapsable.Control(startOpen = false, openState)),
+          renderNode = renderPackage(state),
+          renderLeaf = renderNamespace(state, Collapsable.Control(startOpen = false, openState)),
           Collapsable.Control(startOpen = true, openState)
         )
 
-  private def renderPackage(inheritanceTabState: InheritanceTabState)(packageLabel: String, packagePath: List[String]) =
+  private def renderPackage(state: InheritanceTabState)(packageLabel: String, packagePath: List[String]) =
+    val packagePrefix = packagePath.mkString("/")
     div(
       cls := "whitespace-nowrap inline-block w-full focus:bg-blue-100",
       tabIndex := 0,
       a(
         packageLabel,
-        inContext { thisNode =>
-          onClick --> { _ =>
-            // TODO: move "/" to a named constant
-            val prefix = packagePath.mkString("/")
-            // Rather hacky: find visible children with the given prefix
-            for parent <- thisNode.ref.path.find(_.classList.contains("te-package-name")) do
-              val symbols = parent.querySelectorAll(s"[id ^= '$prefix']").map(e => Symbol(e.id))
-              inheritanceTabState.activeSymbols.extend(symbols)
-              inheritanceTabState.canvasSelection.extend(symbols.toSet)
-          }
-        }
+        inContext: thisNode =>
+          onClick --> selectAllSymbolsInPackage(thisNode, state, packagePrefix)
       )
     )
 
-  private def renderNamespace(inheritanceTabState: InheritanceTabState, mkControl: String => Collapsable.Control)(s: String, ns: Namespace) =
+  private def selectAllSymbolsInPackage(thisNode: ReactiveHtmlElement[HTMLAnchorElement], state: InheritanceTabState, packagePrefix: String): Unit =
+    // TODO: move "/" to a named constant
+    // Rather hacky: find visible children with the given prefix
+    for parent <- thisNode.ref.path.find(_.classList.contains(Collapsable.packageNameClass)) do
+      val symbols = parent.querySelectorAll(s"[id ^= '$packagePrefix']").map(e => Symbol(e.id))
+      state.activeSymbols.extend(symbols)
+      state.canvasSelection.extend(symbols.toSet)
+
+
+  private def renderNamespace(state: InheritanceTabState, mkControl: String => Collapsable.Control)(s: String, ns: Namespace) =
     val symStr = ns.symbol.toString
     val uri = encodeURIComponent(symStr)
-    val isActive = inheritanceTabState.activeSymbolsR.signal.map(_.contains(ns.symbol))
+    val isActive = state.activeSymbolsR.signal.map(_.contains(ns.symbol))
 
     Collapsable(
       nodeLabel =
@@ -71,8 +74,8 @@ object PackagesTree:
             title := symStr,
             ns.displayName,
             onClick --> { _ =>
-              inheritanceTabState.activeSymbols.toggle(ns.symbol)
-              inheritanceTabState.canvasSelection.toggle(ns.symbol)
+              state.activeSymbols.toggle(ns.symbol)
+              state.canvasSelection.toggle(ns.symbol)
             }
           ),
         ),

@@ -8,6 +8,8 @@ import org.jpablo.typeexplorer.ui.app.toggle
 
 object Collapsable:
 
+  val packageNameClass = "te-package-name"
+
   class Control private (val $isOpen: Signal[Boolean], val toggle: Observer[Boolean])
 
   // This is Sub-Var or Var-projection of sorts.
@@ -23,7 +25,7 @@ object Collapsable:
 
   def apply(nodeLabel: HtmlElement, nodeContents: Seq[HtmlElement], control: Control) =
     div(
-      cls := "collapsable-wrapper whitespace-nowrap cursor-pointer te-package-name",
+      cls := s"collapsable-wrapper whitespace-nowrap cursor-pointer $packageNameClass",
       if nodeContents.isEmpty then
         span(cls := "bi inline-block w-5")
       else

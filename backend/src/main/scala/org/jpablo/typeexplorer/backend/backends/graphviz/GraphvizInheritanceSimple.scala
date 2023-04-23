@@ -3,7 +3,6 @@ package org.jpablo.typeexplorer.backend.backends.graphviz
 import guru.nidi.graphviz.attribute.Color
 import guru.nidi.graphviz.engine.{Format, Graphviz}
 import guru.nidi.graphviz.model.Graph
-import org.jpablo.typeexplorer.shared.models
 import zio.*
 
 
