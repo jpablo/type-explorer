@@ -70,10 +70,7 @@ object WebApp extends ZIOAppDefault:
     case req @ Method.POST -> !! / Routes.inheritanceDiagram =>
       for
         body <- req.body.asString
-        response <- inheritanceDiagram(body, { (_, diagram) =>
-          diagram.toGraphviz("name").toSVG
-        }
-        )
+        response <- inheritanceDiagram(body, (ireq, diagram) => diagram.toGraphviz("name", ireq.symbols.toMap, ireq.options).toSVG)
 //        response <- inheritanceDiagram(body, (ireq, diagram) => diagram.toPlantUML(ireq.symbols.toMap, ireq.options).toSVGText)
       yield response
 

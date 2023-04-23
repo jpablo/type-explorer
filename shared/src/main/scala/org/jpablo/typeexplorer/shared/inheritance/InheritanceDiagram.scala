@@ -1,17 +1,15 @@
 package org.jpablo.typeexplorer.shared.inheritance
 
+import org.jpablo.typeexplorer.protos.TextDocumentsWithSourceSeq
+import org.jpablo.typeexplorer.shared.models.{Method, Namespace, NamespaceKind, Symbol, SymbolRange}
 import org.jpablo.typeexplorer.shared.tree.Tree
 import zio.json.*
 import zio.prelude.{Commutative, Identity}
 
-import scala.meta.internal.semanticdb.SymbolInformation.Kind
-import scala.meta.internal.semanticdb.{ClassSignature, MethodSignature, Scope, Signature, SymbolInformation, SymbolOccurrence, TextDocument, TextDocuments, Type, TypeRef, TypeSignature, ValueSignature}
-import org.jpablo.typeexplorer.shared.models.{Method, Namespace, NamespaceKind, Symbol, SymbolRange}
-
+import scala.annotation.targetName
 import scala.meta.internal.semanticdb
-import java.util.jar.Attributes.Name
-import scala.annotation.{tailrec, targetName}
-import org.jpablo.typeexplorer.protos.{TextDocumentsWithSource, TextDocumentsWithSourceSeq}
+import scala.meta.internal.semanticdb.SymbolInformation.Kind
+import scala.meta.internal.semanticdb.{ClassSignature, Signature, SymbolInformation, SymbolOccurrence, Type, TypeRef}
 
 type Arrow = (Symbol, Symbol)
 
@@ -121,7 +119,7 @@ case class InheritanceDiagram(
   def childrenOf(symbol: Symbol): InheritanceDiagram = allRelated(Set(symbol), directChildren)
 
 
-  lazy val toTrees: List[Tree[Namespace]] =
+  def toTrees: List[Tree[Namespace]] =
     val paths =
       for ns <- namespaces.toList yield
         (ns.symbol.toString.split("/").init.toList, ns.displayName, ns)
