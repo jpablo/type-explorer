@@ -1,21 +1,10 @@
 package org.jpablo.typeexplorer.backend.backends.graphviz
 
 import guru.nidi.graphviz.attribute.Color
-import guru.nidi.graphviz.model.Graph
-import net.sourceforge.plantuml.{FileFormat, FileFormatOption, SourceStringReader}
-import org.jpablo.typeexplorer.backend.semanticdb.All
-import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, InheritanceExamples, PlantUML, PlantumlInheritance}
-import org.jpablo.typeexplorer.shared.models
-import org.jpablo.typeexplorer.shared.models.{Method, Namespace, NamespaceKind}
-import zio.*
-import zio.ZIO.ZIOConstructor
 import guru.nidi.graphviz.engine.{Format, Graphviz}
-
-import java.io.ByteArrayOutputStream
-import java.nio.charset.Charset
-import java.nio.file
-import scala.meta.internal.semanticdb.{TextDocuments, TypeSignature}
-import scala.util.{Try, Using}
+import guru.nidi.graphviz.model.Graph
+import org.jpablo.typeexplorer.shared.models
+import zio.*
 
 
 type SvgText = String

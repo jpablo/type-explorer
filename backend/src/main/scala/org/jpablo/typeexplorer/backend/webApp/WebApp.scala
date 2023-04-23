@@ -1,18 +1,14 @@
 package org.jpablo.typeexplorer.backend.webApp
 
-import org.jpablo.typeexplorer.backend.backends.graphviz.toSVG
-import org.jpablo.typeexplorer.backend.backends.graphviz.toGraphviz
-import org.jpablo.typeexplorer.backend.backends.plantuml.toSVGText
-import org.jpablo.typeexplorer.backend.semanticdb.All
-import org.jpablo.typeexplorer.protos.{TextDocumentsWithSource, TextDocumentsWithSourceSeq}
-import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, InheritanceExamples, PlantUML, PlantumlInheritance, DiagramOptions}
-import org.jpablo.typeexplorer.shared.inheritance.toPlantUML
-import org.jpablo.typeexplorer.shared.models
-import org.jpablo.typeexplorer.shared.webApp.{InheritanceRequest, Routes}
+import org.jpablo.typeexplorer.backend.backends.graphviz.{toGraphviz, toSVG}
+//import org.jpablo.typeexplorer.backend.backends.plantuml.toSVGText
 import org.jpablo.typeexplorer.backend.textDocuments.readTextDocumentsWithSource
+import org.jpablo.typeexplorer.protos.TextDocumentsWithSourceSeq
+import org.jpablo.typeexplorer.shared.inheritance.InheritanceDiagram
+import org.jpablo.typeexplorer.shared.webApp.{InheritanceRequest, Routes}
 import org.json4s.*
 import org.json4s.native.Serialization
-import org.json4s.native.Serialization.{read, write}
+import org.json4s.native.Serialization.write
 import zhttp.http.*
 import zhttp.http.Middleware.cors
 import zhttp.http.middleware.Cors.CorsConfig
@@ -20,16 +16,11 @@ import zhttp.service.Server
 import zio.*
 import zio.ZIO.ZIOConstructor
 import zio.json.*
-import zio.prelude.AnySyntax
 import zio.stream.ZStream
 
-import java.io.File
-import java.net.URI
 import java.nio.file
 import java.nio.file.Paths
 import scala.io.Source
-import scala.meta.internal.semanticdb.TextDocuments
-import scala.util.Using
 import scala.util.matching.Regex
 
 object WebApp extends ZIOAppDefault:
@@ -79,7 +70,10 @@ object WebApp extends ZIOAppDefault:
     case req @ Method.POST -> !! / Routes.inheritanceDiagram =>
       for
         body <- req.body.asString
-        response <- inheritanceDiagram(body, (_, diagram) => diagram.toGraphviz("name").toSVG)
+        response <- inheritanceDiagram(body, { (_, diagram) =>
+          diagram.toGraphviz("name").toSVG
+        }
+        )
 //        response <- inheritanceDiagram(body, (ireq, diagram) => diagram.toPlantUML(ireq.symbols.toMap, ireq.options).toSVGText)
       yield response
 

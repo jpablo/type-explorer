@@ -1,6 +1,6 @@
 import org.scalajs.linker.interface.ModuleSplitStyle
 
-val scala3Version     = "3.3.0-RC3"
+val scala3Version     = "3.3.0-RC4"
 val scalametaVersion  = "4.7.5"
 val zioHttpVersion    = "2.0.0-RC11"
 val zioPreludeVersion = "1.0.0-RC16"
@@ -24,8 +24,8 @@ ThisBuild / scalacOptions ++= // Scala 3.x options
     "-Ysafe-init",
     "-language:implicitConversions",
     "-source:future",
-    "-deprecation"
-//    "-Wunused:imports" // Not stable yet in 3.3.0-RC2
+    "-deprecation",
+    "-Wunused:imports" // Not stable yet in 3.3.0-RC2
   )
 
 ThisBuild / assemblyMergeStrategy := { _ => MergeStrategy.first }

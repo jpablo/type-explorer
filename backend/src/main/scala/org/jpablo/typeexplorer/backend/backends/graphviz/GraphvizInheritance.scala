@@ -27,16 +27,17 @@ object GraphvizInheritance:
         .map(tpe => tpe.symbol -> toNode(tpe))
         .toMap
 
+    val arrows =
+      diagram.arrows.toSeq.map: (source, target) =>
+        nodes(source) `link` to(nodes(target))
+
     graph(name)
       .directed
       .graphAttr.`with`(Rank.dir(RankDir.BOTTOM_TO_TOP))
       .nodeAttr.`with`(Style.FILLED, Shape.RECT, Color.rgb("#b7c9e3").fill())
       .linkAttr.`with`(Arrow.EMPTY)
-      .`with`(
-        diagram.arrows.toSeq.map { case (source, target) =>
-          nodes(source) `link` to(nodes(target))
-        }*
-      )
+      .`with`(nodes.values.toSeq*)
+      .`with`(arrows*)
 
   private def toNode(box: Namespace): Node =
     import scalatags.Text.all.*
