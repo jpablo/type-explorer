@@ -34,14 +34,9 @@ object GraphvizInheritance:
     val declarations =
       filteredDiagram.toTrees.map(renderTree(diagramOptions, symbolOptions))
 
-    val nodes =
-      filteredDiagram.namespaces
-        .map(tpe => tpe.symbol -> node(tpe.symbol.toString))
-        .toMap
-
     val arrows =
       filteredDiagram.arrows.toSeq.map: (source, target) =>
-        nodes(source) `link` to(nodes(target))
+        node(source.toString) `link` to(node(target.toString))
 
     graph(name)
       .directed
@@ -51,13 +46,10 @@ object GraphvizInheritance:
       .`with`(declarations*)
       .`with`(arrows*)
 
-
   private def renderTree(diagramOptions: DiagramOptions, symbolOptions: Map[models.Symbol, Option[SymbolOptions]]): Tree[models.Namespace] => (LinkSource & LinkTarget) =
-    case Tree.Node(label, path, children: List[Tree[models.Namespace]]) =>
-      println((label, path))
-      // 'FontSize 20
-      // 'FontName "JetBrains Mono"
-      graph(path.mkString("/")).cluster
+    case Tree.Node(label, path, children) =>
+      val clusterName = path.mkString("/")
+      graph(clusterName).cluster
         .graphAttr.`with`(Label.html(label).locate(Location.BOTTOM))
         .`with`(
           children.map(renderTree(diagramOptions, symbolOptions))*
@@ -87,12 +79,12 @@ object GraphvizInheritance:
       else
         List.empty
 
-    val nodeData =
+    val nodeContents =
       table(border := 0, cBorder := 0, cPadding := 0, cSpacing := 0, //style:="ROUNDED", bgColor := "LIGHTBLUE",
         th(td(b(ns.displayName))),
         fields
       )
-    node(ns.symbol.toString).`with`(Label.html(nodeData.toString))
+    node(ns.symbol.toString).`with`(Label.html(nodeContents.toString))
 
   type PortId = String
 
