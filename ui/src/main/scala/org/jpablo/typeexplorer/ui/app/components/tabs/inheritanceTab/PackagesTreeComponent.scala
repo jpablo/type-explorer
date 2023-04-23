@@ -19,12 +19,13 @@ extension[A] (a: A)
 def PackagesTreeComponent(appState: AppState) =
   val showOptions = Var(false)
   val filterBySymbolName = Var("")
+  val state = appState.inheritanceTabState
   val filteredDiagram: EventStream[InheritanceDiagram] =
-    appState.inheritanceTabState.inheritanceDiagramR
+    state.inheritanceDiagramR
       .combineWith(
         appState.appConfig.signal.map(_.packagesOptions),
         filterBySymbolName.signal,
-        appState.inheritanceTabState.activeSymbolsR.signal
+        state.activeSymbolsR.signal
       )
       .changes
       .debounce(300)
@@ -72,5 +73,5 @@ def PackagesTreeComponent(appState: AppState) =
         ),
       Search(placeholder := "filter", controlled(value <-- filterBySymbolName, onInput.mapToValue --> filterBySymbolName)).small
     ),
-    div(cls := "overflow-auto", children <-- PackagesTree(appState.inheritanceTabState, filteredDiagram))
+    div(cls := "overflow-auto", children <-- PackagesTree(state, filteredDiagram))
   )

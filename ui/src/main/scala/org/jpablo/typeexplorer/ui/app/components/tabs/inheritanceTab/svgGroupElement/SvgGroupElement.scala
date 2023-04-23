@@ -1,7 +1,8 @@
-package org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab
+package org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.svgGroupElement
 
 import org.jpablo.typeexplorer.shared.models
 import org.scalajs.dom
+
 import scala.util.matching.Regex
 
 
@@ -25,6 +26,10 @@ sealed trait SvgGroupElement(val ref: dom.SVGGElement):
 
   def toggle(): Unit =
     if ref.classList.contains(selectedClass) then unselect() else select()
+
+object SvgGroupElement:
+  def fromPlantUMLSVG(e: dom.Element): Option[SvgGroupElement] =
+    NamespaceElement.from(e) orElse ClusterElement.from(e) orElse LinkElement.from(e)
 
 
 class NamespaceElement(ref: dom.SVGGElement) extends SvgGroupElement(ref):
