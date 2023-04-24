@@ -76,12 +76,11 @@ class InheritanceTabState(
     def updateSelectionOptions(f: SymbolOptions => SymbolOptions): Unit =
       val canvasSelection = canvasSelectionR.now()
       activeSymbolsR.update:
-        _.transform { case (sym, options) =>
+        _.transform: (sym, options) =>
           if canvasSelection.contains(sym) then
             Some(f(options.getOrElse(SymbolOptions())))
           else
             options
-        }
 
   /**
     * Modify `$activeSymbols` based on the given function `f`

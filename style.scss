@@ -5,7 +5,7 @@ label[for ^= show-ns-kind-] {
 
 svg {
   // clusters are packages
-  g[id ^= cluster_] {
+  g.cluster {
     &:hover {
       outline: 3px solid rgb(251 191 36);
       cursor: pointer;
@@ -17,7 +17,7 @@ svg {
   }
 
   // `elem_` are namespaces (aka classes, objects, traits, etc)
-  g[id ^= elem_] {
+  g.node {
     text {
       //font-family: 'JetBrains Mono', Monaco, monospace;
     }
@@ -28,7 +28,7 @@ svg {
     }
   }
 
-  g[id ^= link_] {
+  g.edge {
     polygon {
       fill: white;
     }
