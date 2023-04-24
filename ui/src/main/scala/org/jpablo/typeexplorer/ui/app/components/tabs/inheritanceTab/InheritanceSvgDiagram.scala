@@ -28,7 +28,7 @@ class InheritanceSvgDiagram(svg: dom.SVGElement):
     NamespaceElement.selectAll(svg)
 
   def clusterElements(cluster: ClusterElement) =
-    namespaceElements.filter(_.id.startsWith(cluster.idWithSlashes))
+    namespaceElements.filter(_.title.startsWith(cluster.title))
 
   def clusters =
     ClusterElement.selectAll(svg)

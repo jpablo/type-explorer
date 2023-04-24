@@ -6,12 +6,13 @@ import org.scalajs.dom
 
 sealed trait SvgGroupElement(val ref: dom.SVGGElement):
   def prefix : String
-  def box: Option[dom.SVGElement]
+//  def box: Option[dom.SVGElement]
   private def selectKey = "outline"
   private def selectStyle = "3px solid rgb(245 158 11)"
 
-  val id = ref.id.stripPrefix(prefix)
-  val symbol = models.Symbol(id)
+  val id = ref.id
+  def title = ref.getElementsByTagName("title").head.textContent
+  def symbol = models.Symbol(title)
   private val selectedClass = "te-selected"
 
   def select(): Unit =
@@ -34,10 +35,10 @@ class NamespaceElement(ref: dom.SVGGElement) extends SvgGroupElement(ref):
   def prefix = NamespaceElement.prefix
   private val boxTagName = "rect"
 
-  def box: Option[dom.SVGElement] =
-    ref.getElementsByTagName(boxTagName)
-      .find(_.getAttribute("id") == id)
-      .map(_.asInstanceOf[dom.SVGElement])
+//  def box: Option[dom.SVGElement] =
+//    ref.getElementsByTagName(boxTagName)
+//      .find(_.getAttribute("id") == id)
+//      .map(_.asInstanceOf[dom.SVGElement])
 
 object NamespaceElement:
   val prefix = "node"
@@ -54,6 +55,9 @@ object NamespaceElement:
 
 class ClusterElement(ref: dom.SVGGElement) extends SvgGroupElement(ref):
   def prefix = ClusterElement.prefix
+
+  override val title = super.title.stripPrefix("cluster_")
+
   private val boxTagName = "path"
   /** PlantUML "namespace" (aka cluster) ids can't contain slashes, so for now
     * they have dots (`a.b.c)`
@@ -61,7 +65,6 @@ class ClusterElement(ref: dom.SVGGElement) extends SvgGroupElement(ref):
     * in order to compare them we need the following method.
     * See: https://forum.plantuml.net/17150/namespace-with-slashes-in-the-name?show=17151#a17151
     */
-  val idWithSlashes = id.replace('.', '/')
 
   def box: Option[dom.SVGElement] =
     ref.getElementsByTagName(boxTagName)
@@ -70,7 +73,7 @@ class ClusterElement(ref: dom.SVGGElement) extends SvgGroupElement(ref):
 
 
 object ClusterElement:
-  val prefix = "cluster_"
+  val prefix = "clust"
   private val selector = s"g[id ^= $prefix]"
 
   def from(e: dom.Element): Option[ClusterElement] =

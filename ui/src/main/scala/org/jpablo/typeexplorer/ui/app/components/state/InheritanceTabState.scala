@@ -1,21 +1,13 @@
 package org.jpablo.typeexplorer.ui.app.components.state
 
-import com.raquo.airstream.core.EventStream
-import com.raquo.airstream.core.Observer
-import com.raquo.airstream.core.Signal
+import com.raquo.airstream.core.{EventStream, Signal}
 import com.raquo.airstream.state.Var
 import com.raquo.laminar.api.L.*
-import com.softwaremill.quicklens.*
-import io.laminext.syntax.core.{StoredString, storedString}
-import org.jpablo.typeexplorer.shared.inheritance.{DiagramOptions, SymbolOptions}
-import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, PlantumlInheritance}
+import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, SymbolOptions}
 import org.jpablo.typeexplorer.shared.models
-import org.jpablo.typeexplorer.ui.app.Path
-import org.scalajs.dom
-import zio.json.*
-import org.jpablo.typeexplorer.ui.app.toggle
 import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.InheritanceSvgDiagram
-import org.jpablo.typeexplorer.shared.webApp.ActiveSymbolsSeq
+import org.jpablo.typeexplorer.ui.app.toggle
+import org.scalajs.dom
 
 object InheritanceTabState:
   type ActiveSymbols = Map[models.Symbol, Option[SymbolOptions]]

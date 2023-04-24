@@ -73,7 +73,7 @@ def fetchInheritanceSVGDiagram(appState: AppState): EventStream[InheritanceSvgDi
         EventStream.fromValue(svg.svg().ref)
       else
         val body = InheritanceRequest(basePaths.map(_.toString), symbols.toList, options)
-        val req = Fetch.post(s"$basePath${Routes.inheritanceDiagram}", body.toJson)
+        val req = Fetch.post(s"$basePath${Routes.inheritance}", body.toJson)
         req.text.map { fetchResponse =>
           parser
             .parseFromString(fetchResponse.data, dom.MIMEType.`image/svg+xml`)

@@ -1,5 +1,6 @@
 package org.jpablo.typeexplorer.backend.webApp
 
+import guru.nidi.graphviz.model.Graph
 import org.jpablo.typeexplorer.backend.backends.graphviz.{toGraphviz, toSVG}
 //import org.jpablo.typeexplorer.backend.backends.plantuml.toSVGText
 import org.jpablo.typeexplorer.backend.textDocuments.readTextDocumentsWithSource
@@ -54,25 +55,32 @@ object WebApp extends ZIOAppDefault:
   // ----------
   // endpoints
   // ----------
-
-  def inheritanceDiagram(body: String, render: (InheritanceRequest[file.Path], InheritanceDiagram) => Task[String]) =
+  def buildDiagram(req: Request) =
     for
+      body <- req.body.asString
       ireq <- ZIO.from(body.fromJson[InheritanceRequest[file.Path]]).mapError(Throwable(_))
       docs <- readTextDocumentsWithSource(ireq.paths)
       symbols = ireq.symbols.map(_._1).toSet
-      diagram = InheritanceDiagram.from(docs).subdiagram(symbols)
-      svgText <- render(ireq, diagram)
     yield
-      Response.text(svgText).withContentType("image/svg+xml")
+      (ireq, InheritanceDiagram.from(docs).subdiagram(symbols))
+
+  def buildGraph(req: Request): Task[Graph] =
+    for (ireq, diagram) <- buildDiagram(req) yield
+      diagram.toGraphviz("name", ireq.symbols.toMap, ireq.options)
 
 
   private val appZ = Http.collectZIO[Request] {
-    case req @ Method.POST -> !! / Routes.inheritanceDiagram =>
-      for
-        body <- req.body.asString
-        response <- inheritanceDiagram(body, (ireq, diagram) => diagram.toGraphviz("name", ireq.symbols.toMap, ireq.options).toSVG)
-//        response <- inheritanceDiagram(body, (ireq, diagram) => diagram.toPlantUML(ireq.symbols.toMap, ireq.options).toSVGText)
-      yield response
+
+    case req @ Method.POST -> !! / Routes.inheritance =>
+      buildGraph(req)
+        .flatMap(_.toSVG)
+        .map(Response.text)
+        .map(_.withContentType("image/svg+xml"))
+
+    case req @ Method.POST -> !! / Routes.inheritanceDot =>
+      buildGraph(req)
+        .map(_.toString)
+        .map(Response.text)
 
     case req @ Method.GET -> !! / Routes.semanticdb =>
       toTaskOrBadRequest(getPath(req)): paths =>
