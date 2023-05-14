@@ -59,7 +59,7 @@ object GraphvizInheritance:
         )
 
     case Tree.Leaf(_, ns) =>
-      toNode(ns, diagramOptions, symbolOptions(ns.symbol))
+      renderNamespace(ns, diagramOptions, symbolOptions(ns.symbol))
 
   import scalatags.Text.all.*
   // Graphviz specific attributes
@@ -95,7 +95,7 @@ object GraphvizInheritance:
     case other => s"""($other)"""
 
 
-  private def toNode(ns: models.Namespace, diagramOptions: DiagramOptions, symbolOptions: Option[SymbolOptions]): Node =
+  private def renderNamespace(ns: models.Namespace, diagramOptions: DiagramOptions, symbolOptions: Option[SymbolOptions]): Node =
     val showFields = symbolOptions.map(_.showFields).getOrElse(diagramOptions.showFields)
     // val showSignatures = symbolOptions.map(_.showSignatures).getOrElse(diagramOptions.showSignatures)
     val fields =
@@ -107,7 +107,10 @@ object GraphvizInheritance:
             tr(
               td(
                 table(emptyStyle.copy(border = 1),
-                  for m <- ns.methods yield
+                  for
+                    m <- ns.methods
+                    if !diagramOptions.hiddenFields.contains(m.displayName)
+                  yield
                     tr(
                       td(cPadding := 0, align := "LEFT",
                         fontGV(monoFontFace, m.displayName)
