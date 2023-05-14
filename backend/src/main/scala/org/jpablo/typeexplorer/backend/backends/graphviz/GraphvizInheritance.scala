@@ -1,7 +1,7 @@
 package org.jpablo.typeexplorer.backend.backends.graphviz
 
 import guru.nidi.graphviz.attribute.*
-import guru.nidi.graphviz.attribute.Label.Location
+import guru.nidi.graphviz.attribute.Label.{Justification, Location}
 import guru.nidi.graphviz.attribute.Rank.RankDir
 import guru.nidi.graphviz.engine.{Format, Graphviz}
 import guru.nidi.graphviz.model.Factory.*
@@ -53,7 +53,7 @@ object GraphvizInheritance:
     case Tree.Node(label, path, children) =>
       val clusterName = path.mkString("/")
       graph(clusterName).cluster
-        .graphAttr.`with`(Label.html(label).locate(Location.BOTTOM))
+        .graphAttr.`with`(Label.html(label).locate(Location.BOTTOM).justify(Justification.LEFT))
         .`with`(
           children.map(renderTree(diagramOptions, symbolOptions))*
         )
@@ -106,7 +106,7 @@ object GraphvizInheritance:
           Some(
             tr(
               td(
-                table(emptyStyle.copy(border = 1),
+                table(emptyStyle.copy(border = 1, cellPadding = 3),
                   for
                     m <- ns.methods
                     if !diagramOptions.hiddenFields.contains(m.displayName)
@@ -127,7 +127,7 @@ object GraphvizInheritance:
       table(emptyStyle, bgColor := "#F1F1F1",//style:="ROUNDED",
         tr(td(
           // title
-          table(emptyStyle.copy(border = 1),
+          table(emptyStyle.copy(border = 1, cellPadding = 3),
             tr(
               td(
                 fontGV(monoFontFace, stereotype(ns))
