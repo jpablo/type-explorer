@@ -1,10 +1,8 @@
 package org.jpablo.typeexplorer.backend.webApp
 
-import guru.nidi.graphviz.model.Graph
 import org.jpablo.typeexplorer.backend.backends.graphviz.{toGraphviz, toSVG}
-//import org.jpablo.typeexplorer.backend.backends.plantuml.toSVGText
+import org.jpablo.typeexplorer.shared.inheritance.toPlantUML
 import org.jpablo.typeexplorer.backend.textDocuments.readTextDocumentsWithSource
-import org.jpablo.typeexplorer.protos.TextDocumentsWithSourceSeq
 import org.jpablo.typeexplorer.shared.inheritance.InheritanceDiagram
 import org.jpablo.typeexplorer.shared.webApp.{InheritanceRequest, Routes}
 import org.json4s.*
@@ -15,12 +13,10 @@ import zhttp.http.Middleware.cors
 import zhttp.http.middleware.Cors.CorsConfig
 import zhttp.service.Server
 import zio.*
-import zio.ZIO.ZIOConstructor
 import zio.json.*
 import zio.stream.ZStream
 
-import java.nio.file
-import java.nio.file.Paths
+import java.nio.file.{Path, Paths}
 import scala.io.Source
 import scala.util.matching.Regex
 
@@ -34,8 +30,8 @@ object WebApp extends ZIOAppDefault:
   val jarPath = Paths.get(getClass.getProtectionDomain.getCodeSource.getLocation.toURI.getPath)
   val staticPath = jarPath.getParent.getParent.resolve("static")
 
-  given JsonCodec[file.Path] =
-    JsonCodec.string.transform(file.Path.of(_), _.toString)
+  given JsonCodec[Path] =
+    JsonCodec.string.transform(Path.of(_), _.toString)
 
   private val staticRoutes = Http.collectHttp[Request] {
     case Method.GET -> !! =>
@@ -58,14 +54,14 @@ object WebApp extends ZIOAppDefault:
   def buildDiagram(req: Request) =
     for
       body <- req.body.asString
-      ireq <- ZIO.from(body.fromJson[InheritanceRequest[file.Path]]).mapError(Throwable(_))
+      ireq <- ZIO.from(body.fromJson[InheritanceRequest[Path]]).mapError(Throwable(_))
       docs <- readTextDocumentsWithSource(ireq.paths)
       symbols = ireq.symbols.map(_._1).toSet
     yield
       (ireq, InheritanceDiagram.from(docs).subdiagram(symbols))
 
-  def buildGraph(req: Request): Task[Graph] =
-    for (ireq, diagram) <- buildDiagram(req) yield
+  def buildGraph(req: Request) =
+    buildDiagram(req).map: (ireq, diagram) =>
       diagram.toGraphviz("name", ireq.symbols.toMap, ireq.options)
 
 
@@ -76,6 +72,12 @@ object WebApp extends ZIOAppDefault:
         .flatMap(_.toSVG)
         .map(Response.text)
         .map(_.withContentType("image/svg+xml"))
+
+    case req@Method.POST -> !! / Routes.inheritancePuml =>
+      buildDiagram(req)
+        .map: (ireq, diagram) =>
+          diagram.toPlantUML(ireq.symbols.toMap, ireq.options).diagram
+        .map(Response.text)
 
     case req @ Method.POST -> !! / Routes.inheritanceDot =>
       buildGraph(req)
@@ -129,13 +131,13 @@ object WebApp extends ZIOAppDefault:
   given formats: Formats =
     Serialization.formats(NoTypeHints)
 
-  private def readSource(path: file.Path): Task[String] = ZIO.scoped:
+  private def readSource(path: Path): Task[String] = ZIO.scoped:
     ZIO
       .acquireRelease(ZIO.attemptBlocking(Source.fromFile(path.toFile)))(s => ZIO.succeedBlocking(s.close()))
       .map(_.getLines().mkString("\n"))
 
-  private def getPath(req: Request): Option[List[file.Path]] =
-    getParam(req, "path").map(_.map(file.Path.of(_)))
+  private def getPath(req: Request): Option[List[Path]] =
+    getParam(req, "path").map(_.map(Path.of(_)))
 
   private def getParam(req: Request, name: String): Option[List[String]] =
     req.url.queryParams.get(name)

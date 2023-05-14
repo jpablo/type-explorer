@@ -16,6 +16,7 @@ case class InheritanceRequest[A](
 object Routes:
   val inheritance = "inheritance"
   val inheritanceDot = "inheritance.dot"
+  val inheritancePuml = "inheritance.puml"
   val semanticdb = "semanticdb"
   val classes = "classes"
   val source = "source"

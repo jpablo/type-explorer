@@ -41,7 +41,10 @@ object GraphvizInheritance:
     graph(name)
       .directed
       .graphAttr.`with`(Rank.dir(RankDir.BOTTOM_TO_TOP))
-      .nodeAttr.`with`(Style.FILLED, Shape.RECT, Color.rgb("#b7c9e3").fill)
+      .graphAttr.`with`("imagepath", "/Users/jpablo/proyectos/playground/type-explorer")
+      // https://graphviz.org/doc/info/shapes.html#html
+      // ...In effect, shape=plain is shorthand for shape=none width=0 height=0 margin=0...
+      .nodeAttr.`with`(Shape.PLAIN)
       .linkAttr.`with`(Arrow.EMPTY)
       .`with`(declarations*)
       .`with`(arrows*)
@@ -64,25 +67,75 @@ object GraphvizInheritance:
   private val cBorder  = attr("CELLBORDER")
   private val cPadding = attr("CELLPADDING")
   private val cSpacing = attr("CELLSPACING")
+  private val bgColor  = attr("BGCOLOR")
+  private val align  = attr("ALIGN")
+  private val sides  = attr("SIDES")
+  private val face  = attr("FACE")
+  private val fontGV: ConcreteHtmlTag[String] = tag("font")
+
+  case class TableStyle(border: Int, cellBorder: Int, cellPadding: Int, cellSpacing: Int)
+  implicit def tableStyleNode(t: TableStyle): Modifier =
+    List(border := t.border, cBorder := t.cellBorder, cPadding := t.cellPadding, cSpacing := t.cellSpacing)
+
+  val ts =
+    TableStyle(
+      border = 1,
+      cellBorder = 0,
+      cellPadding = 2,
+      cellSpacing = 0
+  )
+  val emptyStyle = TableStyle(0, 0, 0, 0)
+  val monoFontFace = face := "Monospace"
+
+  def stereotype(ns: models.Namespace) = ns.kind match
+    case models.NamespaceKind.Object => "(O)" //""" << (O, #44ad7d) >>"""
+    case models.NamespaceKind.PackageObject => "(P)" //""" << (P, lightblue) >>"""
+    case models.NamespaceKind.Trait => "(T)" //""" << (T, pink) >>"""
+    case models.NamespaceKind.Class => "(C)"
+    case other => s"""($other)"""
+
 
   private def toNode(ns: models.Namespace, diagramOptions: DiagramOptions, symbolOptions: Option[SymbolOptions]): Node =
     val showFields = symbolOptions.map(_.showFields).getOrElse(diagramOptions.showFields)
-//    val showSignatures = symbolOptions.map(_.showSignatures).getOrElse(diagramOptions.showSignatures)
+    // val showSignatures = symbolOptions.map(_.showSignatures).getOrElse(diagramOptions.showSignatures)
     val fields =
       if showFields then
-        for m <- ns.methods yield
-          tr(
-            td(
-              m.displayName
+        if ns.methods.isEmpty then
+          None
+        else
+          Some(
+            tr(
+              td(
+                table(emptyStyle.copy(border = 1),
+                  for m <- ns.methods yield
+                    tr(
+                      td(cPadding := 0, align := "LEFT",
+                        fontGV(monoFontFace, m.displayName)
+                      )
+                    )
+                )
+              )
             )
           )
       else
-        List.empty
+        None
 
     val nodeContents =
-      table(border := 0, cBorder := 0, cPadding := 0, cSpacing := 0, //style:="ROUNDED", bgColor := "LIGHTBLUE",
-        th(td(b(ns.displayName))),
-        fields
+      table(emptyStyle, bgColor := "#F1F1F1",//style:="ROUNDED",
+        tr(td(
+          // title
+          table(emptyStyle.copy(border = 1),
+            tr(
+              td(
+                fontGV(monoFontFace, stereotype(ns))
+              ),
+              td(
+                fontGV(monoFontFace, ns.displayName)
+              )
+            )
+          )
+        )),
+        fields,
       )
     node(ns.symbol.toString).`with`(Label.html(nodeContents.toString))
 
