@@ -102,9 +102,15 @@ def fetchCallGraphSVGDiagram(diagram: Signal[(DiagramType, Path)]): EventStream[
 //      errorNode = doc.querySelector("parsererror")
   yield doc
 
-def fetchSourceCode(paths: Signal[Path])(docPath: Path) =
+def fetchSourceCode(paths: Signal[Path])(docPath: Path): EventStream[String] =
   for
     path <- paths
     response    <- fetchBase(s"source?path=${encodeURIComponent(path.toString + "/" + docPath)}").text
+  yield
+    response.data
+
+def fetchSourceCode2(docPath: Path): EventStream[String] =
+  for
+    response <- fetchBase(s"source?path=${encodeURIComponent(docPath.toString)}").text
   yield
     response.data

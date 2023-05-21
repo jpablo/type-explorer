@@ -24,6 +24,11 @@ def Toolbar(appState: AppState, inheritanceSvgDiagram: Signal[InheritanceSvgDiag
           dom.window.navigator.clipboard.writeText(diagram.toSVG)
         }
       ).tiny,
+      Button("Copy state",
+        onClick --> { _ =>
+          dom.window.navigator.clipboard.writeText(appState.toString)
+        }
+      ).tiny,
       Button("fit",
         onClick.compose(_.sample(inheritanceSvgDiagram)) --> (_.fitToRect(containerBoundingClientRect))
       ).tiny,

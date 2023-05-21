@@ -41,7 +41,6 @@ object GraphvizInheritance:
     graph(name)
       .directed
       .graphAttr.`with`(Rank.dir(RankDir.BOTTOM_TO_TOP))
-      .graphAttr.`with`("imagepath", "/Users/jpablo/proyectos/playground/type-explorer")
       // https://graphviz.org/doc/info/shapes.html#html
       // ...In effect, shape=plain is shorthand for shape=none width=0 height=0 margin=0...
       .nodeAttr.`with`(Shape.PLAIN)
@@ -52,10 +51,15 @@ object GraphvizInheritance:
   private def renderTree(diagramOptions: DiagramOptions, symbolOptions: Map[models.Symbol, Option[SymbolOptions]]): Tree[models.Namespace] => (LinkSource & LinkTarget) =
     case Tree.Node(label, path, children) =>
       val clusterName = path.mkString("/")
-      graph(clusterName).cluster
-        .graphAttr.`with`(Label.html(label).locate(Location.BOTTOM).justify(Justification.LEFT))
+      graph(clusterName)
+        .cluster
+        .graphAttr.`with`(
+          Label.html(label)
+            .locate(Location.BOTTOM)
+            .justify(Justification.LEFT)
+        )
         .`with`(
-          children.map(renderTree(diagramOptions, symbolOptions))*
+          children.map(renderTree(diagramOptions, symbolOptions)) *
         )
 
     case Tree.Leaf(_, ns) =>
