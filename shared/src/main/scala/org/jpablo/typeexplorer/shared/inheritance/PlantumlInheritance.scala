@@ -105,13 +105,14 @@ object PlantumlInheritance:
       case other                       => s""" <<$other>>"""
     val showFields = symbolOptions.map(_.showFields).getOrElse(diagramOptions.showFields)
     val showSignatures = symbolOptions.map(_.showSignatures).getOrElse(diagramOptions.showSignatures)
+    val filteredMethods = ns.methods.filterNot(m => diagramOptions.hiddenFields.contains(m.displayName))
     val fields =
       if showFields then
         if showSignatures then
-          ns.methods.map(renderField(0)).mkString(" {\n", "\n", "\n}\n")
+          filteredMethods
+            .map(renderField(0)).mkString(" {\n", "\n", "\n}\n")
         else
-          ns.methods
-          .filterNot(m => diagramOptions.hiddenFields.contains(m.displayName))
+          filteredMethods
           .groupBy(_.displayName)
           .toList.sortBy(_._1)
           .map((_, ms) => renderField(ms.length)(ms.head)).mkString(" {\n", "\n", "\n}\n")
