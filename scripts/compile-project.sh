@@ -5,5 +5,5 @@ project=${1:-""}
 if [ -z "$project" ]; then
   sbt 'set ThisBuild / semanticdbEnabled := true; clean; compile'
 else
-  sbt "project $project; set semanticdbEnabled := true; clean; compile"
+  sbt "project $project; set semanticdbEnabled := true; clean; compile; Test / compile"
 fi

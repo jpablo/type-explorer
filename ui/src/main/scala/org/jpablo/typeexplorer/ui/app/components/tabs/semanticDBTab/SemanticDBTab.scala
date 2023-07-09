@@ -2,8 +2,8 @@ package org.jpablo.typeexplorer.ui.app.components.tabs.semanticDBTab
 
 import com.raquo.laminar.api.L.*
 import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
+import org.jpablo.typeexplorer.shared.models.{Namespace, Symbol}
 import org.jpablo.typeexplorer.ui.app.Path
-import org.jpablo.typeexplorer.ui.app.client.fetchSourceCode
 import org.jpablo.typeexplorer.ui.app.components.tabs.SourceCodeTab
 
 
@@ -21,7 +21,7 @@ def SemanticDBTab(
   val sourceCodeR =
     selectedDocumentR
       .collect { case (_, Some(TextDocumentsWithSource(_, _, textDocs))) => textDocs.headOption }
-      .map(_.map(doc => Path(doc.uri)))
+      .map(_.map(doc => Namespace(Symbol.empty, "") -> Path(doc.uri)))
 
   div(
     cls := "grid h-full grid-cols-3",

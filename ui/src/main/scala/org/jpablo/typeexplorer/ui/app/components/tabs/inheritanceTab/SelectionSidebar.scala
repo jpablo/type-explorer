@@ -4,6 +4,8 @@ import com.raquo.laminar.api.L.*
 import com.raquo.laminar.api.features.unitArrows
 import com.softwaremill.quicklens.*
 import org.jpablo.typeexplorer.shared.inheritance.InheritanceDiagram
+import org.jpablo.typeexplorer.shared.models.Namespace
+import org.jpablo.typeexplorer.ui.app
 import org.jpablo.typeexplorer.ui.app.Path
 import org.jpablo.typeexplorer.ui.app.components.state.AppState
 import org.jpablo.typeexplorer.ui.app.components.tabs.SourceCodeTab
@@ -14,7 +16,7 @@ import org.jpablo.typeexplorer.ui.app.client.fetchSourceCode2
 private def SelectionSidebar(appState: AppState, inheritanceSvgDiagram: Signal[InheritanceSvgDiagram]) =
   val state = appState.inheritanceTabState
   val selectionEmpty = state.canvasSelectionR.signal.map(_.isEmpty)
-  val sourceCodeR: Var[Option[Path]] = Var(None)
+  val sourceCodeR: Var[Option[(Namespace, Path)]] = Var(None)
 
   div(cls := "row-start-1 row-end-3 border-l border-slate-300 col-start-4 col-end-5",
     ul(cls := "menu menu-compact",
@@ -74,21 +76,19 @@ private def SelectionSidebar(appState: AppState, inheritanceSvgDiagram: Signal[I
         a("Source", disabled <-- selectionEmpty,
           onClick.compose(_.sample(state.inheritanceDiagramR)) --> { diagram =>
             val symbol = state.canvasSelectionR.now().head
-            val ns = diagram.nsBySymbol(symbol)
-            (ns.basePath, ns.documentURI) match
-              case (Some(basePath), Some(d)) =>
-                val bp = basePath.split("/").dropRight(1).mkString("/") + "/"
-                val p = org.jpablo.typeexplorer.ui.app.Path(bp + d)
-                sourceCodeR.set(Some(p))
-              case _ =>
+            val ns: Namespace = diagram.nsBySymbol(symbol)
+            ns.fullPath match
+              case Some(path) =>
+                sourceCodeR.set(Some(ns, app.Path(path)))
+              case None =>
                 println(s"no basePath or documentURI for symbol $symbol")
           }
         )
       ),
 
     ),
-    div(
-      cls := "semanticdb-source-container h-full overflow-auto border-l border-slate-300",
-      SourceCodeTab(sourceCodeR.signal.changes)
-    )
+//    div(
+//      cls := "semanticdb-source-container h-full overflow-auto border-l border-slate-300",
+//      SourceCodeTab(sourceCodeR.signal.changes)
+//    )
   )

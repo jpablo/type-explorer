@@ -51,6 +51,12 @@ case class Namespace(
   lazy val inTest =
     documentURI.exists(_.contains("src/test"))
 
+  def fullPath: Option[String] =
+    (basePath, documentURI) match
+      case (Some(basePath), Some(documentURI)) =>
+        Some(basePath.split("/").dropRight(1).mkString("/") + "/" + documentURI)
+      case _ => None
+
 
 case class Method(symbol: Symbol, displayName: String, returnType: Option[Namespace]) derives JsonCodec
 

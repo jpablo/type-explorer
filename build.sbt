@@ -1,6 +1,6 @@
 import org.scalajs.linker.interface.ModuleSplitStyle
 
-val scala3Version     = "3.3.0-RC4"
+val scala3Version     = "3.3.0"
 val scalametaVersion  = "4.7.5"
 val zioHttpVersion    = "2.0.0-RC11"
 val zioPreludeVersion = "1.0.0-RC16"
@@ -115,7 +115,8 @@ lazy val backend =
       assembly/assemblyJarName := "type-explorer-uber-backend.jar",
       Compile / discoveredMainClasses := Seq(),
       libraryDependencies ++= Seq(
-      "io.d11"                   %% "zhttp"             % "2.0.0-RC11",
+//      "io.d11"                   %% "zhttp"             % "2.0.0-RC11",
+      "dev.zio"                  %% "zio-http"          % "3.0.0-RC1",
       "dev.zio"                  %% "zio-logging"       % "2.1.11",
       "dev.zio"                  %% "zio-logging-slf4j" % "2.1.11",
       "dev.zio"                  %% "zio-logging-slf4j-bridge" % "2.1.11",

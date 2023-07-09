@@ -8,10 +8,16 @@ import org.jpablo.typeexplorer.shared.webApp.{InheritanceRequest, Routes}
 import org.json4s.*
 import org.json4s.native.Serialization
 import org.json4s.native.Serialization.write
-import zhttp.http.*
-import zhttp.http.Middleware.cors
-import zhttp.http.middleware.Cors.CorsConfig
-import zhttp.service.Server
+
+import zio.http.*
+import zio.http.HttpAppMiddleware.cors
+import zio.http.internal.middlewares.Cors.CorsConfig
+
+//import zhttp.http.*
+//import zhttp.http.Middleware.cors
+//import zhttp.http.middleware.Cors.CorsConfig
+//import zhttp.service.Server
+
 import zio.*
 import zio.json.*
 import zio.stream.ZStream
@@ -39,8 +45,7 @@ object WebApp extends ZIOAppDefault:
 
     case Method.GET -> !! / "assets" / path =>
       val file = staticPath.resolve(s"assets/$path").toFile
-      val response = Http.fromStream(ZStream.fromFile(file))
-
+      val response = Http.fromFile(file)
       path match
         case extension("css") => response.withContentType("text/css")
         case extension("js")  => response.withContentType("application/javascript")
