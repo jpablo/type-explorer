@@ -22,11 +22,11 @@ def AppHeader(basePaths: Signal[List[Path]]): Div =
       NavItem(
         span(
           child.text <--
-            basePaths.map: ps =>
+            basePaths.map: (ps: List[Path]) =>
               ps.headOption.map(_.toString).getOrElse("None") + (if ps.size > 1 then s" (+${ps.size - 1})" else "")
         ),
         ul(cls := "menu-compact rounded-box",
-          children <-- basePaths.map(_.tail.map(s => li(a(s.toString))))
+          children <-- basePaths.map(_.drop(1).map(s => li(a(s.toString))))
         ),
       ),
       NavItem(

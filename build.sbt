@@ -1,6 +1,6 @@
 import org.scalajs.linker.interface.ModuleSplitStyle
 
-val scala3Version     = "3.3.0-RC3"
+val scala3Version     = "3.3.0"
 val scalametaVersion  = "4.8.2"
 val zioHttpVersion    = "2.0.0-RC11"
 val zioPreludeVersion = "1.0.0-RC16"
@@ -24,8 +24,8 @@ ThisBuild / scalacOptions ++= // Scala 3.x options
     "-Ysafe-init",
     "-language:implicitConversions",
     "-source:future",
-    "-deprecation"
-//    "-Wunused:imports" // Not stable yet in 3.3.0-RC2
+    "-deprecation",
+    "-Wunused:imports"
   )
 
 ThisBuild / assemblyMergeStrategy := { _ => MergeStrategy.first }
@@ -116,6 +116,7 @@ lazy val backend =
       Compile / discoveredMainClasses := Seq(),
       libraryDependencies ++= Seq(
       "io.d11"                   %% "zhttp"             % "2.0.0-RC11",
+//      "dev.zio"                  %% "zio-http"          % "3.0.0-RC1",
       "dev.zio"                  %% "zio-logging"       % "2.1.11",
       "dev.zio"                  %% "zio-logging-slf4j" % "2.1.11",
       "dev.zio"                  %% "zio-logging-slf4j-bridge" % "2.1.11",
