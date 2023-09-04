@@ -5,6 +5,7 @@ val scalametaVersion  = "4.8.2"
 val zioHttpVersion    = "2.0.0-RC11"
 val zioPreludeVersion = "1.0.0-RC16"
 val zioVersion        = "2.0.10"
+val laminarVersion    = "16.0.0"
 
 // TODO:
 // - Maybe create a plugin to correctly set semanticdbTargetRoot for each subproject?
@@ -161,7 +162,7 @@ lazy val ui =
       // ),
       libraryDependencies ++= Seq(
         "org.scala-js" %%% "scalajs-dom" % "2.2.0",
-        "com.raquo" %%% "laminar" % "15.0.0",
+        "com.raquo" %%% "laminar" % laminarVersion,
         "io.laminext" %%% "fetch" % "0.15.0"
       ),
       excludeDependencies ++= Seq(
