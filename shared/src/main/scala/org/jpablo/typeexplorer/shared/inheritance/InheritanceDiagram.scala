@@ -5,16 +5,37 @@ import zio.json.*
 import zio.prelude.{Commutative, Identity}
 
 import scala.meta.internal.semanticdb.SymbolInformation.Kind
-import scala.meta.internal.semanticdb.{ClassSignature, MethodSignature, Scope, Signature, SymbolInformation, SymbolOccurrence, TextDocument, TextDocuments, Type, TypeRef, TypeSignature, ValueSignature}
-import org.jpablo.typeexplorer.shared.models.{Method, Namespace, NamespaceKind, Symbol, SymbolRange}
+import scala.meta.internal.semanticdb.{
+  ClassSignature,
+  MethodSignature,
+  Scope,
+  Signature,
+  SymbolInformation,
+  SymbolOccurrence,
+  TextDocument,
+  TextDocuments,
+  Type,
+  TypeRef,
+  TypeSignature,
+  ValueSignature
+}
+import org.jpablo.typeexplorer.shared.models.{
+  Method,
+  Namespace,
+  NamespaceKind,
+  Symbol,
+  SymbolRange
+}
 
 import scala.meta.internal.semanticdb
 import java.util.jar.Attributes.Name
 import scala.annotation.{tailrec, targetName}
-import org.jpablo.typeexplorer.protos.{TextDocumentsWithSource, TextDocumentsWithSourceSeq}
+import org.jpablo.typeexplorer.protos.{
+  TextDocumentsWithSource,
+  TextDocumentsWithSourceSeq
+}
 
 type Arrow = (Symbol, Symbol)
-
 
 /** A simplified representation of entities and subtype relationships
   *
@@ -29,21 +50,22 @@ case class InheritanceDiagram(
     namespaces.map(_.symbol)
 
   lazy val directParents: Symbol => Set[Symbol] =
-    arrows.groupBy(_._1)
-    .transform((_, ss) => ss.map(_._2))
-    .withDefaultValue(Set.empty)
+    arrows
+      .groupBy(_._1)
+      .transform((_, ss) => ss.map(_._2))
+      .withDefaultValue(Set.empty)
 
   private lazy val directChildren: Symbol => Set[Symbol] =
-    arrows.groupBy(_._2)
-    .transform((_, ss) => ss.map(_._1))
-    .withDefaultValue(Set.empty)
+    arrows
+      .groupBy(_._2)
+      .transform((_, ss) => ss.map(_._1))
+      .withDefaultValue(Set.empty)
 
   private lazy val nsBySymbol: Map[Symbol, Namespace] =
     namespaces.groupMapReduce(_.symbol)(identity)((_, b) => b)
 
   private lazy val nsByKind: Map[NamespaceKind, Set[Namespace]] =
     namespaces.groupBy(_.kind)
-
 
   // /**
   //   * Follow all arrows related to the given symbol.
@@ -85,10 +107,9 @@ case class InheritanceDiagram(
 
   private def arrowsForSymbols(symbols: Set[Symbol]) =
     for
-      arrow@(a, b) <- arrows
+      arrow @ (a, b) <- arrows
       if (symbols contains a) && (symbols contains b)
-    yield
-      arrow
+    yield arrow
 
   /** Creates a diagram containing the given symbols and the arrows between them.
     */
@@ -137,7 +158,6 @@ case class InheritanceDiagram(
       namespaces = namespaces ++ other.namespaces
     )
 
-
   /** Creates a new subdiagram with all the symbols containing the given String.
     */
   def filterBySymbolName(str: String): InheritanceDiagram =
@@ -146,17 +166,13 @@ case class InheritanceDiagram(
   def filterBy(p: Namespace => Boolean): InheritanceDiagram =
     subdiagram(namespaces.filter(p).map(_.symbol))
 
-
 end InheritanceDiagram
-
-
 
 object InheritanceDiagram:
 
   given Commutative[InheritanceDiagram] with Identity[InheritanceDiagram] with
     def identity = InheritanceDiagram.empty
     def combine(l: => InheritanceDiagram, r: => InheritanceDiagram) = l ++ r
-
 
   // TODO: make this configurable
   val excluded =
@@ -191,7 +207,7 @@ object InheritanceDiagram:
         signature    <- symbolInfo.signature.asNonEmpty.toSeq
         clsSignature <- signature match
           case cs: ClassSignature => List(cs)
-          case _ =>  List.empty
+          case _                  => List.empty
         nsKind = translateKind(symbolInfo.kind)
         declarations = clsSignature
           .declarations
@@ -262,7 +278,6 @@ object InheritanceDiagram:
     case Kind.TRAIT          => NamespaceKind.Trait
 //    case other               => NamespaceKind.Other(other.toString)
 
-
   private def method(allSymbols: Map[Symbol, SymbolInformation])(decl: Symbol) =
     Method(
       symbol      = decl,
@@ -280,4 +295,3 @@ object InheritanceDiagram:
       str
 
 end InheritanceDiagram
-

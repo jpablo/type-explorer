@@ -1,22 +1,16 @@
 package org.jpablo.typeexplorer.ui.app.components.state
 
-import com.raquo.airstream.core.EventStream
 import com.raquo.airstream.core.Signal
-import com.raquo.airstream.eventbus.EventBus
 import com.raquo.airstream.ownership.OneTimeOwner
 import com.raquo.airstream.state.Var
 import com.raquo.laminar.api.L.*
+import com.softwaremill.quicklens.*
 import io.laminext.syntax.core.{StoredString, storedString}
-import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
-import org.jpablo.typeexplorer.shared.inheritance.{DiagramOptions, InheritanceDiagram, PlantumlInheritance}
-import org.jpablo.typeexplorer.shared.models
+import org.jpablo.typeexplorer.shared.inheritance.InheritanceDiagram
 import org.jpablo.typeexplorer.ui.app.Path
-import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.InheritanceSvgDiagram
+import org.jpablo.typeexplorer.ui.app.components.state.InheritanceTabState.ActiveSymbols
 import org.scalajs.dom
 import zio.json.*
-import com.softwaremill.quicklens.*
-import org.jpablo.typeexplorer.shared.webApp.ActiveSymbolsSeq
-import InheritanceTabState.ActiveSymbols
 
 
 def persistent[A: JsonCodec](storedString: StoredString, initial: A)(using Owner): Var[A] =
@@ -73,6 +67,3 @@ object AppState:
           appState0.basePaths.flatMap(fetchDiagram)
         )
     )
-
-
-

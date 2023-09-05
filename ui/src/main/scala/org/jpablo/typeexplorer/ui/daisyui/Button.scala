@@ -3,7 +3,6 @@ package org.jpablo.typeexplorer.ui.daisyui
 import com.raquo.laminar.api.L.*
 import com.raquo.laminar.nodes.ReactiveHtmlElement
 import org.scalajs.dom.html
-import scala.annotation.targetName
 
 type ReactiveElement = ReactiveHtmlElement[html.Element]
 

@@ -1,16 +1,16 @@
 package org.jpablo.typeexplorer.backend.webApp
 
 import org.jpablo.typeexplorer.backend.backends.plantuml.toSVG
-import org.jpablo.typeexplorer.backend.semanticdb.All
-import org.jpablo.typeexplorer.protos.{TextDocumentsWithSource, TextDocumentsWithSourceSeq}
-import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, InheritanceExamples, PlantUML, PlantumlInheritance}
-import org.jpablo.typeexplorer.shared.inheritance.toPlantUML
-import org.jpablo.typeexplorer.shared.models
-import org.jpablo.typeexplorer.shared.webApp.{InheritanceRequest, Routes}
 import org.jpablo.typeexplorer.backend.textDocuments.readTextDocumentsWithSource
+import org.jpablo.typeexplorer.protos.TextDocumentsWithSourceSeq
+import org.jpablo.typeexplorer.shared.inheritance.{
+  InheritanceDiagram,
+  toPlantUML
+}
+import org.jpablo.typeexplorer.shared.webApp.{InheritanceRequest, Routes}
 import org.json4s.*
 import org.json4s.native.Serialization
-import org.json4s.native.Serialization.{read, write}
+import org.json4s.native.Serialization.write
 import zhttp.http.*
 import zhttp.http.Middleware.cors
 import zhttp.http.middleware.Cors.CorsConfig
@@ -18,16 +18,11 @@ import zhttp.service.Server
 import zio.*
 import zio.ZIO.ZIOConstructor
 import zio.json.*
-import zio.prelude.AnySyntax
 import zio.stream.ZStream
 
-import java.io.File
-import java.net.URI
 import java.nio.file
 import java.nio.file.Paths
 import scala.io.Source
-import scala.meta.internal.semanticdb.TextDocuments
-import scala.util.Using
 import scala.util.matching.Regex
 
 object WebApp extends ZIOAppDefault:
@@ -71,8 +66,7 @@ object WebApp extends ZIOAppDefault:
         diagram = InheritanceDiagram.from(docs).subdiagram(symbols)
         puml = diagram.toPlantUML(ireq.symbols.toMap, ireq.options)
         svgText <- puml.toSVG("laminar")
-      yield
-        Response.text(svgText).withContentType("image/svg+xml")
+      yield Response.text(svgText).withContentType("image/svg+xml")
 
     case req @ Method.GET -> !! / Routes.semanticdb =>
       toTaskOrBadRequest(getPath(req)): paths =>
@@ -83,28 +77,26 @@ object WebApp extends ZIOAppDefault:
             Response(body = ch)
               .withContentType(HeaderValues.applicationOctetStream)
 
-    case req@Method.GET -> !! / "semanticdb.json" =>
+    case req @ Method.GET -> !! / "semanticdb.json" =>
       toTaskOrBadRequest(getPath(req)): paths =>
         readTextDocumentsWithSource(paths)
           .map(write)
           .map(Response.json)
 
-
-    case req@Method.GET -> !! / "semanticdb.textproto" =>
+    case req @ Method.GET -> !! / "semanticdb.textproto" =>
       toTaskOrBadRequest(getPath(req)): paths =>
         readTextDocumentsWithSource(paths)
           .map(_.toProtoString)
           .map(Response.text)
 
-
-    case req@Method.GET -> !! / Routes.classes =>
+    case req @ Method.GET -> !! / Routes.classes =>
       toTaskOrBadRequest(getPath(req)): paths =>
         readTextDocumentsWithSource(paths)
           .map(InheritanceDiagram.from)
           .map(_.toJson)
           .map(Response.json)
 
-    case req@Method.GET -> !! / Routes.source =>
+    case req @ Method.GET -> !! / Routes.source =>
       val firstPath = getPath(req).flatMap(_.headOption)
       toTaskOrBadRequest(firstPath): path =>
         readSource(path).map(Response.text)
@@ -123,7 +115,9 @@ object WebApp extends ZIOAppDefault:
 
   private def readSource(path: file.Path): Task[String] = ZIO.scoped:
     ZIO
-      .acquireRelease(ZIO.attemptBlocking(Source.fromFile(path.toFile)))(s => ZIO.succeedBlocking(s.close()))
+      .acquireRelease(ZIO.attemptBlocking(Source.fromFile(path.toFile)))(s =>
+        ZIO.succeedBlocking(s.close())
+      )
       .map(_.getLines().mkString("\n"))
 
   private def getPath(req: Request): Option[List[file.Path]] =
@@ -134,7 +128,7 @@ object WebApp extends ZIOAppDefault:
 
   private def toTaskOrBadRequest[A](oa: Option[A])(f: A => Task[Response]): Task[Response] =
     oa match
-      case None => ZIO.succeed(badRequest)
+      case None    => ZIO.succeed(badRequest)
       case Some(a) => f(a)
 
   private lazy val corsConfig =

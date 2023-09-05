@@ -12,7 +12,6 @@ enum DiagramType:
   case Inheritance
   case CallGraph
 
-
 def AppHeader(basePaths: Signal[List[Path]]): Div =
   div(
     cls := "border-b border-slate-300",
@@ -23,11 +22,11 @@ def AppHeader(basePaths: Signal[List[Path]]): Div =
         span(
           child.text <--
             basePaths.map: (ps: List[Path]) =>
-              ps.headOption.map(_.toString).getOrElse("None") + (if ps.size > 1 then s" (+${ps.size - 1})" else "")
-        ),
-        ul(cls := "menu-compact rounded-box",
-          children <-- basePaths.map(_.drop(1).map(s => li(a(s.toString))))
-        ),
+              ps.headOption
+                .map(_.toString)
+                .getOrElse("None") + (if ps.size > 1 then s" (+${ps.size - 1})"
+                                      else "")
+        )
       ),
       NavItem(
         label(
