@@ -46,10 +46,8 @@ class InheritanceSvgDiagram(svg: dom.SVGElement):
   def toLaminar =
     foreignSvgElement(svg)
 
-  def toSVG: String =
+  def toSVGText: String =
     svg.outerHTML
-
 
 object InheritanceSvgDiagram:
   val empty = InheritanceSvgDiagram(svg.svg().ref)
-
