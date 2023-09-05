@@ -8,16 +8,15 @@ import org.jpablo.typeexplorer.ui.daisyui.*
 import com.raquo.laminar.api.features.unitArrows
 import com.raquo.laminar.nodes.ReactiveHtmlElement
 import org.scalajs.dom.{HTMLDivElement, HTMLElement}
-import org.jpablo.typeexplorer.shared.inheritance.{
-  InheritanceDiagram,
-  toPlantUML
-}
+import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, toPlantUML}
+import org.jpablo.typeexplorer.ui.app.components.state.InheritanceTabState.ActiveSymbols
 
 def Toolbar(
     appState: AppState,
     inheritanceSvgDiagram: Signal[InheritanceSvgDiagram],
     containerBoundingClientRect: => dom.DOMRect
 ) =
+  val state = appState.inheritanceTabState
   val modifySelection = modifyLens[AppConfig]
   div(
     cls := "flex items-center gap-4 ml-2",
@@ -40,7 +39,7 @@ def Toolbar(
     Join(
       Button(
         "remove all",
-        onClick --> appState.inheritanceTabState.activeSymbols.clear()
+        onClick --> state.activeSymbols.clear()
       ).tiny.amend(cls := "join-item"),
       div(
         cls := "dropdown dropdown-hover",
@@ -65,13 +64,13 @@ def Toolbar(
               "plantuml",
               onClick.compose(
                 _.sample(
-                  appState.inheritanceTabState.inheritanceDiagramR,
-                  appState.inheritanceTabState.activeSymbolsR.signal
+                  state.fullInheritanceDiagramR,
+                  state.activeSymbolsR.signal,
+                  appState.appConfig.signal.map(_.diagramOptions)
                 )
-              ) --> { (diagram: InheritanceDiagram, symbols) =>
-                val sd = diagram.subdiagram(symbols.map(_._1).toSet)
+              ) --> { case (fullDiagram: InheritanceDiagram, symbols: ActiveSymbols, options) =>
                 dom.window.navigator.clipboard.writeText(
-                  sd.toPlantUML(symbols.toMap).diagram
+                  fullDiagram.subdiagram(symbols.keySet).toPlantUML(symbols, options).diagram
                 )
               }
             )

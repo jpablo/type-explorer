@@ -23,10 +23,10 @@ object InheritanceTabState:
 import InheritanceTabState.ActiveSymbols
 
 class InheritanceTabState(
-  val activeSymbolsR     : Var[ActiveSymbols] = Var(Map.empty),
-  val inheritanceDiagramR: Signal[InheritanceDiagram] = Signal.fromValue(InheritanceDiagram.empty),
+  val activeSymbolsR         : Var[ActiveSymbols] = Var(Map.empty),
+  val fullInheritanceDiagramR: Signal[InheritanceDiagram] = Signal.fromValue(InheritanceDiagram.empty),
   // this should be a subset of $activeSymbols' keys
-  val canvasSelectionR   : Var[Set[models.Symbol]] = Var(Set.empty),
+  val canvasSelectionR       : Var[Set[models.Symbol]] = Var(Set.empty),
 ):
   object canvasSelection:
     def toggle(symbol: models.Symbol): Unit =
@@ -115,7 +115,7 @@ class InheritanceTabState(
     * Updates $activeSymbols with the given function `f` and the current canvas selection.
     */
   private def addSelectionWith[E <: dom.Event](f: (InheritanceDiagram, models.Symbol) => InheritanceDiagram, ep: EventProp[E]) =
-    val combined = inheritanceDiagramR.combineWith(canvasSelectionR.signal)
+    val combined = fullInheritanceDiagramR.combineWith(canvasSelectionR.signal)
     ep.compose(_.sample(combined)) --> { (diagram, selection) =>
       if selection.nonEmpty then
         val diagram1 = selection.foldLeft(InheritanceDiagram.empty)((acc, s) => f(diagram, s) ++ acc)

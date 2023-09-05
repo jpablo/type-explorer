@@ -62,9 +62,9 @@ object WebApp extends ZIOAppDefault:
         body <- req.body.asString
         ireq <- ZIO.from(body.fromJson[InheritanceRequest[file.Path]]).mapError(Throwable(_))
         docs <- readTextDocumentsWithSource(ireq.paths)
-        symbols = ireq.symbols.map(_._1).toSet
+        symbols = ireq.activeSymbols.map(_._1).toSet
         diagram = InheritanceDiagram.from(docs).subdiagram(symbols)
-        puml = diagram.toPlantUML(ireq.symbols.toMap, ireq.options)
+        puml = diagram.toPlantUML(ireq.activeSymbols.toMap, ireq.options)
         svgText <- puml.toSVG("laminar")
       yield Response.text(svgText).withContentType("image/svg+xml")
 

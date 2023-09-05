@@ -71,7 +71,7 @@ object InheritanceTab:
     val showOptions = Var(false)
     val filterBySymbolName = Var("")
     val filteredDiagram: EventStream[InheritanceDiagram] =
-      appState.inheritanceTabState.inheritanceDiagramR
+      appState.inheritanceTabState.fullInheritanceDiagramR
         .combineWith(
           appState.appConfig.signal.map(_.packagesOptions),
           filterBySymbolName.signal,
@@ -255,7 +255,7 @@ object InheritanceTab:
             disabled <-- selectionEmpty,
             onClick.compose(
               _.sample(
-                inheritanceTabState.inheritanceDiagramR,
+                inheritanceTabState.fullInheritanceDiagramR,
                 inheritanceSvgDiagram
               )
             ) -->
@@ -268,7 +268,7 @@ object InheritanceTab:
             "Select children",
             onClick.compose(
               _.sample(
-                inheritanceTabState.inheritanceDiagramR,
+                inheritanceTabState.fullInheritanceDiagramR,
                 inheritanceSvgDiagram
               )
             ) -->

@@ -8,9 +8,9 @@ import java.nio.file
 type ActiveSymbolsSeq = List[(Symbol, Option[SymbolOptions])]
 
 case class InheritanceRequest[A](
-  paths  : List[A],
-  symbols: ActiveSymbolsSeq,
-  options: DiagramOptions = DiagramOptions(),
+  paths        : List[A],
+  activeSymbols: ActiveSymbolsSeq,
+  options      : DiagramOptions = DiagramOptions(),
 ) derives JsonCodec
 
 
