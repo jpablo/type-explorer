@@ -7,7 +7,7 @@ import io.laminext.syntax.core.*
 import com.softwaremill.quicklens.*
 import org.jpablo.typeexplorer.ui.daisyui.*
 import org.jpablo.typeexplorer.shared.models
-import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, PlantumlInheritance}
+import org.jpablo.typeexplorer.shared.inheritance.InheritanceDiagram
 import org.jpablo.typeexplorer.ui.app.toggleWith
 
 

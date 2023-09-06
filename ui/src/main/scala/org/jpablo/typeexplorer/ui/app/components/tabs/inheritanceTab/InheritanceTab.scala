@@ -1,18 +1,11 @@
 package org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab
 
-import com.raquo.airstream.core.{EventStream, Observer, Signal}
+import com.raquo.airstream.core.Signal
 import com.raquo.laminar.api.L.*
 import com.raquo.laminar.api.features.unitArrows
 import com.raquo.laminar.nodes.ReactiveHtmlElement
-import com.softwaremill.quicklens.*
 import io.laminext.syntax.core.*
-import org.jpablo.typeexplorer.shared.inheritance.InheritanceDiagram
-import org.jpablo.typeexplorer.shared.models
-import org.jpablo.typeexplorer.ui.app.components.state.InheritanceTabState.ActiveSymbols
-import org.jpablo.typeexplorer.ui.app.components.state.{AppConfig, AppState, InheritanceTabState, PackagesOptions}
-import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.svgGroupElement.*
-import org.jpablo.typeexplorer.ui.app.toggleWith
-import org.jpablo.typeexplorer.ui.daisyui.*
+import org.jpablo.typeexplorer.ui.app.components.state.AppState
 import org.jpablo.typeexplorer.ui.widgets.Icons
 import org.scalajs.dom
 import org.scalajs.dom.HTMLDivElement

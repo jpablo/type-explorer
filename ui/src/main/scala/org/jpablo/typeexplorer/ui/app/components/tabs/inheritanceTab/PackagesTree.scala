@@ -2,26 +2,18 @@ package org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab
 
 
 import com.raquo.airstream.core.EventStream
-import com.raquo.airstream.core.Observer
-import com.raquo.airstream.core.Signal
-import com.raquo.airstream.eventbus.EventBus
 import com.raquo.laminar.api.L.*
 import com.raquo.laminar.nodes.ReactiveHtmlElement
-import com.softwaremill.quicklens.*
-import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
-import org.jpablo.typeexplorer.shared.tree.Tree
 import org.jpablo.typeexplorer.shared.inheritance.InheritanceDiagram
 import org.jpablo.typeexplorer.shared.models.{Namespace, NamespaceKind, Symbol}
-import org.jpablo.typeexplorer.ui.app.components.state.AppState
 import org.jpablo.typeexplorer.ui.app.components.state.InheritanceTabState
 import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.svgGroupElement.path
 import org.jpablo.typeexplorer.ui.widgets.{Collapsable, CollapsableTree}
 
 import scalajs.js
 import scalajs.js.URIUtils.encodeURIComponent
-import org.jpablo.typeexplorer.ui.daisyui.*
 import org.scalajs.dom
-import org.scalajs.dom.{HTMLAnchorElement, MouseEvent, html}
+import org.scalajs.dom.HTMLAnchorElement
 
 object PackagesTree:
 

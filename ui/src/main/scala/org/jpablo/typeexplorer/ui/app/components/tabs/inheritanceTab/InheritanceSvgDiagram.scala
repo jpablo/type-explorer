@@ -1,7 +1,6 @@
 package org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab
 
 import com.raquo.laminar.api.L.*
-import com.raquo.laminar.nodes.ChildNode
 import org.jpablo.typeexplorer.shared.models
 import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.svgGroupElement.{ClusterElement, LinkElement, NamespaceElement, removeStyle, updateStyle}
 import org.scalajs.dom
