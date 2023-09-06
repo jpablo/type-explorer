@@ -1,12 +1,11 @@
-package org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab
+package org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.svgGroupElement
 
 import org.jpablo.typeexplorer.shared.models
 import org.scalajs.dom
-import scala.util.matching.Regex
 
 sealed trait SvgGroupElement(val ref: dom.SVGGElement):
   def prefix: String
-  def box: Option[dom.SVGElement]
+//  def box: Option[dom.SVGElement]
   private def selectKey = "outline"
   private def selectStyle = "3px solid rgb(245 158 11)"
 
@@ -16,7 +15,7 @@ sealed trait SvgGroupElement(val ref: dom.SVGGElement):
 
   def select(): Unit =
     ref.classList.add(selectedClass)
-    ref.setStyle(selectKey -> selectStyle)
+    ref.updateStyle(selectKey -> selectStyle)
 
   def unselect(): Unit =
     ref.classList.remove(selectedClass)
@@ -25,15 +24,20 @@ sealed trait SvgGroupElement(val ref: dom.SVGGElement):
   def toggle(): Unit =
     if ref.classList.contains(selectedClass) then unselect() else select()
 
+object SvgGroupElement:
+  def fromDomSvgElement(e: dom.Element): Option[SvgGroupElement] =
+    NamespaceElement.from(e) orElse ClusterElement.from(e) orElse LinkElement.from(e)
+
+
 class NamespaceElement(ref: dom.SVGGElement) extends SvgGroupElement(ref):
   def prefix = NamespaceElement.prefix
   private val boxTagName = "rect"
 
-  def box: Option[dom.SVGElement] =
-    ref
-      .getElementsByTagName(boxTagName)
-      .find(_.getAttribute("id") == id)
-      .map(_.asInstanceOf[dom.SVGElement])
+//  def box: Option[dom.SVGElement] =
+//    ref
+//      .getElementsByTagName(boxTagName)
+//      .find(_.getAttribute("id") == id)
+//      .map(_.asInstanceOf[dom.SVGElement])
 
 object NamespaceElement:
   val prefix = "elem_"
@@ -82,11 +86,11 @@ class LinkElement(ref: dom.SVGGElement) extends SvgGroupElement(ref):
 
   override def select(): Unit =
     for el <- ref.children do
-      el.setStyle("stroke" -> "rgb(245 158 11)", "stroke-width" -> "3.0")
+      el.updateStyle("stroke" -> "rgb(245 158 11)", "stroke-width" -> "3.0")
 
   override def unselect(): Unit =
     for el <- ref.children do
-      el.setStyle("stroke" -> "#181818", "stroke-width" -> "1.0")
+      el.updateStyle("stroke" -> "#181818", "stroke-width" -> "1.0")
 
 object LinkElement:
   val prefix = "link_"
@@ -116,13 +120,16 @@ extension (e: dom.Element)
   def fill = e.getAttribute("fill")
   def fill_=(c: String) = e.setAttribute("fill", c)
 
-  private def stylePattern(styleName: String): Regex =
-    s"$styleName:([^;]*;)".r
+  def styleMap: Map[String, String] =
+    styleToMap(e.getAttribute("style"))
 
-  def setStyle(keyValues: (String, String)*): Unit =
-    val style0: String | Null = e.getAttribute("style")
-    val style = if style0 == null then "" else style0
-    val styleMap =
+  private def mapToStyle(m: Map[String, String]): String =
+    m.map(_ + ":" + _).mkString(";")
+
+  private def styleToMap(style: String | Null): Map[String, String] =
+    if style == null || style.isEmpty
+      then Map.empty
+    else
       style
         .split(";")
         .filterNot(_.isEmpty)
@@ -131,15 +138,12 @@ extension (e: dom.Element)
           arr.head -> arr.tail.headOption.getOrElse("")
         }
         .toMap
-    val m2 = styleMap ++ keyValues.toMap
-    val newStyle = m2.map { case (k, v) => s"$k:$v" }.mkString(";")
-    e.setAttribute("style", newStyle)
+
+  def replaceStyle(keyValues: (String, String)*): Unit =
+    e.setAttribute("style", mapToStyle(keyValues.toMap))
+
+  def updateStyle(keyValues: (String, String)*): Unit =
+    e.setAttribute("style", mapToStyle(e.styleMap ++ keyValues.toMap))
 
   def removeStyle(styleName: String): Unit =
-    if getStyle(styleName).isDefined then setStyle(styleName -> "")
-
-  def getStyle(styleName: String): Option[String] =
-    for
-      style <- Option(e.getAttribute("style"))
-      rMatch <- stylePattern(styleName).findFirstMatchIn(style)
-    yield rMatch.group(1)
+    replaceStyle((e.styleMap - styleName).toList*)

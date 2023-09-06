@@ -61,7 +61,7 @@ case class InheritanceDiagram(
       .transform((_, ss) => ss.map(_._1))
       .withDefaultValue(Set.empty)
 
-  private lazy val nsBySymbol: Map[Symbol, Namespace] =
+  lazy val nsBySymbol: Map[Symbol, Namespace] =
     namespaces.groupMapReduce(_.symbol)(identity)((_, b) => b)
 
   private lazy val nsByKind: Map[NamespaceKind, Set[Namespace]] =

@@ -1,6 +1,6 @@
 package org.jpablo.typeexplorer.backend.webApp
 
-import org.jpablo.typeexplorer.backend.backends.plantuml.toSVG
+import org.jpablo.typeexplorer.backend.backends.plantuml.toSVGText
 import org.jpablo.typeexplorer.backend.textDocuments.readTextDocumentsWithSource
 import org.jpablo.typeexplorer.protos.TextDocumentsWithSourceSeq
 import org.jpablo.typeexplorer.shared.inheritance.{
@@ -65,8 +65,9 @@ object WebApp extends ZIOAppDefault:
         symbols = ireq.activeSymbols.map(_._1).toSet
         diagram = InheritanceDiagram.from(docs).subdiagram(symbols)
         puml = diagram.toPlantUML(ireq.activeSymbols.toMap, ireq.options)
-        svgText <- puml.toSVG("laminar")
-      yield Response.text(svgText).withContentType("image/svg+xml")
+        svgText <- puml.toSVGText("laminar")
+      yield
+        Response.text(svgText).withContentType("image/svg+xml")
 
     case req @ Method.GET -> !! / Routes.semanticdb =>
       toTaskOrBadRequest(getPath(req)): paths =>

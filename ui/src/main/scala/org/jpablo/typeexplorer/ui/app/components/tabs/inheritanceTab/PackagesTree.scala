@@ -14,6 +14,7 @@ import org.jpablo.typeexplorer.shared.inheritance.InheritanceDiagram
 import org.jpablo.typeexplorer.shared.models.{Namespace, NamespaceKind, Symbol}
 import org.jpablo.typeexplorer.ui.app.components.state.AppState
 import org.jpablo.typeexplorer.ui.app.components.state.InheritanceTabState
+import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.svgGroupElement.path
 import org.jpablo.typeexplorer.ui.widgets.{Collapsable, CollapsableTree}
 
 import scalajs.js

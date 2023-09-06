@@ -16,6 +16,9 @@ import org.jpablo.typeexplorer.shared.models.Namespace
 import java.io.File
 
 
+extension (diagram: InheritanceDiagram)
+  def toGraphviz(name: String) = GraphvizInheritance.toGraph(name, diagram)
+
 object GraphvizInheritance:
 
   def toGraph(name: String, diagram: InheritanceDiagram): Graph =
