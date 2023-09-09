@@ -12,5 +12,5 @@ object Join:
   def apply(mods: ReactiveHtmlElement[HTMLElement]*): Join =
     div(
       cls := "join",
-      mods.map(_.amend(cls := ""))
+      mods.map(_.amend(cls := "join-item"))
     )

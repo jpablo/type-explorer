@@ -40,7 +40,7 @@ def Toolbar(
       Button(
         "remove all",
         onClick --> state.activeSymbols.clear()
-      ).tiny.amend(cls := "join-item"),
+      ).tiny,
       div(
         cls := "dropdown dropdown-hover",
         label(
@@ -83,11 +83,11 @@ def Toolbar(
         onClick.compose(_.sample(inheritanceSvgDiagram)) --> { diagram =>
           diagram.fitToRect(containerBoundingClientRect)
         }
-      ).tiny.amend(cls := "join-item"),
+      ).tiny,
       Button(
         "zoom +",
         onClick.compose(_.sample(inheritanceSvgDiagram)) --> (_.zoom(1.1))
-      ).tiny.amend(cls := "join-item")
+      ).tiny
     )
   )
 

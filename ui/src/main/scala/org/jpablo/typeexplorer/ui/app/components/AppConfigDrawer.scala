@@ -40,7 +40,7 @@ def AppConfigDrawer(appConfig: Var[AppConfig]) =
   div(cls := "drawer-side",
     label(cls := "drawer-overlay", forId := "drawer-1"),
 
-    form(cls := "p-4 w-96 bg-base-100 text-base-content flex flex-col space-y-4",
+    form(cls := "p-4 w-96 bg-base-100 text-base-content flex flex-col space-y-4 h-full",
 
       h1(cls := "drawer-title text-xl font-bold",
         "Settings"

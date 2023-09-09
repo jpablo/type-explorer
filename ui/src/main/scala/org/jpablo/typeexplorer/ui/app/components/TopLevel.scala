@@ -1,14 +1,11 @@
 package org.jpablo.typeexplorer.ui.app.components
 
-import com.raquo.airstream.state.Var
 import com.raquo.laminar.api.L.*
-import org.jpablo.typeexplorer.shared.models
+import io.laminext.syntax.core.*
+import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
 import org.jpablo.typeexplorer.ui.app.components.state.AppState
 import org.jpablo.typeexplorer.ui.app.components.tabs.TabsArea
 import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.InheritanceSvgDiagram
-import org.jpablo.typeexplorer.ui.app.toggle
-import io.laminext.syntax.core.*
-import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
 
 def TopLevel(
   appState             : AppState,
@@ -18,7 +15,7 @@ def TopLevel(
   div(
     cls := "drawer drawer-end",
     input(idAttr := "drawer-1", tpe := "checkbox", cls := "drawer-toggle"),
-    div(cls := "drawer-content flex flex-col h-full",
+    div(cls := "drawer-content flex flex-col h-screen",
       AppHeader(appState.basePaths),
       TabsArea(appState, inheritanceSvgDiagram, documents),
       AppFooter,
