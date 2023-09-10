@@ -1,17 +1,12 @@
 package org.jpablo.typeexplorer.ui.app.components.tabs
 
 import com.raquo.laminar.api.L.*
-import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
-import org.jpablo.typeexplorer.shared.inheritance.InheritanceDiagram
-import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.{InheritanceTab, InheritanceSvgDiagram}
-import org.jpablo.typeexplorer.ui.app.components.tabs.semanticDBTab.SemanticDBTab
-import org.scalajs.dom
-import org.jpablo.typeexplorer.ui.app.Path
-import org.jpablo.typeexplorer.shared.models.Symbol
-import org.jpablo.typeexplorer.ui.app.components.state.InheritanceTabState
-import org.jpablo.typeexplorer.ui.app.components.state.AppState
-import org.jpablo.typeexplorer.ui.daisyui.*
 import io.laminext.syntax.core.*
+import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
+import org.jpablo.typeexplorer.ui.app.components.state.AppState
+import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.{InheritanceSvgDiagram, InheritanceTab}
+import org.jpablo.typeexplorer.ui.app.components.tabs.semanticDBTab.SemanticDBTab
+import org.jpablo.typeexplorer.ui.daisyui.*
 
 def TabsArea(
   appState: AppState,
@@ -28,7 +23,6 @@ def TabsArea(
       cls := "mt-2 -mb-px",
       inheritance.NavItem,
       appState.appConfig.signal.map(_.advancedMode).childWhenTrue(semanticDB.NavItem),
-      div(cls :="tab tab-lifted mr-6 flex-1 cursor-default [--tab-border-color:transparent]")
     ),
 
     TabContent(

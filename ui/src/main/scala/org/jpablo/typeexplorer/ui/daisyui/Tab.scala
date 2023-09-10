@@ -6,7 +6,7 @@ import org.scalajs.dom
 
 
 def NavTabs(mods: Modifier[ReactiveHtmlElement.Base]*) =
-  div(cls := "tabs z-10 -mb-px", mods)
+  div(cls := "tabs", mods)
 
 def TabContent(mods: Modifier[ReactiveHtmlElement.Base]*) =
   div(mods)

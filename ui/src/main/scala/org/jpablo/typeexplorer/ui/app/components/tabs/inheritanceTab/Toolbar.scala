@@ -75,7 +75,6 @@ def Toolbar(
               }
             )
           )
-//          li(a("graphviz"))
         )
       ),
       Button(
