@@ -1,14 +1,11 @@
 package org.jpablo.typeexplorer.ui.app
 
 import com.raquo.laminar.api.L.*
-import org.jpablo.typeexplorer.shared.models.Symbol
 import org.jpablo.typeexplorer.ui.app.client.{fetchDocuments, fetchInheritanceDiagram, fetchInheritanceSVGDiagram}
-import org.jpablo.typeexplorer.ui.app.components.state.{AppState, InheritanceTabState}
 import org.jpablo.typeexplorer.ui.app.components.TopLevel
-import org.scalajs.dom.document
-import zio.ZEnvironment
+import org.jpablo.typeexplorer.ui.app.components.state.AppState
 import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.InheritanceSvgDiagram
-import zio.json.*
+import org.scalajs.dom.document
 
 object MainJS:
 

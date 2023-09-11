@@ -262,7 +262,7 @@ object InheritanceDiagram:
     case Kind.PACKAGE_OBJECT => NamespaceKind.PackageObject
     case Kind.CLASS          => NamespaceKind.Class
     case Kind.TRAIT          => NamespaceKind.Trait
-//    case other               => NamespaceKind.Other(other.toString)
+    case _                   => ???
 
   private def method(allSymbols: Map[Symbol, SymbolInformation])(decl: Symbol) =
     Method(

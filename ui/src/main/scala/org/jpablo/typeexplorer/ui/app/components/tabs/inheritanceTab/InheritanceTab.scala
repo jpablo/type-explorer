@@ -22,7 +22,6 @@ object InheritanceTab:
       CanvasContainer(inheritanceSvgDiagram, appState.inheritanceTabState)
 
     val showPackagesTree = Var(false)
-    val middleColumn = showPackagesTree.signal.switch("3 / 4", "2 / 4")
 
     // --- grid container: 4 columns, 2 rows ---
     div(
@@ -35,8 +34,8 @@ object InheritanceTab:
         appState,
         inheritanceSvgDiagram,
         canvasContainer.ref.getBoundingClientRect()
-      ).amend(gridColumn <-- middleColumn),
-      canvasContainer.amend(gridColumn <-- middleColumn),
+      ).amend(gridColumn <-- showPackagesTree.signal.switch("3 / 5", "2 / 5")),
+      canvasContainer.amend(gridColumn <-- showPackagesTree.signal.switch("3 / 4", "2 / 4")),
       SelectionSidebar(appState, inheritanceSvgDiagram)
     )
 
@@ -44,11 +43,13 @@ object InheritanceTab:
     div(
       cls := "row-start-1 row-end-3 flex justify-center border-r border-slate-300",
       ul(
-        cls := "menu menu-compact",
+        cls := "menu menu-sm rounded-box",
         li(
-          cls.toggle("bg-primary") <-- active.signal,
-          Icons.folder.amend(onClick --> active.toggle())
-        )
+          Icons.folder.amend(
+            cls.toggle("active") <-- active.signal,
+            onClick --> active.toggle()
+          )
+        ),
       )
     )
 

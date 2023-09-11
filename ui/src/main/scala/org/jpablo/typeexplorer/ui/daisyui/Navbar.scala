@@ -1,9 +1,6 @@
 package org.jpablo.typeexplorer.ui.daisyui
 
 import com.raquo.laminar.api.L.*
-import com.raquo.laminar.api.L.svg as S
-import org.scalajs.dom
-import io.laminext.core.*
 import com.raquo.laminar.nodes.ReactiveHtmlElement
 
 def Navbar(brand: String, items: LI*): Div =
@@ -16,7 +13,7 @@ def Navbar(brand: String, items: LI*): Div =
     div(
       cls := "flex-none",
       ul(
-        cls := "menu menu-compact menu-horizontal",
+        cls := "menu menu-horizontal",
         items
       )
     )

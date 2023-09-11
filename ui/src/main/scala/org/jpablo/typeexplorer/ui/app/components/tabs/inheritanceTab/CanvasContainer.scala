@@ -12,7 +12,7 @@ private def CanvasContainer(
   inheritanceSvgDiagram: Signal[org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.InheritanceSvgDiagram],
   state: InheritanceTabState
 ) =
-  div(cls := "h-full overflow-auto border-t border-slate-300 p-1 row-start-2 row-end-3",
+  div(cls := "h-full overflow-auto p-1 row-start-2 row-end-3",
     backgroundImage := "radial-gradient(hsla(var(--bc)/.2) .5px,hsla(var(--b2)/1) .5px)",
     backgroundSize := "5px 5px",
     child <-- inheritanceSvgDiagram.map: diagram =>
