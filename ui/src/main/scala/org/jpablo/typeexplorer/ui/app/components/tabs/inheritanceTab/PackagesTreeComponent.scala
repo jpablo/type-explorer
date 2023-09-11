@@ -56,50 +56,7 @@ private def PackagesTreeComponent(appState: AppState) =
         toggle = true
       ),
       showOptions.signal.childWhenTrue:
-        div(
-          cls := "card card-compact p-1 mb-2 border-slate-300 border-[1px]",
-          div(
-            cls := "card-body p-1",
-            LabeledCheckbox(
-              s"filter-by-active",
-              "only active",
-              isChecked =
-                appState.appConfig.signal.map(_.packagesOptions.onlyActive),
-              clickHandler = Observer: _ =>
-                appState.updateAppConfig(
-                  _.modify(_.packagesOptions.onlyActive).using(!_)
-                ),
-              toggle = true
-            ),
-            hr(),
-            LabeledCheckbox(
-              s"filter-by-scope",
-              "Tests",
-              isChecked =
-                appState.appConfig.signal.map(_.packagesOptions.onlyTests),
-              clickHandler = Observer: _ =>
-                appState.updateAppConfig(
-                  _.modify(_.packagesOptions.onlyTests).using(!_)
-                ),
-              toggle = true
-            ),
-            hr(),
-            for kind <- models.NamespaceKind.values.toList
-              yield LabeledCheckbox(
-                id = s"show-ns-kind-$kind",
-                kind.toString,
-                isChecked = appState.appConfig.signal
-                  .map(_.packagesOptions.nsKind)
-                  .map(_.contains(kind)),
-                clickHandler = Observer: b =>
-                  appState.updateAppConfig(
-                    _.modify(_.packagesOptions.nsKind)
-                      .using(_.toggleWith(kind, b))
-                  )
-              )
-          )
-        )
-      ,
+        Options(appState),
       Search(
         placeholder := "filter",
         controlled(
@@ -111,5 +68,51 @@ private def PackagesTreeComponent(appState: AppState) =
     div(
       cls := "overflow-auto",
       children <-- PackagesTree(appState.inheritanceTabState, filteredDiagram)
+    )
+  )
+
+
+private def Options(appState: AppState) =
+  div(
+    cls := "card card-compact p-1 m-2 mb-2 border-slate-300 border-[1px]",
+    div(
+      cls := "card-body p-1",
+      LabeledCheckbox(
+        s"filter-by-active",
+        "only active",
+        isChecked =
+          appState.appConfig.signal.map(_.packagesOptions.onlyActive),
+        clickHandler = Observer: _ =>
+          appState.updateAppConfig(
+            _.modify(_.packagesOptions.onlyActive).using(!_)
+          ),
+        toggle = true
+      ),
+      hr(),
+      LabeledCheckbox(
+        s"filter-by-scope",
+        "Tests",
+        isChecked =
+          appState.appConfig.signal.map(_.packagesOptions.onlyTests),
+        clickHandler = Observer: _ =>
+          appState.updateAppConfig(
+            _.modify(_.packagesOptions.onlyTests).using(!_)
+          ),
+        toggle = true
+      ),
+      hr(),
+      for kind <- models.NamespaceKind.values.toList
+        yield LabeledCheckbox(
+          id = s"show-ns-kind-$kind",
+          kind.toString,
+          isChecked = appState.appConfig.signal
+            .map(_.packagesOptions.nsKind)
+            .map(_.contains(kind)),
+          clickHandler = Observer: b =>
+            appState.updateAppConfig(
+              _.modify(_.packagesOptions.nsKind)
+                .using(_.toggleWith(kind, b))
+            )
+        )
     )
   )
