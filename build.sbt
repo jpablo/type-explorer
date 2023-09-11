@@ -1,6 +1,7 @@
 import org.scalajs.linker.interface.ModuleSplitStyle
 
 val scala3Version     = "3.3.0"
+val scala2Version     = "2.13.11"
 val scalametaVersion  = "4.8.2"
 val zioHttpVersion    = "2.0.0-RC11"
 val zioPreludeVersion = "1.0.0-RC16"
@@ -38,7 +39,7 @@ lazy val protos =
     .settings(
       name         := "type-explorer-protos",
       version      := "0.1.0",
-      scalaVersion := "2.13.6",
+      scalaVersion := scala2Version,
       libraryDependencies ++= Seq(
         "org.scalameta" %%% "common" % scalametaVersion % "protobuf",
         "org.scalameta" %%% "common" % scalametaVersion

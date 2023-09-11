@@ -1,6 +1,5 @@
 package org.jpablo.typeexplorer.shared.inheritance
 
-import zio.json.*
 import org.jpablo.typeexplorer.shared.tree.Tree
 import org.jpablo.typeexplorer.shared.models.{Method, Namespace, NamespaceKind, Symbol}
 
@@ -34,7 +33,17 @@ object PlantumlInheritance:
     PlantUML(
       s"""@startuml
          |set namespaceSeparator none
+         |skinparam class {
+         |  'FontSize 20
+         |  'FontName "JetBrains Mono"
+         |}
+         |
+         |'declarations
+         |
          |${declarations.distinct mkString "\n"}
+         |
+         |'inheritance
+         |
          |${inheritance mkString "\n"}
          |@enduml""".stripMargin
     )
@@ -44,17 +53,12 @@ object PlantumlInheritance:
   private def renderTree(diagramOptions: DiagramOptions, symbols: Map[Symbol, Option[SymbolOptions]]): Tree[Namespace] => String =
     case Tree.Node(label, path, children) =>
       s"""
-         |skinparam class {
-         |  'FontSize 20
-         |  'FontName "JetBrains Mono"
-         |}
-         |
          |namespace "$label" as ${path.mkString(".")} {
          |  ${children.map(renderTree(diagramOptions, symbols)) mkString "\n"}
          |}
          |""".stripMargin
     case Tree.Leaf(_, ns) =>
-      renderNamespace(ns, diagramOptions, symbols(ns.symbol))
+      renderNamespace(ns, diagramOptions, symbols.getOrElse(ns.symbol, None))
 
   // certain characters are interpreted by plantuml, so we use unicode codes instead
   private val replacementTable = Map(
@@ -73,6 +77,7 @@ object PlantumlInheritance:
       case NamespaceKind.Trait         => """ << (T, pink) >>"""
       case NamespaceKind.Class         => ""
       case other                       => s""" <<$other>>"""
+    
     val showFields = symbolOptions.map(_.showFields).getOrElse(diagramOptions.showFields)
     val showSignatures = symbolOptions.map(_.showSignatures).getOrElse(diagramOptions.showSignatures)
     val filteredMethods = ns.methods.filterNot(m => diagramOptions.hiddenFields.contains(m.displayName))
@@ -83,16 +88,18 @@ object PlantumlInheritance:
             .map(renderField(0)).mkString(" {\n", "\n", "\n}\n")
         else
           filteredMethods
-          .groupBy(_.displayName)
-          .toList.sortBy(_._1)
-          .map((_, ms) => renderField(ms.length)(ms.head)).mkString(" {\n", "\n", "\n}\n")
+            .groupBy(_.displayName)
+            .toList.sortBy(_._1)
+            .map((_, ms) => renderField(ms.length)(ms.head)).mkString(" {\n", "\n", "\n}\n")
       else
         ""
     header + stereotype + fields
 
   private def renderField(count: Int)(m: Method): String =
     val countStr = if count > 1 then s"($count)" else ""
-    s"""  ${m.displayName}$countStr ${m.returnType.map(o => " : " + o.displayName).getOrElse("")}  \n' ${m.symbol} """
+    val returnType = m.returnType.map(o => " : " + o.displayName).getOrElse("")
+    val symbolComment = s"' ${m.symbol}"
+    s"""  ${m.displayName}${countStr}${returnType}""" + "\n" + symbolComment
 
 
 

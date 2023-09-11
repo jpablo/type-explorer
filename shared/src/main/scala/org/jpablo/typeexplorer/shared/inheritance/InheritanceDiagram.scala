@@ -1,39 +1,25 @@
 package org.jpablo.typeexplorer.shared.inheritance
 
+import org.jpablo.typeexplorer.protos.TextDocumentsWithSourceSeq
+import org.jpablo.typeexplorer.shared.models.Method
+import org.jpablo.typeexplorer.shared.models.Namespace
+import org.jpablo.typeexplorer.shared.models.NamespaceKind
+import org.jpablo.typeexplorer.shared.models.Symbol
+import org.jpablo.typeexplorer.shared.models.SymbolRange
 import org.jpablo.typeexplorer.shared.tree.Tree
 import zio.json.*
-import zio.prelude.{Commutative, Identity}
+import zio.prelude.Commutative
+import zio.prelude.Identity
 
-import scala.meta.internal.semanticdb.SymbolInformation.Kind
-import scala.meta.internal.semanticdb.{
-  ClassSignature,
-  MethodSignature,
-  Scope,
-  Signature,
-  SymbolInformation,
-  SymbolOccurrence,
-  TextDocument,
-  TextDocuments,
-  Type,
-  TypeRef,
-  TypeSignature,
-  ValueSignature
-}
-import org.jpablo.typeexplorer.shared.models.{
-  Method,
-  Namespace,
-  NamespaceKind,
-  Symbol,
-  SymbolRange
-}
-
+import scala.annotation.targetName
 import scala.meta.internal.semanticdb
-import java.util.jar.Attributes.Name
-import scala.annotation.{tailrec, targetName}
-import org.jpablo.typeexplorer.protos.{
-  TextDocumentsWithSource,
-  TextDocumentsWithSourceSeq
-}
+import scala.meta.internal.semanticdb.ClassSignature
+import scala.meta.internal.semanticdb.Signature
+import scala.meta.internal.semanticdb.SymbolInformation
+import scala.meta.internal.semanticdb.SymbolInformation.Kind
+import scala.meta.internal.semanticdb.SymbolOccurrence
+import scala.meta.internal.semanticdb.Type
+import scala.meta.internal.semanticdb.TypeRef
 
 type Arrow = (Symbol, Symbol)
 
