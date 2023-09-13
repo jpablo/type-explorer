@@ -1,14 +1,14 @@
 package org.jpablo.typeexplorer.ui.app.components
 
 import com.raquo.laminar.api.L.*
-import org.jpablo.typeexplorer.ui.app.components.state.AppConfig
+import org.jpablo.typeexplorer.ui.app.components.state.ProjectConfig
 import com.softwaremill.quicklens.*
 import org.jpablo.typeexplorer.ui.app.Path
 import org.jpablo.typeexplorer.shared.models
 
 case class Updater[A](signal: Signal[A], update: A => Unit)
 
-def AppConfigDrawer(appConfig: Var[AppConfig]) =
+def AppConfigDrawer(config: Var[ProjectConfig]) =
 
   def updater[A, B, C](va: Var[A], modifyField: PathLazyModify[A, B])(to: A => C, from: C => B) =
     Updater(
@@ -17,25 +17,25 @@ def AppConfigDrawer(appConfig: Var[AppConfig]) =
     )
 
   val basePathUpdater =
-    updater(appConfig, modifyLens(_.basePaths))(
+    updater(config, modifyLens(_.basePaths))(
       to = _.basePaths.mkString("\n"),
       from = _.split("\n").toList.map(Path.apply)
     )
 
   val hiddenFieldsUpdater =
-    updater(appConfig, modifyLens(_.diagramOptions.hiddenFields))(
+    updater(config, modifyLens(_.diagramOptions.hiddenFields))(
       to = _.diagramOptions.hiddenFields.mkString("\n"),
       from = _.split("\n").toList
     )
 
   val hiddenSymbolsUpdater =
-    updater(appConfig, modifyLens(_.diagramOptions.hiddenSymbols))(
+    updater(config, modifyLens(_.diagramOptions.hiddenSymbols))(
       to = _.diagramOptions.hiddenSymbols.mkString("\n"),
       from = _.split("\n").map(models.Symbol.apply).toList
     )
 
   val advancedModeUpdater =
-    updater(appConfig, modifyLens(_.advancedMode))(to = _.advancedMode, from = identity)
+    updater(config, modifyLens(_.advancedMode))(to = _.advancedMode, from = identity)
 
   div(cls := "drawer-side",
     label(cls := "drawer-overlay", forId := "drawer-1"),

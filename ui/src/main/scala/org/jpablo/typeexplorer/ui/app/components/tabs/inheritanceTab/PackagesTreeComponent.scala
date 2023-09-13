@@ -1,7 +1,7 @@
 package org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab
 
 import org.jpablo.typeexplorer.ui.app.components.state.InheritanceTabState.ActiveSymbols
-import org.jpablo.typeexplorer.ui.app.components.state.{AppConfig, Project, InheritanceTabState, PackagesOptions}
+import org.jpablo.typeexplorer.ui.app.components.state.{ProjectConfig, Project, InheritanceTabState, PackagesOptions}
 import com.raquo.laminar.api.L.*
 import io.laminext.syntax.core.*
 import com.softwaremill.quicklens.*
@@ -22,7 +22,7 @@ private def PackagesTreeComponent(project: Project) =
   val filteredDiagram: EventStream[InheritanceDiagram] =
     project.inheritanceTabState.fullInheritanceDiagramR
       .combineWith(
-        project.appConfig.signal.map(_.packagesOptions),
+        project.config.signal.map(_.packagesOptions),
         filterBySymbolName.signal,
         project.inheritanceTabState.activeSymbolsR.signal
       )
@@ -81,7 +81,7 @@ private def Options(project: Project) =
         s"filter-by-active",
         "only active",
         isChecked =
-          project.appConfig.signal.map(_.packagesOptions.onlyActive),
+          project.config.signal.map(_.packagesOptions.onlyActive),
         clickHandler = Observer: _ =>
           project.updateAppConfig(
             _.modify(_.packagesOptions.onlyActive).using(!_)
@@ -93,7 +93,7 @@ private def Options(project: Project) =
         s"filter-by-scope",
         "Tests",
         isChecked =
-          project.appConfig.signal.map(_.packagesOptions.onlyTests),
+          project.config.signal.map(_.packagesOptions.onlyTests),
         clickHandler = Observer: _ =>
           project.updateAppConfig(
             _.modify(_.packagesOptions.onlyTests).using(!_)
@@ -105,7 +105,7 @@ private def Options(project: Project) =
         yield LabeledCheckbox(
           id = s"show-ns-kind-$kind",
           kind.toString,
-          isChecked = project.appConfig.signal
+          isChecked = project.config.signal
             .map(_.packagesOptions.nsKind)
             .map(_.contains(kind)),
           clickHandler = Observer: b =>

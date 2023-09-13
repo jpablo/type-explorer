@@ -3,7 +3,6 @@ package org.jpablo.typeexplorer.ui.app.components.state
 import org.jpablo.typeexplorer.shared.inheritance.DiagramOptions
 import zio.json.*
 import org.jpablo.typeexplorer.shared.models
-import InheritanceTabState.ActiveSymbols
 import org.jpablo.typeexplorer.shared.webApp.ActiveSymbolsSeq
 import org.jpablo.typeexplorer.ui.app.Path
 
@@ -13,7 +12,7 @@ case class PackagesOptions (
   nsKind    : Set[models.NamespaceKind] = models.NamespaceKind.values.toSet
 ) derives JsonCodec
 
-case class AppConfig (
+case class ProjectConfig (
   advancedMode   : Boolean          = false,
   packagesOptions: PackagesOptions  = PackagesOptions(),
   diagramOptions : DiagramOptions   = DiagramOptions(),

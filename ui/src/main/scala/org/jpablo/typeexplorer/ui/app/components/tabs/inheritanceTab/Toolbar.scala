@@ -1,6 +1,6 @@
 package org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab
 
-import org.jpablo.typeexplorer.ui.app.components.state.{AppConfig, Project}
+import org.jpablo.typeexplorer.ui.app.components.state.{ProjectConfig, Project}
 import com.raquo.laminar.api.L.*
 import com.softwaremill.quicklens.*
 import org.scalajs.dom
@@ -17,7 +17,7 @@ def Toolbar(
     containerBoundingClientRect: => dom.DOMRect
 ) =
   val state = project.inheritanceTabState
-  val modifySelection = modifyLens[AppConfig]
+  val modifySelection = modifyLens[ProjectConfig]
   div(
     cls := "flex items-center gap-4 ml-2 border-b border-slate-300",
     Join(
@@ -66,7 +66,7 @@ def Toolbar(
                 _.sample(
                   state.fullInheritanceDiagramR,
                   state.activeSymbolsR.signal,
-                  project.appConfig.signal.map(_.diagramOptions)
+                  project.config.signal.map(_.diagramOptions)
                 )
               ) --> { case (fullDiagram: InheritanceDiagram, symbols: ActiveSymbols, options) =>
                 dom.window.navigator.clipboard.writeText(
@@ -93,15 +93,15 @@ def Toolbar(
 private def OptionsToggle(
     id: String,
     labelStr: String,
-    field: AppConfig => Boolean,
-    modifyField: PathLazyModify[AppConfig, Boolean],
+    field: ProjectConfig => Boolean,
+    modifyField: PathLazyModify[ProjectConfig, Boolean],
     project: Project
 ) =
   LabeledCheckbox(
     id = id,
     labelStr = labelStr,
-    isChecked = project.appConfig.signal.map(field),
-    clickHandler = project.appConfig.updater[Boolean]((config, b) =>
+    isChecked = project.config.signal.map(field),
+    clickHandler = project.config.updater[Boolean]((config, b) =>
       modifyField.setTo(b)(config)
     ),
     toggle = true

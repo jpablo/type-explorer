@@ -22,13 +22,13 @@ def TabsArea(
     NavTabs(
       cls := "mt-2 -mb-px",
       inheritance.NavItem,
-      project.appConfig.signal.map(_.advancedMode).childWhenTrue(semanticDB.NavItem),
+      project.config.signal.map(_.advancedMode).childWhenTrue(semanticDB.NavItem),
     ),
 
     TabContent(
       cls := "flex-1 overflow-auto border-t border-slate-300",
       inheritance.Pane(inheritanceCanvas),
-      project.appConfig.signal.map(_.advancedMode).childWhenTrue(semanticDB.Pane(semanticDBTabContent))
+      project.config.signal.map(_.advancedMode).childWhenTrue(semanticDB.Pane(semanticDBTabContent))
     )
   )
 
