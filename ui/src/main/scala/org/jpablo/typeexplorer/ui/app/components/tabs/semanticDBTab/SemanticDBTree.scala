@@ -9,7 +9,7 @@ import scalajs.js.URIUtils.encodeURIComponent
 import org.jpablo.typeexplorer.shared.models
 import org.jpablo.typeexplorer.ui.app.Path
 import zio.prelude.fx.ZPure
-import org.jpablo.typeexplorer.ui.app.components.state.AppState
+import org.jpablo.typeexplorer.ui.app.components.state.Project
 
 object SemanticDBTree:
 

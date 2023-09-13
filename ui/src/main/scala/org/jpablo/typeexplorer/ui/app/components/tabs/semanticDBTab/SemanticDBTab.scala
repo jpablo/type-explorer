@@ -5,7 +5,7 @@ import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
 import org.jpablo.typeexplorer.ui.app.client.fetchSourceCode
 import org.jpablo.typeexplorer.ui.app.components.tabs.semanticDBTab.{SemanticDBText, SemanticDBTree}
 import org.jpablo.typeexplorer.ui.app.Path
-import org.jpablo.typeexplorer.ui.app.components.state.AppState
+import org.jpablo.typeexplorer.ui.app.components.state.Project
 
 
 def SemanticDBTab(

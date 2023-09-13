@@ -1,6 +1,6 @@
 package org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab
 
-import org.jpablo.typeexplorer.ui.app.components.state.{AppConfig, AppState}
+import org.jpablo.typeexplorer.ui.app.components.state.{AppConfig, Project}
 import com.raquo.laminar.api.L.*
 import com.softwaremill.quicklens.*
 import org.scalajs.dom
@@ -12,11 +12,11 @@ import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, toPlantUM
 import org.jpablo.typeexplorer.ui.app.components.state.InheritanceTabState.ActiveSymbols
 
 def Toolbar(
-    appState: AppState,
-    inheritanceSvgDiagram: Signal[InheritanceSvgDiagram],
+    project                    : Project,
+    inheritanceSvgDiagram      : Signal[InheritanceSvgDiagram],
     containerBoundingClientRect: => dom.DOMRect
 ) =
-  val state = appState.inheritanceTabState
+  val state = project.inheritanceTabState
   val modifySelection = modifyLens[AppConfig]
   div(
     cls := "flex items-center gap-4 ml-2 border-b border-slate-300",
@@ -26,14 +26,14 @@ def Toolbar(
         "fields",
         _.diagramOptions.showFields,
         modifySelection(_.diagramOptions.showFields),
-        appState
+        project
       ),
       OptionsToggle(
         "fields-checkbox-2",
         "signatures",
         _.diagramOptions.showSignatures,
         modifySelection(_.diagramOptions.showSignatures),
-        appState
+        project
       )
     ),
     Join(
@@ -66,7 +66,7 @@ def Toolbar(
                 _.sample(
                   state.fullInheritanceDiagramR,
                   state.activeSymbolsR.signal,
-                  appState.appConfig.signal.map(_.diagramOptions)
+                  project.appConfig.signal.map(_.diagramOptions)
                 )
               ) --> { case (fullDiagram: InheritanceDiagram, symbols: ActiveSymbols, options) =>
                 dom.window.navigator.clipboard.writeText(
@@ -95,13 +95,13 @@ private def OptionsToggle(
     labelStr: String,
     field: AppConfig => Boolean,
     modifyField: PathLazyModify[AppConfig, Boolean],
-    appState: AppState
+    project: Project
 ) =
   LabeledCheckbox(
     id = id,
     labelStr = labelStr,
-    isChecked = appState.appConfig.signal.map(field),
-    clickHandler = appState.appConfig.updater[Boolean]((config, b) =>
+    isChecked = project.appConfig.signal.map(field),
+    clickHandler = project.appConfig.updater[Boolean]((config, b) =>
       modifyField.setTo(b)(config)
     ),
     toggle = true

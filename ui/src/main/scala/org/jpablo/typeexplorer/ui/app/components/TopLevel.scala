@@ -3,12 +3,12 @@ package org.jpablo.typeexplorer.ui.app.components
 import com.raquo.laminar.api.L.*
 import io.laminext.syntax.core.*
 import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
-import org.jpablo.typeexplorer.ui.app.components.state.AppState
+import org.jpablo.typeexplorer.ui.app.components.state.Project
 import org.jpablo.typeexplorer.ui.app.components.tabs.TabsArea
 import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.InheritanceSvgDiagram
 
 def TopLevel(
-  appState             : AppState,
+  appState             : Project,
   inheritanceSvgDiagram: Signal[InheritanceSvgDiagram],
   documents: EventStream[List[TextDocumentsWithSource]]
 ) =

@@ -4,7 +4,7 @@ import com.raquo.laminar.api.L.*
 import io.laminext.core.*
 import io.laminext.syntax.core.*
 import org.jpablo.typeexplorer.ui.app.Path
-import org.jpablo.typeexplorer.ui.app.components.state.AppState
+import org.jpablo.typeexplorer.ui.app.components.state.Project
 import org.jpablo.typeexplorer.ui.daisyui.*
 import org.scalajs.dom
 

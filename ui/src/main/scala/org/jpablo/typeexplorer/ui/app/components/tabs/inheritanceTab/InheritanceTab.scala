@@ -5,7 +5,7 @@ import com.raquo.laminar.api.L.*
 import com.raquo.laminar.api.features.unitArrows
 import com.raquo.laminar.nodes.ReactiveHtmlElement
 import io.laminext.syntax.core.*
-import org.jpablo.typeexplorer.ui.app.components.state.AppState
+import org.jpablo.typeexplorer.ui.app.components.state.Project
 import org.jpablo.typeexplorer.ui.widgets.Icons
 import org.scalajs.dom
 import org.scalajs.dom.HTMLDivElement
@@ -15,11 +15,11 @@ object InheritanceTab:
   val gridColumn = styleProp("grid-column")
 
   def apply(
-      appState: AppState,
+      project              : Project,
       inheritanceSvgDiagram: Signal[InheritanceSvgDiagram]
   ): ReactiveHtmlElement[HTMLDivElement] =
     val canvasContainer =
-      CanvasContainer(inheritanceSvgDiagram, appState.inheritanceTabState)
+      CanvasContainer(inheritanceSvgDiagram, project.inheritanceTabState)
 
     val showPackagesTree = Var(false)
 
@@ -27,16 +27,16 @@ object InheritanceTab:
     div(
       cls := "grid h-full grid-cols-[46px_1fr_4fr_0.75fr] grid-rows-[3em_auto]",
       LeftSideMenu(showPackagesTree),
-      PackagesTreeComponent(appState).amend(
+      PackagesTreeComponent(project).amend(
         cls.toggle("hidden") <-- !showPackagesTree.signal
       ),
       Toolbar(
-        appState,
+        project,
         inheritanceSvgDiagram,
         canvasContainer.ref.getBoundingClientRect()
       ).amend(gridColumn <-- showPackagesTree.signal.switch("3 / 5", "2 / 5")),
       canvasContainer.amend(gridColumn <-- showPackagesTree.signal.switch("3 / 4", "2 / 4")),
-      SelectionSidebar(appState, inheritanceSvgDiagram)
+      SelectionSidebar(project, inheritanceSvgDiagram)
     )
 
   private def LeftSideMenu(active: Var[Boolean]) =

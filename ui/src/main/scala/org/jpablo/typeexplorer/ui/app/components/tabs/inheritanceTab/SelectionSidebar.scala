@@ -5,11 +5,11 @@ import com.raquo.laminar.api.features.unitArrows
 import com.softwaremill.quicklens.*
 import org.jpablo.typeexplorer.shared.inheritance.InheritanceDiagram
 import org.jpablo.typeexplorer.ui.app
-import org.jpablo.typeexplorer.ui.app.components.state.AppState
+import org.jpablo.typeexplorer.ui.app.components.state.Project
 import org.jpablo.typeexplorer.ui.daisyui.*
 
 private def SelectionSidebar(
-  appState             : AppState,
+  appState             : Project,
   inheritanceSvgDiagram: Signal[InheritanceSvgDiagram]
 ) =
   val inheritanceTabState = appState.inheritanceTabState
