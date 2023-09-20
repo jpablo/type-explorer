@@ -1,14 +1,14 @@
 package org.jpablo.typeexplorer.ui.app.components
 
 import com.raquo.laminar.api.L.*
-import org.jpablo.typeexplorer.ui.app.components.state.ProjectConfig
+import org.jpablo.typeexplorer.ui.app.components.state.Project
 import com.softwaremill.quicklens.*
 import org.jpablo.typeexplorer.ui.app.Path
 import org.jpablo.typeexplorer.shared.models
 
 case class Updater[A](signal: Signal[A], update: A => Unit)
 
-def AppConfigDrawer(projectConfig: Var[ProjectConfig]) =
+def AppConfigDrawer(projectConfig: Var[Project]) =
 
   def updater[A, B, C](va: Var[A], modifyField: PathLazyModify[A, B])(to: A => C, from: C => B) =
     Updater(

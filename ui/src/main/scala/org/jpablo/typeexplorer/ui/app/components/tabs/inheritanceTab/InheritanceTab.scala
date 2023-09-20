@@ -15,11 +15,11 @@ object InheritanceTab:
   val gridColumn = styleProp("grid-column")
 
   def apply(
-      state: AppState,
+      appState: AppState,
       inheritanceSvgDiagram: Signal[InheritanceSvgDiagram]
   ): ReactiveHtmlElement[HTMLDivElement] =
     val canvasContainer =
-      CanvasContainer(inheritanceSvgDiagram, state.inheritanceTabState)
+      CanvasContainer(inheritanceSvgDiagram, appState.inheritanceTabState)
 
     val showPackagesTree = Var(false)
 
@@ -27,18 +27,18 @@ object InheritanceTab:
     div(
       cls := "grid h-full grid-cols-[46px_1fr_4fr_0.75fr] grid-rows-[3em_auto]",
       LeftSideMenu(showPackagesTree),
-      PackagesTreeComponent(state).amend(
+      PackagesTreeComponent(appState).amend(
         cls.toggle("hidden") <-- !showPackagesTree.signal
       ),
       Toolbar(
-        state,
+        appState,
         inheritanceSvgDiagram,
         canvasContainer.ref.getBoundingClientRect()
       ).amend(gridColumn <-- showPackagesTree.signal.switch("3 / 5", "2 / 5")),
       canvasContainer.amend(
         gridColumn <-- showPackagesTree.signal.switch("3 / 4", "2 / 4")
       ),
-      SelectionSidebar(state, inheritanceSvgDiagram)
+      SelectionSidebar(appState, inheritanceSvgDiagram)
     )
 
   private def LeftSideMenu(active: Var[Boolean]) =

@@ -10,38 +10,38 @@ import org.jpablo.typeexplorer.shared.inheritance.InheritanceDiagram
 import org.jpablo.typeexplorer.ui.app.Path
 import org.jpablo.typeexplorer.ui.app.components.state.InheritanceTabState.ActiveSymbols
 
-// in memory state
+// in-memory state
 case class AppState(
-    inheritanceTabState: InheritanceTabState = InheritanceTabState(),
-    projects: Var[Projects] // <--
-):
-  given owner: Owner = OneTimeOwner(() => ())
-
+    persistedAppStateR: Var[PersistedAppState],
+    inheritanceTabState: InheritanceTabState = InheritanceTabState()
+)(using Owner):
   // synchronized with local storage
-  val projectConfig: Var[ProjectConfig] =
-    projects
-      .zoom(_.activeProject) { (projects, projectConfig) =>
-        Projects(
-          projects.projectConfigs + (projectConfig.id -> projectConfig),
-          Some(projectConfig.id)
-        )
+  val activeProjectR: Var[Project] =
+    persistedAppStateR
+      .zoom(_.activeProject) { (persistedAppState, activeProject) =>
+        persistedAppState
+          .modify(_.projects)
+          .using(_ + (activeProject.id -> activeProject))
+          .modify(_.activeProjectId)
+          .setTo(Some(activeProject.id))
       }
 
   val basePaths: Signal[List[Path]] =
-    projects.signal.map(_.activeProject.basePaths)
+    activeProjectR.signal.map(_.basePaths)
 
   // synchronized with local storage
   val activeSymbols: Var[ActiveSymbols] =
-    projectConfig
-      .zoom(_.activeSymbols.toMap) { (projectConfig, activeSymbols) =>
-        projectConfig
+    activeProjectR
+      .zoom(_.activeSymbols.toMap) { (activeProject, activeSymbols) =>
+        activeProject
           .modify(_.activeSymbols)
           .setTo(activeSymbols.toList)
       }
 
+  def updateActiveProject(f: Project => Project): Unit =
+    activeProjectR.update(f)
 
-  def updateAppConfig(f: ProjectConfig => ProjectConfig): Unit =
-    projectConfig.update(f)
+end AppState
 
 object AppState:
   // 1. Load Projects (from local storage)
@@ -51,15 +51,19 @@ object AppState:
   def load(fetchDiagram: List[Path] => Signal[InheritanceDiagram]): AppState =
     given owner: Owner = OneTimeOwner(() => ())
 
-    // load from local storage
-    val projectsJson = storedString("projects", initial = "{}")
+    val appState =
+      AppState(
+        persistent(
+          storedString("persistedAppState", initial = "{}"),
+          initial = PersistedAppState()
+        )
+      )
 
-    // synchronized with local storage
-    val projects: Var[Projects] =
-      persistent(projectsJson, Projects())
-
-    val project0 = AppState(projects = projects)
     // in memory app state based on the active project id
-    project0
-      .modify(_.inheritanceTabState.activeSymbolsR).setTo(project0.activeSymbols)
-      .modify(_.inheritanceTabState.fullInheritanceDiagramR).setTo(project0.basePaths.flatMap(fetchDiagram))
+    appState.copy(
+      inheritanceTabState = appState.inheritanceTabState
+        .modify(_.activeSymbolsR)
+        .setTo(appState.activeSymbols)
+        .modify(_.fullInheritanceDiagramR)
+        .setTo(appState.basePaths.flatMap(fetchDiagram))
+    )

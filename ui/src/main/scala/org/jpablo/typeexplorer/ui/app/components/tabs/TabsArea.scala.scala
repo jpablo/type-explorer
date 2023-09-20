@@ -12,12 +12,12 @@ import org.jpablo.typeexplorer.ui.app.components.tabs.semanticDBTab.SemanticDBTa
 import org.jpablo.typeexplorer.ui.daisyui.*
 
 def TabsArea(
-    state: AppState,
-    $inheritanceSvgDiagram: Signal[InheritanceSvgDiagram],
-    $documents: EventStream[List[TextDocumentsWithSource]]
+    appState: AppState,
+    inheritanceSvgDiagram: Signal[InheritanceSvgDiagram],
+    documents: EventStream[List[TextDocumentsWithSource]]
 ): List[Div] =
-  val inheritanceCanvas = InheritanceTab(state, $inheritanceSvgDiagram)
-  val semanticDBTabContent = SemanticDBTab($documents, state.basePaths)
+  val inheritanceCanvas = InheritanceTab(appState, inheritanceSvgDiagram)
+  val semanticDBTabContent = SemanticDBTab(documents, appState.basePaths)
   val tabs = Tabs("Inheritance", "SemanticDB")
   val inheritance = tabs(0)
   val semanticDB = tabs(1)
@@ -25,14 +25,14 @@ def TabsArea(
     NavTabs(
       cls := "mt-2 -mb-px",
       inheritance.NavItem,
-      state.projectConfig.signal
+      appState.activeProjectR.signal
         .map(_.advancedMode)
         .childWhenTrue(semanticDB.NavItem)
     ),
     TabContent(
       cls := "flex-1 overflow-auto border-t border-slate-300",
       inheritance.Pane(inheritanceCanvas),
-      state.projectConfig.signal
+      appState.activeProjectR.signal
         .map(_.advancedMode)
         .childWhenTrue(semanticDB.Pane(semanticDBTabContent))
     )

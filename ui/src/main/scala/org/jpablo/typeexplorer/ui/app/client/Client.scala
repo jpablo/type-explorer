@@ -61,7 +61,7 @@ def fetchInheritanceSVGDiagram(state: AppState): EventStream[InheritanceSvgDiagr
     state.basePaths
       .combineWith(
         state.inheritanceTabState.activeSymbolsR.signal,
-        state.projectConfig.signal.map(_.diagramOptions)
+        state.activeProjectR.signal.map(_.diagramOptions)
       )
   for
     (basePaths: List[Path], symbols: ActiveSymbols, options) <- combined

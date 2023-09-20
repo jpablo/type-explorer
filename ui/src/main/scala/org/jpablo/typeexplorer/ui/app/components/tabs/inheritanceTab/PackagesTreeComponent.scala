@@ -1,7 +1,7 @@
 package org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab
 
 import org.jpablo.typeexplorer.ui.app.components.state.InheritanceTabState.ActiveSymbols
-import org.jpablo.typeexplorer.ui.app.components.state.{ProjectConfig, AppState, InheritanceTabState, PackagesOptions}
+import org.jpablo.typeexplorer.ui.app.components.state.{Project, AppState, InheritanceTabState, PackagesOptions}
 import com.raquo.laminar.api.L.*
 import io.laminext.syntax.core.*
 import com.softwaremill.quicklens.*
@@ -16,15 +16,15 @@ extension[A] (a: A)
     if b then a else f(a)
 
 
-private def PackagesTreeComponent(state: AppState) =
+private def PackagesTreeComponent(appState: AppState) =
   val showOptions = Var(false)
   val filterBySymbolName = Var("")
   val filteredDiagram: EventStream[InheritanceDiagram] =
-    state.inheritanceTabState.fullInheritanceDiagramR
+    appState.inheritanceTabState.fullInheritanceDiagramR
       .combineWith(
-        state.projectConfig.signal.map(_.packagesOptions),
+        appState.activeProjectR.signal.map(_.packagesOptions),
         filterBySymbolName.signal,
-        state.inheritanceTabState.activeSymbolsR.signal
+        appState.inheritanceTabState.activeSymbolsR.signal
       )
       .changes
       .debounce(300)
@@ -56,7 +56,7 @@ private def PackagesTreeComponent(state: AppState) =
         toggle = true
       ),
       showOptions.signal.childWhenTrue:
-        Options(state),
+        Options(appState),
       Search(
         placeholder := "filter",
         controlled(
@@ -67,12 +67,12 @@ private def PackagesTreeComponent(state: AppState) =
     ),
     div(
       cls := "overflow-auto",
-      children <-- PackagesTree(state.inheritanceTabState, filteredDiagram)
+      children <-- PackagesTree(appState.inheritanceTabState, filteredDiagram)
     )
   )
 
 
-private def Options(project: AppState) =
+private def Options(appState: AppState) =
   div(
     cls := "card card-compact p-1 m-2 mb-2 border-slate-300 border-[1px]",
     div(
@@ -81,9 +81,9 @@ private def Options(project: AppState) =
         s"filter-by-active",
         "only active",
         isChecked =
-          project.projectConfig.signal.map(_.packagesOptions.onlyActive),
+          appState.activeProjectR.signal.map(_.packagesOptions.onlyActive),
         clickHandler = Observer: _ =>
-          project.updateAppConfig(
+          appState.updateActiveProject(
             _.modify(_.packagesOptions.onlyActive).using(!_)
           ),
         toggle = true
@@ -93,9 +93,9 @@ private def Options(project: AppState) =
         s"filter-by-scope",
         "Tests",
         isChecked =
-          project.projectConfig.signal.map(_.packagesOptions.onlyTests),
+          appState.activeProjectR.signal.map(_.packagesOptions.onlyTests),
         clickHandler = Observer: _ =>
-          project.updateAppConfig(
+          appState.updateActiveProject(
             _.modify(_.packagesOptions.onlyTests).using(!_)
           ),
         toggle = true
@@ -105,11 +105,11 @@ private def Options(project: AppState) =
         yield LabeledCheckbox(
           id = s"show-ns-kind-$kind",
           kind.toString,
-          isChecked = project.projectConfig.signal
+          isChecked = appState.activeProjectR.signal
             .map(_.packagesOptions.nsKind)
             .map(_.contains(kind)),
           clickHandler = Observer: b =>
-            project.updateAppConfig(
+            appState.updateActiveProject(
               _.modify(_.packagesOptions.nsKind)
                 .using(_.toggleWith(kind, b))
             )

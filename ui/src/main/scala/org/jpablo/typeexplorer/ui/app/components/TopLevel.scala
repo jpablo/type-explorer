@@ -20,7 +20,7 @@ def TopLevel(
       AppHeader(state.basePaths),
       TabsArea(state, inheritanceSvgDiagram, documents),
       AppFooter,
-      state.projectConfig.signal
+      state.activeProjectR.signal
         .map(_.advancedMode)
         .childWhenTrue:
           div(
@@ -34,5 +34,5 @@ def TopLevel(
             )
           )
     ),
-    AppConfigDrawer(state.projectConfig)
+    AppConfigDrawer(state.activeProjectR)
   )

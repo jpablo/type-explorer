@@ -5,6 +5,8 @@ import zio.json.*
 import org.jpablo.typeexplorer.shared.models
 import org.jpablo.typeexplorer.shared.webApp.ActiveSymbolsSeq
 import org.jpablo.typeexplorer.ui.app.Path
+import scalajs.js
+
 
 case class PackagesOptions(
     onlyActive: Boolean = false,
@@ -12,20 +14,22 @@ case class PackagesOptions(
     nsKind: Set[models.NamespaceKind] = models.NamespaceKind.values.toSet
 ) derives JsonCodec
 
-
 type ProjectId = String
 
-// persisted
-case class Projects(
-    projectConfigs: Map[ProjectId, ProjectConfig] = Map.empty,
-    activeProjectId: Option[ProjectId] = None
-) derives JsonCodec {
-    def activeProject: ProjectConfig =
-      activeProjectId.flatMap(projectConfigs.get).getOrElse(ProjectConfig("default")) // TODO: use a random UUID
-}
 
 // persisted
-case class ProjectConfig(
+case class PersistedAppState(
+    projects: Map[ProjectId, Project] = Map.empty,
+    activeProjectId: Option[ProjectId] = None
+) derives JsonCodec:
+  def activeProject: Project =
+    activeProjectId
+      .flatMap(projects.get)
+      .getOrElse(Project(js.Dynamic.global.crypto.randomUUID().toString))
+
+
+// persisted
+case class Project(
     id: ProjectId,
     advancedMode: Boolean = false,
     packagesOptions: PackagesOptions = PackagesOptions(),
@@ -34,4 +38,3 @@ case class ProjectConfig(
     // This can't be a Map[A, Option[B]], as zio-json will remove entries with None values
     activeSymbols: ActiveSymbolsSeq = List.empty
 ) derives JsonCodec
-
