@@ -8,7 +8,7 @@ import org.jpablo.typeexplorer.shared.models
 
 case class Updater[A](signal: Signal[A], update: A => Unit)
 
-def AppConfigDrawer(config: Var[ProjectConfig]) =
+def AppConfigDrawer(projectConfig: Var[ProjectConfig]) =
 
   def updater[A, B, C](va: Var[A], modifyField: PathLazyModify[A, B])(to: A => C, from: C => B) =
     Updater(
@@ -17,25 +17,25 @@ def AppConfigDrawer(config: Var[ProjectConfig]) =
     )
 
   val basePathUpdater =
-    updater(config, modifyLens(_.basePaths))(
+    updater(projectConfig, modifyLens(_.basePaths))(
       to = _.basePaths.mkString("\n"),
       from = _.split("\n").toList.map(Path.apply)
     )
 
   val hiddenFieldsUpdater =
-    updater(config, modifyLens(_.diagramOptions.hiddenFields))(
+    updater(projectConfig, modifyLens(_.diagramOptions.hiddenFields))(
       to = _.diagramOptions.hiddenFields.mkString("\n"),
       from = _.split("\n").toList
     )
 
   val hiddenSymbolsUpdater =
-    updater(config, modifyLens(_.diagramOptions.hiddenSymbols))(
+    updater(projectConfig, modifyLens(_.diagramOptions.hiddenSymbols))(
       to = _.diagramOptions.hiddenSymbols.mkString("\n"),
       from = _.split("\n").map(models.Symbol.apply).toList
     )
 
   val advancedModeUpdater =
-    updater(config, modifyLens(_.advancedMode))(to = _.advancedMode, from = identity)
+    updater(projectConfig, modifyLens(_.advancedMode))(to = _.advancedMode, from = identity)
 
   div(cls := "drawer-side",
     label(cls := "drawer-overlay", forId := "drawer-1"),

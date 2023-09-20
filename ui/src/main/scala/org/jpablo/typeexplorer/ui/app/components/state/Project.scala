@@ -9,69 +9,75 @@ import io.laminext.syntax.core.{StoredString, storedString}
 import org.jpablo.typeexplorer.shared.inheritance.InheritanceDiagram
 import org.jpablo.typeexplorer.ui.app.Path
 import org.jpablo.typeexplorer.ui.app.components.state.InheritanceTabState.ActiveSymbols
-import org.scalajs.dom
-import zio.json.*
 
-
-def persistent[A: JsonCodec](storedString: StoredString, initial: A)(using Owner): Var[A] =
-  val aVar: Var[A] =
-    Var {
-      storedString.signal
-        .map { str =>
-          str.fromJson[A] match
-            case Left(value) =>
-              dom.console.error(s"Error parsing json: $value")
-              initial
-            case Right(value) => value
-        }
-        .observe
-        .now()
-    }
-  aVar.signal.foreach: a =>
-    storedString.set(a.toJson)
-  aVar
-
-
-case class GlobalState(
-  projects: Map[String, Project]
-)
-
-
-case class Project(
-  inheritanceTabState: InheritanceTabState,
-  appConfigJson      : StoredString, // global (AppConfig)
+// in memory app state
+case class ProjectBuilder(
+    projectsJson: StoredString // global (Projects)
 )(using Owner):
 
-  val config: Var[ProjectConfig] =
-    persistent(appConfigJson, ProjectConfig())
+  val projects: Var[Projects] =
+    persistent(projectsJson, Projects())
 
-//  val documents: Var[AppConfig] =
-//    persistent(appConfigJson, AppConfig())
+  def currentProject: Project = ???
 
-  def updateAppConfig(f: ProjectConfig => ProjectConfig): Unit =
-    config.update(f)
+end ProjectBuilder
 
-  val basePaths: Signal[List[Path]] =
-    config.signal.map(_.basePaths)
+object ProjectBuilder:
 
+  // 1. Load Projects
+  // 2. Load active project (ProjectConfig)
+  // 3. ProjectConfig (json) -> AppState (in memory)
 
-
-object Project:
-  def build(fetchDiagram: List[Path] => Signal[InheritanceDiagram]) =
+  def build(fetchDiagram: List[Path] => Signal[InheritanceDiagram]): Project =
     given owner: Owner = OneTimeOwner(() => ())
 
-    val appState0 =
-      Project(InheritanceTabState(), storedString("projectConfig", initial = "{}"))
+    val projectsJson = storedString("projects", initial = "{}")
+
+    // previous name: appState0.config
+    val projects: Var[Projects] =
+      persistent(projectsJson, Projects())
+
+    val basePaths: Signal[List[Path]] =
+      projects.signal.map(_.activeProject.basePaths)
+
+    val projectConfig: Var[ProjectConfig] =
+      projects
+        .zoom(_.activeProject) { (projects, projectConfig) =>
+          Projects(
+            projects.projectConfigs + (projectConfig.id -> projectConfig),
+            Some(projectConfig.id)
+          )
+        }
 
     val activeSymbols: Var[ActiveSymbols] =
-      appState0.config
-        .zoom(_.activeSymbols.toMap): (config, activeSymbols) =>
-          config.modify(_.activeSymbols).setTo(activeSymbols.toList)
+      projects
+        .zoom(_.activeProject.activeSymbols.toMap): (projects, activeSymbols) =>
+          val projectConfig: ProjectConfig =
+            projects.activeProject
+              .modify(_.activeSymbols)
+              .setTo(activeSymbols.toList)
+          Projects(
+            projectConfigs =
+              projects.projectConfigs + (projectConfig.id -> projectConfig),
+            activeProjectId = Some(projectConfig.id)
+          )
 
-    appState0.copy(
-      inheritanceTabState =
-        InheritanceTabState(
-          activeSymbols,
-          appState0.basePaths.flatMap(fetchDiagram)
-        )
+    Project(
+      inheritanceTabState = InheritanceTabState(
+        activeSymbolsR = activeSymbols,
+        fullInheritanceDiagramR = basePaths.flatMap(fetchDiagram)
+      ),
+      basePaths,
+      projectConfig,
+      projects
     )
+
+// in memory state
+case class Project(
+    inheritanceTabState: InheritanceTabState,
+    basePaths: Signal[List[Path]],
+    config: Var[ProjectConfig],
+    projects: Var[Projects]
+):
+  def updateAppConfig(f: ProjectConfig => ProjectConfig): Unit =
+    config.update(f)
