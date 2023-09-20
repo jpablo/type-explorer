@@ -56,12 +56,12 @@ def fetchInheritanceDiagram(basePaths: List[Path]): Signal[InheritanceDiagram] =
       classes
 }.startWith(InheritanceDiagram.empty)
 
-def fetchInheritanceSVGDiagram(state: AppState): EventStream[InheritanceSvgDiagram] =
+def fetchInheritanceSVGDiagram(appState: AppState): EventStream[InheritanceSvgDiagram] =
   val combined =
-    state.basePaths
+    appState.basePaths
       .combineWith(
-        state.inheritanceTabState.activeSymbolsR.signal,
-        state.activeProjectR.signal.map(_.diagramOptions)
+        appState.inheritanceTabState.activeSymbolsR.signal,
+        appState.activeProjectR.signal.map(_.diagramOptions)
       )
   for
     (basePaths: List[Path], symbols: ActiveSymbols, options) <- combined

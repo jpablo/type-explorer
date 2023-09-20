@@ -10,12 +10,8 @@ import org.scalajs.dom.document
 object MainJS:
 
   def main(args: Array[String]): Unit =
-
-    val appState: AppState = AppState.load(fetchInheritanceDiagram)
-
+    val appState = AppState.load(fetchInheritanceDiagram)
     val documents = fetchDocuments(appState.basePaths)
     val inheritanceSvgDiagram = fetchInheritanceSVGDiagram(appState).startWith(InheritanceSvgDiagram.empty)
-
     val app = TopLevel(appState, inheritanceSvgDiagram, documents)
-
     render(document.querySelector("#app"), app)

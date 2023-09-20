@@ -7,7 +7,6 @@ import org.jpablo.typeexplorer.shared.webApp.ActiveSymbolsSeq
 import org.jpablo.typeexplorer.ui.app.Path
 import scalajs.js
 
-
 case class PackagesOptions(
     onlyActive: Boolean = false,
     onlyTests: Boolean = false,
@@ -16,8 +15,8 @@ case class PackagesOptions(
 
 type ProjectId = String
 
-
-// persisted
+/** Structure of the persisted state (in local storage)
+  */
 case class PersistedAppState(
     projects: Map[ProjectId, Project] = Map.empty,
     activeProjectId: Option[ProjectId] = None
@@ -27,8 +26,6 @@ case class PersistedAppState(
       .flatMap(projects.get)
       .getOrElse(Project(js.Dynamic.global.crypto.randomUUID().toString))
 
-
-// persisted
 case class Project(
     id: ProjectId,
     advancedMode: Boolean = false,

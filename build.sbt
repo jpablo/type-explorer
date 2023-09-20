@@ -164,7 +164,8 @@ lazy val ui =
       libraryDependencies ++= Seq(
         "org.scala-js" %%% "scalajs-dom" % "2.2.0",
         "com.raquo" %%% "laminar" % laminarVersion,
-        "io.laminext" %%% "fetch" % "0.15.0"
+        "io.laminext" %%% "fetch" % "0.15.0",
+        "com.raquo" %%% "waypoint" % "7.0.0"
       ),
       excludeDependencies ++= Seq(
         "org.scala-lang.modules" %% "scala-collection-compat_sjs1"

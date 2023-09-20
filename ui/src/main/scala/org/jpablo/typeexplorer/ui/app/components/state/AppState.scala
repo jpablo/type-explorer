@@ -10,7 +10,8 @@ import org.jpablo.typeexplorer.shared.inheritance.InheritanceDiagram
 import org.jpablo.typeexplorer.ui.app.Path
 import org.jpablo.typeexplorer.ui.app.components.state.InheritanceTabState.ActiveSymbols
 
-// in-memory state
+/** In-memory App State
+  */
 case class AppState(
     persistedAppStateR: Var[PersistedAppState],
     inheritanceTabState: InheritanceTabState = InheritanceTabState()
