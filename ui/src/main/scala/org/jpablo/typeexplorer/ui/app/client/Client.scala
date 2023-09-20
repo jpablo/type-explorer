@@ -1,24 +1,22 @@
 package org.jpablo.typeexplorer.ui.app.client
 
 import com.raquo.laminar.api.L.*
-import concurrent.ExecutionContext.Implicits.global
 import io.laminext.fetch.*
-import io.laminext.syntax.core.StoredString
 import org.jpablo.typeexplorer.protos.{TextDocumentsWithSource, TextDocumentsWithSourceSeq}
-import org.jpablo.typeexplorer.shared.inheritance.DiagramOptions
-import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, PlantumlInheritance}
-import org.jpablo.typeexplorer.shared.models.{Namespace, Symbol}
-import org.jpablo.typeexplorer.shared.webApp.InheritanceRequest
-import org.jpablo.typeexplorer.shared.webApp.Routes
+import org.jpablo.typeexplorer.shared.inheritance.{DiagramOptions, InheritanceDiagram}
+import org.jpablo.typeexplorer.shared.models.Symbol
+import org.jpablo.typeexplorer.shared.webApp.{InheritanceRequest, Routes}
 import org.jpablo.typeexplorer.ui.app.Path
 import org.jpablo.typeexplorer.ui.app.components.DiagramType
-import org.jpablo.typeexplorer.ui.app.components.state.Project
 import org.jpablo.typeexplorer.ui.app.components.state.InheritanceTabState.ActiveSymbols
+import org.jpablo.typeexplorer.ui.app.components.state.Project
 import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.InheritanceSvgDiagram
 import org.scalajs.dom
-import scala.scalajs.js.typedarray.Int8Array
-import scalajs.js.URIUtils.encodeURIComponent
 import zio.json.*
+
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.scalajs.js.URIUtils.encodeURIComponent
+import scala.scalajs.js.typedarray.Int8Array
 
 val basePath = "http://localhost:8090/"
 
@@ -63,7 +61,7 @@ def fetchInheritanceSVGDiagram(project: Project): EventStream[InheritanceSvgDiag
     project.basePaths
       .combineWith(
         project.inheritanceTabState.activeSymbolsR.signal,
-        project.config.signal.map(_.diagramOptions)
+        project.projectConfig.signal.map(_.diagramOptions)
       )
   for
     (basePaths: List[Path], symbols: ActiveSymbols, options) <- combined

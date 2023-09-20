@@ -11,8 +11,6 @@ object MainJS:
 
   def main(args: Array[String]): Unit =
 
-//    val state: GlobalState = GlobalState.build(fetchInheritanceDiagram)
-
     val currentProject: Project = ProjectBuilder.build(fetchInheritanceDiagram)
 
     val documents = fetchDocuments(currentProject.basePaths)

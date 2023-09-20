@@ -66,7 +66,7 @@ def Toolbar(
                 _.sample(
                   state.fullInheritanceDiagramR,
                   state.activeSymbolsR.signal,
-                  project.config.signal.map(_.diagramOptions)
+                  project.projectConfig.signal.map(_.diagramOptions)
                 )
               ) --> { case (fullDiagram: InheritanceDiagram, symbols: ActiveSymbols, options) =>
                 dom.window.navigator.clipboard.writeText(
@@ -100,8 +100,8 @@ private def OptionsToggle(
   LabeledCheckbox(
     id = id,
     labelStr = labelStr,
-    isChecked = project.config.signal.map(field),
-    clickHandler = project.config.updater[Boolean]((config, b) =>
+    isChecked = project.projectConfig.signal.map(field),
+    clickHandler = project.projectConfig.updater[Boolean]((config, b) =>
       modifyField.setTo(b)(config)
     ),
     toggle = true

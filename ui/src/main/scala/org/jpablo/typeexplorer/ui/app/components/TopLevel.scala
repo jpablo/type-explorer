@@ -20,7 +20,7 @@ def TopLevel(
       AppHeader(project.basePaths),
       TabsArea(project, inheritanceSvgDiagram, documents),
       AppFooter,
-      project.config.signal
+      project.projectConfig.signal
         .map(_.advancedMode)
         .childWhenTrue:
           div(
@@ -34,5 +34,5 @@ def TopLevel(
             )
           )
     ),
-    AppConfigDrawer(project.config)
+    AppConfigDrawer(project.projectConfig)
   )

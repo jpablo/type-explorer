@@ -22,11 +22,11 @@ object InheritanceTabState:
 
 import InheritanceTabState.ActiveSymbols
 
-class InheritanceTabState(
-  val activeSymbolsR         : Var[ActiveSymbols] = Var(Map.empty),
-  val fullInheritanceDiagramR: Signal[InheritanceDiagram] = Signal.fromValue(InheritanceDiagram.empty),
+case class InheritanceTabState(
+  activeSymbolsR         : Var[ActiveSymbols] = Var(Map.empty),
+  fullInheritanceDiagramR: Signal[InheritanceDiagram] = Signal.fromValue(InheritanceDiagram.empty),
   // this should be a subset of $activeSymbols' keys
-  val canvasSelectionR       : Var[Set[models.Symbol]] = Var(Set.empty),
+  canvasSelectionR       : Var[Set[models.Symbol]] = Var(Set.empty),
 ):
   object canvasSelection:
     def toggle(symbol: models.Symbol): Unit =

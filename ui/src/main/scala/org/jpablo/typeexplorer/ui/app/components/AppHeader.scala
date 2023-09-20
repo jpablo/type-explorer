@@ -1,12 +1,9 @@
 package org.jpablo.typeexplorer.ui.app.components
 
 import com.raquo.laminar.api.L.*
-import io.laminext.core.*
 import io.laminext.syntax.core.*
 import org.jpablo.typeexplorer.ui.app.Path
-import org.jpablo.typeexplorer.ui.app.components.state.Project
 import org.jpablo.typeexplorer.ui.daisyui.*
-import org.scalajs.dom
 
 enum DiagramType:
   case Inheritance
