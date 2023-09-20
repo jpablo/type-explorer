@@ -1,7 +1,7 @@
 package org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab
 
 import org.jpablo.typeexplorer.ui.app.components.state.InheritanceTabState.ActiveSymbols
-import org.jpablo.typeexplorer.ui.app.components.state.{ProjectConfig, Project, InheritanceTabState, PackagesOptions}
+import org.jpablo.typeexplorer.ui.app.components.state.{ProjectConfig, AppState, InheritanceTabState, PackagesOptions}
 import com.raquo.laminar.api.L.*
 import io.laminext.syntax.core.*
 import com.softwaremill.quicklens.*
@@ -16,15 +16,15 @@ extension[A] (a: A)
     if b then a else f(a)
 
 
-private def PackagesTreeComponent(project: Project) =
+private def PackagesTreeComponent(state: AppState) =
   val showOptions = Var(false)
   val filterBySymbolName = Var("")
   val filteredDiagram: EventStream[InheritanceDiagram] =
-    project.inheritanceTabState.fullInheritanceDiagramR
+    state.inheritanceTabState.fullInheritanceDiagramR
       .combineWith(
-        project.projectConfig.signal.map(_.packagesOptions),
+        state.projectConfig.signal.map(_.packagesOptions),
         filterBySymbolName.signal,
-        project.inheritanceTabState.activeSymbolsR.signal
+        state.inheritanceTabState.activeSymbolsR.signal
       )
       .changes
       .debounce(300)
@@ -56,7 +56,7 @@ private def PackagesTreeComponent(project: Project) =
         toggle = true
       ),
       showOptions.signal.childWhenTrue:
-        Options(project),
+        Options(state),
       Search(
         placeholder := "filter",
         controlled(
@@ -67,12 +67,12 @@ private def PackagesTreeComponent(project: Project) =
     ),
     div(
       cls := "overflow-auto",
-      children <-- PackagesTree(project.inheritanceTabState, filteredDiagram)
+      children <-- PackagesTree(state.inheritanceTabState, filteredDiagram)
     )
   )
 
 
-private def Options(project: Project) =
+private def Options(project: AppState) =
   div(
     cls := "card card-compact p-1 m-2 mb-2 border-slate-300 border-[1px]",
     div(

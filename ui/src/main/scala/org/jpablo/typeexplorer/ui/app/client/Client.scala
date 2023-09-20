@@ -9,7 +9,7 @@ import org.jpablo.typeexplorer.shared.webApp.{InheritanceRequest, Routes}
 import org.jpablo.typeexplorer.ui.app.Path
 import org.jpablo.typeexplorer.ui.app.components.DiagramType
 import org.jpablo.typeexplorer.ui.app.components.state.InheritanceTabState.ActiveSymbols
-import org.jpablo.typeexplorer.ui.app.components.state.Project
+import org.jpablo.typeexplorer.ui.app.components.state.AppState
 import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.InheritanceSvgDiagram
 import org.scalajs.dom
 import zio.json.*
@@ -56,12 +56,12 @@ def fetchInheritanceDiagram(basePaths: List[Path]): Signal[InheritanceDiagram] =
       classes
 }.startWith(InheritanceDiagram.empty)
 
-def fetchInheritanceSVGDiagram(project: Project): EventStream[InheritanceSvgDiagram] =
+def fetchInheritanceSVGDiagram(state: AppState): EventStream[InheritanceSvgDiagram] =
   val combined =
-    project.basePaths
+    state.basePaths
       .combineWith(
-        project.inheritanceTabState.activeSymbolsR.signal,
-        project.projectConfig.signal.map(_.diagramOptions)
+        state.inheritanceTabState.activeSymbolsR.signal,
+        state.projectConfig.signal.map(_.diagramOptions)
       )
   for
     (basePaths: List[Path], symbols: ActiveSymbols, options) <- combined

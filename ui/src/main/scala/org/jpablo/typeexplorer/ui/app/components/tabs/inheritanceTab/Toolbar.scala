@@ -1,6 +1,6 @@
 package org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab
 
-import org.jpablo.typeexplorer.ui.app.components.state.{ProjectConfig, Project}
+import org.jpablo.typeexplorer.ui.app.components.state.{ProjectConfig, AppState}
 import com.raquo.laminar.api.L.*
 import com.softwaremill.quicklens.*
 import org.scalajs.dom
@@ -8,15 +8,18 @@ import org.jpablo.typeexplorer.ui.daisyui.*
 import com.raquo.laminar.api.features.unitArrows
 import com.raquo.laminar.nodes.ReactiveHtmlElement
 import org.scalajs.dom.{HTMLDivElement, HTMLElement}
-import org.jpablo.typeexplorer.shared.inheritance.{InheritanceDiagram, toPlantUML}
+import org.jpablo.typeexplorer.shared.inheritance.{
+  InheritanceDiagram,
+  toPlantUML
+}
 import org.jpablo.typeexplorer.ui.app.components.state.InheritanceTabState.ActiveSymbols
 
 def Toolbar(
-    project                    : Project,
-    inheritanceSvgDiagram      : Signal[InheritanceSvgDiagram],
+    appState: AppState,
+    inheritanceSvgDiagram: Signal[InheritanceSvgDiagram],
     containerBoundingClientRect: => dom.DOMRect
 ) =
-  val state = project.inheritanceTabState
+  val tabState = appState.inheritanceTabState
   val modifySelection = modifyLens[ProjectConfig]
   div(
     cls := "flex items-center gap-4 ml-2 border-b border-slate-300",
@@ -26,20 +29,20 @@ def Toolbar(
         "fields",
         _.diagramOptions.showFields,
         modifySelection(_.diagramOptions.showFields),
-        project
+        appState
       ),
       OptionsToggle(
         "fields-checkbox-2",
         "signatures",
         _.diagramOptions.showSignatures,
         modifySelection(_.diagramOptions.showSignatures),
-        project
+        appState
       )
     ),
     Join(
       Button(
         "remove all",
-        onClick --> state.activeSymbols.clear()
+        onClick --> tabState.activeSymbols.clear()
       ).tiny,
       div(
         cls := "dropdown dropdown-hover",
@@ -64,14 +67,22 @@ def Toolbar(
               "plantuml",
               onClick.compose(
                 _.sample(
-                  state.fullInheritanceDiagramR,
-                  state.activeSymbolsR.signal,
-                  project.projectConfig.signal.map(_.diagramOptions)
+                  tabState.fullInheritanceDiagramR,
+                  tabState.activeSymbolsR.signal,
+                  appState.projectConfig.signal.map(_.diagramOptions)
                 )
-              ) --> { case (fullDiagram: InheritanceDiagram, symbols: ActiveSymbols, options) =>
-                dom.window.navigator.clipboard.writeText(
-                  fullDiagram.subdiagram(symbols.keySet).toPlantUML(symbols, options).diagram
-                )
+              ) --> {
+                case (
+                      fullDiagram: InheritanceDiagram,
+                      symbols: ActiveSymbols,
+                      options
+                    ) =>
+                  dom.window.navigator.clipboard.writeText(
+                    fullDiagram
+                      .subdiagram(symbols.keySet)
+                      .toPlantUML(symbols, options)
+                      .diagram
+                  )
               }
             )
           )
@@ -95,13 +106,13 @@ private def OptionsToggle(
     labelStr: String,
     field: ProjectConfig => Boolean,
     modifyField: PathLazyModify[ProjectConfig, Boolean],
-    project: Project
+    state: AppState
 ) =
   LabeledCheckbox(
     id = id,
     labelStr = labelStr,
-    isChecked = project.projectConfig.signal.map(field),
-    clickHandler = project.projectConfig.updater[Boolean]((config, b) =>
+    isChecked = state.projectConfig.signal.map(field),
+    clickHandler = state.projectConfig.updater[Boolean]((config, b) =>
       modifyField.setTo(b)(config)
     ),
     toggle = true

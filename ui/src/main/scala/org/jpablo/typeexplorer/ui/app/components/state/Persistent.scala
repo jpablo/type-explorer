@@ -7,17 +7,15 @@ import org.scalajs.dom
 import zio.json.*
 
 def persistent[A: JsonCodec](storedString: StoredString, initial: A)(using
-  Owner
+    Owner
 ): Var[A] =
   val aVar: Var[A] =
     Var {
       storedString.signal
-        .map { str =>
-          str.fromJson[A] match
-            case Left(value) =>
-              dom.console.error(s"Error parsing json: $value")
-              initial
-            case Right(value) => value
+        .map {
+          _.fromJson[A].left
+            .map(dom.console.error(_))
+            .getOrElse(initial)
         }
         .observe
         .now()
@@ -25,6 +23,3 @@ def persistent[A: JsonCodec](storedString: StoredString, initial: A)(using
   aVar.signal.foreach: a =>
     storedString.set(a.toJson)
   aVar
-
-
-
