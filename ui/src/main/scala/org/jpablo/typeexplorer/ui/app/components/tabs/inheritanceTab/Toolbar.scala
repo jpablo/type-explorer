@@ -67,9 +67,9 @@ def Toolbar(
               "plantuml",
               onClick.compose(
                 _.sample(
-                  tabState.fullInheritanceDiagramR,
+                  tabState.fullInheritanceDiagram,
                   tabState.activeSymbolsR.signal,
-                  appState.activeProjectR.signal.map(_.diagramOptions)
+                  appState.diagramOptions
                 )
               ) --> {
                 case (
@@ -111,8 +111,8 @@ private def OptionsToggle(
   LabeledCheckbox(
     id = id,
     labelStr = labelStr,
-    isChecked = state.activeProjectR.signal.map(field),
-    clickHandler = state.activeProjectR.updater[Boolean]((config, b) =>
+    isChecked = state.activeProject.signal.map(field),
+    clickHandler = state.activeProject.updater[Boolean]((config, b) =>
       modifyField.setTo(b)(config)
     ),
     toggle = true

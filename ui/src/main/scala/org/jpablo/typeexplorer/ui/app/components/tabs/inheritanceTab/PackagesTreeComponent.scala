@@ -20,9 +20,9 @@ private def PackagesTreeComponent(appState: AppState) =
   val showOptions = Var(false)
   val filterBySymbolName = Var("")
   val filteredDiagram: EventStream[InheritanceDiagram] =
-    appState.inheritanceTabState.fullInheritanceDiagramR
+    appState.inheritanceTabState.fullInheritanceDiagram
       .combineWith(
-        appState.activeProjectR.signal.map(_.packagesOptions),
+        appState.packagesOptions,
         filterBySymbolName.signal,
         appState.inheritanceTabState.activeSymbolsR.signal
       )
@@ -81,7 +81,7 @@ private def Options(appState: AppState) =
         s"filter-by-active",
         "only active",
         isChecked =
-          appState.activeProjectR.signal.map(_.packagesOptions.onlyActive),
+          appState.packagesOptions.map(_.onlyActive),
         clickHandler = Observer: _ =>
           appState.updateActiveProject(
             _.modify(_.packagesOptions.onlyActive).using(!_)
@@ -93,7 +93,7 @@ private def Options(appState: AppState) =
         s"filter-by-scope",
         "Tests",
         isChecked =
-          appState.activeProjectR.signal.map(_.packagesOptions.onlyTests),
+          appState.packagesOptions.map(_.onlyTests),
         clickHandler = Observer: _ =>
           appState.updateActiveProject(
             _.modify(_.packagesOptions.onlyTests).using(!_)
@@ -105,8 +105,8 @@ private def Options(appState: AppState) =
         yield LabeledCheckbox(
           id = s"show-ns-kind-$kind",
           kind.toString,
-          isChecked = appState.activeProjectR.signal
-            .map(_.packagesOptions.nsKind)
+          isChecked = appState.packagesOptions
+            .map(_.nsKind)
             .map(_.contains(kind)),
           clickHandler = Observer: b =>
             appState.updateActiveProject(

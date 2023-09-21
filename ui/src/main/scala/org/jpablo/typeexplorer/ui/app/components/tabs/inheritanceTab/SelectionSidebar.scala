@@ -64,7 +64,7 @@ private def SelectionSidebar(
               "Hide",
               disabled <-- selectionEmpty,
               onClick -->
-                appState.activeProjectR.update:
+                appState.updateActiveProject:
                   _.modify(_.diagramOptions.hiddenSymbols)
                     .using(_ ++ tabState.canvasSelectionR.now())
             )
@@ -76,7 +76,7 @@ private def SelectionSidebar(
               disabled <-- selectionEmpty,
               onClick.compose(
                 _.sample(
-                  tabState.fullInheritanceDiagramR,
+                  tabState.fullInheritanceDiagram,
                   inheritanceSvgDiagram
                 )
               ) -->
@@ -89,7 +89,7 @@ private def SelectionSidebar(
               "Select children",
               onClick.compose(
                 _.sample(
-                  tabState.fullInheritanceDiagramR,
+                  tabState.fullInheritanceDiagram,
                   inheritanceSvgDiagram
                 )
               ) -->

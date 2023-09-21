@@ -8,7 +8,7 @@ import org.jpablo.typeexplorer.ui.app.components.tabs.TabsArea
 import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.InheritanceSvgDiagram
 
 def TopLevel(
-    state: AppState,
+    appState: AppState,
     inheritanceSvgDiagram: Signal[InheritanceSvgDiagram],
     documents: EventStream[List[TextDocumentsWithSource]]
 ) =
@@ -17,22 +17,22 @@ def TopLevel(
     input(idAttr := "drawer-1", tpe := "checkbox", cls := "drawer-toggle"),
     div(
       cls := "drawer-content flex flex-col h-screen",
-      AppHeader(state.basePaths),
-      TabsArea(state, inheritanceSvgDiagram, documents),
+      AppHeader(appState.basePaths),
+      TabsArea(appState, inheritanceSvgDiagram, documents),
       AppFooter,
-      state.activeProjectR.signal
+      appState.activeProject.signal
         .map(_.advancedMode)
         .childWhenTrue:
           div(
             div(
-              child.text <-- state.inheritanceTabState.canvasSelectionR.signal
+              child.text <-- appState.inheritanceTabState.canvasSelectionR.signal
                 .map(ds => s"canvasSelection: ${ds.size}")
             ),
             div(
-              child.text <-- state.inheritanceTabState.activeSymbolsR.signal
+              child.text <-- appState.inheritanceTabState.activeSymbolsR.signal
                 .map(ss => s"activeSymbols: ${ss.size}")
             )
           )
     ),
-    AppConfigDrawer(state.activeProjectR)
+    AppConfigDrawer(appState.activeProject.project)
   )

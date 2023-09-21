@@ -19,12 +19,18 @@ type ProjectId = String
   */
 case class PersistedAppState(
     projects: Map[ProjectId, Project] = Map.empty,
-    activeProjectId: Option[ProjectId] = None
+    lastActiveProjectId: Option[ProjectId] = None
 ) derives JsonCodec:
-  def activeProject: Project =
-    activeProjectId
+
+  def lastActiveProject: Project =
+    lastActiveProjectId
       .flatMap(projects.get)
       .getOrElse(Project(js.Dynamic.global.crypto.randomUUID().toString))
+
+  def selectProject(projectId: Option[ProjectId]): Project =
+    projectId
+      .flatMap(projects.get)
+      .getOrElse(lastActiveProject)
 
 case class Project(
     id: ProjectId,
