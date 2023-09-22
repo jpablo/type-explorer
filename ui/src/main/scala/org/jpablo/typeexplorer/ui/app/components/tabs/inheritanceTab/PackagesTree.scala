@@ -33,7 +33,7 @@ object PackagesTree:
           Collapsable.Control(startOpen = true, openState)
         )
 
-  private def renderPackage(inheritanceTabState: InheritanceTabState)(packageLabel: String, packagePath: List[String]) =
+  private def renderPackage(tabState: InheritanceTabState)(packageLabel: String, packagePath: List[String]) =
     div(
       cls := "whitespace-nowrap inline-block w-full focus:bg-blue-100",
       tabIndex := 0,
@@ -46,8 +46,8 @@ object PackagesTree:
             // Rather hacky: find visible children with the given prefix
             for parent <- thisNode.ref.path.find(_.classList.contains("te-package-name")) do
               val symbols = parent.querySelectorAll(s"[id ^= '$prefix']").map(e => Symbol(e.id))
-              inheritanceTabState.activeSymbols.extend(symbols)
-              inheritanceTabState.canvasSelection.extend(symbols.toSet)
+              tabState.activeSymbols.extend(symbols)
+              tabState.canvasSelection.extend(symbols.toSet)
           }
         }
       )

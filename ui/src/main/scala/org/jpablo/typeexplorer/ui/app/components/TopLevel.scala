@@ -20,19 +20,17 @@ def TopLevel(
       AppHeader(appState.basePaths),
       TabsArea(appState, inheritanceSvgDiagram, documents),
       AppFooter,
-      appState.activeProject.signal
-        .map(_.advancedMode)
-        .childWhenTrue:
+      appState.advancedMode.childWhenTrue:
+        div(
           div(
-            div(
-              child.text <-- appState.inheritanceTabState.canvasSelectionR.signal
-                .map(ds => s"canvasSelection: ${ds.size}")
-            ),
-            div(
-              child.text <-- appState.inheritanceTabState.activeSymbolsR.signal
-                .map(ss => s"activeSymbols: ${ss.size}")
-            )
+            child.text <-- appState.inheritanceTab.canvasSelectionR.signal
+              .map(ds => s"canvasSelection: ${ds.size}")
+          ),
+          div(
+            child.text <-- appState.inheritanceTab.activeSymbolsR.signal
+              .map(ss => s"activeSymbols: ${ss.size}")
           )
+        )
     ),
     AppConfigDrawer(appState.activeProject.project)
   )

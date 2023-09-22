@@ -18,13 +18,14 @@ import org.jpablo.typeexplorer.ui.app.components.state.InheritanceTabState.Activ
 case class AppState(
     persistedAppState: Var[PersistedAppState],
     activeProject: ProjectVar,
-    inheritanceTabState: InheritanceTabState = InheritanceTabState()
+    inheritanceTab: InheritanceTabState = InheritanceTabState()
 ):
   export activeProject.{
     basePaths,
     activeSymbols,
     packagesOptions,
     diagramOptions,
+    advancedMode,
     update as updateActiveProject
   }
 
@@ -42,6 +43,9 @@ case class ProjectVar(project: Var[Project])(using Owner):
 
   val diagramOptions: Signal[DiagramOptions] =
     project.signal.map(_.diagramOptions)
+
+  val advancedMode: Signal[Boolean] =
+    project.signal.map(_.advancedMode)
 
   val activeSymbols: Var[ActiveSymbols] =
     project

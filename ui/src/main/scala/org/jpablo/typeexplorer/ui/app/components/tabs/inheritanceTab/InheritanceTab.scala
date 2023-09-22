@@ -19,7 +19,7 @@ object InheritanceTab:
       inheritanceSvgDiagram: Signal[InheritanceSvgDiagram]
   ): ReactiveHtmlElement[HTMLDivElement] =
     val canvasContainer =
-      CanvasContainer(inheritanceSvgDiagram, appState.inheritanceTabState)
+      CanvasContainer(inheritanceSvgDiagram, appState.inheritanceTab)
 
     val showPackagesTree = Var(false)
 

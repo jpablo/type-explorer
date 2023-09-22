@@ -19,7 +19,7 @@ def Toolbar(
     inheritanceSvgDiagram: Signal[InheritanceSvgDiagram],
     containerBoundingClientRect: => dom.DOMRect
 ) =
-  val tabState = appState.inheritanceTabState
+  val tabState = appState.inheritanceTab
   val modifySelection = modifyLens[Project]
   div(
     cls := "flex items-center gap-4 ml-2 border-b border-slate-300",

@@ -60,7 +60,7 @@ def fetchInheritanceSVGDiagram(appState: AppState): EventStream[InheritanceSvgDi
   val combined =
     appState.basePaths
       .combineWith(
-        appState.inheritanceTabState.activeSymbolsR.signal,
+        appState.inheritanceTab.activeSymbolsR.signal,
         appState.diagramOptions
       )
   for

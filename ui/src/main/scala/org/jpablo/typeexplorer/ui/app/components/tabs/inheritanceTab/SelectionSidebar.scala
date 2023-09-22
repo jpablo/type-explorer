@@ -12,7 +12,7 @@ private def SelectionSidebar(
     appState: AppState,
     inheritanceSvgDiagram: Signal[InheritanceSvgDiagram]
 ) =
-  val tabState = appState.inheritanceTabState
+  val tabState = appState.inheritanceTab
   val selectionEmpty =
     tabState.canvasSelectionR.signal.map(_.isEmpty)
   div(
@@ -27,7 +27,7 @@ private def SelectionSidebar(
             a(
               "Remove",
               disabled <-- selectionEmpty,
-              tabState.applyOnSelection((all, sel) => all -- sel)(
+              tabState.activeSymbols.applyOnSelection((all, sel) => all -- sel)(
                 onClick
               )
             )
@@ -37,7 +37,7 @@ private def SelectionSidebar(
             a(
               "Keep",
               disabled <-- selectionEmpty,
-              tabState.applyOnSelection((all, sel) =>
+              tabState.activeSymbols.applyOnSelection((all, sel) =>
                 all.filter((k, _) => sel.contains(k))
               )(onClick)
             )
@@ -47,7 +47,7 @@ private def SelectionSidebar(
             a(
               "Add parents",
               disabled <-- selectionEmpty,
-              tabState.addSelectionParents(onClick)
+              tabState.activeSymbols.addSelectionParents(onClick)
             )
           ),
           li(
@@ -55,7 +55,7 @@ private def SelectionSidebar(
             a(
               "Add children",
               disabled <-- selectionEmpty,
-              tabState.addSelectionChildren(onClick)
+              tabState.activeSymbols.addSelectionChildren(onClick)
             )
           ),
           li(

@@ -2,14 +2,8 @@ package org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab
 
 import com.raquo.airstream.core.{EventStream, Signal}
 import com.raquo.laminar.api.L.*
-import org.jpablo.typeexplorer.ui.app.components.state.InheritanceTabState
-import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.svgGroupElement.{
-  ClusterElement,
-  LinkElement,
-  NamespaceElement,
-  SvgGroupElement,
-  path
-}
+import org.jpablo.typeexplorer.ui.app.components.state.{CanvasSelectionOps, InheritanceTabState}
+import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.svgGroupElement.{ClusterElement, LinkElement, NamespaceElement, SvgGroupElement, path}
 import org.scalajs.dom
 import org.scalajs.dom.HTMLDivElement
 
@@ -32,11 +26,11 @@ private def CanvasContainer(
     ,
     onClick.preventDefault
       .compose(_.withCurrentValueOf(inheritanceSvgDiagram)) --> handleSvgClick(
-      tabState
+      tabState.canvasSelection
     ).tupled
   )
 
-private def handleSvgClick(state: InheritanceTabState)(
+private def handleSvgClick(canvasSelection: CanvasSelectionOps)(
     ev: dom.MouseEvent,
     diagram: InheritanceSvgDiagram
 ): Unit =
@@ -58,21 +52,21 @@ private def handleSvgClick(state: InheritanceTabState)(
         case _: (LinkElement | NamespaceElement) =>
           if ev.metaKey then
             g.toggle()
-            state.canvasSelection.toggle(g.symbol)
+            canvasSelection.toggle(g.symbol)
           else
             diagram.unselectAll()
             g.select()
-            state.canvasSelection.replace(g.symbol)
+            canvasSelection.replace(g.symbol)
 
         case cluster: ClusterElement =>
           if !ev.metaKey then
             diagram.unselectAll()
-            state.canvasSelection.clear()
+            canvasSelection.clear()
           // select all boxes inside this cluster
           for ns <- diagram.clusterElements(cluster) do
             ns.select()
-            state.canvasSelection.extend(ns.symbol)
+            canvasSelection.extend(ns.symbol)
 
     case None =>
       diagram.unselectAll()
-      state.canvasSelection.clear()
+      canvasSelection.clear()
