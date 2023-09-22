@@ -2,7 +2,7 @@ package org.jpablo.typeexplorer.backend.semanticdb
 
 import java.nio.file.Path
 import scala.meta.internal.semanticdb
-import scala.meta.internal.semanticdb.{SymbolInformation, SymbolOccurrence, TextDocument, TextDocuments}
+import scala.meta.internal.semanticdb.{SymbolInformation, SymbolOccurrence, TextDocuments}
 import java.nio.file.Paths
 import java.net.URI
 import scala.collection.mutable

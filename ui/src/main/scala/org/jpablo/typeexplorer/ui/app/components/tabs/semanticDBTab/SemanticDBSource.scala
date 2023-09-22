@@ -1,7 +1,7 @@
 package org.jpablo.typeexplorer.ui.app.components.tabs.semanticDBTab
 
 import com.raquo.laminar.api.L.*
-import scala.meta.internal.semanticdb.{TextDocument, SymbolInformation, SymbolOccurrence, Synthetic}
+import scala.meta.internal.semanticdb.SymbolOccurrence
 import scalajs.js
 import com.raquo.airstream.core.EventStream
 

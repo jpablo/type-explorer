@@ -2,7 +2,6 @@ package org.jpablo.typeexplorer.ui.daisyui
 
 import com.raquo.laminar.api.L.*
 import com.raquo.laminar.nodes.ReactiveHtmlElement
-import org.scalajs.dom
 
 
 def NavTabs(mods: Modifier[ReactiveHtmlElement.Base]*) =

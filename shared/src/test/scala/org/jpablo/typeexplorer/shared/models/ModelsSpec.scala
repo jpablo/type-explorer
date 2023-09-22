@@ -1,12 +1,10 @@
 package org.jpablo.typeexplorer.shared.models
 
-import zio.test.*
-import zio.test.Assertion.*
-import zio.Scope
-import zio.json.*
-
-import org.jpablo.typeexplorer.shared.webApp.InheritanceRequest
 import org.jpablo.typeexplorer.shared.models
+import org.jpablo.typeexplorer.shared.webApp.InheritanceRequest
+import zio.json.*
+import zio.test.Assertion.*
+import zio.test.*
 
 object ModelsSpec extends ZIOSpecDefault:
 
