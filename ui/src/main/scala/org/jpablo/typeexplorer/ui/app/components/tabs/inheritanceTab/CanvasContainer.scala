@@ -2,8 +2,17 @@ package org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab
 
 import com.raquo.airstream.core.{EventStream, Signal}
 import com.raquo.laminar.api.L.*
-import org.jpablo.typeexplorer.ui.app.components.state.{CanvasSelectionOps, InheritanceTabState}
-import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.svgGroupElement.{ClusterElement, LinkElement, NamespaceElement, SvgGroupElement, path}
+import org.jpablo.typeexplorer.ui.app.components.state.{
+  CanvasSelectionOps,
+  InheritanceTabState
+}
+import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.svgGroupElement.{
+  ClusterElement,
+  LinkElement,
+  NamespaceElement,
+  SvgGroupElement,
+  path
+}
 import org.scalajs.dom
 import org.scalajs.dom.HTMLDivElement
 
@@ -16,12 +25,13 @@ private def CanvasContainer(
     backgroundImage := "radial-gradient(hsla(var(--bc)/.2) .5px,hsla(var(--b2)/1) .5px)",
     backgroundSize := "5px 5px",
     child <-- inheritanceSvgDiagram.map: diagram =>
-      val selection = tabState.canvasSelectionR.now()
+      val selection = tabState.canvasSelection.now()
       diagram.select(selection)
       // remove elements not present in the new diagram (such elements did exist in the previous diagram)
-      tabState.canvasSelectionR.update(
-        _ -- (selection -- diagram.elementSymbols)
-      )
+      tabState.canvasSelection.remove(selection -- diagram.elementSymbols)
+//      tabState.canvasSelectionR.update(
+//        _ -- (selection -- diagram.elementSymbols)
+//      )
       diagram.toLaminar
     ,
     onClick.preventDefault

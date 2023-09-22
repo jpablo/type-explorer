@@ -23,11 +23,11 @@ def TopLevel(
       appState.advancedMode.childWhenTrue:
         div(
           div(
-            child.text <-- appState.inheritanceTab.canvasSelectionR.signal
+            child.text <-- appState.inheritanceTab.canvasSelection.signal
               .map(ds => s"canvasSelection: ${ds.size}")
           ),
           div(
-            child.text <-- appState.inheritanceTab.activeSymbolsR.signal
+            child.text <-- appState.inheritanceTab.activeSymbols.signal
               .map(ss => s"activeSymbols: ${ss.size}")
           )
         )

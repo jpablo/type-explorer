@@ -68,7 +68,7 @@ def Toolbar(
               onClick.compose(
                 _.sample(
                   tabState.fullInheritanceDiagram,
-                  tabState.activeSymbolsR.signal,
+                  tabState.activeSymbols.signal,
                   appState.diagramOptions
                 )
               ) --> {

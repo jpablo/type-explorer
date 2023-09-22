@@ -14,7 +14,7 @@ private def SelectionSidebar(
 ) =
   val tabState = appState.inheritanceTab
   val selectionEmpty =
-    tabState.canvasSelectionR.signal.map(_.isEmpty)
+    tabState.canvasSelection.signal.map(_.isEmpty)
   div(
     cls := "row-start-2 row-end-3 border-l border-slate-300 col-start-4 col-end-5",
     ul(
@@ -66,7 +66,7 @@ private def SelectionSidebar(
               onClick -->
                 appState.updateActiveProject:
                   _.modify(_.diagramOptions.hiddenSymbols)
-                    .using(_ ++ tabState.canvasSelectionR.now())
+                    .using(_ ++ tabState.canvasSelection.now())
             )
           ),
           li(

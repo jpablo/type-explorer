@@ -32,6 +32,8 @@ class CanvasSelectionOps(
     canvasSelectionR: Var[Set[Symbol]] = Var(Set.empty),
     activeSymbolsR: Var[ActiveSymbols],
 ):
+  export canvasSelectionR.{signal, now}
+
   def toggle(symbol: Symbol): Unit =
     canvasSelectionR.update(_.toggle(symbol))
 
@@ -43,6 +45,9 @@ class CanvasSelectionOps(
 
   def extend(symbols: Set[Symbol]): Unit =
     canvasSelectionR.update(_ ++ symbols)
+
+  def remove(symbols: Set[Symbol]): Unit =
+    canvasSelectionR.update(_ -- symbols)
 
   def clear(): Unit =
     canvasSelectionR.set(Set.empty)
@@ -84,6 +89,9 @@ class ActiveSymbolsOps(
     fullInheritanceDiagram: Signal[InheritanceDiagram],
     canvasSelectionR: Var[Set[Symbol]]
 ):
+
+  export activeSymbolsR.signal
+
   def toggle(symbol: Symbol): Unit =
     activeSymbolsR.update: activeSymbols =>
       if activeSymbols.contains(symbol) then activeSymbols - symbol
