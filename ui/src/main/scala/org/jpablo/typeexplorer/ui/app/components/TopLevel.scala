@@ -17,7 +17,8 @@ def TopLevel(
     input(idAttr := "drawer-1", tpe := "checkbox", cls := "drawer-toggle"),
     div(
       cls := "drawer-content flex flex-col h-screen",
-      AppHeader(appState.basePaths),
+//      ProjectSelector,
+      AppHeader(appState.basePaths, appState.activeProject),
       TabsArea(appState, inheritanceSvgDiagram, documents),
       AppFooter,
       appState.advancedMode.childWhenTrue:

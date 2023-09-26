@@ -34,6 +34,7 @@ case class PersistedAppState(
 
 case class Project(
     id: ProjectId,
+    name: String = "",
     advancedMode: Boolean = false,
     packagesOptions: PackagesOptions = PackagesOptions(),
     diagramOptions: DiagramOptions = DiagramOptions(),

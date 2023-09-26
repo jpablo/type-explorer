@@ -1,9 +1,9 @@
 package org.jpablo.typeexplorer.ui.daisyui
 
 import com.raquo.laminar.api.L.*
-import com.raquo.laminar.nodes.ReactiveHtmlElement
+import com.raquo.laminar.nodes.{ReactiveElement, ReactiveHtmlElement}
 
-def Navbar(brand: String, items: LI*): Div =
+def Navbar(brand: String, items: ReactiveElement.Base*): Div =
   div(
     cls := "navbar bg-base-100",
     div(
@@ -11,13 +11,13 @@ def Navbar(brand: String, items: LI*): Div =
       a(cls := "btn btn-ghost normal-case text-xl", brand)
     ),
     div(
-      cls := "flex-none",
-      ul(
-        cls := "menu menu-horizontal",
+      cls := "flex-none gap-3",
         items
-      )
+//      ul(
+//        cls := "menu menu-horizontal",
+//      )
     )
   )
 
 def NavItem(mods: Modifier[ReactiveHtmlElement.Base]*) =
-  li(mods)
+  div(mods)

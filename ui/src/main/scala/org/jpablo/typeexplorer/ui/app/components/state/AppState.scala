@@ -38,6 +38,8 @@ case class ProjectVar(project: Var[Project])(using Owner):
   val basePaths: Signal[List[Path]] =
     project.signal.map(_.basePaths)
 
+  val name = project.zoom(_.name)((p, n) => p.copy(name = n))
+
   val packagesOptions: Signal[PackagesOptions] =
     project.signal.map(_.packagesOptions)
 
