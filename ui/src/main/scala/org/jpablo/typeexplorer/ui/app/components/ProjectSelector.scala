@@ -22,7 +22,7 @@ def ProjectSelector(
         cls := "menu",
         children <--
           projects.map { projects =>
-            projects.map { case (id, project) =>
+            projects.map { (id, project) =>
               li(
                 cls := "menu-item",
                 a(

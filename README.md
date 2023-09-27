@@ -68,3 +68,10 @@ $ npm run build
 
 You can then find the built files in the `dist/` directory.
 You will need an HTTP server, such as `python3 -m http.server`, to open the files, as Vite rewrites `<script>` tags to prevent cross-origin requests.
+
+
+# License
+
+[License](./LICENSE)
+
+Copyright 2023 Juan Pablo Romero and the type-explorer contributors.
