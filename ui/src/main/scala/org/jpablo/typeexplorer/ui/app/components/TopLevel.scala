@@ -3,22 +3,22 @@ package org.jpablo.typeexplorer.ui.app.components
 import com.raquo.laminar.api.L.*
 import io.laminext.syntax.core.*
 import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
-import org.jpablo.typeexplorer.ui.app.components.state.AppState
+import org.jpablo.typeexplorer.ui.app.components.state.{AppState, ProjectId}
 import org.jpablo.typeexplorer.ui.app.components.tabs.TabsArea
 import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.InheritanceSvgDiagram
 
 def TopLevel(
     appState: AppState,
     inheritanceSvgDiagram: Signal[InheritanceSvgDiagram],
-    documents: EventStream[List[TextDocumentsWithSource]]
+    documents: EventStream[List[TextDocumentsWithSource]],
+    selectedProject: EventBus[ProjectId]
 ) =
   div(
     cls := "drawer drawer-end",
     input(idAttr := "drawer-1", tpe := "checkbox", cls := "drawer-toggle"),
     div(
       cls := "drawer-content flex flex-col h-screen",
-//      ProjectSelector,
-      AppHeader(appState.basePaths, appState.activeProject),
+      AppHeader(appState, selectedProject),
       TabsArea(appState, inheritanceSvgDiagram, documents),
       AppFooter,
       appState.advancedMode.childWhenTrue:
