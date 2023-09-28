@@ -61,7 +61,7 @@ lazy val protos =
 val sharedSettings = Seq(
   libraryDependencies ++= Seq(
     "dev.zio" %%% "zio-prelude"       % zioPreludeVersion,
-    "dev.zio" %%% "zio-json"          % "0.4.2",
+    "dev.zio" %%% "zio-json"          % "0.6.1",
     "dev.zio" %%% "zio-test"          % zioVersion % "test",
     "dev.zio" %%% "zio-test-sbt"      % zioVersion % "test",
     "dev.zio" %%% "zio-test-magnolia" % zioVersion % "test",

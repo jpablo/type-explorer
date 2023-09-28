@@ -21,7 +21,6 @@ object ProjectId:
       JsonEncoder.string.contramap(_.value),
       JsonDecoder.string.map(ProjectId(_))
     )
-
   given JsonFieldEncoder[ProjectId] = JsonFieldEncoder.string.contramap(_.value)
   given JsonFieldDecoder[ProjectId] = JsonFieldDecoder.string.map(ProjectId(_))
 

@@ -1,11 +1,10 @@
 package org.jpablo.typeexplorer.backend.backends.graphviz
 
-import org.jpablo.typeexplorer.backend.semanticdb.SymbolRegistry
 import zio.test.*
 import zio.test.Assertion.*
 
 import java.net.URI
-import java.nio.file.{Files, Paths}
+import java.nio.file.Paths
 import scala.meta.internal.semanticdb
 import scala.meta.internal.semanticdb.TextDocuments
 // import zio.test.magnolia.DeriveGen

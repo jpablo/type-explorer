@@ -6,6 +6,7 @@ import com.raquo.laminar.nodes.ReactiveHtmlElement
 import org.jpablo.typeexplorer.ui.app.components.state.{Project, ProjectId}
 import org.scalajs.dom.{HTMLDialogElement, HTMLDivElement}
 import com.raquo.laminar.api.features.unitArrows
+import org.jpablo.typeexplorer.ui.app.toggle
 
 val dialog = htmlTag[HTMLDialogElement]("dialog")
 
@@ -20,6 +21,7 @@ def ProjectSelector(
     deleteProject: EventBus[ProjectId]
 ) =
   val filter = Var("")
+  val selection = Var(Set.empty[ProjectId])
   val filteredProjects =
     projects
       .combineWith(filter.signal)
@@ -37,6 +39,7 @@ def ProjectSelector(
     cls := "modal",
     div(
       cls := "modal-box",
+      // -------- filter ---------
       input(
         tpe := "text",
         cls := "input input-bordered w-full",
@@ -46,12 +49,14 @@ def ProjectSelector(
           onInput.mapToValue --> filter
         )
       ),
+      // -------- project list ---------
       ul(
         cls := "menu",
         children <-- filteredProjects.map(
-          _.map(ProjectSelectorItem(selectedProject, deleteProject)).toSeq
+          _.map(ProjectSelectorItem(selectedProject, selection)).toSeq
         )
       ),
+      // -------- actions ---------
       div(
         cls := "modal-action",
         form(
@@ -61,6 +66,12 @@ def ProjectSelector(
             "new",
             onClick.preventDefault --> selectedProject.emit(ProjectId.random)
           ),
+          button(
+            cls := "btn",
+            "delete",
+            onClick.preventDefault
+              .compose(_.sample(selection)) --> (_.foreach(deleteProject.emit))
+          ),
           button(cls := "btn", "close")
         )
       )
@@ -69,19 +80,19 @@ def ProjectSelector(
 
 def ProjectSelectorItem(
     selectedProject: EventBus[ProjectId],
-    deleteProject: EventBus[ProjectId]
+    selection: Var[Set[ProjectId]]
 )(id: ProjectId, project: Project) =
   li(
-    cls := "menu-item",
+    cls := "flex flex-row",
     a(
-      cls := "text-gray-700",
+      cls := "text-gray-700 flex-1",
       href := "#",
       onClick.preventDefault.mapTo(id) --> selectedProject,
       if project.name.isBlank then id.value else project.name
     ),
-    button(
-      cls := "btn btn-sm btn-error",
-      onClick.preventDefault.mapTo(id) --> deleteProject,
-      "delete"
+    input(
+      cls := "checkbox flex-none",
+      tpe := "checkbox",
+      onClick.preventDefault.mapTo(id) --> selection.update(_.toggle(id))
     )
   )
