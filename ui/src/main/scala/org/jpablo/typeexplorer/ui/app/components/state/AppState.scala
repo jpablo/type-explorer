@@ -28,6 +28,9 @@ case class AppState(
     advancedMode,
     update as updateActiveProject
   }
+  
+  def deleteProject(projectId: ProjectId): Unit =
+    persistedAppState.update(_.deleteProject(projectId))
 
 /** Convenience wrapper around a Var[Project]
   */

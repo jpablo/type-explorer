@@ -1,23 +1,24 @@
 package org.jpablo.typeexplorer.ui.app.components
 
 import com.raquo.laminar.api.L.*
-import org.jpablo.typeexplorer.ui.app.Path
-import org.jpablo.typeexplorer.ui.app.components.state.{AppState, ProjectId, ProjectVar}
 import com.raquo.laminar.api.features.unitArrows
 import com.raquo.laminar.nodes.ReactiveHtmlElement
-import org.scalajs.dom
-import org.scalajs.dom.HTMLDialogElement
+import org.jpablo.typeexplorer.ui.app.Path
+import org.jpablo.typeexplorer.ui.app.components.state.{AppState, ProjectId}
 
 enum DiagramType:
   case Inheritance
   case CallGraph
 
-val dialog = htmlTag("dialog")
 
-def AppHeader(appState: AppState, selectedProject: EventBus[ProjectId]): Div =
+def AppHeader(
+  appState: AppState,
+  selectedProject: EventBus[org.jpablo.typeexplorer.ui.app.components.state.ProjectId],
+  deleteProject: EventBus[org.jpablo.typeexplorer.ui.app.components.state.ProjectId],
+): Div =
   val titleDialog = TitleDialog(appState.activeProject.name)
   val projects = appState.persistedAppState.signal.map(_.projects)
-  val projectSelector = ProjectSelector(projects, selectedProject)
+  val projectSelector = ProjectSelector(projects, selectedProject, deleteProject)
   div(
     cls := "border-b border-slate-300",
     div(
@@ -30,7 +31,7 @@ def AppHeader(appState: AppState, selectedProject: EventBus[ProjectId]): Div =
         cls := "flex-none",
         button(
           cls := "btn btn-ghost btn-sm",
-          onClick --> (titleDialog.ref: HTMLDialogElement).showModal(),
+          onClick --> titleDialog.showModal(),
           child.text <--
             appState.activeProject.project.signal.map: p =>
               if p.name.isBlank then "Untitled" else p.name
@@ -40,7 +41,7 @@ def AppHeader(appState: AppState, selectedProject: EventBus[ProjectId]): Div =
         cls := "flex-1",
         a(
           cls := "btn btn-sm",
-          onClick --> (projectSelector.ref: HTMLDialogElement).showModal(),
+          onClick --> projectSelector.showModal(),
           label(cls := "bi bi-list")
         )
 
@@ -65,12 +66,12 @@ def AppHeader(appState: AppState, selectedProject: EventBus[ProjectId]): Div =
         )
       )
     ),
-    titleDialog,
-    projectSelector
+    titleDialog.tag,
+    projectSelector.tag
   )
 
 def TitleDialog(title: Var[String]) =
-  dialog(
+  Dialog(
     cls := "modal",
     div(
       cls := "modal-box",

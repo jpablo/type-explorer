@@ -11,14 +11,15 @@ def TopLevel(
     appState: AppState,
     inheritanceSvgDiagram: Signal[InheritanceSvgDiagram],
     documents: EventStream[List[TextDocumentsWithSource]],
-    selectedProject: EventBus[ProjectId]
+    selectedProject: EventBus[ProjectId],
+    deleteProject: EventBus[ProjectId]
 ) =
   div(
     cls := "drawer drawer-end",
     input(idAttr := "drawer-1", tpe := "checkbox", cls := "drawer-toggle"),
     div(
       cls := "drawer-content flex flex-col h-screen",
-      AppHeader(appState, selectedProject),
+      AppHeader(appState, selectedProject, deleteProject),
       TabsArea(appState, inheritanceSvgDiagram, documents),
       AppFooter,
       appState.advancedMode.childWhenTrue:

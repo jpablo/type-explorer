@@ -13,7 +13,21 @@ case class PackagesOptions(
     nsKind: Set[models.NamespaceKind] = models.NamespaceKind.values.toSet
 ) derives JsonCodec
 
-type ProjectId = String
+case class ProjectId(value: String) extends AnyVal
+
+object ProjectId:
+  given JsonCodec[ProjectId] =
+    JsonCodec(
+      JsonEncoder.string.contramap(_.value),
+      JsonDecoder.string.map(ProjectId(_))
+    )
+
+  given JsonFieldEncoder[ProjectId] = JsonFieldEncoder.string.contramap(_.value)
+  given JsonFieldDecoder[ProjectId] = JsonFieldDecoder.string.map(ProjectId(_))
+
+  def random =
+    ProjectId(js.Dynamic.global.crypto.randomUUID().toString)
+end ProjectId
 
 /** Structure of the persisted state (in local storage)
   */
@@ -25,12 +39,20 @@ case class PersistedAppState(
   def lastActiveProject: Project =
     lastActiveProjectId
       .flatMap(projects.get)
-      .getOrElse(Project(js.Dynamic.global.crypto.randomUUID().toString))
+      .getOrElse(Project(ProjectId.random))
 
   def selectProject(projectId: Option[ProjectId]): Project =
     projectId
       .flatMap(projects.get)
       .getOrElse(lastActiveProject)
+
+  def deleteProject(projectId: ProjectId): PersistedAppState =
+    copy(
+      projects = projects - projectId,
+      lastActiveProjectId =
+        if lastActiveProjectId.contains(projectId) then None
+        else lastActiveProjectId
+    )
 
 case class Project(
     id: ProjectId,
