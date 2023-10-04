@@ -28,7 +28,7 @@ case class AppState(
     advancedMode,
     update as updateActiveProject
   }
-  
+
   def deleteProject(projectId: ProjectId): Unit =
     persistedAppState.update(_.deleteProject(projectId))
 
@@ -77,7 +77,7 @@ object AppState:
         initial = PersistedAppState()
       )
     val activeProject =
-      ProjectVar(selectProject(persistedAppState, projectId))
+      ProjectVar(selectOrCreateProject(persistedAppState, projectId))
 
     AppState(
       persistedAppState,
@@ -88,7 +88,10 @@ object AppState:
       )
     )
 
-  def selectProject(
+  /** Select an existing project or create a new one. The new project will be
+    * persisted only after the first update.
+    */
+  def selectOrCreateProject(
       persistedAppState: Var[PersistedAppState],
       projectId: Option[ProjectId]
   )(using Owner): Var[Project] =

@@ -35,15 +35,11 @@ case class PersistedAppState(
     lastActiveProjectId: Option[ProjectId] = None
 ) derives JsonCodec:
 
-  def lastActiveProject: Project =
-    lastActiveProjectId
-      .flatMap(projects.get)
-      .getOrElse(Project(ProjectId.random))
-
   def selectProject(projectId: Option[ProjectId]): Project =
     projectId
       .flatMap(projects.get)
-      .getOrElse(lastActiveProject)
+      .orElse(projectId.map(Project(_)))
+      .getOrElse(Project(ProjectId.random))
 
   def deleteProject(projectId: ProjectId): PersistedAppState =
     copy(

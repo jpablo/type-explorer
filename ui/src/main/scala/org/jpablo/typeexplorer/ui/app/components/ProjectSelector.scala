@@ -53,7 +53,7 @@ def ProjectSelector(
       ul(
         cls := "menu",
         children <-- filteredProjects.map(
-          _.map(ProjectSelectorItem(selectedProject, selection)).toSeq
+          _.map(ProjectSelectorItem(selection)).toSeq
         )
       ),
       // -------- actions ---------
@@ -79,15 +79,13 @@ def ProjectSelector(
   )
 
 def ProjectSelectorItem(
-    selectedProject: EventBus[ProjectId],
     selection: Var[Set[ProjectId]]
 )(id: ProjectId, project: Project) =
   li(
     cls := "flex flex-row",
     a(
       cls := "text-gray-700 flex-1",
-      href := "#",
-      onClick.preventDefault.mapTo(id) --> selectedProject,
+      href := s"/${id.value}",
       if project.name.isBlank then id.value else project.name
     ),
     input(
