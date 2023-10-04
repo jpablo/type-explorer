@@ -88,9 +88,15 @@ def ProjectSelectorItem(
       href := s"/${id.value}",
       if project.name.isBlank then id.value else project.name
     ),
-    input(
-      cls := "checkbox flex-none",
-      tpe := "checkbox",
-      onClick.preventDefault.mapTo(id) --> selection.update(_.toggle(id))
+    div(
+      cls := "flex-none",
+      input(
+        cls := "checkbox",
+        tpe := "checkbox",
+        controlled(
+          checked <-- selection.signal.map(_.contains(id)),
+          onClick.mapTo(id) --> selection.update(_.toggle(id))
+        )
+      )
     )
   )
