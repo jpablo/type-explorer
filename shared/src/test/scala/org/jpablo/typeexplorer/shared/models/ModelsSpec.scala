@@ -11,18 +11,37 @@ object ModelsSpec extends ZIOSpecDefault:
   override def spec = suite("Models Spec") (
 
     test("Serialize InheritanceReq"):
-      val json = """
+      val serialization = """
       {
-          "paths": [
-            "/Users/jpablo/GitHub/Airstream"
+        "paths": [
+          "/Users/jpablo/GitHub/Airstream"
+        ],
+        "activeSymbols": [
+          [
+            "com/raquo/airstream/core/EventStream#",
+            null
+          ]
+        ],
+        "options": {
+          "showFields": false,
+          "showSignatures": false,
+          "hiddenFields": [
+            "canEqual",
+            "copy",
+            "equals",
+            "hashCode",
+            "productArity",
+            "productElement",
+            "productIterator",
+            "productPrefix",
+            "toString",
+            "_1",
+            "_2",
+            "_3",
+            "_4"
           ],
-          "symbols": [
-            ["com/raquo/airstream/core/EventStream#", null]
-          ],
-          "options": {
-              "fields": false,
-              "signatures": false
-          }
+          "hiddenSymbols": []
+        }
       }
       """
       val expected =
@@ -30,17 +49,40 @@ object ModelsSpec extends ZIOSpecDefault:
           List("/Users/jpablo/GitHub/Airstream"),
           List(models.Symbol("com/raquo/airstream/core/EventStream#") -> None)
         )
-      assertTrue(json.fromJson[InheritanceRequest[String]] == Right(expected))
+      assertTrue(Right(expected) == serialization.fromJson[InheritanceRequest[String]])
     ,
     test("Serialize InheritanceReq without options"):
-      val json = """
+      val serialization = """
       {
-          "paths": [
-            "/Users/jpablo/GitHub/Airstream"
-          ],
-          "symbols": [
-            ["com/raquo/airstream/core/EventStream#", null]
+        "paths": [
+          "/Users/jpablo/GitHub/Airstream"
+        ],
+        "activeSymbols": [
+          [
+            "com/raquo/airstream/core/EventStream#",
+            null
           ]
+        ],
+        "options": {
+          "showFields": false,
+          "showSignatures": false,
+          "hiddenFields": [
+            "canEqual",
+            "copy",
+            "equals",
+            "hashCode",
+            "productArity",
+            "productElement",
+            "productIterator",
+            "productPrefix",
+            "toString",
+            "_1",
+            "_2",
+            "_3",
+            "_4"
+          ],
+          "hiddenSymbols": []
+        }
       }
       """
       val expected =
@@ -49,5 +91,5 @@ object ModelsSpec extends ZIOSpecDefault:
           List(models.Symbol("com/raquo/airstream/core/EventStream#") -> None)
         )
 
-      assertTrue(json.fromJson[InheritanceRequest[String]] == Right(expected))
+      assertTrue(serialization.fromJson[InheritanceRequest[String]] == Right(expected))
   )
