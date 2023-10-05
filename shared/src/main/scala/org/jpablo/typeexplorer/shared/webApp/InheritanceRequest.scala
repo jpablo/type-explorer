@@ -1,9 +1,8 @@
 package org.jpablo.typeexplorer.shared.webApp
 
-import org.jpablo.typeexplorer.shared.inheritance.{SymbolOptions, DiagramOptions}
-import zio.json.*
+import org.jpablo.typeexplorer.shared.inheritance.{DiagramOptions, SymbolOptions}
 import org.jpablo.typeexplorer.shared.models.Symbol
-import java.nio.file
+import zio.json.*
 
 type ActiveSymbolsSeq = List[(Symbol, Option[SymbolOptions])]
 

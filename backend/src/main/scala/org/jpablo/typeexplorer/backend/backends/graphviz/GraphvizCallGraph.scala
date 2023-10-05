@@ -1,15 +1,10 @@
 package org.jpablo.typeexplorer.backend.backends.graphviz
 
-import GraphvizCallGraph.toGraph
-import guru.nidi.graphviz.attribute.Label
-import scalatags.Text
-import guru.nidi.graphviz.attribute.Rank.RankDir
-import guru.nidi.graphviz.model.{Graph, Link, LinkSource, LinkTarget, Node, PortNode}
+import guru.nidi.graphviz.attribute.*
+import guru.nidi.graphviz.engine.{Format, Graphviz}
 import guru.nidi.graphviz.model.Factory.*
-import guru.nidi.graphviz.attribute.Records.*
-import guru.nidi.graphviz.attribute.{Arrow, Color, Rank, Records, Shape, Style}
-import guru.nidi.graphviz.engine.Format
-import guru.nidi.graphviz.engine.Graphviz
+import guru.nidi.graphviz.model.{Graph, LinkTarget, Node}
+import org.jpablo.typeexplorer.backend.backends.graphviz.GraphvizCallGraph.toGraph
 import org.jpablo.typeexplorer.shared.callGraph.{CallGraph, CallGraphExamples}
 import org.jpablo.typeexplorer.shared.models.{Method, Namespace}
 
