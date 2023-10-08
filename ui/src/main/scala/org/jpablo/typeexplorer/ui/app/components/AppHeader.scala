@@ -13,8 +13,8 @@ enum DiagramType:
 
 def AppHeader(
   appState: AppState,
-  selectedProject: EventBus[org.jpablo.typeexplorer.ui.app.components.state.ProjectId],
-  deleteProject: EventBus[org.jpablo.typeexplorer.ui.app.components.state.ProjectId],
+  selectedProject: EventBus[ProjectId],
+  deleteProject: EventBus[ProjectId],
 ): Div =
   val titleDialog = TitleDialog(appState.activeProject.name)
   val projects = appState.persistedAppState.signal.map(_.projects)
