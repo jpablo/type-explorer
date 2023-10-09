@@ -27,6 +27,7 @@ def AppHeader(
         cls := "flex-none",
         a(cls := "btn btn-ghost normal-case text-xl", "Type Explorer")
       ),
+      // -------- project title --------
       div(
         cls := "flex-none",
         button(
@@ -37,6 +38,7 @@ def AppHeader(
               if p.name.isBlank then "Untitled" else p.name
         )
       ),
+      // -------- project selector --------
       div(
         cls := "flex-1",
         a(
@@ -46,6 +48,7 @@ def AppHeader(
         )
 
       ),
+      // -------- base path --------
       div(
         cls := "flex-none gap-3",
         b("base path:"),
@@ -57,6 +60,7 @@ def AppHeader(
                 .getOrElse("None") + (if ps.size > 1 then s" (+${ps.size - 1})"
                                       else "")
         ),
+        // -------- config gear button --------
         a(
           cls := "btn btn-sm",
           label(

@@ -67,7 +67,7 @@ object AppState:
     */
   def load(
       fetchDiagram: List[Path] => Signal[InheritanceDiagram],
-      projectId: Option[ProjectId] = None
+      projectId: ProjectId
   ): AppState =
     given owner: Owner = OneTimeOwner(() => ())
 
@@ -93,10 +93,10 @@ object AppState:
     */
   def selectOrCreateProject(
       persistedAppState: Var[PersistedAppState],
-      projectId: Option[ProjectId]
+      projectId: ProjectId
   )(using Owner): Var[Project] =
     persistedAppState
-      .zoom(_.selectProject(projectId)) {
+      .zoom(_.selectOrCreateProject(projectId)) {
         (persistedAppState, selectedProject) =>
           persistedAppState
             .modify(_.projects)

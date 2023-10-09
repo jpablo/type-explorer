@@ -1,6 +1,10 @@
 package org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab
 
-import org.jpablo.typeexplorer.ui.app.components.state.{Project, AppState}
+import org.jpablo.typeexplorer.ui.app.components.state.{
+  AppState,
+  InheritanceTabState,
+  Project
+}
 import com.raquo.laminar.api.L.*
 import com.softwaremill.quicklens.*
 import org.scalajs.dom
@@ -23,6 +27,7 @@ def Toolbar(
   val modifySelection = modifyLens[Project]
   div(
     cls := "flex items-center gap-4 ml-2 border-b border-slate-300",
+    // -------- fields and signatures --------
     Join(
       OptionsToggle(
         "fields-checkbox-1",
@@ -39,6 +44,7 @@ def Toolbar(
         appState
       )
     ),
+    // -------- actions toolbar --------
     Join(
       Button(
         "remove all",
@@ -65,25 +71,7 @@ def Toolbar(
           li(
             a(
               "plantuml",
-              onClick.compose(
-                _.sample(
-                  tabState.fullInheritanceDiagram,
-                  tabState.activeSymbols.signal,
-                  appState.diagramOptions
-                )
-              ) --> {
-                case (
-                      fullDiagram: InheritanceDiagram,
-                      symbols: ActiveSymbols,
-                      options
-                    ) =>
-                  dom.window.navigator.clipboard.writeText(
-                    fullDiagram
-                      .subdiagram(symbols.keySet)
-                      .toPlantUML(symbols, options)
-                      .diagram
-                  )
-              }
+              onPlantUMLClicked(appState, tabState)
             )
           )
         )
@@ -117,3 +105,22 @@ private def OptionsToggle(
     ),
     toggle = true
   )
+
+private def onPlantUMLClicked(
+    appState: AppState,
+    tabState: InheritanceTabState
+) =
+  onClick.compose(
+    _.sample(
+      tabState.fullInheritanceDiagram,
+      tabState.activeSymbols.signal,
+      appState.diagramOptions
+    )
+  ) --> { (fullDiagram: InheritanceDiagram, symbols: ActiveSymbols, options) =>
+    dom.window.navigator.clipboard.writeText(
+      fullDiagram
+        .subdiagram(symbols.keySet)
+        .toPlantUML(symbols, options)
+        .diagram
+    )
+  }
