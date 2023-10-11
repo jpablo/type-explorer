@@ -2,16 +2,14 @@ package org.jpablo.typeexplorer.ui.app.components
 
 import com.raquo.laminar.api.L.*
 import com.raquo.laminar.api.features.unitArrows
-import com.raquo.laminar.codecs.StringAsIsCodec
 import com.raquo.laminar.nodes.ReactiveHtmlElement
 import org.jpablo.typeexplorer.ui.app.Path
 import org.jpablo.typeexplorer.ui.app.components.state.{AppState, ProjectId}
+import org.jpablo.typeexplorer.ui.domUtils.dataTip
 
 enum DiagramType:
   case Inheritance
   case CallGraph
-
-val dataTip = htmlAttr("data-Tip", StringAsIsCodec)
 
 def AppHeader(
   appState: AppState,

@@ -24,7 +24,7 @@ object PlantumlInheritance:
     val filteredDiagram =
       diagram.filterBy(ns => !diagramOptions.hiddenSymbols.contains(ns.symbol))
     val declarations =
-      filteredDiagram.toTrees.map(renderTree(diagramOptions, symbols))
+      filteredDiagram.toTrees.children.map(renderTree(diagramOptions, symbols))
 
     val inheritance =
       for (source, target) <- filteredDiagram.arrows yield
@@ -51,7 +51,7 @@ object PlantumlInheritance:
   // ----------------------------------------------------
 
   private def renderTree(diagramOptions: DiagramOptions, symbols: Map[Symbol, Option[SymbolOptions]]): Tree[Namespace] => String =
-    case Tree.Node(label, path, children) =>
+    case Tree.Branch(label, path, children) =>
       s"""
          |namespace "$label" as ${path.mkString(".")} {
          |  ${children.map(renderTree(diagramOptions, symbols)) mkString "\n"}
@@ -77,7 +77,7 @@ object PlantumlInheritance:
       case NamespaceKind.Trait         => """ << (T, pink) >>"""
       case NamespaceKind.Class         => ""
       case other                       => s""" <<$other>>"""
-    
+
     val showFields = symbolOptions.map(_.showFields).getOrElse(diagramOptions.showFields)
     val showSignatures = symbolOptions.map(_.showSignatures).getOrElse(diagramOptions.showSignatures)
     val filteredMethods = ns.methods.filterNot(m => diagramOptions.hiddenFields.contains(m.displayName))

@@ -6,7 +6,7 @@ import io.laminext.syntax.core.StoredString
 import org.scalajs.dom
 import zio.json.*
 
-def persistent[A: JsonCodec](storedString: StoredString, initial: A)(using
+def persistentVar[A: JsonCodec](storedString: StoredString, initial: A)(using
     Owner
 ): Var[A] =
   val aVar: Var[A] =

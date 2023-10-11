@@ -7,8 +7,7 @@ import org.jpablo.typeexplorer.ui.app.components.state.{Project, ProjectId}
 import org.scalajs.dom.{HTMLDialogElement, HTMLDivElement}
 import com.raquo.laminar.api.features.unitArrows
 import org.jpablo.typeexplorer.ui.app.toggle
-
-val dialog = htmlTag[HTMLDialogElement]("dialog")
+import org.jpablo.typeexplorer.ui.domUtils.dialog
 
 case class Dialog(mods: Modifier[ReactiveHtmlElement.Base]*):
   export tag.ref, tag.ref.showModal

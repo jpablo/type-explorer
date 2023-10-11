@@ -5,8 +5,12 @@ import zio.json.*
 import com.softwaremill.quicklens.*
 
 enum Tree[+A] derives JsonCodec:
-  case Node(label: Tree.Label, path: List[Tree.Label], children: List[Tree[A]])
+  case Branch(label: Tree.Label, path: List[Tree.Label], override val children: List[Tree[A]])
   case Leaf(label: Tree.Label, data: A)
+
+  def children: List[Tree[A]] = this match
+    case b: Branch[a] => b.children
+    case _: Leaf[l]      => Nil
 
   def label: Tree.Label
 
@@ -14,7 +18,8 @@ object Tree:
   type Label = String
   type LeafWithPath[A] = (List[Label], Label, A)
 
-  def fromPaths[A](paths: List[LeafWithPath[A]], sep: String = "/", prefix: List[Tree.Label] = List.empty): List[Tree[A]] =
+
+  def fromPaths[A](paths: List[LeafWithPath[A]], sep: String = "/", prefix: List[Tree.Label] = List.empty): Tree[A] =
     val leaves        = paths.collect { case (Nil,    label, data) => Leaf(label, data) }
     val nonEmptyPaths = paths.collect { case (h :: t, label, data) => (NonEmptyList(h, t*), label, data) }
 
@@ -27,10 +32,14 @@ object Tree:
     val nodes =
       for (groupLabel, groupPaths) <- leafGroups yield
         val prefix1 = prefix :+ groupLabel
-        val subtrees = fromPaths(groupPaths, sep, prefix1)
+        val subtrees = fromPaths(groupPaths, sep, prefix1).children
         node(groupLabel, subtrees, prefix1, sep)
 
-    nodes.sortBy(_.label) ++ leaves.sortBy(_.label)
+    Tree.Branch(
+      label = prefix.mkString(sep),
+      path = prefix,
+      children = nodes.sortBy(_.label) ++ leaves.sortBy(_.label)
+    )
 
 
   private def pathTail[B](path: (NonEmptyList[Label], Label, B)): LeafWithPath[B] =
@@ -38,6 +47,6 @@ object Tree:
 
   private def node[A](label: Label, trees: List[Tree[A]], path: List[Tree.Label], sep: String): Tree[A] =
     trees match
-      case List(d: Node[A]) => d.modify(_.label)(label + sep + _)
-      case _                => Node(label, path, trees)
+      case List(d: Branch[A]) => d.modify(_.label)(label + sep + _)
+      case _                => Branch(label, path, trees)
 

@@ -128,7 +128,7 @@ case class InheritanceDiagram(
   def childrenOf(symbol: Symbol): InheritanceDiagram = allRelated(Set(symbol), directChildren)
 
 
-  lazy val toTrees: List[Tree[Namespace]] =
+  lazy val toTrees: Tree[Namespace] =
     val paths =
       for ns <- namespaces.toList yield
         (ns.symbol.toString.split("/").init.toList, ns.displayName, ns)

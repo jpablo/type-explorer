@@ -27,7 +27,7 @@ def TopLevel(
       AppHeader(appState, selectedProject, deleteProject),
       TabsArea(appState, inheritanceSvgDiagram, documents),
       AppFooter,
-      // -------- advanced mode --------
+      // -------- advanced/debug mode --------
       appState.advancedMode.childWhenTrue:
         div(
           div(

@@ -17,7 +17,7 @@ object SemanticDBTree:
   ) =
     for documentsWithSource <- documents yield
       val open = Var(Map.empty[String, Boolean])
-      for fileTree <- Tree.fromPaths(documentsWithSource.map(buildPath)) yield
+      for fileTree <- Tree.fromPaths(documentsWithSource.map(buildPath)).children yield
         val mkControl = Collapsable.Control(false, open)
         CollapsableTree(fileTree)(
           renderNode = (b, path) => span(cls := "whitespace-nowrap", b),

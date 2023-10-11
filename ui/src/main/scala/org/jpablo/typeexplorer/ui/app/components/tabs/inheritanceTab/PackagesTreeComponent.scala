@@ -27,6 +27,8 @@ private def PackagesTreeComponent(appState: AppState) =
       .combineWith(
         appState.packagesOptions,
         filterBySymbolName.signal,
+        // TODO: consider another approach where changing activeSymbols does not trigger
+        // a full tree redraw, but just modifies the relevant nodes
         appState.inheritanceTab.activeSymbols.signal
       )
       .changes
@@ -70,8 +72,8 @@ private def PackagesTreeComponent(appState: AppState) =
       ).small
     ),
     div(
-      cls := "overflow-auto",
-      children <-- PackagesTree(appState.inheritanceTab, filteredDiagram)
+      cls := "overflow-auto mt-1",
+      child <-- PackagesTree(appState.inheritanceTab, filteredDiagram)
     )
   )
 

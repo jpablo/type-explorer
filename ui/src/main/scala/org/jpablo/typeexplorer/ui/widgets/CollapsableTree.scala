@@ -6,12 +6,12 @@ import org.jpablo.typeexplorer.shared.tree.Tree
 def CollapsableTree[A](
   t: Tree[A]
 )(
-  renderNode: (String, List[String]) => HtmlElement,
-  renderLeaf: (String, A) => HtmlElement,
+  renderNode: (Tree.Label, List[String]) => HtmlElement,
+  renderLeaf: (Tree.Label, A) => HtmlElement,
   mkControl : String => Collapsable.Control
 )
 : HtmlElement = t match
-  case Tree.Node(label, path, children) =>
+  case Tree.Branch(label, path, children) =>
     val key = path.mkString(".") ++ "." + label
     Collapsable(
       nodeLabel    = renderNode(label, path),

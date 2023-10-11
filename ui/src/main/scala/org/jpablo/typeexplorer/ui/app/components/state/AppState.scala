@@ -68,16 +68,14 @@ object AppState:
   def load(
       fetchDiagram: List[Path] => Signal[InheritanceDiagram],
       projectId: ProjectId
-  ): AppState =
-    given owner: Owner = OneTimeOwner(() => ())
-
+  )(using Owner): AppState =
     val persistedAppState =
-      persistent(
+      persistentVar(
         storedString("persistedAppState", initial = "{}"),
         initial = PersistedAppState()
       )
     val activeProject =
-      ProjectVar(selectOrCreateProject(persistedAppState, projectId))
+      selectOrCreateProject(persistedAppState, projectId)
 
     AppState(
       persistedAppState,
@@ -94,13 +92,15 @@ object AppState:
   def selectOrCreateProject(
       persistedAppState: Var[PersistedAppState],
       projectId: ProjectId
-  )(using Owner): Var[Project] =
-    persistedAppState
-      .zoom(_.selectOrCreateProject(projectId)) {
-        (persistedAppState, selectedProject) =>
-          persistedAppState
-            .modify(_.projects)
-            .using(_ + (selectedProject.id -> selectedProject))
-      }
+  )(using Owner): ProjectVar =
+    ProjectVar {
+      persistedAppState
+        .zoom(_.selectOrCreateProject(projectId)) {
+          (persistedAppState, selectedProject) =>
+            persistedAppState
+              .modify(_.projects)
+              .using(_ + (selectedProject.id -> selectedProject))
+        }
+    }
 
 end AppState

@@ -32,7 +32,7 @@ object GraphvizInheritance:
       diagram.filterBy(ns => !diagramOptions.hiddenSymbols.contains(ns.symbol))
 
     val declarations =
-      filteredDiagram.toTrees.map(renderTree(diagramOptions, symbolOptions))
+      filteredDiagram.toTrees.children.map(renderTree(diagramOptions, symbolOptions))
 
     val arrows =
       filteredDiagram.arrows.toSeq.map: (source, target) =>
@@ -49,7 +49,7 @@ object GraphvizInheritance:
       .`with`(arrows*)
 
   private def renderTree(diagramOptions: DiagramOptions, symbolOptions: Map[models.Symbol, Option[SymbolOptions]]): Tree[models.Namespace] => (LinkSource & LinkTarget) =
-    case Tree.Node(label, path, children) =>
+    case Tree.Branch(label, path, children) =>
       val clusterName = path.mkString("/")
       graph(clusterName)
         .cluster

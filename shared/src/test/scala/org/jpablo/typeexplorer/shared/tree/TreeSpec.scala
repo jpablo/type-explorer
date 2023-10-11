@@ -13,7 +13,7 @@ object TreeSpec extends ZIOSpecDefault:
       )
       val expected =
         List(
-          Node("a/b/c", List("a", "b", "c"), List(Leaf("d", 1)))
+          Branch("a/b/c", List("a", "b", "c"), List(Leaf("d", 1)))
         )
       assertTrue(expected == tree)
     ,
@@ -29,16 +29,16 @@ object TreeSpec extends ZIOSpecDefault:
 
       val expected =
         List(
-          Node(
+          Branch(
             "a/b",
             List("a", "b"),
             List(
-              Node(
+              Branch(
                 "c",
                 List("a", "b", "c"),
                 List(Leaf("d", 1), Leaf("e", 2))
               ),
-              Node(
+              Branch(
                 "f",
                 List("a", "b", "f"),
                 List(Leaf("g", 3))
