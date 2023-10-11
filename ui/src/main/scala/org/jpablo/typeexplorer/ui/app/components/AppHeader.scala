@@ -2,6 +2,7 @@ package org.jpablo.typeexplorer.ui.app.components
 
 import com.raquo.laminar.api.L.*
 import com.raquo.laminar.api.features.unitArrows
+import com.raquo.laminar.codecs.StringAsIsCodec
 import com.raquo.laminar.nodes.ReactiveHtmlElement
 import org.jpablo.typeexplorer.ui.app.Path
 import org.jpablo.typeexplorer.ui.app.components.state.{AppState, ProjectId}
@@ -10,6 +11,7 @@ enum DiagramType:
   case Inheritance
   case CallGraph
 
+val dataTip = htmlAttr("data-Tip", StringAsIsCodec)
 
 def AppHeader(
   appState: AppState,
@@ -29,7 +31,11 @@ def AppHeader(
       ),
       // -------- project title --------
       div(
-        cls := "flex-none",
+        cls := "divider divider-horizontal mx-1",
+      ),
+      div(
+        cls := "flex-none tooltip tooltip-bottom",
+        dataTip := "Edit project name",
         button(
           cls := "btn btn-ghost btn-sm",
           onClick --> titleDialog.showModal(),
@@ -37,6 +43,9 @@ def AppHeader(
             appState.activeProject.project.signal.map: p =>
               if p.name.isBlank then "Untitled" else p.name
         )
+      ),
+      div(
+        cls := "divider divider-horizontal mx-1",
       ),
       // -------- project selector --------
       div(
