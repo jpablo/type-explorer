@@ -104,8 +104,18 @@ object WebApp extends ZIOAppDefault:
 
   } @@ cors(corsConfig)
 
+  private val port = 8090
+  welcomeUser()
+
   val run =
-    Server.start(8090, staticRoutes ++ appZ)
+    Server.start(port, staticRoutes ++ appZ)
+
+  def welcomeUser(): Unit =
+    println("--------------------------------------------------")
+    println("Welcome to Type Explorer!")
+    println(s"Open your browser at http://localhost:$port/")
+    println(s"Press Ctrl-C to stop the server")
+    println("--------------------------------------------------")
 
   // -----------------
   // helper functions
