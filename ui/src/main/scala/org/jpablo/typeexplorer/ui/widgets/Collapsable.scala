@@ -49,4 +49,5 @@ object Icons:
   def fileBinary = i(cls := "bi bi-file-binary")
   def fileCode = i(cls := "bi bi-file-code")
   def folder = a(cls := "bi bi-folder")
+  def close = a(cls := "bi bi-x-circle")
 
