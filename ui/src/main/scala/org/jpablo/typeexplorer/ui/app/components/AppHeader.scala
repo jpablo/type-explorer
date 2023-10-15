@@ -48,12 +48,15 @@ def AppHeader(
       // -------- project selector --------
       div(
         cls := "flex-1",
-        a(
-          cls := "btn btn-sm",
-          onClick --> projectSelector.showModal(),
-          label(cls := "bi bi-list")
-        )
-
+        div(
+          cls := "tooltip tooltip-bottom",
+          dataTip := "Select project",
+          a(
+            cls := "btn btn-sm",
+            onClick --> projectSelector.showModal(),
+            label(cls := "bi bi-list")
+          )
+        ),
       ),
       // -------- base path --------
       div(
@@ -68,11 +71,15 @@ def AppHeader(
                                       else "")
         ),
         // -------- config gear button --------
-        a(
-          cls := "btn btn-sm",
-          label(
-            forId := "drawer-1",
-            cls := "drawer-button bi bi-gear"
+        div(
+          cls := "tooltip tooltip-bottom",
+          dataTip := "Configuration",
+          a(
+            cls := "btn btn-sm",
+            label(
+              forId := "drawer-1",
+              cls := "drawer-button bi bi-gear"
+            )
           )
         )
       )
@@ -80,6 +87,7 @@ def AppHeader(
     titleDialog.tag,
     projectSelector.tag
   )
+end AppHeader
 
 def TitleDialog(title: Var[String]) =
   Dialog(

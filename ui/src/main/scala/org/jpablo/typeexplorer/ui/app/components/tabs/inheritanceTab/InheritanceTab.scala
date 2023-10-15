@@ -21,7 +21,7 @@ object InheritanceTab:
     val canvasContainer =
       CanvasContainer(inheritanceSvgDiagram, appState.inheritanceTab)
 
-    val showPackagesTree = Var(true)
+    val showPackagesTree = Var(false)
 
     // --- grid container: 4 columns, 2 rows ---
     div(
