@@ -1,13 +1,13 @@
 #!/bin/bash
 
-project=${1:-""}
+project=${1:-"all"}
 
-semanticdbVersion="4.8.11"
+semanticdbVersion=${2:-"4.8.11"}
 
-if [ -z "$project" ]; then
-  sbt "set ThisBuild / semanticdbEnabled := true; set semanticdbVersion := \"$semanticdbVersion\"; clean; compile"
+if [ "$project" == "all" ]; then
+  sbt -client "set ThisBuild / semanticdbEnabled := true; set semanticdbVersion := \"$semanticdbVersion\"; clean; compile"
 else
-  sbt "project $project; set semanticdbEnabled := true; set semanticdbVersion := \"$semanticdbVersion\"; clean; compile; Test / compile"
+  sbt -client "project $project; set semanticdbEnabled := true; set semanticdbVersion := \"$semanticdbVersion\"; clean; compile; Test / compile"
 fi
 
 
