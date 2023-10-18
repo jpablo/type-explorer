@@ -64,6 +64,7 @@ class InheritanceSvgDiagram(svgElement: dom.SVGElement):
     val e = DomApi.unsafeParseSvgString(t)
     val bbox = el.getBBox()
     val s = svg.svg(
+      svg.xmlns := "http://www.w3.org/2000/svg",
       svg.viewBox := s"${bbox.x} ${bbox.y} ${bbox.width} ${bbox.height}",
       foreignSvgElement(e)
     )
