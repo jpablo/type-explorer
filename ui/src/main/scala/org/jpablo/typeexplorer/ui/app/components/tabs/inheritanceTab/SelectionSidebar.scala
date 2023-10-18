@@ -62,7 +62,11 @@ private def SelectionSidebar(
                 val el = svgDiagram.getElementById("elem_" + canvasSelection.head.toString()).asInstanceOf[dom.SVGSVGElement]
                 val t = el.outerHTML
                 val e = DomApi.unsafeParseSvgString(t)
-                val s = svg.svg(foreignSvgElement(e))
+                val bbox = el.getBBox()
+                val s = svg.svg(
+                  svg.viewBox := s"${bbox.x} ${bbox.y} ${bbox.width} ${bbox.height}",
+                  foreignSvgElement(e)
+                )
                 dom.window.navigator.clipboard.writeText(s.ref.outerHTML)
               }
             )
