@@ -7,6 +7,7 @@ import org.jpablo.typeexplorer.shared.inheritance.InheritanceDiagram
 import org.jpablo.typeexplorer.ui.app
 import org.jpablo.typeexplorer.ui.app.components.state.AppState
 import org.jpablo.typeexplorer.ui.daisyui.*
+import org.scalajs.dom
 
 private def SelectionSidebar(
     appState: AppState,
@@ -22,6 +23,7 @@ private def SelectionSidebar(
       li(
         h2(cls := "menu-title", span("selection")),
         ul(
+          // ----- remove selection -----
           li(
             cls.toggle("disabled") <-- selectionEmpty,
             a(
@@ -32,6 +34,7 @@ private def SelectionSidebar(
               )
             )
           ),
+          // ----- remove complement -----
           li(
             cls.toggle("disabled") <-- selectionEmpty,
             a(
@@ -42,6 +45,21 @@ private def SelectionSidebar(
               )(onClick)
             )
           ),
+          // ----- copy as svg -----
+          li(
+            cls.toggle("disabled") <-- selectionEmpty,
+            a(
+              "Copy as SVG",
+              disabled <-- selectionEmpty,
+              onClick.compose(
+                _.sample(inheritanceSvgDiagram, tabState.canvasSelectionR)
+              ) --> { (svgDiagram, canvasSelection) =>
+                val id = canvasSelection.head.toString()
+                dom.window.navigator.clipboard.writeText(svgDiagram.toSVGText(canvasSelection))
+              }
+            )
+          ),
+          // ----- augment selection with parents -----
           li(
             cls.toggle("disabled") <-- selectionEmpty,
             a(
@@ -50,6 +68,7 @@ private def SelectionSidebar(
               tabState.activeSymbols.addSelectionParents(onClick)
             )
           ),
+          // ----- augment selection with children -----
           li(
             cls.toggle("disabled") <-- selectionEmpty,
             a(
@@ -58,6 +77,7 @@ private def SelectionSidebar(
               tabState.activeSymbols.addSelectionChildren(onClick)
             )
           ),
+          // ----- add selection to set of hidden symbols -----
           li(
             cls.toggle("disabled") <-- selectionEmpty,
             a(
@@ -69,6 +89,7 @@ private def SelectionSidebar(
                     .using(_ ++ tabState.canvasSelection.now())
             )
           ),
+          // ----- select parents -----
           li(
             cls.toggle("disabled") <-- selectionEmpty,
             a(
@@ -83,6 +104,7 @@ private def SelectionSidebar(
                 tabState.canvasSelection.selectParents.tupled
             )
           ),
+          // ----- select children -----
           li(
             cls.toggle("disabled") <-- selectionEmpty,
             a(
@@ -96,6 +118,7 @@ private def SelectionSidebar(
                 tabState.canvasSelection.selectChildren.tupled
             )
           ),
+          // ----- show fields -----
           li(
             cls.toggle("disabled") <-- selectionEmpty,
             LabeledCheckbox(

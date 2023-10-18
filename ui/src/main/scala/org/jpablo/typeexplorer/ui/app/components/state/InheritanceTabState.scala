@@ -30,7 +30,7 @@ end InheritanceTabState
 
 class CanvasSelectionOps(
     canvasSelectionR: Var[Set[Symbol]] = Var(Set.empty),
-    activeSymbolsR: Var[ActiveSymbols],
+    activeSymbolsR: Var[ActiveSymbols]
 ):
   export canvasSelectionR.{signal, now}
 
@@ -105,6 +105,7 @@ class ActiveSymbolsOps(
 
   def clear(): Unit =
     activeSymbolsR.set(Map.empty)
+    
 
   /** Updates (selected) active symbol's options based on the given function `f`
     */

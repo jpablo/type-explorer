@@ -2,18 +2,27 @@ package org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab
 
 import com.raquo.laminar.api.L.*
 import org.jpablo.typeexplorer.shared.models
-import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.svgGroupElement.{ClusterElement, LinkElement, NamespaceElement, removeStyle, updateStyle}
+import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.svgGroupElement.{
+  ClusterElement,
+  LinkElement,
+  NamespaceElement,
+  removeStyle,
+  updateStyle
+}
 import org.scalajs.dom
+import com.raquo.laminar.DomApi
 
-class InheritanceSvgDiagram(svg: dom.SVGElement):
-  svg.removeStyle("background")
+class InheritanceSvgDiagram(svgElement: dom.SVGElement):
+  export svgElement.querySelector
+
+  svgElement.removeStyle("background")
   // (more styles are set in style.scss)
 
   private def setDimensions(w: Int, h: Int): Unit =
-    svg.updateStyle("width" -> s"${w}px", "height" -> s"${h}px")
+    svgElement.updateStyle("width" -> s"${w}px", "height" -> s"${h}px")
 
-  private def width = svg.getBoundingClientRect().width
-  private def height = svg.getBoundingClientRect().height
+  private def width = svgElement.getBoundingClientRect().width
+  private def height = svgElement.getBoundingClientRect().height
 
   def zoom(r: Double): Unit =
     setDimensions((width * r).toInt, (height * r).toInt)
@@ -22,16 +31,16 @@ class InheritanceSvgDiagram(svg: dom.SVGElement):
     zoom(scala.math.min(rect.width / width, rect.height / height))
 
   private def selectableElements =
-    NamespaceElement.selectAll(svg) ++ LinkElement.selectAll(svg)
+    NamespaceElement.selectAll(svgElement) ++ LinkElement.selectAll(svgElement)
 
   private def namespaceElements =
-    NamespaceElement.selectAll(svg)
+    NamespaceElement.selectAll(svgElement)
 
   def clusterElements(cluster: ClusterElement) =
     namespaceElements.filter(_.id.startsWith(cluster.idWithSlashes))
 
   def clusters =
-    ClusterElement.selectAll(svg)
+    ClusterElement.selectAll(svgElement)
 
   def elementSymbols: Set[models.Symbol] =
     namespaceElements.map(_.symbol).toSet
@@ -44,10 +53,38 @@ class InheritanceSvgDiagram(svg: dom.SVGElement):
     selectableElements.foreach(_.unselect())
 
   def toLaminar =
-    foreignSvgElement(svg)
+    foreignSvgElement(svgElement)
 
   def toSVGText: String =
-    svg.outerHTML
+    svgElement.outerHTML
+
+  case class BBox(x: Double, y: Double, width: Double, height: Double)
+
+  private def buildSvgElement(id: models.Symbol)=
+    val el = getElementById("elem_" + id.toString()).asInstanceOf[dom.SVGSVGElement]
+    val e = DomApi.unsafeParseSvgString(el.outerHTML)
+    val bbox = el.getBBox()
+    (e, BBox(bbox.x, bbox.y, bbox.width, bbox.height))
+
+  def toSVGText(ids: Set[models.Symbol]): String =
+    if (ids.isEmpty) ""
+    else
+      val (svgs, boxes) = ids.map(buildSvgElement).unzip
+      val bbox = boxes.reduce((a, b) =>
+        val x = math.min(a.x, b.x)
+        val y = math.min(a.y, b.y)
+        val width = math.max(a.width, (b.x + b.width) - x)
+        val height = math.max(a.height, (b.y + b.height) - y)
+        BBox(x, y, width, height)
+      )
+      val s = svg.svg(
+        svg.viewBox := s"${bbox.x} ${bbox.y} ${bbox.width} ${bbox.height}",
+        svgs.map(foreignSvgElement).toList
+      )
+      s.ref.outerHTML
+
+  def getElementById(id: String): dom.Element =
+    svgElement.querySelector(s"[id='$id']")
 
 object InheritanceSvgDiagram:
   val empty = InheritanceSvgDiagram(svg.svg().ref)
