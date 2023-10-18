@@ -6,6 +6,8 @@ import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.svgGroupEle
 import org.scalajs.dom
 
 class InheritanceSvgDiagram(svg: dom.SVGElement):
+  export svg.querySelector
+  
   svg.removeStyle("background")
   // (more styles are set in style.scss)
 
@@ -48,6 +50,9 @@ class InheritanceSvgDiagram(svg: dom.SVGElement):
 
   def toSVGText: String =
     svg.outerHTML
+
+  def getElementById(id: String): dom.Element =
+    svg.querySelector(s"[id='$id']")
 
 object InheritanceSvgDiagram:
   val empty = InheritanceSvgDiagram(svg.svg().ref)
