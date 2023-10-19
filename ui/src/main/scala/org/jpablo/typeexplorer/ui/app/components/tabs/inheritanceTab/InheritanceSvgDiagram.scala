@@ -58,17 +58,30 @@ class InheritanceSvgDiagram(svgElement: dom.SVGElement):
   def toSVGText: String =
     svgElement.outerHTML
 
-  def toSVGText(id: String): String =
-    val el = getElementById("elem_" + id).asInstanceOf[dom.SVGSVGElement]
-    val t = el.outerHTML
-    val e = DomApi.unsafeParseSvgString(t)
+  case class BBox(x: Double, y: Double, width: Double, height: Double)
+
+  private def buildSvgElement(id: models.Symbol)=
+    val el = getElementById("elem_" + id.toString()).asInstanceOf[dom.SVGSVGElement]
+    val e = DomApi.unsafeParseSvgString(el.outerHTML)
     val bbox = el.getBBox()
-    val s = svg.svg(
-      svg.xmlns := "http://www.w3.org/2000/svg",
-      svg.viewBox := s"${bbox.x} ${bbox.y} ${bbox.width} ${bbox.height}",
-      foreignSvgElement(e)
-    )
-    s.ref.outerHTML
+    (e, BBox(bbox.x, bbox.y, bbox.width, bbox.height))
+
+  def toSVGText(ids: Set[models.Symbol]): String =
+    if (ids.isEmpty) ""
+    else
+      val (svgs, boxes) = ids.map(buildSvgElement).unzip
+      val bbox = boxes.reduce((a, b) =>
+        val x = math.min(a.x, b.x)
+        val y = math.min(a.y, b.y)
+        val width = math.max(a.width, (b.x + b.width) - x)
+        val height = math.max(a.height, (b.y + b.height) - y)
+        BBox(x, y, width, height)
+      )
+      val s = svg.svg(
+        svg.viewBox := s"${bbox.x} ${bbox.y} ${bbox.width} ${bbox.height}",
+        svgs.map(foreignSvgElement).toList
+      )
+      s.ref.outerHTML
 
   def getElementById(id: String): dom.Element =
     svgElement.querySelector(s"[id='$id']")

@@ -1,6 +1,5 @@
 package org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab
 
-import com.raquo.laminar.DomApi
 import com.raquo.laminar.api.L.*
 import com.raquo.laminar.api.features.unitArrows
 import com.softwaremill.quicklens.*
@@ -9,9 +8,6 @@ import org.jpablo.typeexplorer.ui.app
 import org.jpablo.typeexplorer.ui.app.components.state.AppState
 import org.jpablo.typeexplorer.ui.daisyui.*
 import org.scalajs.dom
-import org.jpablo.typeexplorer.shared.inheritance.toPlantUML
-import org.jpablo.typeexplorer.shared.models
-import org.jpablo.typeexplorer.shared.inheritance.PlantUML
 
 private def SelectionSidebar(
     appState: AppState,
@@ -59,7 +55,7 @@ private def SelectionSidebar(
                 _.sample(inheritanceSvgDiagram, tabState.canvasSelectionR)
               ) --> { (svgDiagram, canvasSelection) =>
                 val id = canvasSelection.head.toString()
-                dom.window.navigator.clipboard.writeText(svgDiagram.toSVGText(id))
+                dom.window.navigator.clipboard.writeText(svgDiagram.toSVGText(canvasSelection))
               }
             )
           ),
