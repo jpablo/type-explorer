@@ -21,6 +21,7 @@ object PlantumlInheritanceSpec extends ZIOSpecDefault {
 val examplePuml =
   """
     |@startuml
+    |!pragma layout smetana
     |set namespaceSeparator none
     |skinparam class {
     |  'FontSize 20

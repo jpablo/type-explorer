@@ -1,1 +1,3 @@
 -Dsbt.io.implicit.relative.glob.conversion=allow
+-J-Xmx4G
+
