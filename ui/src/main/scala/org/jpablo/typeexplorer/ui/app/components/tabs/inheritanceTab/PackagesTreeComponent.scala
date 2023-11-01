@@ -50,7 +50,7 @@ private def PackagesTreeComponent(appState: AppState) =
             .orElse(packagesOptions.onlyTests, _.filterBy(!_.inTest))
 
   div(
-    cls := "overflow-auto p-1 row-start-1 row-end-3 col-start-2 col-end-3 border-r border-slate-300 flex flex-col",
+    cls := "bg-base-100 rounded-box overflow-auto p-1 absolute top-2/4 -translate-y-2/4 left-14",
     // --- controls ---
     form(
       LabeledCheckbox(

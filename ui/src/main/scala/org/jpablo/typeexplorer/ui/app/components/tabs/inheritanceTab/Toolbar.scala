@@ -26,7 +26,7 @@ def Toolbar(
   val tabState = appState.inheritanceTab
   val modifySelection = modifyLens[Project]
   div(
-    cls := "flex items-center gap-4 ml-2 border-b border-slate-300",
+    cls := "bg-base-100 rounded-box flex items-center gap-4 ml-2 absolute top-0",
     // -------- fields and signatures --------
     Join(
       OptionsToggle(
