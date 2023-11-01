@@ -32,6 +32,7 @@ object PlantumlInheritance:
 
     PlantUML(
       s"""@startuml
+         |!pragma layout smetana
          |set namespaceSeparator none
          |skinparam class {
          |  'FontSize 20

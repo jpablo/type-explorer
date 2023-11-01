@@ -1,7 +1,6 @@
 package org.jpablo.typeexplorer.ui.app.components.state
 
 import com.raquo.airstream.core.Signal
-import com.raquo.airstream.ownership.OneTimeOwner
 import com.raquo.airstream.state.Var
 import com.raquo.laminar.api.L.*
 import com.softwaremill.quicklens.*
