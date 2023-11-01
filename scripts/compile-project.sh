@@ -2,7 +2,7 @@
 
 project=${1:-"all"}
 
-semanticdbVersion=${2:-"4.8.11"}
+semanticdbVersion=${2:-"latest.release"}
 
 if [ "$project" == "all" ]; then
   sbt -client "set ThisBuild / semanticdbEnabled := true; set semanticdbVersion := \"$semanticdbVersion\"; clean; compile"
