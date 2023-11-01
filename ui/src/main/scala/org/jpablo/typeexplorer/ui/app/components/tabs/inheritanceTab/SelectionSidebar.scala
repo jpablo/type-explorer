@@ -17,7 +17,8 @@ private def SelectionSidebar(
   val selectionEmpty =
     tabState.canvasSelection.signal.map(_.isEmpty)
   div(
-    cls := "row-start-2 row-end-3 border-l border-slate-300 col-start-4 col-end-5",
+    // cls := "row-start-2 row-end-3 border-l border-slate-300 col-start-4 col-end-5",
+    cls := "absolute right-0 top-2",
     ul(
       cls := "menu bg-base-100 rounded-box m-2 p-0",
       li(

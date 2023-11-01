@@ -15,7 +15,7 @@ def AppConfigDrawer(project: Var[Project]) =
       modifyField: PathLazyModify[A, B]
   )(to: A => C, from: C => B) =
     Updater(
-      signal = va.signal.map(a => to(a)),
+      signal = va.signal.map(to),
       update = (c: C) => va.update(a => modifyField.setTo(from(c))(a))
     )
 
@@ -53,7 +53,7 @@ def AppConfigDrawer(project: Var[Project]) =
         cls := "form-control",
         label(cls := "label", b(cls := "label-text", "basePath")),
         textArea(
-          cls := "textarea textarea-bordered h-24 whitespace-nowrap",
+          cls := "textarea textarea-bordered h-32 whitespace-nowrap",
           value <-- basePathUpdater.signal,
           onBlur.mapToValue --> basePathUpdater.update
         )

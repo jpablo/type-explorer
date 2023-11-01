@@ -25,7 +25,7 @@ object InheritanceTab:
 
     // --- grid container: 4 columns, 2 rows ---
     div(
-      cls := "grid h-full grid-cols-[46px_1fr_4fr_0.75fr] grid-rows-[3em_auto]",
+      cls := "grid h-full grid-cols-[46px_1fr_4fr_0.75fr] grid-rows-[3em_auto] relative",
       LeftSideMenu(showPackagesTree),
       PackagesTreeComponent(appState).amend(
         cls.toggle("hidden") <-- !showPackagesTree.signal
@@ -36,7 +36,7 @@ object InheritanceTab:
         canvasContainer.ref.getBoundingClientRect()
       ).amend(gridColumn <-- showPackagesTree.signal.switch("3 / 5", "2 / 5")),
       canvasContainer.amend(
-        gridColumn <-- showPackagesTree.signal.switch("3 / 4", "2 / 4")
+        gridColumn <-- showPackagesTree.signal.switch("3 / 5", "2 / 5")
       ),
       SelectionSidebar(appState, inheritanceSvgDiagram)
     )
