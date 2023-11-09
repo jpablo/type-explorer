@@ -3,7 +3,7 @@ package org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab
 import com.raquo.laminar.api.L.*
 import com.raquo.laminar.api.features.unitArrows
 import com.softwaremill.quicklens.*
-import org.jpablo.typeexplorer.shared.inheritance.InheritanceDiagram
+import org.jpablo.typeexplorer.shared.inheritance.InheritanceGraph
 import org.jpablo.typeexplorer.ui.app
 import org.jpablo.typeexplorer.ui.app.components.state.AppState
 import org.jpablo.typeexplorer.ui.daisyui.*
@@ -13,7 +13,7 @@ private def SelectionSidebar(
     appState: AppState,
     inheritanceSvgDiagram: Signal[InheritanceSvgDiagram]
 ) =
-  val tabState = appState.inheritanceTab
+  val tabState = appState.tabStates.head
   val selectionEmpty =
     tabState.canvasSelection.signal.map(_.isEmpty)
   div(
@@ -85,7 +85,7 @@ private def SelectionSidebar(
               disabled <-- selectionEmpty,
               onClick -->
                 appState.updateActiveProject:
-                  _.modify(_.diagramOptions.hiddenSymbols)
+                  _.modify(_.projectSettings.hiddenSymbols)
                     .using(_ ++ tabState.canvasSelection.now())
             )
           ),
@@ -97,7 +97,7 @@ private def SelectionSidebar(
               disabled <-- selectionEmpty,
               onClick.compose(
                 _.sample(
-                  tabState.fullInheritanceDiagram,
+                  tabState.fullGraph,
                   inheritanceSvgDiagram
                 )
               ) -->
@@ -111,7 +111,7 @@ private def SelectionSidebar(
               "Select children",
               onClick.compose(
                 _.sample(
-                  tabState.fullInheritanceDiagram,
+                  tabState.fullGraph,
                   inheritanceSvgDiagram
                 )
               ) -->

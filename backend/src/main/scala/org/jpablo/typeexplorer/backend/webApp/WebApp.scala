@@ -4,7 +4,7 @@ import org.jpablo.typeexplorer.backend.backends.plantuml.toSVGText
 import org.jpablo.typeexplorer.backend.textDocuments.readTextDocumentsWithSource
 import org.jpablo.typeexplorer.protos.TextDocumentsWithSourceSeq
 import org.jpablo.typeexplorer.shared.inheritance.{
-  InheritanceDiagram,
+  InheritanceGraph,
   toPlantUML
 }
 import org.jpablo.typeexplorer.shared.webApp.{InheritanceRequest, Routes}
@@ -63,8 +63,8 @@ object WebApp extends ZIOAppDefault:
         ireq <- ZIO.from(body.fromJson[InheritanceRequest[file.Path]]).mapError(Throwable(_))
         docs <- readTextDocumentsWithSource(ireq.paths)
         symbols = ireq.activeSymbols.map(_._1).toSet
-        diagram = InheritanceDiagram.from(docs).subdiagram(symbols)
-        puml = diagram.toPlantUML(ireq.activeSymbols.toMap, ireq.options)
+        diagram = InheritanceGraph.from(docs).subdiagram(symbols)
+        puml = diagram.toPlantUML(ireq.activeSymbols.toMap, ireq.options, ireq.projectSettings)
         svgText <- puml.toSVGText("laminar")
       yield
         Response.text(svgText).withContentType("image/svg+xml")
@@ -93,7 +93,7 @@ object WebApp extends ZIOAppDefault:
     case req @ Method.GET -> !! / Routes.classes =>
       toTaskOrBadRequest(getPath(req)): paths =>
         readTextDocumentsWithSource(paths)
-          .map(InheritanceDiagram.from)
+          .map(InheritanceGraph.from)
           .map(_.toJson)
           .map(Response.json)
 

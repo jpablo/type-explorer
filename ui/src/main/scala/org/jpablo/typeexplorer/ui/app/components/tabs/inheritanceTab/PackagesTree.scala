@@ -4,8 +4,8 @@ import com.raquo.airstream.core.EventStream
 import com.raquo.laminar.api.L.*
 import com.raquo.laminar.api.features.unitArrows
 import com.raquo.laminar.nodes.ReactiveHtmlElement
-import org.jpablo.typeexplorer.shared.inheritance.InheritanceDiagram
-import org.jpablo.typeexplorer.shared.models.{Namespace, NamespaceKind, Symbol}
+import org.jpablo.typeexplorer.shared.inheritance.InheritanceGraph
+import org.jpablo.typeexplorer.shared.models.{Namespace, NamespaceKind, GraphSymbol}
 import org.jpablo.typeexplorer.shared.tree.Tree
 import org.jpablo.typeexplorer.ui.app.components.state.InheritanceTabState
 import org.jpablo.typeexplorer.ui.app.toggle
@@ -22,10 +22,10 @@ import org.scalajs.dom.{HTMLAnchorElement, HTMLLIElement, HTMLUListElement}
   *   ["com..., ", "java.io..."]
   */
 def PackagesTree(
-    tabState: InheritanceTabState,
-    diagrams: EventStream[InheritanceDiagram]
+//    tabState: InheritanceTabState,
+    diagrams: EventStream[InheritanceGraph]
 ): EventStream[ReactiveHtmlElement[HTMLUListElement]] =
-  val treeElement = TreeElement(tabState)
+  val treeElement = TreeElement(/*tabState*/)
   for diagram <- diagrams
   yield treeElement
     .render(diagram.toTrees.children)
@@ -37,11 +37,11 @@ val fullLabel: Tree[Namespace] => String =
   case Tree.Branch(_, path, _) => path.mkString("/")
   case Tree.Leaf(_, ns)        => ns.symbol.toString
 
-val leafSymbols: Tree[Namespace] => List[Symbol] =
+val leafSymbols: Tree[Namespace] => List[GraphSymbol] =
   case Tree.Branch(_, _, children) => children.flatMap(leafSymbols)
   case Tree.Leaf(_, ns)            => List(ns.symbol)
 
-class TreeElement(tabState: InheritanceTabState):
+class TreeElement(/*tabState: InheritanceTabState*/):
   val openBranches = Var(Set.empty[List[String]])
 
   def render(
@@ -65,8 +65,8 @@ class TreeElement(tabState: InheritanceTabState):
     )
 
   def PackageMember(ns: Namespace) =
-    val isActive =
-      tabState.activeSymbols.signal.map(_.contains(ns.symbol))
+    val isActive = Signal.fromValue(false)
+//      tabState.activeSymbols.signal.map(_.contains(ns.symbol))
     a(
       idAttr := ns.symbol.toString,
       cls := "font-['JetBrains_Mono']",
@@ -77,8 +77,8 @@ class TreeElement(tabState: InheritanceTabState):
         ns.displayName
       ),
       onClick.preventDefault.stopPropagation --> { _ =>
-        tabState.activeSymbols.toggle(ns.symbol)
-        tabState.canvasSelection.toggle(ns.symbol)
+//        tabState.activeSymbols.toggle(ns.symbol)
+//        tabState.canvasSelection.toggle(ns.symbol)
       }
     )
 
@@ -96,8 +96,8 @@ class TreeElement(tabState: InheritanceTabState):
           packageLabel,
           onClick.preventDefault.stopPropagation --> {
             val symbols = children.flatMap(leafSymbols)
-            tabState.activeSymbols.extend(symbols)
-            tabState.canvasSelection.extend(symbols.toSet)
+//            tabState.activeSymbols.extend(symbols)
+//            tabState.canvasSelection.extend(symbols.toSet)
           }
         )
       ),

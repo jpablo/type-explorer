@@ -3,7 +3,7 @@ package org.jpablo.typeexplorer.ui.app.components
 import com.raquo.laminar.api.L.*
 import org.jpablo.typeexplorer.ui.app.components.state.Project
 import com.softwaremill.quicklens.*
-import org.jpablo.typeexplorer.ui.app.Path
+import org.jpablo.typeexplorer.shared.inheritance.Path
 import org.jpablo.typeexplorer.shared.models
 
 case class Updater[A](signal: Signal[A], update: A => Unit)
@@ -20,21 +20,21 @@ def AppConfigDrawer(project: Var[Project]) =
     )
 
   val basePathUpdater =
-    updater(project, modifyLens(_.basePaths))(
-      to = _.basePaths.mkString("\n"),
+    updater(project, modifyLens(_.projectSettings.basePaths))(
+      to = _.projectSettings.basePaths.mkString("\n"),
       from = _.split("\n").toList.map(Path.apply)
     )
 
   val hiddenFieldsUpdater =
-    updater(project, modifyLens(_.diagramOptions.hiddenFields))(
-      to = _.diagramOptions.hiddenFields.mkString("\n"),
+    updater(project, modifyLens(_.projectSettings.hiddenFields))(
+      to = _.projectSettings.hiddenFields.mkString("\n"),
       from = _.split("\n").toList
     )
 
   val hiddenSymbolsUpdater =
-    updater(project, modifyLens(_.diagramOptions.hiddenSymbols))(
-      to = _.diagramOptions.hiddenSymbols.mkString("\n"),
-      from = _.split("\n").map(models.Symbol.apply).toList
+    updater(project, modifyLens(_.projectSettings.hiddenSymbols))(
+      to = _.projectSettings.hiddenSymbols.mkString("\n"),
+      from = _.split("\n").map(models.GraphSymbol.apply).toList
     )
 
   val advancedModeUpdater =
@@ -49,6 +49,7 @@ def AppConfigDrawer(project: Var[Project]) =
     form(
       cls := "p-4 w-96 bg-base-100 text-base-content flex flex-col space-y-4 h-full",
       h1(cls := "drawer-title text-xl font-bold", "Settings"),
+      // --- base path ---
       div(
         cls := "form-control",
         label(cls := "label", b(cls := "label-text", "basePath")),
@@ -58,6 +59,7 @@ def AppConfigDrawer(project: Var[Project]) =
           onBlur.mapToValue --> basePathUpdater.update
         )
       ),
+      // --- Hidden fields ---
       div(
         cls := "form-control",
         label(cls := "label", b(cls := "label-text", "Hidden fields")),
@@ -69,6 +71,7 @@ def AppConfigDrawer(project: Var[Project]) =
           )
         )
       ),
+      // --- Hidden symbols ---
       div(
         cls := "form-control",
         label(cls := "label", b(cls := "label-text", "Hidden symbols")),
@@ -80,6 +83,7 @@ def AppConfigDrawer(project: Var[Project]) =
           )
         )
       ),
+      // --- semantic db ---
       div(
         cls := "form-control",
         label(

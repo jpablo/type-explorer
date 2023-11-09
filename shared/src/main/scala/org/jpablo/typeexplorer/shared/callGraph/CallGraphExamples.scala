@@ -1,7 +1,7 @@
 package org.jpablo.typeexplorer.shared.callGraph
 
 import org.jpablo.typeexplorer.shared.models
-import org.jpablo.typeexplorer.shared.models.{Method, Namespace, NamespaceKind, Symbol}
+import org.jpablo.typeexplorer.shared.models.{Method, Namespace, NamespaceKind, GraphSymbol}
 
 object CallGraphExamples {
 
@@ -9,7 +9,7 @@ object CallGraphExamples {
   val getUserTasks         = Method("getUserTasks")
 
   val TaskAllocationController =
-    Namespace(Symbol.empty, "TaskAllocationController",
+    Namespace(GraphSymbol.empty, "TaskAllocationController",
       kind = NamespaceKind.Class,
       methods = List(
         getUserTasks,
@@ -26,7 +26,7 @@ object CallGraphExamples {
   val getUserSuperRatingTaskUnits       = Method("getUserSuperRatingTaskUnits")
 
   val TaskAllocationServiceImpl =
-    Namespace(models.Symbol.empty, "TaskAllocationServiceImpl",
+    Namespace(models.GraphSymbol.empty, "TaskAllocationServiceImpl",
       kind = NamespaceKind.Class,
       methods = List(
         getAssignedTaskUnitsToUser,
@@ -41,7 +41,7 @@ object CallGraphExamples {
 
   val updateMetricsSuperRatingStatus = Method("updateMetricsSuperRatingStatus")
   val MetricsServiceImpl =
-    Namespace(models.Symbol.empty, "MetricsServiceImpl",
+    Namespace(models.GraphSymbol.empty, "MetricsServiceImpl",
       kind = NamespaceKind.Class,
       methods = List(
         updateMetricsSuperRatingStatus

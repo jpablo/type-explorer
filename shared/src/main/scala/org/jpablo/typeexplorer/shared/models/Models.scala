@@ -13,15 +13,15 @@ enum NamespaceKind derives JsonCodec:
   case Unknown
 //  case Other(name: String)
 
-opaque type Symbol = String
+opaque type GraphSymbol = String
 
-object Symbol:
-  def apply(value: String): Symbol = value
-  def empty: Symbol = ""
-  extension (s: Symbol) def toString: String = s
-  given JsonCodec[Symbol] = JsonCodec.string
-  given JsonFieldDecoder[Symbol] = JsonFieldDecoder.string
-  given JsonFieldEncoder[Symbol] = JsonFieldEncoder.string
+object GraphSymbol:
+  def apply(value: String): GraphSymbol = value
+  def empty: GraphSymbol = ""
+  extension (s: GraphSymbol) def toString: String = s
+  given JsonCodec[GraphSymbol] = JsonCodec.string
+  given JsonFieldDecoder[GraphSymbol] = JsonFieldDecoder.string
+  given JsonFieldEncoder[GraphSymbol] = JsonFieldEncoder.string
 
 
 case class Package(name: String)
@@ -39,7 +39,7 @@ object SymbolRange:
     SymbolRange(r.startLine, r.startCharacter, r.endLine, r.endCharacter)
 
 case class Namespace(
-  symbol        : Symbol,
+  symbol        : GraphSymbol,
   displayName   : String,
   kind          : NamespaceKind       = NamespaceKind.Class,
   methods       : List[Method]        = List.empty,
@@ -52,10 +52,10 @@ case class Namespace(
     documentURI.exists(_.contains("src/test"))
 
 
-case class Method(symbol: Symbol, displayName: String, returnType: Option[Namespace]) derives JsonCodec
+case class Method(symbol: GraphSymbol, displayName: String, returnType: Option[Namespace]) derives JsonCodec
 
 
 object Method:
   def apply(name: String, returnType: Option[Namespace] = None): Method =
-    Method(Symbol(name), name, returnType)
+    Method(GraphSymbol(name), name, returnType)
 

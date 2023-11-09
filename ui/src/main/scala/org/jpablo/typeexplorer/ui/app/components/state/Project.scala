@@ -1,17 +1,15 @@
 package org.jpablo.typeexplorer.ui.app.components.state
 
-import org.jpablo.typeexplorer.shared.inheritance.DiagramOptions
+import org.jpablo.typeexplorer.shared.inheritance.{
+  DiagramOptions,
+  PackagesOptions,
+  ProjectSettings
+}
 import zio.json.*
 import org.jpablo.typeexplorer.shared.models
 import org.jpablo.typeexplorer.shared.webApp.ActiveSymbolsSeq
-import org.jpablo.typeexplorer.ui.app.Path
-import scalajs.js
 
-case class PackagesOptions(
-    onlyActive: Boolean = false,
-    onlyTests: Boolean = false,
-    nsKind: Set[models.NamespaceKind] = models.NamespaceKind.values.toSet
-) derives JsonCodec
+import scalajs.js
 
 case class ProjectId(value: String) extends AnyVal
 
@@ -21,8 +19,10 @@ object ProjectId:
       JsonEncoder.string.contramap(_.value),
       JsonDecoder.string.map(ProjectId(_))
     )
-  given JsonFieldEncoder[ProjectId] = JsonFieldEncoder.string.contramap(_.value)
-  given JsonFieldDecoder[ProjectId] = JsonFieldDecoder.string.map(ProjectId(_))
+  given JsonFieldEncoder[ProjectId] =
+    JsonFieldEncoder.string.contramap(_.value)
+  given JsonFieldDecoder[ProjectId] =
+    JsonFieldDecoder.string.map(ProjectId(_))
 
   def random =
     ProjectId(js.Dynamic.global.crypto.randomUUID().toString)
@@ -51,8 +51,12 @@ case class Project(
     name: String = "",
     advancedMode: Boolean = false,
     packagesOptions: PackagesOptions = PackagesOptions(),
-    diagramOptions: DiagramOptions = DiagramOptions(),
-    basePaths: List[Path] = List.empty,
+    projectSettings: ProjectSettings = ProjectSettings(),
+    pages: Vector[Page] = Vector(Page())
+) derives JsonCodec
+
+case class Page(
     // This can't be a Map[A, Option[B]], as zio-json will remove entries with None values
-    activeSymbols: ActiveSymbolsSeq = List.empty
+    activeSymbols: ActiveSymbolsSeq = List.empty,
+    diagramOptions: DiagramOptions = DiagramOptions()
 ) derives JsonCodec

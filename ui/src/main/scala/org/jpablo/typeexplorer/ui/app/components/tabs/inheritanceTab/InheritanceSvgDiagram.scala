@@ -42,10 +42,10 @@ class InheritanceSvgDiagram(svgElement: dom.SVGElement):
   def clusters =
     ClusterElement.selectAll(svgElement)
 
-  def elementSymbols: Set[models.Symbol] =
+  def elementSymbols: Set[models.GraphSymbol] =
     namespaceElements.map(_.symbol).toSet
 
-  def select(symbols: Set[models.Symbol]): Unit =
+  def select(symbols: Set[models.GraphSymbol]): Unit =
     for elem <- selectableElements if symbols.contains(elem.symbol) do
       elem.select()
 
@@ -60,13 +60,13 @@ class InheritanceSvgDiagram(svgElement: dom.SVGElement):
 
   case class BBox(x: Double, y: Double, width: Double, height: Double)
 
-  private def buildSvgElement(id: models.Symbol)=
+  private def buildSvgElement(id: models.GraphSymbol)=
     val el = getElementById("elem_" + id.toString()).asInstanceOf[dom.SVGSVGElement]
     val e = DomApi.unsafeParseSvgString(el.outerHTML)
     val bbox = el.getBBox()
     (e, BBox(bbox.x, bbox.y, bbox.width, bbox.height))
 
-  def toSVGText(ids: Set[models.Symbol]): String =
+  def toSVGText(ids: Set[models.GraphSymbol]): String =
     if (ids.isEmpty) ""
     else
       val (svgs, boxes) = ids.map(buildSvgElement).unzip

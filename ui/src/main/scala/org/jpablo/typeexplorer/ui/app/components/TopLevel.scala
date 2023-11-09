@@ -1,7 +1,6 @@
 package org.jpablo.typeexplorer.ui.app.components
 
 import com.raquo.laminar.api.L.*
-import io.laminext.syntax.core.*
 import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
 import org.jpablo.typeexplorer.ui.app.components.state.{AppState, ProjectId}
 import org.jpablo.typeexplorer.ui.app.components.tabs.TabsArea
@@ -11,7 +10,7 @@ import org.jpablo.typeexplorer.ui.widgets.Icons
 
 def TopLevel(
     appState: AppState,
-    inheritanceSvgDiagram: Signal[InheritanceSvgDiagram],
+    inheritanceSvgDiagram: Vector[Signal[InheritanceSvgDiagram]],
     documents: EventStream[List[TextDocumentsWithSource]],
     selectedProject: EventBus[ProjectId],
     deleteProject: EventBus[ProjectId]
@@ -28,17 +27,17 @@ def TopLevel(
       TabsArea(appState, inheritanceSvgDiagram, documents),
       AppFooter,
       // -------- advanced/debug mode --------
-      appState.advancedMode.childWhenTrue:
-        div(
-          div(
-            child.text <-- appState.inheritanceTab.canvasSelection.signal
-              .map(ds => s"canvasSelection: ${ds.size}")
-          ),
-          div(
-            child.text <-- appState.inheritanceTab.activeSymbols.signal
-              .map(ss => s"activeSymbols: ${ss.size}")
-          )
-        )
+//      appState.advancedMode.childWhenTrue:
+//        div(
+//          div(
+//            child.text <-- appState.inheritanceTab.canvasSelection.signal
+//              .map(ds => s"canvasSelection: ${ds.size}")
+//          ),
+//          div(
+//            child.text <-- appState.inheritanceTab.activeSymbols.signal
+//              .map(ss => s"activeSymbols: ${ss.size}")
+//          )
+//        )
     ),
     AppConfigDrawer(appState.activeProject.project)
   )

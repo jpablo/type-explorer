@@ -5,78 +5,81 @@ import com.raquo.airstream.core.Signal
 import com.raquo.airstream.state.Var
 import com.raquo.laminar.api.L.*
 import org.jpablo.typeexplorer.shared.inheritance.SymbolOptions
-import org.jpablo.typeexplorer.shared.inheritance.InheritanceDiagram
-import org.jpablo.typeexplorer.shared.models.Symbol
+import org.jpablo.typeexplorer.shared.inheritance.InheritanceGraph
+import org.jpablo.typeexplorer.shared.models.GraphSymbol
 import org.scalajs.dom
 import org.jpablo.typeexplorer.ui.app.toggle
 import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.InheritanceSvgDiagram
 import InheritanceTabState.ActiveSymbols
 
 object InheritanceTabState:
-  type ActiveSymbols = Map[Symbol, Option[SymbolOptions]]
+  type ActiveSymbols = Map[GraphSymbol, Option[SymbolOptions]]
 
 case class InheritanceTabState(
-    activeSymbolsR: Var[ActiveSymbols] = Var(Map.empty),
-    fullInheritanceDiagram: Signal[InheritanceDiagram] =
-      Signal.fromValue(InheritanceDiagram.empty),
+    page: Var[Page],
+    fullGraph: Signal[InheritanceGraph] =
+      Signal.fromValue(InheritanceGraph.empty),
     // this should be a subset of activeSymbols' keys
-    canvasSelectionR: Var[Set[Symbol]] = Var(Set.empty)
-):
+    canvasSelectionR: Var[Set[GraphSymbol]] = Var(Set.empty)
+)(using Owner):
+  val activeSymbolsR =
+    page.zoom(_.activeSymbols.toMap)((p, s) => p.copy(activeSymbols = s.toList))
+
   val canvasSelection = CanvasSelectionOps(canvasSelectionR, activeSymbolsR)
   val activeSymbols =
-    ActiveSymbolsOps(activeSymbolsR, fullInheritanceDiagram, canvasSelectionR)
+    ActiveSymbolsOps(activeSymbolsR, fullGraph, canvasSelectionR)
 
 end InheritanceTabState
 
 class CanvasSelectionOps(
-    canvasSelectionR: Var[Set[Symbol]] = Var(Set.empty),
+    canvasSelectionR: Var[Set[GraphSymbol]] = Var(Set.empty),
     activeSymbolsR: Var[ActiveSymbols]
 ):
   export canvasSelectionR.{signal, now}
 
-  def toggle(symbol: Symbol): Unit =
+  def toggle(symbol: GraphSymbol): Unit =
     canvasSelectionR.update(_.toggle(symbol))
 
-  def replace(symbol: Symbol): Unit =
+  def replace(symbol: GraphSymbol): Unit =
     canvasSelectionR.set(Set(symbol))
 
-  def extend(symbol: Symbol): Unit =
+  def extend(symbol: GraphSymbol): Unit =
     canvasSelectionR.update(_ + symbol)
 
-  def extend(symbols: Set[Symbol]): Unit =
+  def extend(symbols: Set[GraphSymbol]): Unit =
     canvasSelectionR.update(_ ++ symbols)
 
-  def remove(symbols: Set[Symbol]): Unit =
+  def remove(symbols: Set[GraphSymbol]): Unit =
     canvasSelectionR.update(_ -- symbols)
 
   def clear(): Unit =
     canvasSelectionR.set(Set.empty)
 
   def selectParents(
-      fullDiagram: InheritanceDiagram,
+      fullDiagram: InheritanceGraph,
       inheritanceSvgDiagram: InheritanceSvgDiagram
   ): Unit =
     selectRelated(_.parentsOfAll(_), fullDiagram, inheritanceSvgDiagram)
 
   def selectChildren(
-      fullDiagram: InheritanceDiagram,
+      fullDiagram: InheritanceGraph,
       inheritanceSvgDiagram: InheritanceSvgDiagram
   ): Unit =
     selectRelated(_.childrenOfAll(_), fullDiagram, inheritanceSvgDiagram)
 
   private def selectRelated(
       selector: (
-          InheritanceDiagram,
-          Set[Symbol]
-      ) => InheritanceDiagram,
-      fullDiagram: InheritanceDiagram,
+          InheritanceGraph,
+          Set[GraphSymbol]
+      ) => InheritanceGraph,
+      fullDiagram: InheritanceGraph,
       inheritanceSvgDiagram: InheritanceSvgDiagram
   ): Unit =
     val svgDiagram = fullDiagram.subdiagram(activeSymbolsR.now().keySet)
     val selection = canvasSelectionR.now()
     val relatedDiagram = selector(svgDiagram, selection)
     val arrowSymbols =
-      relatedDiagram.arrows.map((a, b) => Symbol(s"${b}_$a"))
+      relatedDiagram.arrows.map((a, b) => GraphSymbol(s"${b}_$a"))
     extend(relatedDiagram.symbols)
     extend(arrowSymbols)
     inheritanceSvgDiagram.select(relatedDiagram.symbols)
@@ -86,26 +89,25 @@ end CanvasSelectionOps
 
 class ActiveSymbolsOps(
     activeSymbolsR: Var[ActiveSymbols],
-    fullInheritanceDiagram: Signal[InheritanceDiagram],
-    canvasSelectionR: Var[Set[Symbol]]
+    fullInheritanceGraph: Signal[InheritanceGraph],
+    canvasSelectionR: Var[Set[GraphSymbol]]
 ):
 
   export activeSymbolsR.signal
 
-  def toggle(symbol: Symbol): Unit =
+  def toggle(symbol: GraphSymbol): Unit =
     activeSymbolsR.update: activeSymbols =>
       if activeSymbols.contains(symbol) then activeSymbols - symbol
       else activeSymbols + (symbol -> None)
 
-  def extend(symbol: Symbol): Unit =
+  def extend(symbol: GraphSymbol): Unit =
     activeSymbolsR.update(_ + (symbol -> None))
 
-  def extend(symbols: collection.Seq[Symbol]): Unit =
+  def extend(symbols: collection.Seq[GraphSymbol]): Unit =
     activeSymbolsR.update(_ ++ symbols.map(_ -> None))
 
   def clear(): Unit =
     activeSymbolsR.set(Map.empty)
-    
 
   /** Updates (selected) active symbol's options based on the given function `f`
     */
@@ -121,7 +123,7 @@ class ActiveSymbolsOps(
   /** Modify `activeSymbols` based on the given function `f`
     */
   def applyOnSelection[E <: dom.Event](
-      f: (ActiveSymbols, Set[Symbol]) => ActiveSymbols
+      f: (ActiveSymbols, Set[GraphSymbol]) => ActiveSymbols
   )(ep: EventProp[E]) =
     ep.compose(_.sample(canvasSelectionR)) --> { selection =>
       activeSymbolsR.update(f(_, selection))
@@ -141,13 +143,13 @@ class ActiveSymbolsOps(
     * selection.
     */
   private def addSelectionWith[E <: dom.Event](
-      f: (InheritanceDiagram, Symbol) => InheritanceDiagram,
+      f: (InheritanceGraph, GraphSymbol) => InheritanceGraph,
       ep: EventProp[E]
   ) =
-    val combined = fullInheritanceDiagram.combineWith(canvasSelectionR.signal)
+    val combined = fullInheritanceGraph.combineWith(canvasSelectionR.signal)
     ep.compose(_.sample(combined)) --> { (diagram, selection) =>
       if selection.nonEmpty then
-        val diagram1 = selection.foldLeft(InheritanceDiagram.empty)((acc, s) =>
+        val diagram1 = selection.foldLeft(InheritanceGraph.empty)((acc, s) =>
           f(diagram, s) ++ acc
         )
         extend(diagram1.symbols.toSeq)

@@ -2,7 +2,7 @@ package org.jpablo.typeexplorer.ui.app.components.tabs.semanticDBTab
 
 import com.raquo.laminar.api.L.*
 import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
-import org.jpablo.typeexplorer.ui.app.Path
+import org.jpablo.typeexplorer.shared.inheritance.Path
 import org.jpablo.typeexplorer.ui.app.client.fetchSourceCode
 
 def SemanticDBTab(

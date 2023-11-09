@@ -7,7 +7,7 @@ import guru.nidi.graphviz.engine.{Format, Graphviz}
 import guru.nidi.graphviz.model.Factory.*
 import guru.nidi.graphviz.model.{Graph, LinkSource, LinkTarget, Node}
 import org.jpablo.typeexplorer.backend.backends.graphviz.GraphvizInheritance.toGraph
-import org.jpablo.typeexplorer.shared.inheritance.{DiagramOptions, InheritanceDiagram, InheritanceExamples, SymbolOptions}
+import org.jpablo.typeexplorer.shared.inheritance.{DiagramOptions, InheritanceGraph, InheritanceExamples, ProjectSettings, SymbolOptions}
 import org.jpablo.typeexplorer.shared.models
 import org.jpablo.typeexplorer.shared.tree.Tree
 import scalatags.Text
@@ -15,24 +15,25 @@ import scalatags.Text
 import java.io.File
 
 
-extension (diagram: InheritanceDiagram)
-  def toGraphviz(name: String, symbolOptions: Map[models.Symbol, Option[SymbolOptions]], diagramOptions: DiagramOptions) =
-    GraphvizInheritance.toGraph(name, diagram, symbolOptions, diagramOptions)
+extension (iGraph: InheritanceGraph)
+  def toGraphviz(name: String, symbolOptions: Map[models.GraphSymbol, Option[SymbolOptions]], diagramOptions: DiagramOptions, projectSettings: ProjectSettings) =
+    GraphvizInheritance.toGraph(name, iGraph, symbolOptions, diagramOptions, projectSettings)
 
 object GraphvizInheritance:
 
   def toGraph(
-    name          : String,
-    diagram       : InheritanceDiagram,
-    symbolOptions : Map[models.Symbol, Option[SymbolOptions]],
-    diagramOptions: DiagramOptions
+    name           : String,
+    iGraph         : InheritanceGraph,
+    symbolOptions  : Map[models.GraphSymbol, Option[SymbolOptions]],
+    diagramOptions : DiagramOptions,
+    projectSettings: ProjectSettings
   ): Graph =
 
     val filteredDiagram =
-      diagram.filterBy(ns => !diagramOptions.hiddenSymbols.contains(ns.symbol))
+      iGraph.filterBy(ns => !projectSettings.hiddenSymbols.contains(ns.symbol))
 
     val declarations =
-      filteredDiagram.toTrees.children.map(renderTree(diagramOptions, symbolOptions))
+      filteredDiagram.toTrees.children.map(renderTree(diagramOptions, projectSettings, symbolOptions))
 
     val arrows =
       filteredDiagram.arrows.toSeq.map: (source, target) =>
@@ -48,7 +49,7 @@ object GraphvizInheritance:
       .`with`(declarations*)
       .`with`(arrows*)
 
-  private def renderTree(diagramOptions: DiagramOptions, symbolOptions: Map[models.Symbol, Option[SymbolOptions]]): Tree[models.Namespace] => (LinkSource & LinkTarget) =
+  private def renderTree(diagramOptions: DiagramOptions, projectSettings: ProjectSettings, symbolOptions: Map[models.GraphSymbol, Option[SymbolOptions]]): Tree[models.Namespace] => (LinkSource & LinkTarget) =
     case Tree.Branch(label, path, children) =>
       val clusterName = path.mkString("/")
       graph(clusterName)
@@ -59,11 +60,11 @@ object GraphvizInheritance:
             .justify(Justification.LEFT)
         )
         .`with`(
-          children.map(renderTree(diagramOptions, symbolOptions)) *
+          children.map(renderTree(diagramOptions, projectSettings, symbolOptions)) *
         )
 
     case Tree.Leaf(_, ns) =>
-      renderNamespace(ns, diagramOptions, symbolOptions(ns.symbol))
+      renderNamespace(ns, diagramOptions, projectSettings, symbolOptions(ns.symbol))
 
   import scalatags.Text.all.*
   // Graphviz specific attributes
@@ -99,7 +100,7 @@ object GraphvizInheritance:
     case other => s"""($other)"""
 
 
-  private def renderNamespace(ns: models.Namespace, diagramOptions: DiagramOptions, symbolOptions: Option[SymbolOptions]): Node =
+  private def renderNamespace(ns: models.Namespace, diagramOptions: DiagramOptions, projectSettings: ProjectSettings, symbolOptions: Option[SymbolOptions]): Node =
     val showFields = symbolOptions.map(_.showFields).getOrElse(diagramOptions.showFields)
     // val showSignatures = symbolOptions.map(_.showSignatures).getOrElse(diagramOptions.showSignatures)
     val fields =
@@ -113,7 +114,7 @@ object GraphvizInheritance:
                 table(emptyStyle.copy(border = 1, cellPadding = 3),
                   for
                     m <- ns.methods
-                    if !diagramOptions.hiddenFields.contains(m.displayName)
+                    if !projectSettings.hiddenFields.contains(m.displayName)
                   yield
                     tr(
                       td(cPadding := 0, align := "LEFT",
@@ -152,5 +153,5 @@ end GraphvizInheritance
 
 @main
 def graphVizInheritanceExample: File =
-  val g = toGraph("laminar",  InheritanceExamples.laminar, Map.empty, DiagramOptions())
+  val g = toGraph("laminar",  InheritanceExamples.laminar, Map.empty, DiagramOptions(), ProjectSettings())
   Graphviz.fromGraph(g).height(500).render(Format.SVG_STANDALONE).toFile(new File("examples/laminar1.svg"))

@@ -10,7 +10,7 @@ sealed trait SvgGroupElement(val ref: dom.SVGGElement):
   private def selectStyle = "3px solid rgb(245 158 11)"
 
   val id = ref.id.stripPrefix(prefix)
-  val symbol = models.Symbol(id)
+  val symbol = models.GraphSymbol(id)
   private val selectedClass = "selected"
 
   def select(): Unit =

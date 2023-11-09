@@ -2,12 +2,26 @@ package org.jpablo.typeexplorer.shared.inheritance
 
 import zio.json.*
 import org.jpablo.typeexplorer.shared.models
+import org.jpablo.typeexplorer.shared.inheritance.Path
 
+// packages tree configuration
+case class PackagesOptions(
+  onlyActive: Boolean = false,
+  onlyTests: Boolean = false,
+  nsKind: Set[models.NamespaceKind] = models.NamespaceKind.values.toSet
+) derives JsonCodec
+
+// project configuration
+case class ProjectSettings(
+  basePaths: List[Path] = List.empty,
+  hiddenFields  : List[String] = DiagramOptions.hiddenFields,
+  hiddenSymbols : List[models.GraphSymbol] = DiagramOptions.hiddenSymbols
+) derives JsonCodec
+
+// diagram configuration (tab specific)
 case class DiagramOptions(
   showFields    : Boolean = false,
   showSignatures: Boolean = false,
-  hiddenFields  : List[String] = DiagramOptions.hiddenFields,
-  hiddenSymbols : List[models.Symbol] = DiagramOptions.hiddenSymbols
 ) derives JsonCodec
 
 case class SymbolOptions(
@@ -17,7 +31,7 @@ case class SymbolOptions(
 
 object DiagramOptions:
 
-  private val hiddenFields = List(
+  val hiddenFields = List(
     "canEqual",
     "copy",
     "equals",
@@ -30,6 +44,6 @@ object DiagramOptions:
     "_1", "_2", "_3", "_4",
   )
 
-  private val hiddenSymbols = List()
+  val hiddenSymbols = List()
 
 end DiagramOptions

@@ -4,7 +4,7 @@ import org.jpablo.typeexplorer.protos.TextDocumentsWithSourceSeq
 import org.jpablo.typeexplorer.shared.models.Method
 import org.jpablo.typeexplorer.shared.models.Namespace
 import org.jpablo.typeexplorer.shared.models.NamespaceKind
-import org.jpablo.typeexplorer.shared.models.Symbol
+import org.jpablo.typeexplorer.shared.models.GraphSymbol
 import org.jpablo.typeexplorer.shared.models.SymbolRange
 import org.jpablo.typeexplorer.shared.tree.Tree
 import zio.json.*
@@ -21,33 +21,33 @@ import scala.meta.internal.semanticdb.SymbolOccurrence
 import scala.meta.internal.semanticdb.Type
 import scala.meta.internal.semanticdb.TypeRef
 
-type Arrow = (Symbol, Symbol)
+type Arrow = (GraphSymbol, GraphSymbol)
 
 /** A simplified representation of entities and subtype relationships
   *
   * @param arrows A pair `(a, b)` means that `a` is a subtype of `b`
   * @param namespaces Classes, Objects, Traits, etc
   */
-case class InheritanceDiagram(
+case class InheritanceGraph(
   arrows    : Set[Arrow],
   namespaces: Set[Namespace] = Set.empty,
 ) derives JsonCodec:
   lazy val symbols =
     namespaces.map(_.symbol)
 
-  lazy val directParents: Symbol => Set[Symbol] =
+  lazy val directParents: GraphSymbol => Set[GraphSymbol] =
     arrows
       .groupBy(_._1)
       .transform((_, ss) => ss.map(_._2))
       .withDefaultValue(Set.empty)
 
-  private lazy val directChildren: Symbol => Set[Symbol] =
+  private lazy val directChildren: GraphSymbol => Set[GraphSymbol] =
     arrows
       .groupBy(_._2)
       .transform((_, ss) => ss.map(_._1))
       .withDefaultValue(Set.empty)
 
-  lazy val nsBySymbol: Map[Symbol, Namespace] =
+  lazy val nsBySymbol: Map[GraphSymbol, Namespace] =
     namespaces.groupMapReduce(_.symbol)(identity)((_, b) => b)
 
   private lazy val nsByKind: Map[NamespaceKind, Set[Namespace]] =
@@ -91,7 +91,7 @@ case class InheritanceDiagram(
 
   // ---------------------------------------------
 
-  private def arrowsForSymbols(symbols: Set[Symbol]) =
+  private def arrowsForSymbols(symbols: Set[GraphSymbol]) =
     for
       arrow @ (a, b) <- arrows
       if (symbols contains a) && (symbols contains b)
@@ -99,33 +99,33 @@ case class InheritanceDiagram(
 
   /** Creates a diagram containing the given symbols and the arrows between them.
     */
-  def subdiagram(symbols: Set[Symbol]): InheritanceDiagram =
+  def subdiagram(symbols: Set[GraphSymbol]): InheritanceGraph =
     val foundSymbols = nsBySymbol.keySet.intersect(symbols)
     val foundNS      = foundSymbols.map(nsBySymbol)
-    InheritanceDiagram(arrowsForSymbols(foundSymbols), foundNS)
+    InheritanceGraph(arrowsForSymbols(foundSymbols), foundNS)
 
-  def subdiagramByKinds(kinds: Set[NamespaceKind]): InheritanceDiagram =
+  def subdiagramByKinds(kinds: Set[NamespaceKind]): InheritanceGraph =
     val foundKinds  = nsByKind.filter((kind, _) => kinds.contains(kind))
     val foundNS     = foundKinds.values.flatten.toSet
-    InheritanceDiagram(arrowsForSymbols(foundNS.map(_.symbol)), foundNS)
+    InheritanceGraph(arrowsForSymbols(foundNS.map(_.symbol)), foundNS)
 
   // Note: doesn't handle loops.
   // How efficient is this compared to the tail rec version above?
-  def unfold(symbols: Set[Symbol], related: Symbol => Set[Symbol]): Set[Symbol] =
+  def unfold(symbols: Set[GraphSymbol], related: GraphSymbol => Set[GraphSymbol]): Set[GraphSymbol] =
     Set.unfold(symbols) { ss =>
       val ss2 = ss.flatMap(related)
       if ss2.isEmpty then None else Some((ss2, ss2))
     }.flatten
 
 
-  private def allRelated(ss: Set[Symbol], r: Symbol => Set[Symbol]): InheritanceDiagram =
+  private def allRelated(ss: Set[GraphSymbol], r: GraphSymbol => Set[GraphSymbol]): InheritanceGraph =
     subdiagram(unfold(ss, r) ++ ss)
 
-  def parentsOfAll(symbols: Set[Symbol]): InheritanceDiagram = allRelated(symbols, directParents)
-  def childrenOfAll(symbols: Set[Symbol]): InheritanceDiagram = allRelated(symbols, directChildren)
+  def parentsOfAll(symbols: Set[GraphSymbol]): InheritanceGraph = allRelated(symbols, directParents)
+  def childrenOfAll(symbols: Set[GraphSymbol]): InheritanceGraph = allRelated(symbols, directChildren)
 
-  def parentsOf(symbol: Symbol): InheritanceDiagram = allRelated(Set(symbol), directParents)
-  def childrenOf(symbol: Symbol): InheritanceDiagram = allRelated(Set(symbol), directChildren)
+  def parentsOf(symbol: GraphSymbol): InheritanceGraph = allRelated(Set(symbol), directParents)
+  def childrenOf(symbol: GraphSymbol): InheritanceGraph = allRelated(Set(symbol), directChildren)
 
 
   lazy val toTrees: Tree[Namespace] =
@@ -138,27 +138,27 @@ case class InheritanceDiagram(
     * No new arrows are introduced beyond those present in both diagrams.
     */
   @targetName("combine")
-  def ++ (other: InheritanceDiagram): InheritanceDiagram =
-    InheritanceDiagram(
+  def ++ (other: InheritanceGraph): InheritanceGraph =
+    InheritanceGraph(
       arrows = arrows ++ other.arrows,
       namespaces = namespaces ++ other.namespaces
     )
 
   /** Creates a new subdiagram with all the symbols containing the given String.
     */
-  def filterBySymbolName(str: String): InheritanceDiagram =
+  def filterBySymbolName(str: String): InheritanceGraph =
     subdiagram(symbols.filter(_.toString.toLowerCase.contains(str.toLowerCase)))
 
-  def filterBy(p: Namespace => Boolean): InheritanceDiagram =
+  def filterBy(p: Namespace => Boolean): InheritanceGraph =
     subdiagram(namespaces.filter(p).map(_.symbol))
 
-end InheritanceDiagram
+end InheritanceGraph
 
-object InheritanceDiagram:
+object InheritanceGraph:
 
-  given Commutative[InheritanceDiagram] with Identity[InheritanceDiagram] with
-    def identity = InheritanceDiagram.empty
-    def combine(l: => InheritanceDiagram, r: => InheritanceDiagram) = l ++ r
+  given Commutative[InheritanceGraph] with Identity[InheritanceGraph] with
+    def identity = InheritanceGraph.empty
+    def combine(l: => InheritanceGraph, r: => InheritanceGraph) = l ++ r
 
   // TODO: make this configurable
   val excluded =
@@ -172,9 +172,9 @@ object InheritanceDiagram:
     )
 
   // In Scala 3.2 the type annotation is needed.
-  val empty: InheritanceDiagram = new InheritanceDiagram(Set.empty)
+  val empty: InheritanceGraph = new InheritanceGraph(Set.empty)
 
-  def from(textDocuments: TextDocumentsWithSourceSeq): InheritanceDiagram =
+  def from(textDocuments: TextDocumentsWithSourceSeq): InheritanceGraph =
     val allSymbols =
       for
         docWithSource <- textDocuments.documentsWithSource
@@ -183,7 +183,7 @@ object InheritanceDiagram:
         si <- doc.symbols
         if !excluded.exists(si.symbol.contains)
       yield
-        Symbol(si.symbol) -> (si, docWithSource.semanticDbUri, doc.uri, docWithSource.basePath, occurrences.get(si.symbol))
+        GraphSymbol(si.symbol) -> (si, docWithSource.semanticDbUri, doc.uri, docWithSource.basePath, occurrences.get(si.symbol))
 
     val symbolInfosMap = allSymbols.map { case (s, t) => s -> t._1 }.toMap
 
@@ -200,7 +200,7 @@ object InheritanceDiagram:
           .map:
             _.symlinks
               .filterNot(si => excluded.exists(si.contains))
-              .map(Symbol(_))
+              .map(GraphSymbol(_))
           .toSeq.flatten
 
         methods = declarations.map(method(symbolInfosMap))
@@ -224,20 +224,20 @@ object InheritanceDiagram:
         parent        <- parents
         parentType    <- parent.asNonEmpty.toSeq
         parentSymbol  <- parentType match
-          case tr: TypeRef => List(Symbol(tr.symbol))
+          case tr: TypeRef => List(GraphSymbol(tr.symbol))
           case _ => List.empty
         if !excluded.contains(parentSymbol.toString)
       yield
         ns.symbol -> parentSymbol
 
-    InheritanceDiagram(
+    InheritanceGraph(
       arrows     = arrows.toSet,
       namespaces = namespaces.map(_._1).toSet ++ missingSymbols(arrows.map(_._2).toList, symbolInfosMap)
     )
 
   end from
 
-  private def missingSymbols(parents: List[Symbol], allSymbols: Map[Symbol, SymbolInformation]) =
+  private def missingSymbols(parents: List[GraphSymbol], allSymbols: Map[GraphSymbol, SymbolInformation]) =
     for
       to <- parents.distinct if ! (allSymbols contains to)
     yield
@@ -264,14 +264,14 @@ object InheritanceDiagram:
     case Kind.TRAIT          => NamespaceKind.Trait
     case _                   => ???
 
-  private def method(allSymbols: Map[Symbol, SymbolInformation])(decl: Symbol) =
+  private def method(allSymbols: Map[GraphSymbol, SymbolInformation])(decl: GraphSymbol) =
     Method(
       symbol      = decl,
       displayName = allSymbols.get(decl).map(_.displayName).getOrElse(missingMethodName(decl)),
       returnType  = None
     )
 
-  private def missingMethodName(s: Symbol) =
+  private def missingMethodName(s: GraphSymbol) =
     val str = s.toString
     if str.endsWith("`<init>`().") then
       "<init>"
@@ -280,4 +280,4 @@ object InheritanceDiagram:
     else
       str
 
-end InheritanceDiagram
+end InheritanceGraph

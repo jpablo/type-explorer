@@ -6,7 +6,7 @@ import zio.json.*
 
 object PlantumlInheritanceSpec extends ZIOSpecDefault {
 
-  val diagram = exampleInheritanceDiagram.fromJson[InheritanceDiagram].toOption.get
+  val diagram = exampleInheritanceDiagram.fromJson[InheritanceGraph].toOption.get
 
   def spec =
     suite("PlantumlInheritance")(

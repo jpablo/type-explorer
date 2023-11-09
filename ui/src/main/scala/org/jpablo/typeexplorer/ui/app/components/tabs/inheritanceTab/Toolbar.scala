@@ -1,10 +1,6 @@
 package org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab
 
-import org.jpablo.typeexplorer.ui.app.components.state.{
-  AppState,
-  InheritanceTabState,
-  Project
-}
+import org.jpablo.typeexplorer.ui.app.components.state.{AppState, InheritanceTabState, Project}
 import com.raquo.laminar.api.L.*
 import com.softwaremill.quicklens.*
 import org.scalajs.dom
@@ -12,10 +8,7 @@ import org.jpablo.typeexplorer.ui.daisyui.*
 import com.raquo.laminar.api.features.unitArrows
 import com.raquo.laminar.nodes.ReactiveHtmlElement
 import org.scalajs.dom.{HTMLDivElement, HTMLElement}
-import org.jpablo.typeexplorer.shared.inheritance.{
-  InheritanceDiagram,
-  toPlantUML
-}
+import org.jpablo.typeexplorer.shared.inheritance.{DiagramOptions, InheritanceGraph, toPlantUML}
 import org.jpablo.typeexplorer.ui.app.components.state.InheritanceTabState.ActiveSymbols
 
 def Toolbar(
@@ -23,7 +16,7 @@ def Toolbar(
     inheritanceSvgDiagram: Signal[InheritanceSvgDiagram],
     containerBoundingClientRect: => dom.DOMRect
 ) =
-  val tabState = appState.inheritanceTab
+//  val tabState = appState.inheritanceTab
   val modifySelection = modifyLens[Project]
   div(
     cls := "bg-base-100 rounded-box flex items-center gap-4 ml-2 absolute top-0",
@@ -32,15 +25,15 @@ def Toolbar(
       OptionsToggle(
         "fields-checkbox-1",
         "fields",
-        _.diagramOptions.showFields,
-        modifySelection(_.diagramOptions.showFields),
+        _.pages.head.diagramOptions.showFields,
+        modifySelection(_.pages.at(0).diagramOptions.showFields),
         appState
       ),
       OptionsToggle(
         "fields-checkbox-2",
         "signatures",
-        _.diagramOptions.showSignatures,
-        modifySelection(_.diagramOptions.showSignatures),
+        _.pages.head.diagramOptions.showSignatures,
+        modifySelection(_.pages.at(0).diagramOptions.showSignatures),
         appState
       )
     ),
@@ -48,7 +41,7 @@ def Toolbar(
     Join(
       Button(
         "remove all",
-        onClick --> tabState.activeSymbols.clear()
+//        onClick --> tabState.activeSymbols.clear()
       ).tiny,
       div(
         cls := "dropdown dropdown-hover",
@@ -71,7 +64,7 @@ def Toolbar(
           li(
             a(
               "plantuml",
-              onPlantUMLClicked(appState, tabState)
+              onPlantUMLClicked(appState/*, tabState*/)
             )
           )
         )
@@ -108,19 +101,23 @@ private def OptionsToggle(
 
 private def onPlantUMLClicked(
     appState: AppState,
-    tabState: InheritanceTabState
+//    tabState: InheritanceTabState
 ) =
   onClick.compose(
     _.sample(
-      tabState.fullInheritanceDiagram,
-      tabState.activeSymbols.signal,
+      appState.fullGraph,
+//      tabState.activeSymbols.signal,
       appState.diagramOptions
     )
-  ) --> { (fullDiagram: InheritanceDiagram, symbols: ActiveSymbols, options) =>
+  ) --> { (fullDiagram: InheritanceGraph, options) =>
     dom.window.navigator.clipboard.writeText(
       fullDiagram
-        .subdiagram(symbols.keySet)
-        .toPlantUML(symbols, options)
+//        .subdiagram(symbols.keySet)
+        .subdiagram(Set.empty)
+        .toPlantUML(
+          Map.empty,
+          options.head
+        )
         .diagram
     )
   }

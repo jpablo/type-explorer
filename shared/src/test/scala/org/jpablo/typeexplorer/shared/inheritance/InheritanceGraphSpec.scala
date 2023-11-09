@@ -5,12 +5,12 @@ import zio.test.Assertion.*
 
 import org.jpablo.typeexplorer.shared.models
 
-object InheritanceDiagramSpec extends ZIOSpecDefault:
+object InheritanceGraphSpec extends ZIOSpecDefault:
 
   // sbt> testOnly org.jpablo.typeexplorer.shared.inheritance.*
 
   def makeClass(name: String) =
-    models.Namespace(models.Symbol(name), name, models.NamespaceKind.Class)
+    models.Namespace(models.GraphSymbol(name), name, models.NamespaceKind.Class)
 
   val base0  = makeClass("base0")
   val base1  = makeClass("base1")
@@ -43,7 +43,7 @@ object InheritanceDiagramSpec extends ZIOSpecDefault:
     └──────┘    └──────┘
    */
 
-  val diagram = InheritanceDiagram(
+  val diagram = InheritanceGraph(
     arrows = Set(
       base1.symbol  -> base0.symbol,
       base2.symbol  -> base0.symbol,
@@ -65,14 +65,14 @@ object InheritanceDiagramSpec extends ZIOSpecDefault:
 
       test("subdiagram - single symbol"):
         val filtered = diagram.subdiagram(Set(classA.symbol))
-        val expected = InheritanceDiagram(arrows = Set(), namespaces = Set(classA) )
+        val expected = InheritanceGraph(arrows = Set(), namespaces = Set(classA) )
         assertTrue(filtered == expected)
       ,
 
       test("subdiagram - multiple symbols"):
         val filtered = diagram.subdiagram(Set(classA, classB, classC).map(_.symbol))
         val expected =
-          InheritanceDiagram(
+          InheritanceGraph(
             arrows = Set((classB.symbol, classA.symbol), (classC.symbol, classA.symbol)),
             namespaces = Set(classA, classB, classC)
           )
@@ -83,7 +83,7 @@ object InheritanceDiagramSpec extends ZIOSpecDefault:
         val filtered = diagram.parentsOf(classA.symbol)
 
         val expected =
-          InheritanceDiagram(
+          InheritanceGraph(
             arrows = Set(
               base1.symbol -> base0.symbol,
               base2.symbol -> base0.symbol,
@@ -99,7 +99,7 @@ object InheritanceDiagramSpec extends ZIOSpecDefault:
         val filtered = diagram.parentsOf(classB.symbol)
 
         val expected =
-          InheritanceDiagram(
+          InheritanceGraph(
             arrows = Set(
               base1.symbol -> base0.symbol,
               base2.symbol -> base0.symbol,
@@ -115,7 +115,7 @@ object InheritanceDiagramSpec extends ZIOSpecDefault:
       test("parentsOfAll"):
         val base3  = makeClass("base3")
         val base4  = makeClass("base4")
-        val diagram2 = InheritanceDiagram(
+        val diagram2 = InheritanceGraph(
           Set(base3.symbol -> base4.symbol),
           Set(base3, base4)
         )
@@ -132,7 +132,7 @@ object InheritanceDiagramSpec extends ZIOSpecDefault:
       test("childrenOfAll"):
         val base3  = makeClass("base3")
         val base4  = makeClass("base4")
-        val diagram2 = InheritanceDiagram(
+        val diagram2 = InheritanceGraph(
           Set(base3.symbol -> base4.symbol),
           Set(base3, base4)
         )

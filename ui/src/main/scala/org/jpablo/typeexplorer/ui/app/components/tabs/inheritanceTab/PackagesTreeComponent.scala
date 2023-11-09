@@ -1,18 +1,13 @@
 package org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab
 
 import org.jpablo.typeexplorer.ui.app.components.state.InheritanceTabState.ActiveSymbols
-import org.jpablo.typeexplorer.ui.app.components.state.{
-  Project,
-  AppState,
-  InheritanceTabState,
-  PackagesOptions
-}
+import org.jpablo.typeexplorer.ui.app.components.state.{AppState, InheritanceTabState, Project}
 import com.raquo.laminar.api.L.*
 import io.laminext.syntax.core.*
 import com.softwaremill.quicklens.*
 import org.jpablo.typeexplorer.ui.daisyui.*
 import org.jpablo.typeexplorer.shared.models
-import org.jpablo.typeexplorer.shared.inheritance.InheritanceDiagram
+import org.jpablo.typeexplorer.shared.inheritance.{InheritanceGraph, PackagesOptions}
 import org.jpablo.typeexplorer.ui.app.toggleWith
 
 extension [A](a: A)
@@ -22,31 +17,31 @@ extension [A](a: A)
 private def PackagesTreeComponent(appState: AppState) =
   val showOptions = Var(false)
   val filterBySymbolName = Var("")
-  val filteredDiagram: EventStream[InheritanceDiagram] =
-    appState.inheritanceTab.fullInheritanceDiagram
+  val filteredDiagram: EventStream[InheritanceGraph] =
+    appState.fullGraph
       .combineWith(
         appState.packagesOptions,
         filterBySymbolName.signal,
         // TODO: consider another approach where changing activeSymbols does not trigger
         // a full tree redraw, but just modifies the relevant nodes
-        appState.inheritanceTab.activeSymbols.signal
+//        appState.inheritanceTab.activeSymbols.signal
       )
       .changes
       .debounce(300)
       .map:
         (
-            diagram: InheritanceDiagram,
+            diagram: InheritanceGraph,
             packagesOptions: PackagesOptions,
             w: String,
-            activeSymbols: ActiveSymbols
+//            activeSymbols: ActiveSymbols
         ) =>
           diagram
             .orElse(w.isBlank, _.filterBySymbolName(w))
             .subdiagramByKinds(packagesOptions.nsKind)
-            .orElse(
-              !packagesOptions.onlyActive,
-              _.subdiagram(activeSymbols.keySet)
-            )
+//            .orElse(
+//              !packagesOptions.onlyActive,
+//              _.subdiagram(activeSymbols.keySet)
+//            )
             .orElse(packagesOptions.onlyTests, _.filterBy(!_.inTest))
 
   div(
@@ -73,7 +68,7 @@ private def PackagesTreeComponent(appState: AppState) =
     ),
     div(
       cls := "overflow-auto mt-1",
-      child <-- PackagesTree(appState.inheritanceTab, filteredDiagram)
+      child <-- PackagesTree(/*appState.inheritanceTab, */filteredDiagram)
     )
   )
 

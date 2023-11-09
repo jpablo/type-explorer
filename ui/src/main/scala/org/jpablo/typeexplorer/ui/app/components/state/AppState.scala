@@ -5,23 +5,19 @@ import com.raquo.airstream.state.Var
 import com.raquo.laminar.api.L.*
 import com.softwaremill.quicklens.*
 import io.laminext.syntax.core.storedString
-import org.jpablo.typeexplorer.shared.inheritance.{
-  DiagramOptions,
-  InheritanceDiagram
-}
-import org.jpablo.typeexplorer.ui.app.Path
+import org.jpablo.typeexplorer.shared.inheritance.{InheritanceGraph, Path}
 import org.jpablo.typeexplorer.ui.app.components.state.InheritanceTabState.ActiveSymbols
 
 /** In-memory App State
   */
-case class AppState(
+class AppState(
     persistedAppState: Var[PersistedAppState],
-    activeProject: ProjectVar,
-    inheritanceTab: InheritanceTabState = InheritanceTabState()
+    val activeProject: ProjectVar, // = f(persistedAppState)
+    val fullGraph: Signal[InheritanceGraph], // = f(activeProject)
+    val tabStates: Vector[InheritanceTabState] = Vector.empty // = f(activeProject)
 ):
   export activeProject.{
     basePaths,
-    activeSymbols,
     packagesOptions,
     diagramOptions,
     advancedMode,
@@ -31,41 +27,15 @@ case class AppState(
   def deleteProject(projectId: ProjectId): Unit =
     persistedAppState.update(_.deleteProject(projectId))
 
-/** Convenience wrapper around a Var[Project]
-  */
-case class ProjectVar(project: Var[Project])(using Owner):
-
-  export project.{signal, update, updater}
-
-  val basePaths: Signal[List[Path]] =
-    project.signal.map(_.basePaths)
-
-  val name = project.zoom(_.name)((p, n) => p.copy(name = n))
-
-  val packagesOptions: Signal[PackagesOptions] =
-    project.signal.map(_.packagesOptions)
-
-  val diagramOptions: Signal[DiagramOptions] =
-    project.signal.map(_.diagramOptions)
-
-  val advancedMode: Signal[Boolean] =
-    project.signal.map(_.advancedMode)
-
-  val activeSymbols: Var[ActiveSymbols] =
-    project
-      .zoom(_.activeSymbols.toMap) { (activeProject, activeSymbols) =>
-        activeProject
-          .modify(_.activeSymbols)
-          .setTo(activeSymbols.toList)
-      }
-end ProjectVar
+  val projects: Signal[Map[ProjectId, Project]] =
+    persistedAppState.signal.map(_.projects)
 
 object AppState:
 
   /** Load Projects from local storage and select the active project
     */
   def load(
-      fetchDiagram: List[Path] => Signal[InheritanceDiagram],
+      fetchFullInheritanceGraph: List[Path] => Signal[InheritanceGraph],
       projectId: ProjectId
   )(using Owner): AppState =
     val persistedAppState =
@@ -73,16 +43,26 @@ object AppState:
         storedString("persistedAppState", initial = "{}"),
         initial = PersistedAppState()
       )
-    val activeProject =
+    val activeProjectV: ProjectVar =
       selectOrCreateProject(persistedAppState, projectId)
+
+    val activeProject = activeProjectV.project.now()
+
+    val fullGraph: Signal[InheritanceGraph] =
+      fetchFullInheritanceGraph(activeProject.projectSettings.basePaths)
+
+    val tabStates: Vector[InheritanceTabState] =
+      activeProject.pages.zipWithIndex.map: (p, i) =>
+        InheritanceTabState(
+          page = activeProjectV.page(i),
+          fullGraph = fullGraph
+        )
 
     AppState(
       persistedAppState,
-      activeProject,
-      InheritanceTabState(
-        activeSymbolsR = activeProject.activeSymbols,
-        fullInheritanceDiagram = activeProject.basePaths.flatMap(fetchDiagram)
-      )
+      activeProjectV,
+      fullGraph,
+      tabStates
     )
 
   /** Select an existing project or create a new one. The new project will be

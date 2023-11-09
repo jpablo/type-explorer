@@ -1,15 +1,13 @@
 package org.jpablo.typeexplorer.ui.app.client
 
+import com.raquo.airstream.core.EventStream
 import com.raquo.laminar.api.L.*
 import io.laminext.fetch.*
 import org.jpablo.typeexplorer.protos.{TextDocumentsWithSource, TextDocumentsWithSourceSeq}
-import org.jpablo.typeexplorer.shared.inheritance.{DiagramOptions, InheritanceDiagram}
-import org.jpablo.typeexplorer.shared.models.Symbol
+import org.jpablo.typeexplorer.shared.inheritance.{InheritanceGraph, Path}
 import org.jpablo.typeexplorer.shared.webApp.{InheritanceRequest, Routes}
-import org.jpablo.typeexplorer.ui.app.Path
 import org.jpablo.typeexplorer.ui.app.components.DiagramType
-import org.jpablo.typeexplorer.ui.app.components.state.InheritanceTabState.ActiveSymbols
-import org.jpablo.typeexplorer.ui.app.components.state.AppState
+import org.jpablo.typeexplorer.ui.app.components.state.{AppState, InheritanceTabState, Page}
 import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.InheritanceSvgDiagram
 import org.scalajs.dom
 import zio.json.*
@@ -39,7 +37,7 @@ def fetchDocuments(paths: Signal[List[Path]]): EventStream[List[TextDocumentsWit
     lst
 
 
-def fetchInheritanceDiagram(basePaths: List[Path]): Signal[InheritanceDiagram] = {
+def fetchFullInheritanceGraph(basePaths: List[Path]): Signal[InheritanceGraph] = {
   if basePaths.isEmpty then
     EventStream.empty
   else
@@ -48,29 +46,30 @@ def fetchInheritanceDiagram(basePaths: List[Path]): Signal[InheritanceDiagram] =
       response <- fetchBase(s"${Routes.classes}?$qs").text
       classes  <- EventStream.fromTry {
         response.data
-          .fromJson[InheritanceDiagram].left
+          .fromJson[InheritanceGraph].left
           .map(Exception(_))
           .toTry
       }
     yield
       classes
-}.startWith(InheritanceDiagram.empty)
+}.startWith(InheritanceGraph.empty)
 
-def fetchInheritanceSVGDiagram(appState: AppState): EventStream[InheritanceSvgDiagram] =
+def fetchInheritanceSVGDiagrams(appState: AppState): Vector[Signal[InheritanceSvgDiagram]] =
+    appState.tabStates.map(fetchInheritanceSVGDiagram(appState, _).startWith(InheritanceSvgDiagram.empty))
+
+
+def fetchInheritanceSVGDiagram(appState: AppState, tabState: InheritanceTabState): EventStream[InheritanceSvgDiagram] =
   val combined =
-    appState.basePaths
-      .combineWith(
-        appState.inheritanceTab.activeSymbols.signal,
-        appState.diagramOptions
-      )
+    appState.basePaths.combineWith(tabState.page.signal)
+
   for
-    (basePaths: List[Path], symbols: ActiveSymbols, options) <- combined
+    (basePaths: List[Path], page: Page) <- combined
     parser = dom.DOMParser()
     svgElement <-
       if basePaths.isEmpty then
         EventStream.fromValue(svg.svg().ref)
       else
-        val body = InheritanceRequest(basePaths.map(_.toString), symbols.toList, options)
+        val body = InheritanceRequest(basePaths.map(_.toString), page.activeSymbols, page.diagramOptions)
         val req = Fetch.post(s"$basePath${Routes.inheritanceDiagram}", body.toJson)
         req.text.map { fetchResponse =>
           parser

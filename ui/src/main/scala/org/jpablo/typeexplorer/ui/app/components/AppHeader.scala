@@ -3,7 +3,7 @@ package org.jpablo.typeexplorer.ui.app.components
 import com.raquo.laminar.api.L.*
 import com.raquo.laminar.api.features.unitArrows
 import com.raquo.laminar.nodes.ReactiveHtmlElement
-import org.jpablo.typeexplorer.ui.app.Path
+import org.jpablo.typeexplorer.shared.inheritance.Path
 import org.jpablo.typeexplorer.ui.app.components.state.{AppState, ProjectId}
 import org.jpablo.typeexplorer.ui.domUtils.dataTip
 
@@ -17,8 +17,7 @@ def AppHeader(
   deleteProject: EventBus[ProjectId],
 ): Div =
   val titleDialog = TitleDialog(appState.activeProject.name)
-  val projects = appState.persistedAppState.signal.map(_.projects)
-  val projectSelector = ProjectSelector(projects, selectedProject, deleteProject)
+  val projectSelector = ProjectSelector(appState.projects, selectedProject, deleteProject)
   div(
     cls := "border-b border-slate-300",
     div(

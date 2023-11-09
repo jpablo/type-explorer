@@ -1,27 +1,27 @@
 package org.jpablo.typeexplorer.shared.inheritance
 
 import org.jpablo.typeexplorer.shared.models
-import org.jpablo.typeexplorer.shared.models.{Method, Namespace, NamespaceKind, Symbol}
+import org.jpablo.typeexplorer.shared.models.{Method, Namespace, NamespaceKind, GraphSymbol}
 
 object InheritanceExamples {
 
-  val baseObservable     = Namespace(Symbol("BaseObservable"), "BaseObservable", kind = NamespaceKind.Class, methods = List(Method("map"), Method("mapTo"), Method("flatMap")))
-  val observable         = Namespace(models.Symbol("Observable"), "Observable")
-  val observer           = Namespace(models.Symbol("Observer"), "Observer")
-  val source             = Namespace(models.Symbol("Source"), "Source", methods = List(Method("toObservable", Some(observable))))
-  val named              = Namespace(models.Symbol("Named"), "Named", methods = List(Method("toObserver", Some(observer))))
-  val sink               = Namespace(models.Symbol("Sink"), "Sink")
-  val eventSource        = Namespace(models.Symbol("EventSource"), "EventSource")
-  val signalSource       = Namespace(models.Symbol("SignalSource"), "SignalSource")
-  val eventBus           = Namespace(models.Symbol("EventBus"), "EventBus")
-  val `var`              = Namespace(models.Symbol("Var"), "Var")
-  val writeBus           = Namespace(models.Symbol("WriteBus"), "WriteBus")
-  val writableObservable = Namespace(models.Symbol("WritableObservable"), "WritableObservable")
-  val eventStream        = Namespace(models.Symbol("EventStream"), "EventStream", methods = List(Method("filter"), Method("delay")))
-  val signal             = Namespace(models.Symbol("Signal"), "Signal", methods = List(Method("now"), Method("compose")))
-  val writableSignal     = Namespace(models.Symbol("WritableSignal"), "WritableSignal")
-  val strictSignal       = Namespace(models.Symbol("StrictSignal"), "StrictSignal")
-  val `val`              = Namespace(models.Symbol("Val"), "Val")
+  val baseObservable     = Namespace(GraphSymbol("BaseObservable"), "BaseObservable", kind = NamespaceKind.Class, methods = List(Method("map"), Method("mapTo"), Method("flatMap")))
+  val observable         = Namespace(GraphSymbol("Observable"), "Observable")
+  val observer           = Namespace(GraphSymbol("Observer"), "Observer")
+  val source             = Namespace(GraphSymbol("Source"), "Source", methods = List(Method("toObservable", Some(observable))))
+  val named              = Namespace(GraphSymbol("Named"), "Named", methods = List(Method("toObserver", Some(observer))))
+  val sink               = Namespace(GraphSymbol("Sink"), "Sink")
+  val eventSource        = Namespace(GraphSymbol("EventSource"), "EventSource")
+  val signalSource       = Namespace(GraphSymbol("SignalSource"), "SignalSource")
+  val eventBus           = Namespace(GraphSymbol("EventBus"), "EventBus")
+  val `var`              = Namespace(GraphSymbol("Var"), "Var")
+  val writeBus           = Namespace(GraphSymbol("WriteBus"), "WriteBus")
+  val writableObservable = Namespace(GraphSymbol("WritableObservable"), "WritableObservable")
+  val eventStream        = Namespace(GraphSymbol("EventStream"), "EventStream", methods = List(Method("filter"), Method("delay")))
+  val signal             = Namespace(GraphSymbol("Signal"), "Signal", methods = List(Method("now"), Method("compose")))
+  val writableSignal     = Namespace(GraphSymbol("WritableSignal"), "WritableSignal")
+  val strictSignal       = Namespace(GraphSymbol("StrictSignal"), "StrictSignal")
+  val `val`              = Namespace(GraphSymbol("Val"), "Val")
 
   val pairs: List[(Namespace, Namespace)] =
     List(
@@ -54,7 +54,7 @@ object InheritanceExamples {
     )
 
   lazy val laminar =
-    InheritanceDiagram(
+    InheritanceGraph(
       arrows = pairs.toSet.map { case (a, b) => a.symbol -> b.symbol },
       namespaces = pairs.toSet.map(_._1) ++ pairs.map(_._2)
     )

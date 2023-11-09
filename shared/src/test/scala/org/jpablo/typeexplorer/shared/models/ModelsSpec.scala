@@ -47,7 +47,7 @@ object ModelsSpec extends ZIOSpecDefault:
       val expected =
         InheritanceRequest(
           List("/Users/jpablo/GitHub/Airstream"),
-          List(models.Symbol("com/raquo/airstream/core/EventStream#") -> None)
+          List(models.GraphSymbol("com/raquo/airstream/core/EventStream#") -> None)
         )
       assertTrue(Right(expected) == serialization.fromJson[InheritanceRequest[String]])
     ,
@@ -88,7 +88,7 @@ object ModelsSpec extends ZIOSpecDefault:
       val expected =
         InheritanceRequest(
           List("/Users/jpablo/GitHub/Airstream"),
-          List(models.Symbol("com/raquo/airstream/core/EventStream#") -> None)
+          List(models.GraphSymbol("com/raquo/airstream/core/EventStream#") -> None)
         )
 
       assertTrue(serialization.fromJson[InheritanceRequest[String]] == Right(expected))

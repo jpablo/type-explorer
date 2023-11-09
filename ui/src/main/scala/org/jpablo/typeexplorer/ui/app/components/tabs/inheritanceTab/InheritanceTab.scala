@@ -5,7 +5,7 @@ import com.raquo.laminar.api.L.*
 import com.raquo.laminar.api.features.unitArrows
 import com.raquo.laminar.nodes.ReactiveHtmlElement
 import io.laminext.syntax.core.*
-import org.jpablo.typeexplorer.ui.app.components.state.AppState
+import org.jpablo.typeexplorer.ui.app.components.state.{AppState, InheritanceTabState}
 import org.jpablo.typeexplorer.ui.widgets.Icons
 import org.scalajs.dom
 import org.scalajs.dom.HTMLDivElement
@@ -16,10 +16,11 @@ object InheritanceTab:
 
   def apply(
       appState: AppState,
+      inheritanceTabState: InheritanceTabState,
       inheritanceSvgDiagram: Signal[InheritanceSvgDiagram]
   ): ReactiveHtmlElement[HTMLDivElement] =
     val canvasContainer =
-      CanvasContainer(inheritanceSvgDiagram, appState.inheritanceTab)
+      CanvasContainer(inheritanceSvgDiagram, inheritanceTabState)
 
     val showPackagesTree = Var(false)
 
