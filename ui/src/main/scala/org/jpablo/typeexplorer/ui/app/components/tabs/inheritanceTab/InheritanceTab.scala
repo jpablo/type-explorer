@@ -29,6 +29,7 @@ object InheritanceTab:
       cls := "h-full relative",
       Toolbar(
         appState,
+        tabState,
         inheritanceSvgDiagram,
         canvasContainer.ref.getBoundingClientRect()
       ),

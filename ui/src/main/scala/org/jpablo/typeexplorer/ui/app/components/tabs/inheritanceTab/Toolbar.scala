@@ -1,6 +1,10 @@
 package org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab
 
-import org.jpablo.typeexplorer.ui.app.components.state.{AppState, InheritanceTabState, Project}
+import org.jpablo.typeexplorer.ui.app.components.state.{
+  AppState,
+  InheritanceTabState,
+  Project
+}
 import com.raquo.laminar.api.L.*
 import com.softwaremill.quicklens.*
 import org.scalajs.dom
@@ -8,16 +12,24 @@ import org.jpablo.typeexplorer.ui.daisyui.*
 import com.raquo.laminar.api.features.unitArrows
 import com.raquo.laminar.nodes.ReactiveHtmlElement
 import org.scalajs.dom.{HTMLDivElement, HTMLElement}
-import org.jpablo.typeexplorer.shared.inheritance.{DiagramOptions, InheritanceGraph, toPlantUML}
+import org.jpablo.typeexplorer.shared.inheritance.{
+  DiagramOptions,
+  InheritanceGraph,
+  toPlantUML
+}
 import org.jpablo.typeexplorer.ui.app.components.state.InheritanceTabState.ActiveSymbols
+import org.jpablo.typeexplorer.ui.domUtils
 
 def Toolbar(
     appState: AppState,
+    tabState: InheritanceTabState,
     inheritanceSvgDiagram: Signal[InheritanceSvgDiagram],
     containerBoundingClientRect: => dom.DOMRect
 ) =
 //  val tabState = appState.inheritanceTab
   val modifySelection = modifyLens[Project]
+  val zoomValue = Var(100.0)
+  inheritanceSvgDiagram.combineWith(zoomValue.signal).foreach (_.absoluteZoom(_))(owner = unsafeWindowOwner)
   div(
     cls := "bg-base-100 rounded-box flex items-center gap-4 ml-2 absolute top-0",
     // -------- fields and signatures --------
@@ -28,7 +40,7 @@ def Toolbar(
         _.pages.head.diagramOptions.showFields,
         modifySelection(_.pages.at(0).diagramOptions.showFields),
         appState
-      ),
+      )
 //      OptionsToggle(
 //        "fields-checkbox-2",
 //        "signatures",
@@ -41,7 +53,7 @@ def Toolbar(
     Join(
       Button(
         "remove all",
-//        onClick --> tabState.activeSymbols.clear()
+        onClick --> tabState.activeSymbols.clear()
       ).tiny,
       div(
         cls := "dropdown dropdown-hover",
@@ -64,7 +76,7 @@ def Toolbar(
           li(
             a(
               "plantuml",
-              onPlantUMLClicked(appState/*, tabState*/)
+              onPlantUMLClicked(appState /*, tabState*/ )
             )
           )
         )
@@ -76,8 +88,22 @@ def Toolbar(
         }
       ).tiny,
       Button(
-        "zoom +",
-        onClick.compose(_.sample(inheritanceSvgDiagram)) --> (_.zoom(1.1))
+        "-",
+        onClick --> zoomValue.update(_ * 0.9)
+      ).tiny,
+      input(
+        tpe := "range",
+        domUtils.min := 50,
+        domUtils.max := 150,
+        value := "100",
+        controlled(
+          value <-- zoomValue.signal.map(_.toString),
+          onInput.mapToValue.map(_.toDouble) --> zoomValue
+        )
+      ),
+      Button(
+        "+",
+        onClick --> zoomValue.update(_ * 1.1)
       ).tiny
     )
   )
@@ -100,7 +126,7 @@ private def OptionsToggle(
   )
 
 private def onPlantUMLClicked(
-    appState: AppState,
+    appState: AppState
 //    tabState: InheritanceTabState
 ) =
   onClick.compose(
