@@ -27,6 +27,12 @@ class InheritanceSvgDiagram(svgElement: dom.SVGElement):
   def zoom(r: Double): Unit =
     setDimensions((width * r).toInt, (height * r).toInt)
 
+  def absoluteZoom(r: Double): Unit =
+    val width = svgElement.attributes.getNamedItem("width").value.replace("px", "").toDouble
+    val height = svgElement.attributes.getNamedItem("height").value.replace("px", "").toDouble
+    // FIXME: hack for dev
+    setDimensions((width * r / 100).toInt, (height * r / 100).toInt)
+
   def fitToRect(rect: dom.DOMRect): Unit =
     zoom(scala.math.min(rect.width / width, rect.height / height))
 

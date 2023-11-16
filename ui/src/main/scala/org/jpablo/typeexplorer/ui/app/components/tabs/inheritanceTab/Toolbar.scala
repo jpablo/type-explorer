@@ -17,6 +17,7 @@ import org.jpablo.typeexplorer.shared.inheritance.{
   toPlantUML
 }
 import org.jpablo.typeexplorer.ui.app.components.state.InheritanceTabState.ActiveSymbols
+import org.jpablo.typeexplorer.ui.domUtils
 
 def Toolbar(
     appState: AppState,
@@ -85,7 +86,10 @@ def Toolbar(
       Button(
         "zoom +",
         onClick.compose(_.sample(inheritanceSvgDiagram)) --> (_.zoom(1.1))
-      ).tiny
+      ).tiny,
+      input(tpe := "range", domUtils.min := 50, domUtils.max := 150, value := "100",
+        onInput.mapToValue.compose(_.withCurrentValueOf(inheritanceSvgDiagram)) --> { (value, diagram) => diagram.absoluteZoom(value.toDouble) }
+      )
     )
   )
 
