@@ -29,13 +29,13 @@ def Toolbar(
         modifySelection(_.pages.at(0).diagramOptions.showFields),
         appState
       ),
-      OptionsToggle(
-        "fields-checkbox-2",
-        "signatures",
-        _.pages.head.diagramOptions.showSignatures,
-        modifySelection(_.pages.at(0).diagramOptions.showSignatures),
-        appState
-      )
+//      OptionsToggle(
+//        "fields-checkbox-2",
+//        "signatures",
+//        _.pages.head.diagramOptions.showSignatures,
+//        modifySelection(_.pages.at(0).diagramOptions.showSignatures),
+//        appState
+//      )
     ),
     // -------- actions toolbar --------
     Join(

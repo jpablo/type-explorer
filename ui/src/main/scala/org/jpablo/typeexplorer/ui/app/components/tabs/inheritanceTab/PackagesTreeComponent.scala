@@ -14,7 +14,7 @@ extension [A](a: A)
   private def orElse(b: Boolean, f: A => A): A =
     if b then a else f(a)
 
-private def PackagesTreeComponent(appState: AppState) =
+private def PackagesTreeComponent(appState: AppState, tabState: InheritanceTabState) =
   val showOptions = Var(false)
   val filterBySymbolName = Var("")
   val filteredDiagram: EventStream[InheritanceGraph] =
@@ -24,7 +24,7 @@ private def PackagesTreeComponent(appState: AppState) =
         filterBySymbolName.signal,
         // TODO: consider another approach where changing activeSymbols does not trigger
         // a full tree redraw, but just modifies the relevant nodes
-//        appState.inheritanceTab.activeSymbols.signal
+        tabState.activeSymbols.signal
       )
       .changes
       .debounce(300)
@@ -33,15 +33,15 @@ private def PackagesTreeComponent(appState: AppState) =
             diagram: InheritanceGraph,
             packagesOptions: PackagesOptions,
             w: String,
-//            activeSymbols: ActiveSymbols
+            activeSymbols: ActiveSymbols
         ) =>
           diagram
             .orElse(w.isBlank, _.filterBySymbolName(w))
             .subdiagramByKinds(packagesOptions.nsKind)
-//            .orElse(
-//              !packagesOptions.onlyActive,
-//              _.subdiagram(activeSymbols.keySet)
-//            )
+            .orElse(
+              !packagesOptions.onlyActive,
+              _.subdiagram(activeSymbols.keySet)
+            )
             .orElse(packagesOptions.onlyTests, _.filterBy(!_.inTest))
 
   div(
@@ -68,7 +68,7 @@ private def PackagesTreeComponent(appState: AppState) =
     ),
     div(
       cls := "overflow-auto mt-1",
-      child <-- PackagesTree(/*appState.inheritanceTab, */filteredDiagram)
+      child <-- PackagesTree(tabState, filteredDiagram)
     )
   )
 

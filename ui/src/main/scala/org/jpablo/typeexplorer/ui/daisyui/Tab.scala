@@ -5,7 +5,7 @@ import com.raquo.laminar.nodes.ReactiveHtmlElement
 
 
 def NavTabs(mods: Modifier[ReactiveHtmlElement.Base]*) =
-  div(cls := "tabs", mods)
+  div(cls := "tabs tabs-lifted", mods)
 
 def TabContent(mods: Modifier[ReactiveHtmlElement.Base]*) =
   div(mods)
@@ -14,7 +14,7 @@ def TabContent(mods: Modifier[ReactiveHtmlElement.Base]*) =
 class Tab(activeTab: Var[Int], title: String, index: Int):
   def NavItem =
     a(
-      cls := "tab tab-lifted",
+      cls := "tab",
       cls.toggle("tab-active", "") <-- activeTab.signal.map(_ == index),
       onClick.mapTo(index) --> activeTab,
       title

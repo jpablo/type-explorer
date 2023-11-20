@@ -17,7 +17,7 @@ def TabsArea(
         InheritanceTab(appState, tabState, svgDiagram)
     }
 //  val semanticDBTabContent = SemanticDBTab(documents, appState.basePaths)
-  val tabs = Tabs(List.tabulate(canvas.length)(i => s"Inheritance-$i")*)
+  val tabs = Tabs(List.tabulate(canvas.length)(i => s"Inheritance-${i + 1}")*)
 //  val semanticDB = tabs(2)
   List(
     NavTabs(

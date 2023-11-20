@@ -22,10 +22,10 @@ import org.scalajs.dom.{HTMLAnchorElement, HTMLLIElement, HTMLUListElement}
   *   ["com..., ", "java.io..."]
   */
 def PackagesTree(
-//    tabState: InheritanceTabState,
+    tabState: InheritanceTabState,
     diagrams: EventStream[InheritanceGraph]
 ): EventStream[ReactiveHtmlElement[HTMLUListElement]] =
-  val treeElement = TreeElement(/*tabState*/)
+  val treeElement = TreeElement(tabState)
   for diagram <- diagrams
   yield treeElement
     .render(diagram.toTrees.children)
@@ -41,7 +41,7 @@ val leafSymbols: Tree[Namespace] => List[GraphSymbol] =
   case Tree.Branch(_, _, children) => children.flatMap(leafSymbols)
   case Tree.Leaf(_, ns)            => List(ns.symbol)
 
-class TreeElement(/*tabState: InheritanceTabState*/):
+class TreeElement(tabState: InheritanceTabState):
   val openBranches = Var(Set.empty[List[String]])
 
   def render(
@@ -65,8 +65,7 @@ class TreeElement(/*tabState: InheritanceTabState*/):
     )
 
   def PackageMember(ns: Namespace) =
-    val isActive = Signal.fromValue(false)
-//      tabState.activeSymbols.signal.map(_.contains(ns.symbol))
+    val isActive = tabState.activeSymbols.signal.map(_.contains(ns.symbol))
     a(
       idAttr := ns.symbol.toString,
       cls := "font-['JetBrains_Mono']",
@@ -77,8 +76,9 @@ class TreeElement(/*tabState: InheritanceTabState*/):
         ns.displayName
       ),
       onClick.preventDefault.stopPropagation --> { _ =>
-//        tabState.activeSymbols.toggle(ns.symbol)
-//        tabState.canvasSelection.toggle(ns.symbol)
+        println(ns.symbol)
+        tabState.activeSymbols.toggle(ns.symbol)
+        tabState.canvasSelection.toggle(ns.symbol)
       }
     )
 
@@ -96,8 +96,8 @@ class TreeElement(/*tabState: InheritanceTabState*/):
           packageLabel,
           onClick.preventDefault.stopPropagation --> {
             val symbols = children.flatMap(leafSymbols)
-//            tabState.activeSymbols.extend(symbols)
-//            tabState.canvasSelection.extend(symbols.toSet)
+            tabState.activeSymbols.extend(symbols)
+            tabState.canvasSelection.extend(symbols.toSet)
           }
         )
       ),
