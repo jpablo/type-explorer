@@ -15,3 +15,7 @@ ul.collapsable-children > li > .collapsable-wrapper {
     margin-left: 0;
 }
 
+
+.te-tabs-area {
+    grid-template-rows: auto 1fr;
+}

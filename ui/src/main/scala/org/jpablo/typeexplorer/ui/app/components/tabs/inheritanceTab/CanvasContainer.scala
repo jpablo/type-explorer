@@ -17,8 +17,8 @@ import org.scalajs.dom
 import org.scalajs.dom.HTMLDivElement
 
 private def CanvasContainer(
+    tabState: InheritanceTabState,
     inheritanceSvgDiagram: Signal[InheritanceSvgDiagram],
-    tabState: InheritanceTabState
 ) =
   div(
     cls := "h-full w-full overflow-auto relative p-1 z-10",

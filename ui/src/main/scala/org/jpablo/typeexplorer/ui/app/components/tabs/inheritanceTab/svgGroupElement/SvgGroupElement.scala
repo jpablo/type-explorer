@@ -133,10 +133,9 @@ extension (e: dom.Element)
       style
         .split(";")
         .filterNot(_.isEmpty)
-        .map { str =>
+        .map: str =>
           val arr = str.split(":")
           arr.head -> arr.tail.headOption.getOrElse("")
-        }
         .toMap
 
   def replaceStyle(keyValues: (String, String)*): Unit =

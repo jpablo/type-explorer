@@ -5,15 +5,15 @@ import com.raquo.laminar.api.features.unitArrows
 import com.softwaremill.quicklens.*
 import org.jpablo.typeexplorer.shared.inheritance.InheritanceGraph
 import org.jpablo.typeexplorer.ui.app
-import org.jpablo.typeexplorer.ui.app.components.state.AppState
+import org.jpablo.typeexplorer.ui.app.components.state.{AppState, InheritanceTabState}
 import org.jpablo.typeexplorer.ui.daisyui.*
 import org.scalajs.dom
 
 private def SelectionSidebar(
     appState: AppState,
+    tabState: InheritanceTabState,
     inheritanceSvgDiagram: Signal[InheritanceSvgDiagram]
 ) =
-  val tabState = appState.tabStates.head
   val selectionEmpty =
     tabState.canvasSelection.signal.map(_.isEmpty)
   div(
@@ -54,8 +54,8 @@ private def SelectionSidebar(
               onClick.compose(
                 _.sample(inheritanceSvgDiagram, tabState.canvasSelectionR)
               ) --> { (svgDiagram, canvasSelection) =>
-                val id = canvasSelection.head.toString()
-                dom.window.navigator.clipboard.writeText(svgDiagram.toSVGText(canvasSelection))
+                dom.window.navigator.clipboard
+                  .writeText(svgDiagram.toSVGText(canvasSelection))
               }
             )
           ),

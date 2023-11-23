@@ -1,14 +1,14 @@
 package org.jpablo.typeexplorer.ui.app.components
 
 import com.raquo.laminar.api.L.*
-import org.jpablo.typeexplorer.ui.app.components.state.Project
+import org.jpablo.typeexplorer.ui.app.components.state.{PersistentVar, Project}
 import com.softwaremill.quicklens.*
 import org.jpablo.typeexplorer.shared.inheritance.Path
 import org.jpablo.typeexplorer.shared.models
 
 case class Updater[A](signal: Signal[A], update: A => Unit)
 
-def AppConfigDrawer(project: Var[Project]) =
+def AppConfigDrawer(project: PersistentVar[Project]) =
 
   def updater[A, B, C](
       va: Var[A],
@@ -20,25 +20,25 @@ def AppConfigDrawer(project: Var[Project]) =
     )
 
   val basePathUpdater =
-    updater(project, modifyLens(_.projectSettings.basePaths))(
+    updater(project.v, modifyLens(_.projectSettings.basePaths))(
       to = _.projectSettings.basePaths.mkString("\n"),
       from = _.split("\n").toList.map(Path.apply)
     )
 
   val hiddenFieldsUpdater =
-    updater(project, modifyLens(_.projectSettings.hiddenFields))(
+    updater(project.v, modifyLens(_.projectSettings.hiddenFields))(
       to = _.projectSettings.hiddenFields.mkString("\n"),
       from = _.split("\n").toList
     )
 
   val hiddenSymbolsUpdater =
-    updater(project, modifyLens(_.projectSettings.hiddenSymbols))(
+    updater(project.v, modifyLens(_.projectSettings.hiddenSymbols))(
       to = _.projectSettings.hiddenSymbols.mkString("\n"),
       from = _.split("\n").map(models.GraphSymbol.apply).toList
     )
 
   val advancedModeUpdater =
-    updater(project, modifyLens(_.advancedMode))(
+    updater(project.v, modifyLens(_.advancedMode))(
       to = _.advancedMode,
       from = identity
     )

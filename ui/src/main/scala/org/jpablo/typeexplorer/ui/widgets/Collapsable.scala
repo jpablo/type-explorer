@@ -34,20 +34,3 @@ object Collapsable:
       )
     )
 
-
-object Icons:
-
-  def chevron(
-    $isOpen: Signal[Boolean],
-    mods   : Modifier[Anchor]*
-  ) =
-    a(
-      cls := "bi inline-block w-5",
-      cls <-- $isOpen.map(o => if o then "bi-chevron-down" else "bi-chevron-right"),
-    ).amend(mods)
-
-  def fileBinary = i(cls := "bi bi-file-binary")
-  def fileCode = i(cls := "bi bi-file-code")
-  def folder = a(cls := "bi bi-folder")
-  def close = a(cls := "bi bi-x-circle")
-

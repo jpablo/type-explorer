@@ -47,9 +47,8 @@ object SemanticDBText:
           cls := "m-0 text-xs",
           code(
             cls := "language-protobuf 0 text-xs",
-            onMountCallback { ctx =>
-              js.Dynamic.global.Prism.highlightElement(ctx.thisNode.ref)
-            },
+            onMountCallback: ctx =>
+              js.Dynamic.global.Prism.highlightElement(ctx.thisNode.ref),
             text
           )
         )

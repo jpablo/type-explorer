@@ -4,6 +4,7 @@ import com.raquo.laminar.api.L.*
 import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
 import org.jpablo.typeexplorer.shared.tree.Tree
 import org.jpablo.typeexplorer.shared.inheritance.Path
+import org.jpablo.typeexplorer.ui.widgets.Icons.{fileBinaryIcon, fileCodeIcon}
 import org.jpablo.typeexplorer.ui.widgets.{Collapsable, CollapsableTree, Icons}
 
 import scala.meta.internal.semanticdb.{SymbolInformation, TextDocument}
@@ -35,7 +36,7 @@ object SemanticDBTree:
     Collapsable(
       nodeLabel =
         span(
-          Icons.fileBinary,
+          i.fileBinaryIcon,
           a(
             href := "#" + uri,
             onClick.preventDefault.mapTo(Path(uri)) --> $selectedSemanticDb,
@@ -51,7 +52,7 @@ object SemanticDBTree:
     Collapsable(
       nodeLabel =
         span(
-          Icons.fileCode,
+          i.fileCodeIcon,
           doc.uri
         ),
       nodeContents =

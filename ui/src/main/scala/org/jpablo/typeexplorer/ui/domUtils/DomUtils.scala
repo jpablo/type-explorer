@@ -10,7 +10,11 @@ val dialog = htmlTag[HTMLDialogElement]("dialog")
 
 val open = htmlAttr("open", BooleanAsAttrPresenceCodec)
 val dataTip = htmlAttr("data-tip", StringAsIsCodec)
+val name = htmlAttr("name", StringAsIsCodec)
+val ariaLabel = htmlAttr("aria-label", StringAsIsCodec)
 
 val autocomplete = htmlProp("autocomplete", StringAsIsCodec)
 val min = htmlAttr("min", IntAsStringCodec)
 val max = htmlAttr("max", IntAsStringCodec)
+
+val gridColumn = styleProp("grid-column")

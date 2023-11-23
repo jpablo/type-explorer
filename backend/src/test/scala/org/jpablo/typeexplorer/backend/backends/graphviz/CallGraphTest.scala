@@ -27,13 +27,12 @@ object CallGraphTest extends ZIOSpecDefault {
   def spec = suite("suite")(
     test("test") {
 
-      semanticdb.Locator(paths) { (p, payload: TextDocuments) =>
+      semanticdb.Locator(paths): (p, payload: TextDocuments) =>
         for {
           td <- payload.documents
           si <- td.symbols
         } do
           println(si)
-      }
 
       // IDEA: construct a btree with the line/char positions of each definition
       // so that each reference can be located

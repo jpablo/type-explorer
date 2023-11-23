@@ -24,15 +24,13 @@ def ProjectSelector(
   val filteredProjects =
     projects
       .combineWith(filter.signal)
-      .map { (projects, filter) =>
+      .map: (projects, filter) =>
         if filter.isBlank then projects
         else
-          projects.filter { (_, project) =>
-            project.name.toLowerCase.contains(
-              filter.toLowerCase
-            ) || project.id.value.toLowerCase.contains(filter.toLowerCase)
-          }
-      }
+          projects.filter: (_, project) =>
+            project.name.toLowerCase
+              .contains(filter.toLowerCase) || project.id.value.toLowerCase
+              .contains(filter.toLowerCase)
 
   Dialog(
     cls := "modal",

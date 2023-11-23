@@ -5,22 +5,23 @@ import com.raquo.laminar.api.L.*
 import com.raquo.laminar.api.features.unitArrows
 import com.raquo.laminar.nodes.ReactiveHtmlElement
 import io.laminext.syntax.core.*
-import org.jpablo.typeexplorer.ui.app.components.state.{AppState, InheritanceTabState}
+import org.jpablo.typeexplorer.ui.app.components.state.{
+  AppState,
+  InheritanceTabState
+}
 import org.jpablo.typeexplorer.ui.widgets.Icons
+import org.jpablo.typeexplorer.ui.widgets.Icons.folderIcon
 import org.scalajs.dom
 import org.scalajs.dom.HTMLDivElement
 
 object InheritanceTab:
 
-  val gridColumn = styleProp("grid-column")
-
-  def apply(
-      appState             : AppState,
-      tabState             : InheritanceTabState,
+  def apply(appState: AppState)(
+      tabState: InheritanceTabState,
       inheritanceSvgDiagram: Signal[InheritanceSvgDiagram]
   ): ReactiveHtmlElement[HTMLDivElement] =
     val canvasContainer =
-      CanvasContainer(inheritanceSvgDiagram, tabState)
+      CanvasContainer(tabState, inheritanceSvgDiagram)
 
     val showPackagesTree = Var(false)
 
@@ -38,7 +39,7 @@ object InheritanceTab:
       PackagesTreeComponent(appState, tabState).amend(
         cls.toggle("hidden") <-- !showPackagesTree.signal
       ),
-      SelectionSidebar(appState, inheritanceSvgDiagram)
+      SelectionSidebar(appState, tabState, inheritanceSvgDiagram)
     )
 
   private def LeftSideMenu(active: Var[Boolean]) =
@@ -47,7 +48,7 @@ object InheritanceTab:
       ul(
         cls := "menu menu-sm rounded-box",
         li(
-          Icons.folder.amend(
+          a.folderIcon.amend(
             cls.toggle("active") <-- active.signal,
             onClick --> active.toggle()
           )

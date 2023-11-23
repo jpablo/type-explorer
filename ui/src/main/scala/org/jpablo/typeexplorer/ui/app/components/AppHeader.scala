@@ -6,6 +6,7 @@ import com.raquo.laminar.nodes.ReactiveHtmlElement
 import org.jpablo.typeexplorer.shared.inheritance.Path
 import org.jpablo.typeexplorer.ui.app.components.state.{AppState, ProjectId}
 import org.jpablo.typeexplorer.ui.domUtils.dataTip
+import org.jpablo.typeexplorer.ui.widgets.Icons.*
 
 enum DiagramType:
   case Inheritance
@@ -46,14 +47,27 @@ def AppHeader(
       ),
       // -------- project selector --------
       div(
-        cls := "flex-1",
+        cls := "flex-none",
         div(
           cls := "tooltip tooltip-bottom",
           dataTip := "Select project",
           a(
             cls := "btn btn-sm",
             onClick --> projectSelector.showModal(),
-            label(cls := "bi bi-list")
+            label.listIcon
+          )
+        ),
+      ),
+      // -------- new tab button --------
+      div(
+        cls := "flex-1",
+        div(
+          cls := "tooltip tooltip-bottom",
+          dataTip := "New tab",
+          a(
+            cls := "btn btn-sm",
+            onClick --> appState.newPage(),
+            label.folderPlusIcon
           )
         ),
       ),

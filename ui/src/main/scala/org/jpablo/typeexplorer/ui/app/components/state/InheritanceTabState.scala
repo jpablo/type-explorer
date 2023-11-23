@@ -16,12 +16,10 @@ object InheritanceTabState:
   type ActiveSymbols = Map[GraphSymbol, Option[SymbolOptions]]
 
 case class InheritanceTabState(
-    page: Var[Page],
-    fullGraph: Signal[InheritanceGraph] =
-      Signal.fromValue(InheritanceGraph.empty),
+    fullGraph: Signal[InheritanceGraph],
     // this should be a subset of activeSymbols' keys
-    canvasSelectionR: Var[Set[GraphSymbol]] = Var(Set.empty)
-)(using Owner):
+    canvasSelectionR: Var[Set[GraphSymbol]]
+)(val page: Var[Page])(using Owner):
   val activeSymbolsR =
     page.zoom(_.activeSymbols.toMap)((p, s) => p.copy(activeSymbols = s.toList))
 
@@ -114,11 +112,10 @@ class ActiveSymbolsOps(
   def updateSelectionOptions(f: SymbolOptions => SymbolOptions): Unit =
     val canvasSelection = canvasSelectionR.now()
     activeSymbolsR.update:
-      _.transform { case (sym, options) =>
+      _.transform: (sym, options) =>
         if canvasSelection.contains(sym) then
           Some(f(options.getOrElse(SymbolOptions())))
         else options
-      }
 
   /** Modify `activeSymbols` based on the given function `f`
     */

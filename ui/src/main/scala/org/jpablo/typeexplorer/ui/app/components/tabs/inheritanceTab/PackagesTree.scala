@@ -76,7 +76,6 @@ class TreeElement(tabState: InheritanceTabState):
         ns.displayName
       ),
       onClick.preventDefault.stopPropagation --> { _ =>
-        println(ns.symbol)
         tabState.activeSymbols.toggle(ns.symbol)
         tabState.canvasSelection.toggle(ns.symbol)
       }

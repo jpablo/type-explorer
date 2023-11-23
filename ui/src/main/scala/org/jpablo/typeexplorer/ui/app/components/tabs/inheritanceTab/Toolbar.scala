@@ -1,24 +1,15 @@
 package org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab
 
-import org.jpablo.typeexplorer.ui.app.components.state.{
-  AppState,
-  InheritanceTabState,
-  Project
-}
 import com.raquo.laminar.api.L.*
-import com.softwaremill.quicklens.*
-import org.scalajs.dom
-import org.jpablo.typeexplorer.ui.daisyui.*
 import com.raquo.laminar.api.features.unitArrows
 import com.raquo.laminar.nodes.ReactiveHtmlElement
-import org.scalajs.dom.{HTMLDivElement, HTMLElement}
-import org.jpablo.typeexplorer.shared.inheritance.{
-  DiagramOptions,
-  InheritanceGraph,
-  toPlantUML
-}
-import org.jpablo.typeexplorer.ui.app.components.state.InheritanceTabState.ActiveSymbols
+import com.softwaremill.quicklens.*
+import org.jpablo.typeexplorer.shared.inheritance.{InheritanceGraph, toPlantUML}
+import org.jpablo.typeexplorer.ui.app.components.state.{AppState, InheritanceTabState, Project}
+import org.jpablo.typeexplorer.ui.daisyui.*
 import org.jpablo.typeexplorer.ui.domUtils
+import org.scalajs.dom
+import org.scalajs.dom.{HTMLDivElement, HTMLElement}
 
 def Toolbar(
     appState: AppState,
@@ -26,7 +17,6 @@ def Toolbar(
     inheritanceSvgDiagram: Signal[InheritanceSvgDiagram],
     containerBoundingClientRect: => dom.DOMRect
 ) =
-//  val tabState = appState.inheritanceTab
   val modifySelection = modifyLens[Project]
   val zoomValue = Var(100.0)
   val minZoom = 25
@@ -38,7 +28,7 @@ def Toolbar(
       diagram.absoluteZoom(actualZoom)
     }(owner = unsafeWindowOwner)
   div(
-    cls := "bg-base-100 rounded-box flex items-center gap-4 ml-2 absolute top-0 z-10",
+    cls := "bg-base-100 rounded-box flex items-center gap-4 ml-2 absolute top-1 right-2/4 z-10",
     // -------- fields and signatures --------
     Join(
       OptionsToggle(

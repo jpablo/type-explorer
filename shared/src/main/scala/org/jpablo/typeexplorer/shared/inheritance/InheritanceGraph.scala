@@ -185,7 +185,7 @@ object InheritanceGraph:
       yield
         GraphSymbol(si.symbol) -> (si, docWithSource.semanticDbUri, doc.uri, docWithSource.basePath, occurrences.get(si.symbol))
 
-    val symbolInfosMap = allSymbols.map { case (s, t) => s -> t._1 }.toMap
+    val symbolInfosMap = allSymbols.map((s, t) => s -> t._1).toMap
 
     val namespaces =
       for
