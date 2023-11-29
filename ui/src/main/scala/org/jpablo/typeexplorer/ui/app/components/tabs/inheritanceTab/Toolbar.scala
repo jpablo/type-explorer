@@ -29,7 +29,14 @@ def Toolbar(
 //  val tabState = appState.inheritanceTab
   val modifySelection = modifyLens[Project]
   val zoomValue = Var(100.0)
-  inheritanceSvgDiagram.combineWith(zoomValue.signal).foreach (_.absoluteZoom(_))(owner = unsafeWindowOwner)
+  val minZoom = 25
+  val maxZoom = 400
+  inheritanceSvgDiagram
+    .combineWith(zoomValue.signal)
+    .foreach { (diagram, zoom) =>
+      val actualZoom = Math.min(maxZoom, Math.max(minZoom, zoom))
+      diagram.absoluteZoom(actualZoom)
+    }(owner = unsafeWindowOwner)
   div(
     cls := "bg-base-100 rounded-box flex items-center gap-4 ml-2 absolute top-0",
     // -------- fields and signatures --------
@@ -84,7 +91,9 @@ def Toolbar(
       Button(
         "fit",
         onClick.compose(_.sample(inheritanceSvgDiagram)) --> { diagram =>
-          diagram.fitToRect(containerBoundingClientRect)
+          zoomValue.set(
+            100 * diagram.getFitProportion(containerBoundingClientRect)
+          )
         }
       ).tiny,
       Button(
@@ -93,8 +102,8 @@ def Toolbar(
       ).tiny,
       input(
         tpe := "range",
-        domUtils.min := 50,
-        domUtils.max := 150,
+        domUtils.min := minZoom,
+        domUtils.max := maxZoom,
         value := "100",
         controlled(
           value <-- zoomValue.signal.map(_.toString),

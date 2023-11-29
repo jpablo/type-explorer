@@ -22,7 +22,7 @@ def TopLevel(
     cls := "drawer drawer-end",
     input(idAttr := "drawer-1", tpe := "checkbox", cls := "drawer-toggle"),
     div(
-      cls := "drawer-content flex flex-col h-screen",
+      cls := "drawer-content flex flex-col h-screen overflow-hidden",
       AppHeader(appState, selectedProject, deleteProject),
       TabsArea(appState, inheritanceSvgDiagram, documents),
       AppFooter,

@@ -26,7 +26,7 @@ object InheritanceTab:
 
     // --- grid container: 4 columns, 2 rows ---
     div(
-      cls := "h-full relative",
+      cls := "h-full w-full relative",
       Toolbar(
         appState,
         tabState,

@@ -29,14 +29,23 @@ class InheritanceSvgDiagram(svgElement: dom.SVGElement):
 
   def absoluteZoom(r: Double): Unit =
     val widthAttribute = svgElement.attributes.getNamedItem("width")
-    val width = if widthAttribute != null then widthAttribute.value.replace("px", "").toDouble else 0
+    val width =
+      if widthAttribute != null then
+        widthAttribute.value.replace("px", "").toDouble
+      else 0
     val heightAttribute = svgElement.attributes.getNamedItem("height")
-    val height = if heightAttribute != null then heightAttribute.value.replace("px", "").toDouble else 0
+    val height =
+      if heightAttribute != null then
+        heightAttribute.value.replace("px", "").toDouble
+      else 0
     // FIXME: hack for dev
     setDimensions((width * r / 100).toInt, (height * r / 100).toInt)
 
   def fitToRect(rect: dom.DOMRect): Unit =
     zoom(scala.math.min(rect.width / width, rect.height / height))
+
+  def getFitProportion(rect: dom.DOMRect): Double =
+    scala.math.min(rect.width / width, rect.height / height)
 
   private def selectableElements =
     NamespaceElement.selectAll(svgElement) ++ LinkElement.selectAll(svgElement)
@@ -68,8 +77,9 @@ class InheritanceSvgDiagram(svgElement: dom.SVGElement):
 
   case class BBox(x: Double, y: Double, width: Double, height: Double)
 
-  private def buildSvgElement(id: models.GraphSymbol)=
-    val el = getElementById("elem_" + id.toString()).asInstanceOf[dom.SVGSVGElement]
+  private def buildSvgElement(id: models.GraphSymbol) =
+    val el =
+      getElementById("elem_" + id.toString()).asInstanceOf[dom.SVGSVGElement]
     val e = DomApi.unsafeParseSvgString(el.outerHTML)
     val bbox = el.getBBox()
     (e, BBox(bbox.x, bbox.y, bbox.width, bbox.height))
