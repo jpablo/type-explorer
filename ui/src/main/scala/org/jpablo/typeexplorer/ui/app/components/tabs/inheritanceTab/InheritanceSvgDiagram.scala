@@ -21,28 +21,17 @@ class InheritanceSvgDiagram(svgElement: dom.SVGElement):
   private def setDimensions(w: Int, h: Int): Unit =
     svgElement.updateStyle("width" -> s"${w}px", "height" -> s"${h}px")
 
-  private def width = svgElement.getBoundingClientRect().width
-  private def height = svgElement.getBoundingClientRect().height
+  private def getPixelsAttributeValue(name: String) =
+    val attribute = svgElement.attributes.getNamedItem(name)
+    if attribute != null then attribute.value.replace("px", "").toDouble
+    else 0
 
-  def zoom(r: Double): Unit =
-    setDimensions((width * r).toInt, (height * r).toInt)
+  private def width = getPixelsAttributeValue("width")
+
+  private def height = getPixelsAttributeValue("height")
 
   def absoluteZoom(r: Double): Unit =
-    val widthAttribute = svgElement.attributes.getNamedItem("width")
-    val width =
-      if widthAttribute != null then
-        widthAttribute.value.replace("px", "").toDouble
-      else 0
-    val heightAttribute = svgElement.attributes.getNamedItem("height")
-    val height =
-      if heightAttribute != null then
-        heightAttribute.value.replace("px", "").toDouble
-      else 0
-    // FIXME: hack for dev
     setDimensions((width * r / 100).toInt, (height * r / 100).toInt)
-
-  def fitToRect(rect: dom.DOMRect): Unit =
-    zoom(scala.math.min(rect.width / width, rect.height / height))
 
   def getFitProportion(rect: dom.DOMRect): Double =
     scala.math.min(rect.width / width, rect.height / height)
