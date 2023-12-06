@@ -26,7 +26,7 @@ def TabsArea(
 //      appState.advancedMode.childWhenTrue(semanticDB.NavItem)
     ),
     TabContent(
-      cls := "flex-1 overflow-auto border-t border-slate-300",
+      cls := "flex-1 border-t border-slate-300",
       tabs.zip(canvas).map((t, c) => t.Pane(c))
 //      appState.advancedMode.childWhenTrue(semanticDB.Pane(semanticDBTabContent))
     )

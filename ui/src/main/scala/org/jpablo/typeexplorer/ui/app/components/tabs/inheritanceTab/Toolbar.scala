@@ -38,7 +38,7 @@ def Toolbar(
       diagram.absoluteZoom(actualZoom)
     }(owner = unsafeWindowOwner)
   div(
-    cls := "bg-base-100 rounded-box flex items-center gap-4 ml-2 absolute top-0",
+    cls := "bg-base-100 rounded-box flex items-center gap-4 ml-2 absolute top-0 z-10",
     // -------- fields and signatures --------
     Join(
       OptionsToggle(

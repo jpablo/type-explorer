@@ -16,6 +16,11 @@ class InheritanceSvgDiagram(svgElement: dom.SVGElement):
   export svgElement.querySelector
 
   svgElement.removeStyle("background")
+  svgElement.classList.add("absolute")
+  svgElement.classList.add("top-2/4")
+  svgElement.classList.add("-translate-y-2/4")
+  svgElement.classList.add("left-2/4")
+  svgElement.classList.add("-translate-x-2/4")
   // (more styles are set in style.scss)
 
   private def setDimensions(w: Int, h: Int): Unit =

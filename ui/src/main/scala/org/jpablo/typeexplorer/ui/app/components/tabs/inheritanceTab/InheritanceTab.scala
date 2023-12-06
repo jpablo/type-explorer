@@ -27,26 +27,23 @@ object InheritanceTab:
     // --- grid container: 4 columns, 2 rows ---
     div(
       cls := "h-full w-full relative",
+      canvasContainer,
       Toolbar(
         appState,
         tabState,
         inheritanceSvgDiagram,
         canvasContainer.ref.getBoundingClientRect()
       ),
-      canvasContainer,
       LeftSideMenu(showPackagesTree),
       PackagesTreeComponent(appState, tabState).amend(
         cls.toggle("hidden") <-- !showPackagesTree.signal
-      ),
-      div(
-        cls := "h-full absolute top-0 left-0",
       ),
       SelectionSidebar(appState, inheritanceSvgDiagram)
     )
 
   private def LeftSideMenu(active: Var[Boolean]) =
     div(
-      cls := "bg-base-100 rounded-box justify-center absolute left-0 top-2/4 -translate-y-2/4",
+      cls := "bg-base-100 rounded-box justify-center absolute left-0 top-2/4 -translate-y-2/4 z-10",
       ul(
         cls := "menu menu-sm rounded-box",
         li(

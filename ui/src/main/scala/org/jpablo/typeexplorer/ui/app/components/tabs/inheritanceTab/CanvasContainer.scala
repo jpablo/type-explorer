@@ -21,7 +21,7 @@ private def CanvasContainer(
     tabState: InheritanceTabState
 ) =
   div(
-    cls := "h-full w-full overflow-auto p-1",
+    cls := "h-full w-full overflow-auto relative p-1 z-10",
     backgroundImage := "radial-gradient(hsla(var(--bc)/.2) .5px,hsla(var(--b2)/1) .5px)",
     backgroundSize := "5px 5px",
     child <-- inheritanceSvgDiagram.map: diagram =>

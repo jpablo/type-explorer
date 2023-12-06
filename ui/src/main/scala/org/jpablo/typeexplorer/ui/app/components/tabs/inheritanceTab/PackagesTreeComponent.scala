@@ -45,7 +45,7 @@ private def PackagesTreeComponent(appState: AppState, tabState: InheritanceTabSt
             .orElse(packagesOptions.onlyTests, _.filterBy(!_.inTest))
 
   div(
-    cls := "bg-base-100 rounded-box overflow-auto p-1 absolute top-2/4 -translate-y-2/4 left-14",
+    cls := "bg-base-100 rounded-box overflow-auto p-1 absolute top-2/4 -translate-y-2/4 left-14 z-10",
     // --- controls ---
     form(
       LabeledCheckbox(
