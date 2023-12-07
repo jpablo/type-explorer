@@ -91,7 +91,7 @@ class ActiveSymbolsOps(
     canvasSelectionR: Var[Set[GraphSymbol]]
 ):
 
-  export activeSymbolsR.signal
+  val signal = activeSymbolsR.signal
 
   def toggle(symbol: GraphSymbol): Unit =
     activeSymbolsR.update: activeSymbols =>
