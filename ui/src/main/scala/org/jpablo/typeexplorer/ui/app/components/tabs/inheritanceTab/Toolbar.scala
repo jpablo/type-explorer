@@ -4,10 +4,16 @@ import com.raquo.laminar.api.L.*
 import com.raquo.laminar.api.features.unitArrows
 import com.raquo.laminar.nodes.ReactiveHtmlElement
 import com.softwaremill.quicklens.*
+import io.laminext.syntax.core.*
 import org.jpablo.typeexplorer.shared.inheritance.{InheritanceGraph, toPlantUML}
-import org.jpablo.typeexplorer.ui.app.components.state.{AppState, InheritanceTabState, Project}
+import org.jpablo.typeexplorer.ui.app.components.state.{
+  AppState,
+  InheritanceTabState,
+  Project
+}
 import org.jpablo.typeexplorer.ui.daisyui.*
 import org.jpablo.typeexplorer.ui.domUtils
+import org.jpablo.typeexplorer.ui.widgets.Icons.folderIcon
 import org.scalajs.dom
 import org.scalajs.dom.{HTMLDivElement, HTMLElement}
 
@@ -28,7 +34,19 @@ def Toolbar(
       diagram.absoluteZoom(actualZoom)
     }(owner = unsafeWindowOwner)
   div(
-    cls := "bg-base-100 rounded-box flex items-center gap-4 ml-2 absolute top-1 right-2/4 z-10",
+    cls := "shadow bg-base-100 rounded-box flex items-center gap-4 p-0.5 absolute top-1 left-2/4 -translate-x-2/4 z-10",
+    // -------- package selector --------
+    Join(
+      div(
+        cls := "dropdown",
+        div.folderIcon
+          .amend(cls := "btn btn-sm", tabIndex := 0, role := "button"),
+        PackagesTreeComponent(appState, tabState)
+          .amend(
+            cls := "p-2 shadow menu dropdown-content z-[1] bg-base-100 rounded-box"
+          )
+      )
+    ),
     // -------- fields and signatures --------
     Join(
       OptionsToggle(
@@ -85,13 +103,17 @@ def Toolbar(
             100 * diagram.getFitProportion(containerBoundingClientRect)
           )
         }
-      ).tiny,
+      ).tiny
+    ),
+    // ----------
+    Join(
       Button(
         "-",
         onClick --> zoomValue.update(_ * 0.9)
       ).tiny,
       input(
         tpe := "range",
+        cls := "bg-base-200",
         domUtils.min := minZoom,
         domUtils.max := maxZoom,
         value := "100",
