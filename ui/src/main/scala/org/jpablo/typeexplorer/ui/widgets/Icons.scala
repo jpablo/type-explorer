@@ -25,6 +25,8 @@ object Icons:
     def listIcon = tag(cls := "bi bi-list")
     def plusCircleIcon = tag(cls := "bi bi-plus-circle")
     def folderPlusIcon = tag(cls := "bi bi-folder-plus")
+    def barChartSteps = tag(cls := "bi bi-bar-chart-steps")
+    def boxes = tag(cls := "bi bi-boxes")
 
 
 

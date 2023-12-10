@@ -13,7 +13,7 @@ import org.jpablo.typeexplorer.ui.app.components.state.{
 }
 import org.jpablo.typeexplorer.ui.daisyui.*
 import org.jpablo.typeexplorer.ui.domUtils
-import org.jpablo.typeexplorer.ui.widgets.Icons.folderIcon
+import org.jpablo.typeexplorer.ui.widgets.Icons.*
 import org.scalajs.dom
 import org.scalajs.dom.{HTMLDivElement, HTMLElement}
 
@@ -39,7 +39,7 @@ def Toolbar(
     Join(
       div(
         cls := "dropdown",
-        div.folderIcon
+        div.boxes
           .amend(cls := "btn btn-sm", tabIndex := 0, role := "button"),
         PackagesTreeComponent(appState, tabState)
           .amend(
