@@ -43,6 +43,7 @@ def Toolbar(
           .amend(cls := "btn btn-sm", tabIndex := 0, role := "button"),
         PackagesTreeComponent(appState, tabState)
           .amend(
+            tabIndex := 0,
             cls := "p-2 shadow menu dropdown-content z-[1] bg-base-100 rounded-box"
           )
       )

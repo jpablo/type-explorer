@@ -1,15 +1,21 @@
 package org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab
 
 import org.jpablo.typeexplorer.ui.app.components.state.InheritanceTabState.ActiveSymbols
-import org.jpablo.typeexplorer.ui.app.components.state.{AppState, InheritanceTabState, Project}
+import org.jpablo.typeexplorer.ui.app.components.state.{
+  AppState,
+  InheritanceTabState,
+  Project
+}
 import com.raquo.laminar.api.L.*
 import io.laminext.syntax.core.*
 import com.softwaremill.quicklens.*
 import org.jpablo.typeexplorer.ui.daisyui.*
 import org.jpablo.typeexplorer.shared.models
-import org.jpablo.typeexplorer.shared.inheritance.{InheritanceGraph, PackagesOptions}
+import org.jpablo.typeexplorer.shared.inheritance.{
+  InheritanceGraph,
+  PackagesOptions
+}
 import org.jpablo.typeexplorer.ui.extensions.*
-
 
 def PackagesTreeComponent(appState: AppState, tabState: InheritanceTabState) =
   val showOptions = Var(false)
