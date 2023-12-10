@@ -8,7 +8,7 @@ import org.jpablo.typeexplorer.shared.inheritance.InheritanceGraph
 import org.jpablo.typeexplorer.shared.models.{Namespace, NamespaceKind, GraphSymbol}
 import org.jpablo.typeexplorer.shared.tree.Tree
 import org.jpablo.typeexplorer.ui.app.components.state.InheritanceTabState
-import org.jpablo.typeexplorer.ui.app.toggle
+import org.jpablo.typeexplorer.ui.extensions.*
 import org.jpablo.typeexplorer.ui.domUtils.{details, summary, open}
 import org.scalajs.dom
 import org.scalajs.dom.{HTMLAnchorElement, HTMLLIElement, HTMLUListElement}

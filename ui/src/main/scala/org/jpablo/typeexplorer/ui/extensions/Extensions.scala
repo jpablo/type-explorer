@@ -1,6 +1,9 @@
-package org.jpablo.typeexplorer.ui.app
+package org.jpablo.typeexplorer.ui.extensions
 
 
+extension [A](a: A)
+  def orElse(b: Boolean, f: A => A): A =
+    if b then a else f(a)
 
 extension [A] (set: Set[A])
   def toggle(a: A) =
@@ -13,3 +16,4 @@ extension [A] (set: Set[A])
 extension [K] (map: Map[K, Boolean])
   def toggle(k: K, initial: Boolean = false) =
     map + (k -> !map.getOrElse(k, initial))
+

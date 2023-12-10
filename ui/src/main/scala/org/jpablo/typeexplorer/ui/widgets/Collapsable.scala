@@ -4,7 +4,7 @@ import com.raquo.airstream.core.Signal
 import com.raquo.laminar.api.L.*
 import com.raquo.laminar.nodes.ReactiveHtmlElement
 import io.laminext.syntax.core.*
-import org.jpablo.typeexplorer.ui.app.toggle
+import org.jpablo.typeexplorer.ui.extensions.*
 
 object Collapsable:
 

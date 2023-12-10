@@ -8,13 +8,10 @@ import com.softwaremill.quicklens.*
 import org.jpablo.typeexplorer.ui.daisyui.*
 import org.jpablo.typeexplorer.shared.models
 import org.jpablo.typeexplorer.shared.inheritance.{InheritanceGraph, PackagesOptions}
-import org.jpablo.typeexplorer.ui.app.toggleWith
+import org.jpablo.typeexplorer.ui.extensions.*
 
-extension [A](a: A)
-  private def orElse(b: Boolean, f: A => A): A =
-    if b then a else f(a)
 
-private def PackagesTreeComponent(appState: AppState, tabState: InheritanceTabState) =
+def PackagesTreeComponent(appState: AppState, tabState: InheritanceTabState) =
   val showOptions = Var(false)
   val filterBySymbolName = Var("")
   val filteredDiagram: EventStream[InheritanceGraph] =

@@ -8,7 +8,7 @@ import org.jpablo.typeexplorer.shared.inheritance.SymbolOptions
 import org.jpablo.typeexplorer.shared.inheritance.InheritanceGraph
 import org.jpablo.typeexplorer.shared.models.GraphSymbol
 import org.scalajs.dom
-import org.jpablo.typeexplorer.ui.app.toggle
+import org.jpablo.typeexplorer.ui.extensions.*
 import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.InheritanceSvgDiagram
 import InheritanceTabState.ActiveSymbols
 

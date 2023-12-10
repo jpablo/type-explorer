@@ -6,7 +6,7 @@ import com.raquo.laminar.nodes.ReactiveHtmlElement
 import org.jpablo.typeexplorer.ui.app.components.state.{Project, ProjectId}
 import org.scalajs.dom.{HTMLDialogElement, HTMLDivElement}
 import com.raquo.laminar.api.features.unitArrows
-import org.jpablo.typeexplorer.ui.app.toggle
+import org.jpablo.typeexplorer.ui.extensions.*
 import org.jpablo.typeexplorer.ui.domUtils.dialog
 
 case class Dialog(mods: Modifier[ReactiveHtmlElement.Base]*):
