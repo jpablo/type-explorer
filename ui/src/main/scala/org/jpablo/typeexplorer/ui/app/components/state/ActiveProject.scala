@@ -31,12 +31,26 @@ case class ActiveProject(project: PersistentVar[Project])(using Owner):
     project.signal.map(_.advancedMode)
 
   def pageV(i: Int): Var[Page] =
-    project.zoom(_.pages(i))((p, page) => p.modify(_.pages.at(i)).setTo(page))
+    project.zoom { p =>
+      // TODO: Figure out why this is called with an invalid index after deleting a page
+      p.pages(math.min(p.pages.size - 1, i))
+    }((p, page) => p.modify(_.pages.at(i)).setTo(page))
 
   val pages: Signal[Vector[Page]] =
     project.signal.map(_.pages)
 
   def newPage(): Unit =
     project.update(_.modify(_.pages).using(_ :+ Page()))
+
+  def closePage(i: Int): Unit =
+    project.update(_.modify(_.pages).using(_.patch(i, Nil, 1)))
+
+  def setActivePage(i: Int): Unit =
+    println(s"setActivePage($i)")
+//    project.update(_.modify(_.activePage).setTo(i))
+
+  def getActivePageIndex: Int =
+    0
+//    project.now().activePage
 
 end ActiveProject

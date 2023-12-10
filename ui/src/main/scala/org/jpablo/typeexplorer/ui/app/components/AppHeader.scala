@@ -16,6 +16,7 @@ def AppHeader(
   appState: AppState,
   selectedProject: EventBus[ProjectId],
   deleteProject: EventBus[ProjectId],
+  findActiveTab: () => Int
 ): Div =
   val titleDialog = TitleDialog(appState.activeProject.name)
   val projectSelector = ProjectSelector(appState.projects, selectedProject, deleteProject)
@@ -60,7 +61,7 @@ def AppHeader(
       ),
       // -------- new tab button --------
       div(
-        cls := "flex-1",
+        cls := "flex-none",
         div(
           cls := "tooltip tooltip-bottom",
           dataTip := "New tab",
@@ -68,6 +69,21 @@ def AppHeader(
             cls := "btn btn-sm",
             onClick --> appState.newPage(),
             label.folderPlusIcon
+          )
+        ),
+      ),
+      // -------- close tab button --------
+      div(
+        cls := "flex-1",
+        div(
+          cls := "tooltip tooltip-bottom",
+          dataTip := "Close tab",
+          a(
+            cls := "btn btn-sm",
+            onClick --> { _ =>
+              appState.closePage(findActiveTab())
+            },
+            label.folderMinusIcon
           )
         ),
       ),

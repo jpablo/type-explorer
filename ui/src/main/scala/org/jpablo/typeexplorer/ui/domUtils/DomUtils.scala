@@ -10,6 +10,7 @@ val dialog = htmlTag[HTMLDialogElement]("dialog")
 
 val open = htmlAttr("open", BooleanAsAttrPresenceCodec)
 val dataTip = htmlAttr("data-tip", StringAsIsCodec)
+val dataTabIndex = htmlAttr("data-tab-index", IntAsStringCodec)
 val name = htmlAttr("name", StringAsIsCodec)
 val ariaLabel = htmlAttr("aria-label", StringAsIsCodec)
 

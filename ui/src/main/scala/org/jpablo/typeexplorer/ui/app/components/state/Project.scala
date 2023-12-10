@@ -12,7 +12,8 @@ case class Project(
     advancedMode: Boolean = false,
     packagesOptions: PackagesOptions = PackagesOptions(),
     projectSettings: ProjectSettings = ProjectSettings(),
-    pages: Vector[Page] = Vector(Page())
+    pages: Vector[Page] = Vector(Page()),
+    activePage: Int = 0
 ) derives JsonCodec
 
 case class Page(

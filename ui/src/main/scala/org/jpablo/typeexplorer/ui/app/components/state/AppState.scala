@@ -20,6 +20,8 @@ class AppState(
     advancedMode,
     pages,
     newPage,
+    setActivePage,
+    closePage,
     update as updateActiveProject
   }
 

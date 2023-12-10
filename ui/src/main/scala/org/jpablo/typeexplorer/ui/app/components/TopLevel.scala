@@ -6,6 +6,7 @@ import org.jpablo.typeexplorer.ui.app.components.state.{AppState, ProjectId}
 import org.jpablo.typeexplorer.ui.app.components.tabs.TabsArea
 import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.InheritanceSvgDiagram
 import org.jpablo.typeexplorer.ui.daisyui.{Button, small}
+import org.jpablo.typeexplorer.ui.domUtils.dataTabIndex
 import org.jpablo.typeexplorer.ui.widgets.Icons
 import org.jpablo.typeexplorer.ui.widgets.Icons.closeIcon
 
@@ -17,14 +18,18 @@ def TopLevel(
     deleteProject: EventBus[ProjectId],
     errors: EventBus[String]
 ) =
+  val tabsArea = TabsArea(appState, inheritanceSvgDiagrams, documents)
+  // TODO: temporary hack to find the active tab while Project#activePage works
+  def findActiveTab(): Int =
+    tabsArea.ref.querySelector("input:checked").getAttribute(dataTabIndex.name).toInt
   div(
     ErrorToast(errors),
     cls := "drawer drawer-end",
     input(idAttr := "drawer-1", tpe := "checkbox", cls := "drawer-toggle"),
     div(
       cls := "drawer-content flex flex-col h-screen overflow-hidden",
-      AppHeader(appState, selectedProject, deleteProject),
-      TabsArea(appState, inheritanceSvgDiagrams, documents),
+      AppHeader(appState, selectedProject, deleteProject, findActiveTab),
+      tabsArea,
       AppFooter,
       // -------- advanced/debug mode --------
 //      appState.advancedMode.childWhenTrue:

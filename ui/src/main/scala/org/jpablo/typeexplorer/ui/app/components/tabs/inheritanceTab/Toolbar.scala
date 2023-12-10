@@ -39,7 +39,7 @@ def Toolbar(
     Join(
       div(
         cls := "dropdown",
-        div.boxes
+        div.boxesIcon
           .amend(cls := "btn btn-sm", tabIndex := 0, role := "button"),
         PackagesTreeComponent(appState, tabState)
           .amend(
@@ -109,7 +109,7 @@ def Toolbar(
     // ----------
     Join(
       Button(
-        "-",
+        span.dashIcon,
         onClick --> zoomValue.update(_ * 0.9)
       ).tiny,
       input(
@@ -124,7 +124,7 @@ def Toolbar(
         )
       ),
       Button(
-        "+",
+        span.plusIcon,
         onClick --> zoomValue.update(_ * 1.1)
       ).tiny
     )

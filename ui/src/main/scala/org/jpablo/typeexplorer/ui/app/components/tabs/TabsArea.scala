@@ -2,6 +2,7 @@ package org.jpablo.typeexplorer.ui.app.components.tabs
 
 import com.raquo.laminar.api.L.*
 import com.raquo.laminar.nodes.ReactiveHtmlElement
+import com.raquo.laminar.api.features.unitArrows
 import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
 import org.jpablo.typeexplorer.ui.app.components.state.{
   AppState,
@@ -26,6 +27,7 @@ def TabsArea(
         states.zip(diagrams).map(InheritanceTab(appState))
       )
   // -----------------------------
+  val activePage = appState.activeProject.getActivePageIndex
   div(
     role := "tablist",
     cls := "tabs tabs-lifted h-full w-full te-tabs-area",
@@ -36,10 +38,14 @@ def TabsArea(
             input(
               role := "tab",
               tpe := "radio",
-              checked := i == 0,
+              checked := i == activePage,
+              dataTabIndex := i,
               cls := "tab",
               name := "tabs_area",
-              ariaLabel := s"Inheritance-${i + 1}"
+              ariaLabel := s"Inheritance-${i + 1}",
+              onClick --> { _ =>
+                appState.setActivePage(i)
+              },
             ),
             div(
               role := "tabpanel",
