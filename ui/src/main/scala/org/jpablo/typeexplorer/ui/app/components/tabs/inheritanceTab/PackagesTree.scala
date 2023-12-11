@@ -68,7 +68,7 @@ class TreeElement(tabState: InheritanceTabState):
     val isActive = tabState.activeSymbols.signal.map(_.contains(ns.symbol))
     a(
       idAttr := ns.symbol.toString,
-      cls := "font-['JetBrains_Mono']",
+      cls := "font-['JetBrains_Mono'] rounded-box p-1 m-px cursor-pointer",
       cls.toggle("active") <-- isActive,
       TreeElement.stereotype(ns),
       div(
