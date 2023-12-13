@@ -10,7 +10,7 @@ import org.jpablo.typeexplorer.ui.extensions.*
 import org.jpablo.typeexplorer.ui.domUtils.dialog
 
 case class Dialog(mods: Modifier[ReactiveHtmlElement.Base]*):
-  export tag.ref, tag.ref.showModal
+  export tag.ref, tag.ref.showModal, tag.ref.close
 
   val tag = dialog(mods)
 

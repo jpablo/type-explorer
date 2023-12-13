@@ -13,13 +13,14 @@ enum DiagramType:
   case CallGraph
 
 def AppHeader(
-  appState: AppState,
-  selectedProject: EventBus[ProjectId],
-  deleteProject: EventBus[ProjectId],
-  findActiveTab: () => Int
+    appState: AppState,
+    selectedProject: EventBus[ProjectId],
+    deleteProject: EventBus[ProjectId],
+    findActiveTab: () => Int
 ): Div =
   val titleDialog = TitleDialog(appState.activeProject.name)
-  val projectSelector = ProjectSelector(appState.projects, selectedProject, deleteProject)
+  val projectSelector =
+    ProjectSelector(appState.projects, selectedProject, deleteProject)
   div(
     cls := "border-b border-slate-300",
     div(
@@ -30,7 +31,7 @@ def AppHeader(
       ),
       // -------- project title --------
       div(
-        cls := "divider divider-horizontal mx-1",
+        cls := "divider divider-horizontal mx-1"
       ),
       div(
         cls := "flex-none tooltip tooltip-bottom",
@@ -44,7 +45,7 @@ def AppHeader(
         )
       ),
       div(
-        cls := "divider divider-horizontal mx-1",
+        cls := "divider divider-horizontal mx-1"
       ),
       // -------- project selector --------
       div(
@@ -57,7 +58,7 @@ def AppHeader(
             onClick --> projectSelector.showModal(),
             label.listIcon
           )
-        ),
+        )
       ),
       // -------- new tab button --------
       div(
@@ -70,7 +71,7 @@ def AppHeader(
             onClick --> appState.newPage(),
             label.folderPlusIcon
           )
-        ),
+        )
       ),
       // -------- close tab button --------
       div(
@@ -85,7 +86,7 @@ def AppHeader(
             },
             label.folderMinusIcon
           )
-        ),
+        )
       ),
       // -------- base path --------
       div(
@@ -121,20 +122,29 @@ end AppHeader
 def TitleDialog(title: Var[String]) =
   Dialog(
     cls := "modal",
-    div(
-      cls := "modal-box",
-      input(
-        tpe := "text",
-        cls := "input input-bordered w-full",
-        placeholder := "Project name",
-        controlled(
-          value <-- title.signal,
-          onInput.mapToValue --> title.writer
-        )
-      ),
+    inContext { thisNode =>
       div(
-        cls := "modal-action",
-        form(method := "dialog", button(cls := "btn", "close"))
+        cls := "modal-box",
+        input(
+          tpe := "text",
+          cls := "input input-bordered w-full",
+          placeholder := "Project name",
+          controlled(
+            value <-- title.signal,
+            onInput.mapToValue --> { (value) =>
+              println(s"new title: $value")
+              title.writer.onNext(value)
+            }
+          ),
+          onKeyDown.filter(_.key == "Enter") --> { _ =>
+            println("enter")
+            ()
+          }
+        ),
+        div(
+          cls := "modal-action",
+          form(method := "dialog", button(cls := "btn", "close"))
+        )
       )
-    )
+    }
   )
