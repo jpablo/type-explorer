@@ -137,9 +137,10 @@ def TitleDialog(title: Var[String], open: Var[Boolean]) =
           value <-- title.signal,
           onInput.mapToValue --> title.writer
         ),
-        onKeyDown.filter { e =>
-          e.key == "Enter" || e.key == "Escape"
-        }.mapTo(false) --> open.set
+        onKeyDown
+          .filter: e =>
+            e.key == "Enter" || e.key == "Escape"
+          .mapTo(false) --> open.set
       ),
       div(
         cls := "modal-action",
