@@ -3,23 +3,28 @@ package org.jpablo.typeexplorer.ui.app.components
 import com.raquo.laminar.api.L.*
 import com.raquo.laminar.api.features.unitArrows
 import com.raquo.laminar.nodes.ReactiveHtmlElement
+import com.raquo.laminar.nodes.ReactiveHtmlElement.Base
 import org.jpablo.typeexplorer.shared.inheritance.Path
 import org.jpablo.typeexplorer.ui.app.components.state.{AppState, ProjectId}
 import org.jpablo.typeexplorer.ui.domUtils.dataTip
 import org.jpablo.typeexplorer.ui.widgets.Icons.*
+import org.scalajs.dom
+import org.scalajs.dom.HTMLDivElement
 
 enum DiagramType:
   case Inheritance
   case CallGraph
 
 def AppHeader(
-  appState: AppState,
-  selectedProject: EventBus[ProjectId],
-  deleteProject: EventBus[ProjectId],
-  findActiveTab: () => Int
+    appState: AppState,
+    selectedProject: EventBus[ProjectId],
+    deleteProject: EventBus[ProjectId],
+    findActiveTab: () => Int
 ): Div =
-  val titleDialog = TitleDialog(appState.activeProject.name)
-  val projectSelector = ProjectSelector(appState.projects, selectedProject, deleteProject)
+  val titleDialogOpen = Var(false)
+  val titleDialog = TitleDialog(appState.activeProject.name, titleDialogOpen)
+  val projectSelector =
+    ProjectSelector(appState.projects, selectedProject, deleteProject)
   div(
     cls := "border-b border-slate-300",
     div(
@@ -30,21 +35,21 @@ def AppHeader(
       ),
       // -------- project title --------
       div(
-        cls := "divider divider-horizontal mx-1",
+        cls := "divider divider-horizontal mx-1"
       ),
       div(
         cls := "flex-none tooltip tooltip-bottom",
         dataTip := "Edit project name",
         button(
           cls := "btn btn-ghost btn-sm",
-          onClick --> titleDialog.showModal(),
+          onClick.mapTo(true) --> titleDialogOpen.set,
           child.text <--
             appState.activeProject.project.signal.map: p =>
               if p.name.isBlank then "Untitled" else p.name
         )
       ),
       div(
-        cls := "divider divider-horizontal mx-1",
+        cls := "divider divider-horizontal mx-1"
       ),
       // -------- project selector --------
       div(
@@ -57,7 +62,7 @@ def AppHeader(
             onClick --> projectSelector.showModal(),
             label.listIcon
           )
-        ),
+        )
       ),
       // -------- new tab button --------
       div(
@@ -70,7 +75,7 @@ def AppHeader(
             onClick --> appState.newPage(),
             label.folderPlusIcon
           )
-        ),
+        )
       ),
       // -------- close tab button --------
       div(
@@ -85,7 +90,7 @@ def AppHeader(
             },
             label.folderMinusIcon
           )
-        ),
+        )
       ),
       // -------- base path --------
       div(
@@ -118,9 +123,10 @@ def AppHeader(
   )
 end AppHeader
 
-def TitleDialog(title: Var[String]) =
+def TitleDialog(title: Var[String], open: Var[Boolean]) =
   Dialog(
     cls := "modal",
+    cls.toggle("modal-open") <-- open.signal,
     div(
       cls := "modal-box",
       input(
@@ -130,11 +136,17 @@ def TitleDialog(title: Var[String]) =
         controlled(
           value <-- title.signal,
           onInput.mapToValue --> title.writer
-        )
+        ),
+        onKeyDown.filter { e =>
+          e.key == "Enter" || e.key == "Escape"
+        }.mapTo(false) --> open.set
       ),
       div(
         cls := "modal-action",
-        form(method := "dialog", button(cls := "btn", "close"))
+        form(
+          method := "dialog",
+          button(cls := "btn", "close", onClick.mapTo(false) --> open.set)
+        )
       )
     )
   )

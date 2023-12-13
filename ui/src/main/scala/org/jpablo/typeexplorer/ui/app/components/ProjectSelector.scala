@@ -10,9 +10,8 @@ import org.jpablo.typeexplorer.ui.extensions.*
 import org.jpablo.typeexplorer.ui.domUtils.dialog
 
 case class Dialog(mods: Modifier[ReactiveHtmlElement.Base]*):
-  export tag.ref, tag.ref.showModal
-
   val tag = dialog(mods)
+  export tag.ref, tag.ref.showModal
 
 def ProjectSelector(
     projects: Signal[Map[ProjectId, Project]],

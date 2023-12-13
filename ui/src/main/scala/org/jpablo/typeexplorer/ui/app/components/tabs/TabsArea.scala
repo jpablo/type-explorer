@@ -2,7 +2,6 @@ package org.jpablo.typeexplorer.ui.app.components.tabs
 
 import com.raquo.laminar.api.L.*
 import com.raquo.laminar.nodes.ReactiveHtmlElement
-import com.raquo.laminar.api.features.unitArrows
 import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
 import org.jpablo.typeexplorer.ui.app.components.state.{
   AppState,
