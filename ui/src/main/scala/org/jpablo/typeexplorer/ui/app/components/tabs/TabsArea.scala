@@ -31,19 +31,19 @@ def TabsArea(
     role := "tablist",
     cls := "tabs tabs-lifted h-full w-full te-tabs-area",
     children <--
-      tabsR.map: tabs =>
-        tabs.zipWithIndex.flatMap: (tab, i) =>
+      tabsR.combineWith(activePage).map: (tabs, activePageIndex) =>
+        tabs.zipWithIndex.flatMap: (tab, tabIndex) =>
           Vector(
             input(
               role := "tab",
               tpe := "radio",
-              checked := i == activePage,
-              dataTabIndex := i,
+              checked := tabIndex == activePageIndex,
+              dataTabIndex := tabIndex,
               cls := "tab",
               name := "tabs_area",
-              ariaLabel := s"Inheritance-${i + 1}",
+              ariaLabel := s"Inheritance-${tabIndex + 1}",
               onClick --> { _ =>
-                appState.setActivePage(i)
+                appState.setActivePage(tabIndex)
               },
             ),
             div(

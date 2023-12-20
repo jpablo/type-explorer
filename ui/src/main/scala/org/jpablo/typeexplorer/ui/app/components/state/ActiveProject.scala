@@ -46,11 +46,9 @@ case class ActiveProject(project: PersistentVar[Project])(using Owner):
     project.update(_.modify(_.pages).using(_.patch(i, Nil, 1)))
 
   def setActivePage(i: Int): Unit =
-    ()
-//    project.update(_.modify(_.activePage).setTo(i))
+    project.update(_.modify(_.activePage).setTo(i))
 
-  def getActivePageIndex: Int =
-    0
-//    project.now().activePage
+  def getActivePageIndex: Signal[Int] =
+    project.signal.map(_.activePage)
 
 end ActiveProject
