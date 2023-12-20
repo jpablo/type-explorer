@@ -4,7 +4,12 @@ import com.raquo.airstream.core.Signal
 import com.raquo.airstream.state.Var
 import com.raquo.laminar.api.L.Owner
 import com.softwaremill.quicklens.*
-import org.jpablo.typeexplorer.shared.inheritance.{DiagramOptions, PackagesOptions, Path, ProjectSettings}
+import org.jpablo.typeexplorer.shared.inheritance.{
+  DiagramOptions,
+  PackagesOptions,
+  Path,
+  ProjectSettings
+}
 
 /** Convenience wrapper around a Var[Project]
   */
@@ -39,8 +44,15 @@ case class ActiveProject(project: PersistentVar[Project])(using Owner):
   val pages: Signal[Vector[Page]] =
     project.signal.map(_.pages)
 
-  def newPage(): Unit =
-    project.update(_.modify(_.pages).using(_ :+ Page()))
+  def newPage(): Unit = {
+    val page: Page = Page()
+    project.update { p =>
+      p.modify(_.pages)
+        .using(_ :+ page)
+        .modify(_.activePage)
+        .using(_ => p.pages.length)
+    }
+  }
 
   def closePage(i: Int): Unit =
     project.update(_.modify(_.pages).using(_.patch(i, Nil, 1)))
