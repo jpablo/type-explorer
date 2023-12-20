@@ -44,7 +44,7 @@ def AppConfigDrawer(project: PersistentVar[Project]) =
     )
 
   div(
-    cls := "drawer-side z-20",
+    cls := "drawer-side z-20 overflow-hidden",
     label(cls := "drawer-overlay", forId := "drawer-1"),
     form(
       cls := "p-4 w-96 bg-base-100 text-base-content flex flex-col space-y-4 h-full",
