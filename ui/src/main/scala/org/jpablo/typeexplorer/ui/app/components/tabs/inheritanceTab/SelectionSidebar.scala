@@ -19,8 +19,9 @@ private def SelectionSidebar(
     tabState: InheritanceTabState,
     inheritanceSvgDiagram: Signal[InheritanceSvgDiagram]
 ) =
+
   val selectionEmpty =
-    tabState.canvasSelection.signal.map(_.isEmpty)
+        tabState.canvasSelection.signal.map(_.isEmpty)
   div(
     cls := "absolute right-0 top-2 z-10",
     selectionEmpty.childWhenFalse(

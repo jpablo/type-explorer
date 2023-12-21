@@ -52,8 +52,9 @@ def Toolbar(
       OptionsToggle(
         "fields-checkbox-1",
         "fields",
-        _.pages.head.diagramOptions.showFields,
-        modifySelection(_.pages.at(0).diagramOptions.showFields),
+        p => p.pages(p.activePage).diagramOptions.showFields, { (p, showMembers) =>
+          p.modify(_.pages.at(p.activePage).diagramOptions.showFields).setTo(showMembers)
+        },
         appState
       )
 //      OptionsToggle(
@@ -133,16 +134,14 @@ private def OptionsToggle(
     id: String,
     labelStr: String,
     field: Project => Boolean,
-    modifyField: PathLazyModify[Project, Boolean],
+    callback: (Project, Boolean) => Project,
     state: AppState
 ) =
   LabeledCheckbox(
     id = id,
     labelStr = labelStr,
     isChecked = state.activeProject.signal.map(field),
-    clickHandler = state.activeProject.updater[Boolean]((config, b) =>
-      modifyField.setTo(b)(config)
-    ),
+    clickHandler = state.activeProject.updater[Boolean](callback),
     toggle = true
   )
 
