@@ -15,14 +15,10 @@ def InheritanceTab(appState: AppState)(
     inheritanceSvgDiagram: Signal[InheritanceSvgDiagram]
 ): ReactiveHtmlElement[HTMLDivElement] =
   val canvasContainer = CanvasContainer(tabState, inheritanceSvgDiagram)
+  val rect = canvasContainer.ref.getBoundingClientRect()
   div(
     cls := "h-full w-full relative",
     canvasContainer,
-    Toolbar(
-      appState,
-      tabState,
-      inheritanceSvgDiagram,
-      canvasContainer.ref.getBoundingClientRect()
-    ),
+    Toolbar(appState, tabState, inheritanceSvgDiagram, rect),
     SelectionSidebar(appState, tabState, inheritanceSvgDiagram)
   )

@@ -4,8 +4,7 @@ import com.raquo.airstream.core.EventStream
 import com.raquo.airstream.core.Signal
 import com.raquo.airstream.state.Var
 import com.raquo.laminar.api.L.*
-import org.jpablo.typeexplorer.shared.inheritance.SymbolOptions
-import org.jpablo.typeexplorer.shared.inheritance.InheritanceGraph
+import org.jpablo.typeexplorer.shared.inheritance.{DiagramOptions, InheritanceGraph, SymbolOptions}
 import org.jpablo.typeexplorer.shared.models.GraphSymbol
 import org.scalajs.dom
 import org.jpablo.typeexplorer.ui.extensions.*
@@ -23,10 +22,12 @@ case class InheritanceTabState(
   val activeSymbolsR =
     page.zoom(_.activeSymbols.toMap)((p, s) => p.copy(activeSymbols = s.toList))
 
+  val diagramOptions: Var[DiagramOptions] =
+    page.zoom(_.diagramOptions)((p, s) => p.copy(diagramOptions = s))
+
   val canvasSelection = CanvasSelectionOps(canvasSelectionR, activeSymbolsR)
   val activeSymbols =
     ActiveSymbolsOps(activeSymbolsR, fullGraph, canvasSelectionR)
-
 end InheritanceTabState
 
 class CanvasSelectionOps(

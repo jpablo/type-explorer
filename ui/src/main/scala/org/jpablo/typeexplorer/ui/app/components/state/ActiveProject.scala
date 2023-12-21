@@ -61,6 +61,6 @@ case class ActiveProject(project: PersistentVar[Project])(using Owner):
     project.update(_.modify(_.activePage).setTo(i))
 
   def getActivePageIndex: Signal[Int] =
-    project.signal.map(_.activePage)
+    project.signal.map(_.validActivePage)
 
 end ActiveProject

@@ -7,8 +7,7 @@ import com.softwaremill.quicklens.*
 import org.jpablo.typeexplorer.shared.inheritance.{InheritanceGraph, toPlantUML}
 import org.jpablo.typeexplorer.ui.app.components.state.{
   AppState,
-  InheritanceTabState,
-  Project
+  InheritanceTabState
 }
 import org.jpablo.typeexplorer.ui.daisyui.*
 import org.jpablo.typeexplorer.ui.domUtils
@@ -22,7 +21,6 @@ def Toolbar(
     inheritanceSvgDiagram: Signal[InheritanceSvgDiagram],
     containerBoundingClientRect: => dom.DOMRect
 ) =
-  val modifySelection = modifyLens[Project]
   val zoomValue = Var(100.0)
   val minZoom = 25
   val maxZoom = 400
@@ -49,21 +47,14 @@ def Toolbar(
     ),
     // -------- fields and signatures --------
     Join(
-      OptionsToggle(
-        "fields-checkbox-1",
-        "fields",
-        p => p.pages(p.activePage).diagramOptions.showFields, { (p, showMembers) =>
-          p.modify(_.pages.at(p.activePage).diagramOptions.showFields).setTo(showMembers)
-        },
-        appState
+      LabeledCheckbox(
+        id = "fields-checkbox-1",
+        labelStr = "fields",
+        isChecked = tabState.diagramOptions.signal.map(_.showFields),
+        clickHandler = tabState.diagramOptions
+          .updater(_.modify(_.showFields).setTo(_)),
+        toggle = true
       )
-//      OptionsToggle(
-//        "fields-checkbox-2",
-//        "signatures",
-//        _.pages.head.diagramOptions.showSignatures,
-//        modifySelection(_.pages.at(0).diagramOptions.showSignatures),
-//        appState
-//      )
     ),
     // -------- actions toolbar --------
     Join(
@@ -92,7 +83,7 @@ def Toolbar(
           li(
             a(
               "plantuml",
-              onPlantUMLClicked(appState /*, tabState*/ )
+              onPlantUMLClicked(appState.fullGraph, tabState)
             )
           )
         )
@@ -130,40 +121,21 @@ def Toolbar(
     )
   )
 
-private def OptionsToggle(
-    id: String,
-    labelStr: String,
-    field: Project => Boolean,
-    callback: (Project, Boolean) => Project,
-    state: AppState
-) =
-  LabeledCheckbox(
-    id = id,
-    labelStr = labelStr,
-    isChecked = state.activeProject.signal.map(field),
-    clickHandler = state.activeProject.updater[Boolean](callback),
-    toggle = true
-  )
-
 private def onPlantUMLClicked(
-    appState: AppState
-//    tabState: InheritanceTabState
+    fullGraph: Signal[InheritanceGraph],
+    tabState: InheritanceTabState
 ) =
   onClick.compose(
     _.sample(
-      appState.fullGraph,
-//      tabState.activeSymbols.signal,
-      appState.diagramOptions
+      fullGraph,
+      tabState.activeSymbols.signal,
+      tabState.diagramOptions
     )
-  ) --> { (fullDiagram: InheritanceGraph, options) =>
+  ) --> { (fullDiagram: InheritanceGraph, activeSymbols, options) =>
     dom.window.navigator.clipboard.writeText(
       fullDiagram
-//        .subdiagram(symbols.keySet)
-        .subdiagram(Set.empty)
-        .toPlantUML(
-          Map.empty,
-          options.head
-        )
+        .subdiagram(activeSymbols.keySet)
+        .toPlantUML(activeSymbols, options)
         .diagram
     )
   }
