@@ -1,17 +1,12 @@
 package org.jpablo.typeexplorer.ui.app.components
 
-import com.raquo.laminar.api.L
 import com.raquo.laminar.api.L.*
+import com.raquo.laminar.api.features.unitArrows
 import com.raquo.laminar.nodes.ReactiveHtmlElement
 import org.jpablo.typeexplorer.ui.app.components.state.{Project, ProjectId}
-import org.scalajs.dom.{HTMLDialogElement, HTMLDivElement}
-import com.raquo.laminar.api.features.unitArrows
 import org.jpablo.typeexplorer.ui.extensions.*
-import org.jpablo.typeexplorer.ui.domUtils.dialog
-
-case class Dialog(mods: Modifier[ReactiveHtmlElement.Base]*):
-  val tag = dialog(mods)
-  export tag.ref, tag.ref.showModal
+import org.jpablo.typeexplorer.ui.widgets.Dialog
+import org.scalajs.dom.HTMLDivElement
 
 def ProjectSelector(
     projects: Signal[Map[ProjectId, Project]],

@@ -11,6 +11,7 @@ import org.jpablo.typeexplorer.ui.app.components.state.{
 }
 import org.jpablo.typeexplorer.ui.daisyui.*
 import org.jpablo.typeexplorer.ui.domUtils
+import org.jpablo.typeexplorer.ui.domUtils.dataTip
 import org.jpablo.typeexplorer.ui.widgets.Icons.*
 import org.scalajs.dom
 import org.scalajs.dom.{HTMLDivElement, HTMLElement}
@@ -19,7 +20,8 @@ def Toolbar(
     appState: AppState,
     tabState: InheritanceTabState,
     inheritanceSvgDiagram: Signal[InheritanceSvgDiagram],
-    containerBoundingClientRect: => dom.DOMRect
+    containerBoundingClientRect: => dom.DOMRect,
+    packagesDialogOpen: Var[Boolean]
 ) =
   val zoomValue = Var(100.0)
   val minZoom = 25
@@ -30,19 +32,19 @@ def Toolbar(
       val actualZoom = Math.min(maxZoom, Math.max(minZoom, zoom))
       diagram.absoluteZoom(actualZoom)
     }(owner = unsafeWindowOwner)
+
   div(
     cls := "shadow bg-base-100 rounded-box flex items-center gap-4 p-0.5 absolute top-1 left-2/4 -translate-x-2/4 z-10",
     // -------- package selector --------
     Join(
       div(
-        cls := "dropdown",
-        div.boxesIcon
-          .amend(cls := "btn btn-sm", tabIndex := 0, role := "button"),
-        PackagesTreeComponent(appState, tabState)
-          .amend(
-            tabIndex := 0,
-            cls := "p-2 shadow menu dropdown-content z-[1] bg-base-100 rounded-box"
-          )
+        cls := "flex-none tooltip tooltip-bottom",
+        dataTip := "Package Selector",
+        button(
+          cls := "btn btn-ghost btn-sm",
+          onClick.mapTo(true) --> packagesDialogOpen.set,
+          "Packages"
+        )
       )
     ),
     // -------- fields and signatures --------
