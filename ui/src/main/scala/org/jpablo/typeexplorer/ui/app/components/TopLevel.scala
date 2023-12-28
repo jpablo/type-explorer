@@ -11,7 +11,6 @@ import org.jpablo.typeexplorer.ui.widgets.Icons.closeIcon
 
 def TopLevel(
     appState: AppState,
-    inheritanceSvgDiagrams: Signal[Vector[Signal[InheritanceSvgDiagram]]],
     documents: EventStream[List[TextDocumentsWithSource]],
     selectedProject: EventBus[ProjectId],
     deleteProject: EventBus[ProjectId],
@@ -24,7 +23,7 @@ def TopLevel(
     div(
       cls := "drawer-content flex flex-col h-screen overflow-hidden",
       AppHeader(appState, selectedProject, deleteProject),
-      TabsArea(appState, inheritanceSvgDiagrams, documents),
+      TabsArea(appState, documents),
       AppFooter
       // -------- advanced/debug mode --------
 //      appState.advancedMode.childWhenTrue:

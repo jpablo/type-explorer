@@ -10,7 +10,7 @@ import org.jpablo.typeexplorer.protos.{
 import org.jpablo.typeexplorer.shared.inheritance.{InheritanceGraph, Path}
 import org.jpablo.typeexplorer.shared.webApp.{InheritanceRequest, Routes}
 import org.jpablo.typeexplorer.ui.app.components.DiagramType
-import org.jpablo.typeexplorer.ui.app.components.state.{AppState, Page}
+import org.jpablo.typeexplorer.ui.app.components.state.Page
 import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.InheritanceSvgDiagram
 import org.scalajs.dom
 import zio.json.*
@@ -61,17 +61,7 @@ def fetchFullInheritanceGraph(
     yield classes
 }.startWith(InheritanceGraph.empty)
 
-def fetchInheritanceSVGDiagrams(
-    appState: AppState
-): Signal[Vector[Signal[InheritanceSvgDiagram]]] =
-  appState.basePaths
-    .combineWith(appState.pages)
-    .map: (paths, pages) =>
-      pages.map: page =>
-        fetchInheritanceSVGDiagram(paths, page)
-          .startWith(InheritanceSvgDiagram.empty)
-
-def fetchInheritanceSVGDiagram(
+def fetchInheritanceSVGDiagram(pageId: String)(
     basePaths: List[Path],
     page: Page
 ): EventStream[InheritanceSvgDiagram] =

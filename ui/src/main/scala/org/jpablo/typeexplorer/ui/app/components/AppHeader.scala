@@ -86,8 +86,7 @@ def AppHeader(
           a(
             cls := "btn btn-sm",
             onClick --> appState.closeActivePage(),
-            label.folderMinusIcon,
-            "close"
+            label.folderMinusIcon
           )
         )
       ),

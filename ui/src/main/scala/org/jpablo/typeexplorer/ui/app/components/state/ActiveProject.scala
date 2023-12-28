@@ -21,22 +21,22 @@ case class ActiveProject(project: PersistentVar[Project])(using Owner):
   val updater = project.updater
 
   val basePaths: Signal[List[Path]] =
-    project.signal.map(_.projectSettings.basePaths)
+    project.signal.map(_.projectSettings.basePaths).distinct
 
   val name: Var[String] =
     project.zoom(_.name)((p, n) => p.copy(name = n))
 
   val packagesOptions: Signal[PackagesOptions] =
-    project.signal.map(_.packagesOptions)
+    project.signal.map(_.packagesOptions).distinct
 
   val projectSettings: Signal[ProjectSettings] =
-    project.signal.map(_.projectSettings)
+    project.signal.map(_.projectSettings).distinct
 
   val diagramOptions: Signal[Vector[DiagramOptions]] =
-    project.signal.map(_.pages.map(_.diagramOptions))
+    project.signal.map(_.pages.map(_.diagramOptions)).distinct
 
   val advancedMode: Signal[Boolean] =
-    project.signal.map(_.advancedMode)
+    project.signal.map(_.advancedMode).distinct
 
   def pageV(i: Int): Var[Page] =
     project.zoom { p =>
@@ -45,7 +45,7 @@ case class ActiveProject(project: PersistentVar[Project])(using Owner):
     }((p, page) => p.modify(_.pages.at(i)).setTo(page))
 
   val pages: Signal[Vector[Page]] =
-    project.signal.map(_.pages)
+    project.signal.map(_.pages).distinct
 
   def newPage(): Unit = {
     val page: Page = Page()

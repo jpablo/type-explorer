@@ -1,6 +1,5 @@
 package org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab
 
-import com.raquo.airstream.core.Signal
 import com.raquo.laminar.api.L.*
 import com.raquo.laminar.api.features.unitArrows
 import com.raquo.laminar.nodes.ReactiveHtmlElement
@@ -12,10 +11,11 @@ import org.jpablo.typeexplorer.ui.widgets.Dialog
 import org.scalajs.dom
 import org.scalajs.dom.HTMLDivElement
 
-def InheritanceTab(appState: AppState)(
-    tabState: InheritanceTabState,
-    inheritanceSvgDiagram: Signal[InheritanceSvgDiagram]
+def InheritanceTab(
+    appState: AppState,
+    tabState: InheritanceTabState
 ): Div =
+  val inheritanceSvgDiagram = tabState.svgDiagram(appState.basePaths)
   val canvasContainer = CanvasContainer(tabState, inheritanceSvgDiagram)
   val rect = canvasContainer.ref.getBoundingClientRect()
   val packagesDialog =

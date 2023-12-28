@@ -4,8 +4,7 @@ import com.raquo.laminar.api.L.*
 import com.raquo.laminar.nodes.ReactiveHtmlElement
 import org.jpablo.typeexplorer.ui.app.client.{
   fetchDocuments,
-  fetchFullInheritanceGraph,
-  fetchInheritanceSVGDiagrams
+  fetchFullInheritanceGraph
 }
 import org.jpablo.typeexplorer.ui.app.components.TopLevel
 import org.jpablo.typeexplorer.ui.app.components.state.{AppState, ProjectId}
@@ -36,7 +35,6 @@ object MainJS:
     deleteProject.events.foreach(appState.deleteProject)
     TopLevel(
       appState,
-      fetchInheritanceSVGDiagrams(appState),
       fetchDocuments(appState.basePaths),
       selectedProject,
       deleteProject,

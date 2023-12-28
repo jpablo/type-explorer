@@ -40,10 +40,9 @@ def Toolbar(
       div(
         cls := "flex-none tooltip tooltip-bottom",
         dataTip := "Package Selector",
-        button(
+        button.boxesIcon.amend(
           cls := "btn btn-ghost btn-sm",
-          onClick --> packagesDialogOpen.set(true),
-          "Packages"
+          onClick --> packagesDialogOpen.set(true)
         )
       )
     ),
@@ -68,7 +67,7 @@ def Toolbar(
         cls := "dropdown dropdown-hover",
         label(
           tabIndex := 0,
-          cls := "btn btn-xs join-item",
+          cls := "btn btn-xs join-item whitespace-nowrap",
           "Copy as"
         ),
         ul(

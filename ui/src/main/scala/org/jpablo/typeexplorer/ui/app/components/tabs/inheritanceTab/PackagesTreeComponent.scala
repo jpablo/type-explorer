@@ -20,8 +20,13 @@ import org.jpablo.typeexplorer.ui.extensions.*
 def PackagesTreeComponent(appState: AppState, tabState: InheritanceTabState) =
   val showOptions = Var(false)
   val filterBySymbolName = Var("")
+  val activeSymbols = tabState.activeSymbols.signal
   val filteredDiagram: EventStream[InheritanceGraph] =
-    filteredDiagramEvent(appState, tabState, filterBySymbolName.signal)
+    filteredDiagramEvent(
+      appState,
+      activeSymbols,
+      filterBySymbolName.signal
+    )
 
   div(
     cls := "bg-base-100 rounded-box overflow-auto p-1 z-10",
@@ -53,7 +58,7 @@ def PackagesTreeComponent(appState: AppState, tabState: InheritanceTabState) =
 
 private def filteredDiagramEvent(
     appState: AppState,
-    tabState: InheritanceTabState,
+    activeSymbols: Signal[ActiveSymbols],
     filterBySymbolName: Signal[String]
 ): EventStream[InheritanceGraph] =
   appState.fullGraph
@@ -62,7 +67,7 @@ private def filteredDiagramEvent(
       filterBySymbolName,
       // TODO: consider another approach where changing activeSymbols does not trigger
       // a full tree redraw, but just modifies the relevant nodes
-      tabState.activeSymbols.signal
+      activeSymbols
     )
     .changes
     .debounce(300)

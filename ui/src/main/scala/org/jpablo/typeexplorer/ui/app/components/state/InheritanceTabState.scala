@@ -7,6 +7,7 @@ import com.raquo.laminar.api.L.*
 import org.jpablo.typeexplorer.shared.inheritance.{
   DiagramOptions,
   InheritanceGraph,
+  Path,
   SymbolOptions
 }
 import org.jpablo.typeexplorer.shared.models.GraphSymbol
@@ -14,8 +15,8 @@ import org.scalajs.dom
 import org.jpablo.typeexplorer.ui.extensions.*
 import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.InheritanceSvgDiagram
 import InheritanceTabState.ActiveSymbols
-
-import scala.scalajs.js
+import com.raquo.laminar.modifiers.Binder.Base
+import org.jpablo.typeexplorer.ui.app.client.fetchInheritanceSVGDiagram
 
 object InheritanceTabState:
   type ActiveSymbols = Map[GraphSymbol, Option[SymbolOptions]]
@@ -27,7 +28,7 @@ case class InheritanceTabState(
     page: Var[Page],
     pageId: String
 )(using Owner):
-  val activeSymbolsR =
+  val activeSymbolsR: Var[Map[GraphSymbol, Option[SymbolOptions]]] =
     page.zoom(_.activeSymbols.toMap)((p, s) => p.copy(activeSymbols = s.toList))
 
   val diagramOptions: Var[DiagramOptions] =
@@ -38,13 +39,21 @@ case class InheritanceTabState(
     ActiveSymbolsOps(activeSymbolsR, fullGraph, canvasSelectionR)
 
   val packagesDialogOpen = Var(false)
+
+  def svgDiagram(basePaths: Signal[List[Path]]): Signal[InheritanceSvgDiagram] =
+    basePaths
+      .combineWith(page.signal.distinct)
+      .flatMap(fetchInheritanceSVGDiagram(pageId))
+      .startWith(InheritanceSvgDiagram.empty)
+
 end InheritanceTabState
 
 class CanvasSelectionOps(
     canvasSelectionR: Var[Set[GraphSymbol]] = Var(Set.empty),
     activeSymbolsR: Var[ActiveSymbols]
 ):
-  export canvasSelectionR.{signal, now}
+  export canvasSelectionR.now
+  val signal = canvasSelectionR.signal
 
   def toggle(symbol: GraphSymbol): Unit =
     canvasSelectionR.update(_.toggle(symbol))
@@ -97,9 +106,9 @@ class CanvasSelectionOps(
 end CanvasSelectionOps
 
 class ActiveSymbolsOps(
-    activeSymbolsR: Var[ActiveSymbols],
-    fullInheritanceGraph: Signal[InheritanceGraph],
-    canvasSelectionR: Var[Set[GraphSymbol]]
+    val activeSymbolsR: Var[ActiveSymbols],
+    val fullInheritanceGraph: Signal[InheritanceGraph],
+    val canvasSelectionR: Var[Set[GraphSymbol]]
 ):
 
   val signal = activeSymbolsR.signal
@@ -150,10 +159,10 @@ class ActiveSymbolsOps(
   /** Updates activeSymbols with the given function `f` and the current canvas
     * selection.
     */
-  private def addSelectionWith[E <: dom.Event](
+  def addSelectionWith[E <: dom.Event](
       f: (InheritanceGraph, GraphSymbol) => InheritanceGraph,
       ep: EventProp[E]
-  ) =
+  ): Base =
     val combined = fullInheritanceGraph.combineWith(canvasSelectionR.signal)
     ep.compose(_.sample(combined)) --> { (diagram, selection) =>
       if selection.nonEmpty then

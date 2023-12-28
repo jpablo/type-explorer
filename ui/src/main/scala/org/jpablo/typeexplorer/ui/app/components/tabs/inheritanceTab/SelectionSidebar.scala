@@ -1,18 +1,15 @@
 package org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab
 
+import com.raquo.airstream.core.Signal
 import com.raquo.laminar.api.L.*
 import com.raquo.laminar.api.features.unitArrows
 import com.softwaremill.quicklens.*
+import io.laminext.syntax.core.*
 import org.jpablo.typeexplorer.shared.inheritance.InheritanceGraph
 import org.jpablo.typeexplorer.ui.app
-import org.jpablo.typeexplorer.ui.app.components.state.{
-  AppState,
-  InheritanceTabState
-}
+import org.jpablo.typeexplorer.ui.app.components.state.*
 import org.jpablo.typeexplorer.ui.daisyui.*
 import org.scalajs.dom
-import io.laminext.syntax.core.*
-import com.raquo.airstream.core.Signal
 
 private def SelectionSidebar(
     appState: AppState,
@@ -21,7 +18,7 @@ private def SelectionSidebar(
 ) =
 
   val selectionEmpty =
-        tabState.canvasSelection.signal.map(_.isEmpty)
+    tabState.canvasSelection.signal.map(_.isEmpty)
   div(
     cls := "absolute right-0 top-2 z-10",
     selectionEmpty.childWhenFalse(

@@ -6,19 +6,13 @@ import org.jpablo.typeexplorer.ui.app.components.state.{
   CanvasSelectionOps,
   InheritanceTabState
 }
-import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.svgGroupElement.{
-  ClusterElement,
-  LinkElement,
-  NamespaceElement,
-  SvgGroupElement,
-  path
-}
+import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.svgGroupElement.*
 import org.scalajs.dom
 import org.scalajs.dom.HTMLDivElement
 
 private def CanvasContainer(
     tabState: InheritanceTabState,
-    inheritanceSvgDiagram: Signal[InheritanceSvgDiagram],
+    inheritanceSvgDiagram: Signal[InheritanceSvgDiagram]
 ) =
   div(
     cls := "h-full w-full overflow-auto relative p-1 z-10",
