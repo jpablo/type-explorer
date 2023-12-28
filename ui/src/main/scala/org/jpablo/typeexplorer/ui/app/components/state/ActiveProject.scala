@@ -15,7 +15,10 @@ import org.jpablo.typeexplorer.shared.inheritance.{
   */
 case class ActiveProject(project: PersistentVar[Project])(using Owner):
 
-  export project.{signal, update, updater}
+  //  export project.{signal, update, updater}
+  val signal = project.signal
+  val update = project.update
+  val updater = project.updater
 
   val basePaths: Signal[List[Path]] =
     project.signal.map(_.projectSettings.basePaths)
@@ -57,10 +60,17 @@ case class ActiveProject(project: PersistentVar[Project])(using Owner):
   def closePage(i: Int): Unit =
     project.update(_.modify(_.pages).using(_.patch(i, Nil, 1)))
 
-  def setActivePage(i: Int): Unit =
-    project.update(_.modify(_.activePage).setTo(i))
+  def closeActivePage(): Unit =
+    project.update: p =>
+      p.modify(_.pages).using(_.patch(p.activePage, Nil, 1))
+
+  def setActivePage(id: String): Unit =
+    project.update(_.setActivePageId(id))
 
   def getActivePageIndex: Signal[Int] =
     project.signal.map(_.validActivePage)
+
+  def getActivePageId: Signal[String] =
+    project.signal.map(_.activePageId)
 
 end ActiveProject

@@ -8,6 +8,8 @@ import org.jpablo.typeexplorer.shared.inheritance.{
 import org.jpablo.typeexplorer.shared.models
 import org.jpablo.typeexplorer.shared.webApp.ActiveSymbolsSeq
 import zio.json.*
+import com.softwaremill.quicklens.*
+import scala.scalajs.js
 
 case class Project(
     id: ProjectId,
@@ -23,7 +25,15 @@ case class Project(
     else if activePage >= pages.size then pages.size - 1
     else activePage
 
+  def activePageId: String =
+    pages(validActivePage).id
+
+  def setActivePageId(id: String): Project =
+    val i = pages.zipWithIndex.find((p, i) => p.id == id).map(_._2).getOrElse(0)
+    this.modify(_.activePage).setTo(i)
+
 case class Page(
+    id: String = js.Dynamic.global.crypto.randomUUID().toString,
     // This can't be a Map[A, Option[B]], as zio-json will remove entries with None values
     activeSymbols: ActiveSymbolsSeq = List.empty,
     diagramOptions: DiagramOptions = DiagramOptions()

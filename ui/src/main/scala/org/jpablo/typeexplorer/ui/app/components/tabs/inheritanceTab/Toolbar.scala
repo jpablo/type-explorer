@@ -42,7 +42,7 @@ def Toolbar(
         dataTip := "Package Selector",
         button(
           cls := "btn btn-ghost btn-sm",
-          onClick.mapTo(true) --> packagesDialogOpen.set,
+          onClick --> packagesDialogOpen.set(true),
           "Packages"
         )
       )

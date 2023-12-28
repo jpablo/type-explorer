@@ -5,7 +5,11 @@ import com.raquo.laminar.api.L.*
 import com.raquo.laminar.api.features.unitArrows
 import com.raquo.laminar.nodes.ReactiveHtmlElement
 import org.jpablo.typeexplorer.shared.inheritance.InheritanceGraph
-import org.jpablo.typeexplorer.shared.models.{Namespace, NamespaceKind, GraphSymbol}
+import org.jpablo.typeexplorer.shared.models.{
+  Namespace,
+  NamespaceKind,
+  GraphSymbol
+}
 import org.jpablo.typeexplorer.shared.tree.Tree
 import org.jpablo.typeexplorer.ui.app.components.state.InheritanceTabState
 import org.jpablo.typeexplorer.ui.extensions.*
@@ -88,7 +92,9 @@ class TreeElement(tabState: InheritanceTabState):
   ) =
     details(
       open <-- openBranches.signal.map(s => s.contains(packagePath)),
-      onClick.preventDefault.stopPropagation --> openBranches.update(_.toggle(packagePath)),
+      onClick.preventDefault.stopPropagation --> openBranches.update(
+        _.toggle(packagePath)
+      ),
       summary(
         span(
           cls := "link link-hover",

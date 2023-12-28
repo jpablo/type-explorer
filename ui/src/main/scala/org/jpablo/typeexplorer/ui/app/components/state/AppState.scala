@@ -22,6 +22,7 @@ class AppState(
     newPage,
     setActivePage,
     closePage,
+    closeActivePage,
     update as updateActiveProject
   }
 
@@ -29,14 +30,43 @@ class AppState(
     AppState.selectOrCreateProject(persistedAppState, projectId)
 
   val fullGraph: Signal[InheritanceGraph] =
-    activeProject.basePaths.flatMap(fetchFullInheritanceGraph)
+    activeProject.basePaths.flatMap: paths =>
+      fetchFullInheritanceGraph(paths)
+
+  // experiment
+  val tabStates2: Signal[Vector[InheritanceTabState]] =
+    activeProject.pages
+      .scanLeft[Vector[InheritanceTabState]] { (pages: Vector[Page]) =>
+        // initial tab states
+        pages.indices.toVector.map: i =>
+          InheritanceTabState(
+            fullGraph,
+            Var(Set.empty),
+            activeProject.pageV(i),
+            ""
+          )
+
+      } { (tabStates: Vector[InheritanceTabState], newPages: Vector[Page]) =>
+        // do something if newPages does not match tabStates
+        newPages.indices.toVector.map: i =>
+          InheritanceTabState(
+            fullGraph,
+            Var(Set.empty),
+            activeProject.pageV(i),
+            ""
+          )
+      }
 
   val tabStates: Signal[Vector[InheritanceTabState]] =
     activeProject.pages
-      .map: pages =>
-        Vector
-          .tabulate(pages.length)(activeProject.pageV)
-          .map(InheritanceTabState(fullGraph, Var(Set.empty)))
+      .map:
+        _.zipWithIndex.map: (p, i) =>
+          InheritanceTabState(
+            fullGraph,
+            Var(Set.empty),
+            activeProject.pageV(i),
+            p.id
+          )
 
   def deleteProject(projectId: ProjectId): Unit =
     persistedAppState.update(_.deleteProject(projectId))

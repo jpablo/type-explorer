@@ -21,31 +21,7 @@ def PackagesTreeComponent(appState: AppState, tabState: InheritanceTabState) =
   val showOptions = Var(false)
   val filterBySymbolName = Var("")
   val filteredDiagram: EventStream[InheritanceGraph] =
-    appState.fullGraph
-      .combineWith(
-        appState.packagesOptions,
-        filterBySymbolName.signal,
-        // TODO: consider another approach where changing activeSymbols does not trigger
-        // a full tree redraw, but just modifies the relevant nodes
-        tabState.activeSymbols.signal
-      )
-      .changes
-      .debounce(300)
-      .map:
-        (
-            diagram: InheritanceGraph,
-            packagesOptions: PackagesOptions,
-            w: String,
-            activeSymbols: ActiveSymbols
-        ) =>
-          diagram
-            .orElse(w.isBlank, _.filterBySymbolName(w))
-            .subdiagramByKinds(packagesOptions.nsKind)
-            .orElse(
-              !packagesOptions.onlyActive,
-              _.subdiagram(activeSymbols.keySet)
-            )
-            .orElse(packagesOptions.onlyTests, _.filterBy(!_.inTest))
+    filteredDiagramEvent(appState, tabState, filterBySymbolName.signal)
 
   div(
     cls := "bg-base-100 rounded-box overflow-auto p-1 z-10",
@@ -74,6 +50,37 @@ def PackagesTreeComponent(appState: AppState, tabState: InheritanceTabState) =
       child <-- PackagesTree(tabState, filteredDiagram)
     )
   )
+
+private def filteredDiagramEvent(
+    appState: AppState,
+    tabState: InheritanceTabState,
+    filterBySymbolName: Signal[String]
+): EventStream[InheritanceGraph] =
+  appState.fullGraph
+    .combineWith(
+      appState.packagesOptions,
+      filterBySymbolName,
+      // TODO: consider another approach where changing activeSymbols does not trigger
+      // a full tree redraw, but just modifies the relevant nodes
+      tabState.activeSymbols.signal
+    )
+    .changes
+    .debounce(300)
+    .map:
+      (
+          diagram: InheritanceGraph,
+          packagesOptions: PackagesOptions,
+          w: String,
+          activeSymbols: ActiveSymbols
+      ) =>
+        diagram
+          .orElse(w.isBlank, _.filterBySymbolName(w))
+          .subdiagramByKinds(packagesOptions.nsKind)
+          .orElse(
+            !packagesOptions.onlyActive,
+            _.subdiagram(activeSymbols.keySet)
+          )
+          .orElse(packagesOptions.onlyTests, _.filterBy(!_.inTest))
 
 private def Options(appState: AppState) =
   div(

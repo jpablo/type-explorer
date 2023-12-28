@@ -19,8 +19,7 @@ enum DiagramType:
 def AppHeader(
     appState: AppState,
     selectedProject: EventBus[ProjectId],
-    deleteProject: EventBus[ProjectId],
-    findActiveTab: () => Int
+    deleteProject: EventBus[ProjectId]
 ): Div =
   val titleDialogOpen = Var(false)
   val titleDialog = TitleDialog(appState.activeProject.name, titleDialogOpen)
@@ -86,10 +85,9 @@ def AppHeader(
           dataTip := "Close tab",
           a(
             cls := "btn btn-sm",
-            onClick --> { _ =>
-              appState.closePage(findActiveTab())
-            },
-            label.folderMinusIcon
+            onClick --> appState.closeActivePage(),
+            label.folderMinusIcon,
+            "close"
           )
         )
       ),

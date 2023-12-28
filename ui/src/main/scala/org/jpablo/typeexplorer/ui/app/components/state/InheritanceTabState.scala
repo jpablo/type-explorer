@@ -4,12 +4,18 @@ import com.raquo.airstream.core.EventStream
 import com.raquo.airstream.core.Signal
 import com.raquo.airstream.state.Var
 import com.raquo.laminar.api.L.*
-import org.jpablo.typeexplorer.shared.inheritance.{DiagramOptions, InheritanceGraph, SymbolOptions}
+import org.jpablo.typeexplorer.shared.inheritance.{
+  DiagramOptions,
+  InheritanceGraph,
+  SymbolOptions
+}
 import org.jpablo.typeexplorer.shared.models.GraphSymbol
 import org.scalajs.dom
 import org.jpablo.typeexplorer.ui.extensions.*
 import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.InheritanceSvgDiagram
 import InheritanceTabState.ActiveSymbols
+
+import scala.scalajs.js
 
 object InheritanceTabState:
   type ActiveSymbols = Map[GraphSymbol, Option[SymbolOptions]]
@@ -17,8 +23,10 @@ object InheritanceTabState:
 case class InheritanceTabState(
     fullGraph: Signal[InheritanceGraph],
     // this should be a subset of activeSymbols' keys
-    canvasSelectionR: Var[Set[GraphSymbol]]
-)(val page: Var[Page])(using Owner):
+    canvasSelectionR: Var[Set[GraphSymbol]],
+    page: Var[Page],
+    pageId: String
+)(using Owner):
   val activeSymbolsR =
     page.zoom(_.activeSymbols.toMap)((p, s) => p.copy(activeSymbols = s.toList))
 
@@ -28,6 +36,8 @@ case class InheritanceTabState(
   val canvasSelection = CanvasSelectionOps(canvasSelectionR, activeSymbolsR)
   val activeSymbols =
     ActiveSymbolsOps(activeSymbolsR, fullGraph, canvasSelectionR)
+
+  val packagesDialogOpen = Var(false)
 end InheritanceTabState
 
 class CanvasSelectionOps(
