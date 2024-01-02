@@ -8,14 +8,17 @@ import io.laminext.syntax.core.*
 import org.jpablo.typeexplorer.shared.inheritance.InheritanceGraph
 import org.jpablo.typeexplorer.ui.app
 import org.jpablo.typeexplorer.ui.app.components.state.*
+import org.jpablo.typeexplorer.ui.app.components.state.InheritanceTabState.ActiveSymbols
 import org.jpablo.typeexplorer.ui.daisyui.*
 import org.scalajs.dom
 
-private def SelectionSidebar(
+def SelectionSidebar(
     appState: AppState,
-    tabState: InheritanceTabState,
-    inheritanceSvgDiagram: Signal[InheritanceSvgDiagram]
+    tabState: InheritanceTabState
 ) =
+
+  val activeSymbols: Signal[ActiveSymbols] =
+    tabState.activeSymbols.signal
 
   val selectionEmpty =
     tabState.canvasSelection.signal.map(_.isEmpty)
@@ -58,7 +61,7 @@ private def SelectionSidebar(
                 "Copy as SVG",
                 disabled <-- selectionEmpty,
                 onClick.compose(
-                  _.sample(inheritanceSvgDiagram, tabState.canvasSelectionR)
+                  _.sample(tabState.inheritanceSvgDiagram, tabState.canvasSelectionV)
                 ) --> { (svgDiagram, canvasSelection) =>
                   dom.window.navigator.clipboard
                     .writeText(svgDiagram.toSVGText(canvasSelection))
@@ -104,7 +107,8 @@ private def SelectionSidebar(
                 onClick.compose(
                   _.sample(
                     tabState.fullGraph,
-                    inheritanceSvgDiagram
+                    tabState.inheritanceSvgDiagram,
+                    activeSymbols
                   )
                 ) -->
                   tabState.canvasSelection.selectParents.tupled
@@ -118,7 +122,8 @@ private def SelectionSidebar(
                 onClick.compose(
                   _.sample(
                     tabState.fullGraph,
-                    inheritanceSvgDiagram
+                    tabState.inheritanceSvgDiagram,
+                    activeSymbols
                   )
                 ) -->
                   tabState.canvasSelection.selectChildren.tupled
@@ -131,7 +136,7 @@ private def SelectionSidebar(
                 id = "fields-checkbox-3",
                 labelStr = "Show fields",
                 isChecked = tabState.activeSymbolsR.signal
-                  .combineWith(tabState.canvasSelectionR.signal)
+                  .combineWith(tabState.canvasSelectionV.signal)
                   .map: (activeSymbols, selection) =>
                     val activeSelection =
                       activeSymbols.filter((s, _) => selection.contains(s))

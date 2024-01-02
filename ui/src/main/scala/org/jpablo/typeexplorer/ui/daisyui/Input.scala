@@ -1,13 +1,8 @@
 package org.jpablo.typeexplorer.ui.daisyui
 
-import com.raquo.laminar.api.L
 import com.raquo.laminar.api.L.*
-import com.raquo.laminar.keys.LockedEventKey
-import com.raquo.laminar.modifiers.Binder.Base
-import com.raquo.laminar.modifiers.EventListener
 import com.raquo.laminar.nodes.ReactiveHtmlElement
 import org.jpablo.typeexplorer.ui.domUtils.autocomplete
-import org.scalajs.dom.MouseEvent
 
 def Checkbox(mods: Modifier[ReactiveHtmlElement.Base]*): Input =
   input(tpe := "checkbox", cls := "checkbox", mods)

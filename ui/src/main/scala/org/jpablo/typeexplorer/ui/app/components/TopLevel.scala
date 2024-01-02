@@ -4,9 +4,7 @@ import com.raquo.laminar.api.L.*
 import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
 import org.jpablo.typeexplorer.ui.app.components.state.{AppState, ProjectId}
 import org.jpablo.typeexplorer.ui.app.components.tabs.TabsArea
-import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.InheritanceSvgDiagram
 import org.jpablo.typeexplorer.ui.daisyui.{Button, small}
-import org.jpablo.typeexplorer.ui.widgets.Icons
 import org.jpablo.typeexplorer.ui.widgets.Icons.closeIcon
 
 def TopLevel(

@@ -12,7 +12,7 @@ class AppState(
     persistedAppState: PersistentVar[PersistedAppState],
     projectId: ProjectId,
     fetchFullInheritanceGraph: List[Path] => Signal[InheritanceGraph]
-)(using Owner):
+)(using o: Owner):
   export activeProject.{
     basePaths,
     packagesOptions,
@@ -32,17 +32,6 @@ class AppState(
   val fullGraph: Signal[InheritanceGraph] =
     activeProject.basePaths.flatMap: paths =>
       fetchFullInheritanceGraph(paths)
-
-  val tabStates: Signal[Vector[InheritanceTabState]] =
-    activeProject.pages
-      .map:
-        _.zipWithIndex.map: (p, i) =>
-          InheritanceTabState(
-            fullGraph,
-            Var(Set.empty),
-            activeProject.pageV(i),
-            p.id
-          )
 
   def deleteProject(projectId: ProjectId): Unit =
     persistedAppState.update(_.deleteProject(projectId))

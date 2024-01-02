@@ -13,7 +13,7 @@ import org.jpablo.typeexplorer.shared.inheritance.{
 
 /** Convenience wrapper around a Var[Project]
   */
-case class ActiveProject(project: PersistentVar[Project])(using Owner):
+case class ActiveProject(project: PersistentVar[Project])(using o: Owner):
 
   //  export project.{signal, update, updater}
   val signal = project.signal
@@ -38,11 +38,10 @@ case class ActiveProject(project: PersistentVar[Project])(using Owner):
   val advancedMode: Signal[Boolean] =
     project.signal.map(_.advancedMode).distinct
 
-  def pageV(i: Int): Var[Page] =
+  def pageV(pageId: String): Var[Page] =
     project.zoom { p =>
-      // TODO: Figure out why this is called with an invalid index after deleting a page
-      p.pages(math.min(p.pages.size - 1, i))
-    }((p, page) => p.modify(_.pages.at(i)).setTo(page))
+      p.pages.find(_.id == pageId).getOrElse(p.pages.last)
+    }((p, page) => p.modify(_.pages.eachWhere(_.id == pageId)).setTo(page))
 
   val pages: Signal[Vector[Page]] =
     project.signal.map(_.pages).distinct

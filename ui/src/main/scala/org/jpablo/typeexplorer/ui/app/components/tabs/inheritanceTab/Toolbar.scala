@@ -19,14 +19,12 @@ import org.scalajs.dom.{HTMLDivElement, HTMLElement}
 def Toolbar(
     appState: AppState,
     tabState: InheritanceTabState,
-    inheritanceSvgDiagram: Signal[InheritanceSvgDiagram],
-    containerBoundingClientRect: => dom.DOMRect,
-    packagesDialogOpen: Var[Boolean]
+    containerBoundingClientRect: => dom.DOMRect
 ) =
   val zoomValue = Var(100.0)
   val minZoom = 25
   val maxZoom = 400
-  inheritanceSvgDiagram
+  tabState.inheritanceSvgDiagram
     .combineWith(zoomValue.signal)
     .foreach { (diagram, zoom) =>
       val actualZoom = Math.min(maxZoom, Math.max(minZoom, zoom))
@@ -42,7 +40,7 @@ def Toolbar(
         dataTip := "Package Selector",
         button.boxesIcon.amend(
           cls := "btn btn-ghost btn-sm",
-          onClick --> packagesDialogOpen.set(true)
+          onClick --> tabState.packagesDialogOpen.set(true)
         )
       )
     ),
@@ -76,7 +74,7 @@ def Toolbar(
           li(
             a(
               "svg",
-              onClick.compose(_.sample(inheritanceSvgDiagram)) --> { diagram =>
+              onClick.compose(_.sample(tabState.inheritanceSvgDiagram)) --> { diagram =>
                 dom.window.navigator.clipboard.writeText(diagram.toSVGText)
               }
             )
@@ -91,7 +89,7 @@ def Toolbar(
       ),
       Button(
         "fit",
-        onClick.compose(_.sample(inheritanceSvgDiagram)) --> { diagram =>
+        onClick.compose(_.sample(tabState.inheritanceSvgDiagram)) --> { diagram =>
           zoomValue.set(
             100 * diagram.getFitProportion(containerBoundingClientRect)
           )

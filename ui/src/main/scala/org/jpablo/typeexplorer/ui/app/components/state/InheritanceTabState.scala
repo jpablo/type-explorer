@@ -15,6 +15,7 @@ import org.scalajs.dom
 import org.jpablo.typeexplorer.ui.extensions.*
 import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.InheritanceSvgDiagram
 import InheritanceTabState.ActiveSymbols
+import com.raquo.airstream.ownership.OneTimeOwner
 import com.raquo.laminar.modifiers.Binder.Base
 import org.jpablo.typeexplorer.ui.app.client.fetchInheritanceSVGDiagram
 
@@ -22,68 +23,88 @@ object InheritanceTabState:
   type ActiveSymbols = Map[GraphSymbol, Option[SymbolOptions]]
 
 case class InheritanceTabState(
+    basePaths: Signal[List[Path]],
     fullGraph: Signal[InheritanceGraph],
     // this should be a subset of activeSymbols' keys
-    canvasSelectionR: Var[Set[GraphSymbol]],
-    page: Var[Page],
+    canvasSelectionV: Var[Set[GraphSymbol]],
+    pageV: Var[Page],
     pageId: String
-)(using Owner):
+):
+
+  // TODO: verify that subscriptions are killed when the tab is closed
+  given o: Owner = OneTimeOwner(() => ())
+
   val activeSymbolsR: Var[Map[GraphSymbol, Option[SymbolOptions]]] =
-    page.zoom(_.activeSymbols.toMap)((p, s) => p.copy(activeSymbols = s.toList))
+    pageV.zoom(_.activeSymbols.toMap)((p, s) =>
+      p.copy(activeSymbols = s.toList)
+    )
 
   val diagramOptions: Var[DiagramOptions] =
-    page.zoom(_.diagramOptions)((p, s) => p.copy(diagramOptions = s))
+    pageV.zoom(_.diagramOptions)((p, s) => p.copy(diagramOptions = s))
 
-  val canvasSelection = CanvasSelectionOps(canvasSelectionR, activeSymbolsR)
+  val canvasSelection =
+    CanvasSelectionOps(canvasSelectionV)
+
   val activeSymbols =
-    ActiveSymbolsOps(activeSymbolsR, fullGraph, canvasSelectionR)
+    ActiveSymbolsOps(activeSymbolsR, fullGraph, canvasSelectionV)
 
   val packagesDialogOpen = Var(false)
 
-  def svgDiagram(basePaths: Signal[List[Path]]): Signal[InheritanceSvgDiagram] =
+  val inheritanceSvgDiagram: Signal[InheritanceSvgDiagram] =
     basePaths
-      .combineWith(page.signal.distinct)
+      .combineWith(pageV.signal.distinct)
       .flatMap(fetchInheritanceSVGDiagram(pageId))
       .startWith(InheritanceSvgDiagram.empty)
 
 end InheritanceTabState
 
 class CanvasSelectionOps(
-    canvasSelectionR: Var[Set[GraphSymbol]] = Var(Set.empty),
-    activeSymbolsR: Var[ActiveSymbols]
+    canvasSelectionV: Var[Set[GraphSymbol]] = Var(Set.empty)
 ):
-  export canvasSelectionR.now
-  val signal = canvasSelectionR.signal
+  export canvasSelectionV.now
+  val signal = canvasSelectionV.signal
 
   def toggle(symbol: GraphSymbol): Unit =
-    canvasSelectionR.update(_.toggle(symbol))
+    canvasSelectionV.update(_.toggle(symbol))
 
   def replace(symbol: GraphSymbol): Unit =
-    canvasSelectionR.set(Set(symbol))
+    canvasSelectionV.set(Set(symbol))
 
   def extend(symbol: GraphSymbol): Unit =
-    canvasSelectionR.update(_ + symbol)
+    canvasSelectionV.update(_ + symbol)
 
   def extend(symbols: Set[GraphSymbol]): Unit =
-    canvasSelectionR.update(_ ++ symbols)
+    canvasSelectionV.update(_ ++ symbols)
 
   def remove(symbols: Set[GraphSymbol]): Unit =
-    canvasSelectionR.update(_ -- symbols)
+    canvasSelectionV.update(_ -- symbols)
 
   def clear(): Unit =
-    canvasSelectionR.set(Set.empty)
+    canvasSelectionV.set(Set.empty)
 
   def selectParents(
       fullDiagram: InheritanceGraph,
-      inheritanceSvgDiagram: InheritanceSvgDiagram
+      inheritanceSvgDiagram: InheritanceSvgDiagram,
+      activeSymbols: ActiveSymbols
   ): Unit =
-    selectRelated(_.parentsOfAll(_), fullDiagram, inheritanceSvgDiagram)
+    selectRelated(
+      _.parentsOfAll(_),
+      fullDiagram,
+      inheritanceSvgDiagram,
+      activeSymbols
+    )
 
   def selectChildren(
       fullDiagram: InheritanceGraph,
-      inheritanceSvgDiagram: InheritanceSvgDiagram
+      inheritanceSvgDiagram: InheritanceSvgDiagram,
+      activeSymbols: ActiveSymbols
   ): Unit =
-    selectRelated(_.childrenOfAll(_), fullDiagram, inheritanceSvgDiagram)
+    selectRelated(
+      _.childrenOfAll(_),
+      fullDiagram,
+      inheritanceSvgDiagram,
+      activeSymbols
+    )
 
   private def selectRelated(
       selector: (
@@ -91,10 +112,11 @@ class CanvasSelectionOps(
           Set[GraphSymbol]
       ) => InheritanceGraph,
       fullDiagram: InheritanceGraph,
-      inheritanceSvgDiagram: InheritanceSvgDiagram
+      inheritanceSvgDiagram: InheritanceSvgDiagram,
+      activeSymbols: ActiveSymbols
   ): Unit =
-    val svgDiagram = fullDiagram.subdiagram(activeSymbolsR.now().keySet)
-    val selection = canvasSelectionR.now()
+    val svgDiagram = fullDiagram.subdiagram(activeSymbols.keySet)
+    val selection = canvasSelectionV.now()
     val relatedDiagram = selector(svgDiagram, selection)
     val arrowSymbols =
       relatedDiagram.arrows.map((a, b) => GraphSymbol(s"${b}_$a"))
