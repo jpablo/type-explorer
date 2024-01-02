@@ -17,7 +17,7 @@ import org.scalajs.dom
 import org.scalajs.dom.{HTMLDivElement, HTMLElement}
 
 def Toolbar(
-    appState: AppState,
+    fullGraph: Signal[InheritanceGraph],
     tabState: InheritanceTabState,
     containerBoundingClientRect: => dom.DOMRect
 ) =
@@ -29,7 +29,7 @@ def Toolbar(
     .foreach { (diagram, zoom) =>
       val actualZoom = Math.min(maxZoom, Math.max(minZoom, zoom))
       diagram.absoluteZoom(actualZoom)
-    }(owner = unsafeWindowOwner)
+    }(owner = tabState.owner)
 
   div(
     cls := "shadow bg-base-100 rounded-box flex items-center gap-4 p-0.5 absolute top-1 left-2/4 -translate-x-2/4 z-10",
@@ -40,7 +40,7 @@ def Toolbar(
         dataTip := "Package Selector",
         button.boxesIcon.amend(
           cls := "btn btn-ghost btn-sm",
-          onClick --> tabState.packagesDialogOpen.set(true)
+          onClick --> tabState.packagesDialogOpenV.set(true)
         )
       )
     ),
@@ -49,8 +49,8 @@ def Toolbar(
       LabeledCheckbox(
         id = "fields-checkbox-1",
         labelStr = "fields",
-        isChecked = tabState.diagramOptions.signal.map(_.showFields),
-        clickHandler = tabState.diagramOptions
+        isChecked = tabState.diagramOptionsV.signal.map(_.showFields),
+        clickHandler = tabState.diagramOptionsV
           .updater(_.modify(_.showFields).setTo(_)),
         toggle = true
       )
@@ -74,25 +74,27 @@ def Toolbar(
           li(
             a(
               "svg",
-              onClick.compose(_.sample(tabState.inheritanceSvgDiagram)) --> { diagram =>
-                dom.window.navigator.clipboard.writeText(diagram.toSVGText)
+              onClick.compose(_.sample(tabState.inheritanceSvgDiagram)) --> {
+                diagram =>
+                  dom.window.navigator.clipboard.writeText(diagram.toSVGText)
               }
             )
           ),
           li(
             a(
               "plantuml",
-              onPlantUMLClicked(appState.fullGraph, tabState)
+              onPlantUMLClicked(fullGraph, tabState)
             )
           )
         )
       ),
       Button(
         "fit",
-        onClick.compose(_.sample(tabState.inheritanceSvgDiagram)) --> { diagram =>
-          zoomValue.set(
-            100 * diagram.getFitProportion(containerBoundingClientRect)
-          )
+        onClick.compose(_.sample(tabState.inheritanceSvgDiagram)) --> {
+          diagram =>
+            zoomValue.set(
+              100 * diagram.getFitProportion(containerBoundingClientRect)
+            )
         }
       ).tiny
     ),
@@ -128,7 +130,7 @@ private def onPlantUMLClicked(
     _.sample(
       fullGraph,
       tabState.activeSymbols.signal,
-      tabState.diagramOptions
+      tabState.diagramOptionsV
     )
   ) --> { (fullDiagram: InheritanceGraph, activeSymbols, options) =>
     dom.window.navigator.clipboard.writeText(

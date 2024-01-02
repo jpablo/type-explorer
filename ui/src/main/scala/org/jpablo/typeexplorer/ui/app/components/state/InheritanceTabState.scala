@@ -22,38 +22,33 @@ import org.jpablo.typeexplorer.ui.app.client.fetchInheritanceSVGDiagram
 object InheritanceTabState:
   type ActiveSymbols = Map[GraphSymbol, Option[SymbolOptions]]
 
-case class InheritanceTabState(
-    basePaths: Signal[List[Path]],
-    fullGraph: Signal[InheritanceGraph],
-    // this should be a subset of activeSymbols' keys
-    canvasSelectionV: Var[Set[GraphSymbol]],
-    pageV: Var[Page],
-    pageId: String
-):
-
+case class InheritanceTabState(appState: AppState, pageId: String):
   // TODO: verify that subscriptions are killed when the tab is closed
-  given o: Owner = OneTimeOwner(() => ())
+  given owner: Owner = OneTimeOwner(() => ())
+  // this should be a subset of activeSymbols' keys
+  private val canvasSelectionV = Var(Set.empty[GraphSymbol])
+  private val pageV = appState.activeProject.pageV(pageId)
 
-  val activeSymbolsR: Var[Map[GraphSymbol, Option[SymbolOptions]]] =
+  val activeSymbolsV: Var[Map[GraphSymbol, Option[SymbolOptions]]] =
     pageV.zoom(_.activeSymbols.toMap)((p, s) =>
       p.copy(activeSymbols = s.toList)
     )
 
-  val diagramOptions: Var[DiagramOptions] =
+  val diagramOptionsV: Var[DiagramOptions] =
     pageV.zoom(_.diagramOptions)((p, s) => p.copy(diagramOptions = s))
 
   val canvasSelection =
     CanvasSelectionOps(canvasSelectionV)
 
   val activeSymbols =
-    ActiveSymbolsOps(activeSymbolsR, fullGraph, canvasSelectionV)
+    ActiveSymbolsOps(activeSymbolsV, appState.fullGraph, canvasSelectionV)
 
-  val packagesDialogOpen = Var(false)
+  val packagesDialogOpenV = Var(false)
 
   val inheritanceSvgDiagram: Signal[InheritanceSvgDiagram] =
-    basePaths
+    appState.basePaths
       .combineWith(pageV.signal.distinct)
-      .flatMap(fetchInheritanceSVGDiagram(pageId))
+      .flatMap(fetchInheritanceSVGDiagram)
       .startWith(InheritanceSvgDiagram.empty)
 
 end InheritanceTabState
@@ -181,7 +176,7 @@ class ActiveSymbolsOps(
   /** Updates activeSymbols with the given function `f` and the current canvas
     * selection.
     */
-  def addSelectionWith[E <: dom.Event](
+  private def addSelectionWith[E <: dom.Event](
       f: (InheritanceGraph, GraphSymbol) => InheritanceGraph,
       ep: EventProp[E]
   ): Base =

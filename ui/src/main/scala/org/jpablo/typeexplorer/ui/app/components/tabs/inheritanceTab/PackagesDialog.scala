@@ -17,7 +17,7 @@ def PackagesDialog(
 ) =
   Dialog(
     cls := "modal",
-    cls.toggle("modal-open") <-- tabState.packagesDialogOpen.signal,
+    cls.toggle("modal-open") <-- tabState.packagesDialogOpenV.signal,
     div(
       cls := "modal-box",
       PackagesTreeComponent(appState, tabState),
@@ -28,7 +28,7 @@ def PackagesDialog(
           button(
             cls := "btn",
             "close",
-            onClick --> tabState.packagesDialogOpen.set(false)
+            onClick --> tabState.packagesDialogOpenV.set(false)
           )
         )
       )

@@ -61,7 +61,7 @@ def SelectionSidebar(
                 "Copy as SVG",
                 disabled <-- selectionEmpty,
                 onClick.compose(
-                  _.sample(tabState.inheritanceSvgDiagram, tabState.canvasSelectionV)
+                  _.sample(tabState.inheritanceSvgDiagram, tabState.canvasSelection.signal)
                 ) --> { (svgDiagram, canvasSelection) =>
                   dom.window.navigator.clipboard
                     .writeText(svgDiagram.toSVGText(canvasSelection))
@@ -106,7 +106,7 @@ def SelectionSidebar(
                 disabled <-- selectionEmpty,
                 onClick.compose(
                   _.sample(
-                    tabState.fullGraph,
+                    appState.fullGraph,
                     tabState.inheritanceSvgDiagram,
                     activeSymbols
                   )
@@ -121,7 +121,7 @@ def SelectionSidebar(
                 "Select children",
                 onClick.compose(
                   _.sample(
-                    tabState.fullGraph,
+                    appState.fullGraph,
                     tabState.inheritanceSvgDiagram,
                     activeSymbols
                   )
@@ -135,8 +135,8 @@ def SelectionSidebar(
               LabeledCheckbox(
                 id = "fields-checkbox-3",
                 labelStr = "Show fields",
-                isChecked = tabState.activeSymbolsR.signal
-                  .combineWith(tabState.canvasSelectionV.signal)
+                isChecked = tabState.activeSymbolsV.signal
+                  .combineWith(tabState.canvasSelection.signal)
                   .map: (activeSymbols, selection) =>
                     val activeSelection =
                       activeSymbols.filter((s, _) => selection.contains(s))

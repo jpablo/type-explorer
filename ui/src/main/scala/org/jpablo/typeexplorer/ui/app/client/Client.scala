@@ -61,7 +61,7 @@ def fetchFullInheritanceGraph(
     yield classes
 }.startWith(InheritanceGraph.empty)
 
-def fetchInheritanceSVGDiagram(pageId: String)(
+def fetchInheritanceSVGDiagram(
     basePaths: List[Path],
     page: Page
 ): EventStream[InheritanceSvgDiagram] =
