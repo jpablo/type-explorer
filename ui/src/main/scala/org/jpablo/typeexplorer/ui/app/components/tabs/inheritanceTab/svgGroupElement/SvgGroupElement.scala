@@ -28,7 +28,6 @@ object SvgGroupElement:
   def fromDomSvgElement(e: dom.Element): Option[SvgGroupElement] =
     NamespaceElement.from(e) orElse ClusterElement.from(e) orElse LinkElement.from(e)
 
-
 class NamespaceElement(ref: dom.SVGGElement) extends SvgGroupElement(ref):
   def prefix = NamespaceElement.prefix
   private val boxTagName = "rect"
@@ -44,8 +43,7 @@ object NamespaceElement:
   private val selector = s"g[id ^= $prefix]"
 
   def from(e: dom.Element): Option[NamespaceElement] =
-    if e.isNamespace then
-      Some(NamespaceElement(e.asInstanceOf[dom.SVGGElement]))
+    if e.isNamespace then Some(NamespaceElement(e.asInstanceOf[dom.SVGGElement]))
     else None
 
   def selectAll(e: dom.Element) =
@@ -55,11 +53,9 @@ class ClusterElement(ref: dom.SVGGElement) extends SvgGroupElement(ref):
   def prefix = ClusterElement.prefix
   private val boxTagName = "path"
 
-  /** PlantUML "namespace" (aka cluster) ids can't contain slashes, so for now
-    * they have dots (`a.b.c)` OTOH "classes" (namespaces) have ids of the form
-    * `a/b/c`, which means that in order to compare them we need the following
-    * method. See:
-    * https://forum.plantuml.net/17150/namespace-with-slashes-in-the-name?show=17151#a17151
+  /** PlantUML "namespace" (aka cluster) ids can't contain slashes, so for now they have dots (`a.b.c)` OTOH "classes"
+    * (namespaces) have ids of the form `a/b/c`, which means that in order to compare them we need the following method.
+    * See: https://forum.plantuml.net/17150/namespace-with-slashes-in-the-name?show=17151#a17151
     */
   val idWithSlashes = id.replace('.', '/')
 
@@ -85,12 +81,10 @@ class LinkElement(ref: dom.SVGGElement) extends SvgGroupElement(ref):
   def box: Option[dom.SVGElement] = None
 
   override def select(): Unit =
-    for el <- ref.children do
-      el.updateStyle("stroke" -> "rgb(245 158 11)", "stroke-width" -> "3.0")
+    for el <- ref.children do el.updateStyle("stroke" -> "rgb(245 158 11)", "stroke-width" -> "3.0")
 
   override def unselect(): Unit =
-    for el <- ref.children do
-      el.updateStyle("stroke" -> "#181818", "stroke-width" -> "1.0")
+    for el <- ref.children do el.updateStyle("stroke" -> "#181818", "stroke-width" -> "1.0")
 
 object LinkElement:
   val prefix = "link_"
@@ -105,9 +99,7 @@ object LinkElement:
 
 extension (e: dom.Element)
   def path =
-    e +: LazyList.unfold(e)(e =>
-      Option(e.parentNode.asInstanceOf[dom.Element]).map(e => (e, e))
-    )
+    e +: LazyList.unfold(e)(e => Option(e.parentNode.asInstanceOf[dom.Element]).map(e => (e, e)))
 
   def isDiagramElement(prefix: String) =
     e.tagName == "g" && e
@@ -128,7 +120,7 @@ extension (e: dom.Element)
 
   private def styleToMap(style: String | Null): Map[String, String] =
     if style == null || style.isEmpty
-      then Map.empty
+    then Map.empty
     else
       style
         .split(";")

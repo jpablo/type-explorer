@@ -9,8 +9,8 @@ import org.jpablo.typeexplorer.shared.inheritance.{InheritanceGraph, Path}
 /** In-memory App State
   */
 class AppState(
-    persistedAppState: PersistentVar[PersistedAppState],
-    projectId: ProjectId,
+    persistedAppState:         PersistentVar[PersistedAppState],
+    projectId:                 ProjectId,
     fetchFullInheritanceGraph: List[Path] => Signal[InheritanceGraph]
 )(using o: Owner):
   export activeProject.{
@@ -45,7 +45,7 @@ object AppState:
     */
   def load(
       fetchFullInheritanceGraph: List[Path] => Signal[InheritanceGraph],
-      projectId: ProjectId
+      projectId:                 ProjectId
   )(using Owner): AppState =
     AppState(
       persistentVar(
@@ -56,21 +56,19 @@ object AppState:
       fetchFullInheritanceGraph
     )
 
-  /** Select an existing project or create a new one. The new project will be
-    * persisted only after the first update.
+  /** Select an existing project or create a new one. The new project will be persisted only after the first update.
     */
   private def selectOrCreateProject(
       persistedAppState: PersistentVar[PersistedAppState],
-      projectId: ProjectId
+      projectId:         ProjectId
   )(using Owner): ActiveProject =
     ActiveProject {
       PersistentVar {
         persistedAppState
-          .zoom(_.selectOrCreateProject(projectId)):
-            (persistedAppState, selectedProject) =>
-              persistedAppState
-                .modify(_.projects)
-                .using(_ + (selectedProject.id -> selectedProject))
+          .zoom(_.selectOrCreateProject(projectId)): (persistedAppState, selectedProject) =>
+            persistedAppState
+              .modify(_.projects)
+              .using(_ + (selectedProject.id -> selectedProject))
       }
     }
 

@@ -4,12 +4,7 @@ import com.raquo.airstream.core.Signal
 import com.raquo.airstream.state.Var
 import com.raquo.laminar.api.L.Owner
 import com.softwaremill.quicklens.*
-import org.jpablo.typeexplorer.shared.inheritance.{
-  DiagramOptions,
-  PackagesOptions,
-  Path,
-  ProjectSettings
-}
+import org.jpablo.typeexplorer.shared.inheritance.{DiagramOptions, PackagesOptions, Path, ProjectSettings}
 
 /** Convenience wrapper around a Var[Project]
   */
@@ -65,9 +60,6 @@ case class ActiveProject(project: PersistentVar[Project])(using o: Owner):
 
   def setActivePage(id: String): Unit =
     project.update(_.setActivePageId(id))
-
-  def getActivePageIndex: Signal[Int] =
-    project.signal.map(_.validActivePage)
 
   def getActivePageId: Signal[String] =
     project.signal.map(_.activePageId)

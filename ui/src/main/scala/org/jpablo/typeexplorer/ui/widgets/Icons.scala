@@ -9,12 +9,12 @@ import org.scalajs.dom
 object Icons:
 
   def chevron(
-    $isOpen: Signal[Boolean],
-    mods   : Modifier[Anchor]*
+      $isOpen: Signal[Boolean],
+      mods:    Modifier[Anchor]*
   ) =
     a(
       cls := "bi inline-block w-5",
-      cls <-- $isOpen.map(o => if o then "bi-chevron-down" else "bi-chevron-right"),
+      cls <-- $isOpen.map(o => if o then "bi-chevron-down" else "bi-chevron-right")
     ).amend(mods)
 
   extension (tag: HtmlTag[dom.HTMLElement])
@@ -30,6 +30,3 @@ object Icons:
     def boxesIcon = tag(cls := "bi bi-boxes")
     def plusIcon = tag(cls := "bi bi-plus")
     def dashIcon = tag(cls := "bi bi-dash")
-
-
-

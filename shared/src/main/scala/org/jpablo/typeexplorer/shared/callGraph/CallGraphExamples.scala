@@ -6,10 +6,12 @@ import org.jpablo.typeexplorer.shared.models.{Method, Namespace, NamespaceKind, 
 object CallGraphExamples {
 
   val getUserAssignedTasks = Method("getUserAssignedTasks")
-  val getUserTasks         = Method("getUserTasks")
+  val getUserTasks = Method("getUserTasks")
 
   val TaskAllocationController =
-    Namespace(GraphSymbol.empty, "TaskAllocationController",
+    Namespace(
+      GraphSymbol.empty,
+      "TaskAllocationController",
       kind = NamespaceKind.Class,
       methods = List(
         getUserTasks,
@@ -17,16 +19,18 @@ object CallGraphExamples {
       )
     )
 
-  val getAssignedTaskUnitsToUser        = Method("getAssignedTaskUnitsToUser")
-  val getUserTaskUnitsByProjectId       = Method("getUserTaskUnitsByProjectId")
-  val getUserTaskUnits                  = Method("getUserTaskUnits")
+  val getAssignedTaskUnitsToUser = Method("getAssignedTaskUnitsToUser")
+  val getUserTaskUnitsByProjectId = Method("getUserTaskUnitsByProjectId")
+  val getUserTaskUnits = Method("getUserTaskUnits")
   val createProjectSurveySkillAttribute = Method("createProjectSurveySkillAttribute")
-  val getUserNewProjectTaskUnits        = Method("getUserNewProjectTaskUnits")
-  val getTasksForUserInProject          = Method("getTasksForUserInProject")
-  val getUserSuperRatingTaskUnits       = Method("getUserSuperRatingTaskUnits")
+  val getUserNewProjectTaskUnits = Method("getUserNewProjectTaskUnits")
+  val getTasksForUserInProject = Method("getTasksForUserInProject")
+  val getUserSuperRatingTaskUnits = Method("getUserSuperRatingTaskUnits")
 
   val TaskAllocationServiceImpl =
-    Namespace(models.GraphSymbol.empty, "TaskAllocationServiceImpl",
+    Namespace(
+      models.GraphSymbol.empty,
+      "TaskAllocationServiceImpl",
       kind = NamespaceKind.Class,
       methods = List(
         getAssignedTaskUnitsToUser,
@@ -41,7 +45,9 @@ object CallGraphExamples {
 
   val updateMetricsSuperRatingStatus = Method("updateMetricsSuperRatingStatus")
   val MetricsServiceImpl =
-    Namespace(models.GraphSymbol.empty, "MetricsServiceImpl",
+    Namespace(
+      models.GraphSymbol.empty,
+      "MetricsServiceImpl",
       kind = NamespaceKind.Class,
       methods = List(
         updateMetricsSuperRatingStatus
@@ -58,7 +64,7 @@ object CallGraphExamples {
       createProjectSurveySkillAttribute -> getTasksForUserInProject,
       getUserNewProjectTaskUnits        -> getTasksForUserInProject,
       getTasksForUserInProject          -> getUserSuperRatingTaskUnits,
-      getUserSuperRatingTaskUnits       -> updateMetricsSuperRatingStatus,
+      getUserSuperRatingTaskUnits       -> updateMetricsSuperRatingStatus
     )
 
   lazy val callGraphExample =
@@ -71,5 +77,3 @@ object CallGraphExamples {
       )
     )
 }
-
-

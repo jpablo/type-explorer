@@ -4,13 +4,12 @@ import com.raquo.laminar.api.L.*
 import org.jpablo.typeexplorer.shared.tree.Tree
 
 def CollapsableTree[A](
-  t: Tree[A]
+    t: Tree[A]
 )(
-  renderNode: (Tree.Label, List[String]) => HtmlElement,
-  renderLeaf: (Tree.Label, A) => HtmlElement,
-  mkControl : String => Collapsable.Control
-)
-: HtmlElement = t match
+    renderNode: (Tree.Label, List[String]) => HtmlElement,
+    renderLeaf: (Tree.Label, A) => HtmlElement,
+    mkControl:  String => Collapsable.Control
+): HtmlElement = t match
   case Tree.Branch(label, path, children) =>
     val key = path.mkString(".") ++ "." + label
     Collapsable(

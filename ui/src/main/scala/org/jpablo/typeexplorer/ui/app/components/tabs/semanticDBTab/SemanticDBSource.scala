@@ -7,7 +7,7 @@ import com.raquo.airstream.core.EventStream
 
 def SourceCodeTab(
     $sourceCode: EventStream[String],
-    position: Option[SymbolOccurrence] = None
+    position:    Option[SymbolOccurrence] = None
 ) =
   div(
     pre(

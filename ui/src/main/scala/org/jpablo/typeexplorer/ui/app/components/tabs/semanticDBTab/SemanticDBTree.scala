@@ -13,8 +13,8 @@ import scala.scalajs.js.URIUtils.encodeURIComponent
 object SemanticDBTree:
 
   def build(
-    documents          : EventStream[List[TextDocumentsWithSource]],
-    selectedSemanticDb : EventBus[Path]
+      documents:          EventStream[List[TextDocumentsWithSource]],
+      selectedSemanticDb: EventBus[Path]
   ) =
     for documentsWithSource <- documents yield
       val open = Var(Map.empty[String, Boolean])
@@ -30,19 +30,20 @@ object SemanticDBTree:
     val all = doc.semanticDbUri.split("/").toList.filter(_.nonEmpty)
     (all.init, all.last, doc)
 
-
-  private def renderDocWithSource($selectedSemanticDb: EventBus[Path], mkControl: String => Collapsable.Control)(name: String, docWithSource: TextDocumentsWithSource) = {
+  private def renderDocWithSource(
+      $selectedSemanticDb: EventBus[Path],
+      mkControl:           String => Collapsable.Control
+  )(name: String, docWithSource: TextDocumentsWithSource) = {
     val uri = docWithSource.semanticDbUri
     Collapsable(
-      nodeLabel =
-        span(
-          i.fileBinaryIcon,
-          a(
-            href := "#" + uri,
-            onClick.preventDefault.mapTo(Path(uri)) --> $selectedSemanticDb,
-            name
-          )
-        ),
+      nodeLabel = span(
+        i.fileBinaryIcon,
+        a(
+          href := "#" + uri,
+          onClick.preventDefault.mapTo(Path(uri)) --> $selectedSemanticDb,
+          name
+        )
+      ),
       nodeContents = docWithSource.documents.map(renderTextDocument(mkControl)),
       mkControl(uri)
     )
@@ -50,26 +51,22 @@ object SemanticDBTree:
 
   private def renderTextDocument(mkControl: String => Collapsable.Control)(doc: TextDocument) =
     Collapsable(
-      nodeLabel =
-        span(
-          i.fileCodeIcon,
-          doc.uri
-        ),
-      nodeContents =
-        doc.symbols.sortBy(_.symbol).map(renderSymbolInformation(mkControl)),
+      nodeLabel = span(
+        i.fileCodeIcon,
+        doc.uri
+      ),
+      nodeContents = doc.symbols.sortBy(_.symbol).map(renderSymbolInformation(mkControl)),
       mkControl(doc.uri)
     )
 
   private def renderSymbolInformation(mkControl: String => Collapsable.Control)(si: SymbolInformation) =
     Collapsable(
-      nodeLabel =
-        span(
-          span(si.kind.toString),
-          span(": "),
-          a(href := "#" + encodeURIComponent(si.symbol), si.displayName)
-        ),
-      nodeContents =
-        List(li("symbol: ", si.symbol)),
+      nodeLabel = span(
+        span(si.kind.toString),
+        span(": "),
+        a(href := "#" + encodeURIComponent(si.symbol), si.displayName)
+      ),
+      nodeContents = List(li("symbol: ", si.symbol)),
       mkControl(si.symbol)
     )
 

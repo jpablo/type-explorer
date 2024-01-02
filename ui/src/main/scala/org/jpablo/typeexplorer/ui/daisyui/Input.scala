@@ -15,23 +15,23 @@ def Search(mods: Modifier[ReactiveHtmlElement.Base]*): Input =
   )
 
 def LabeledCheckbox(
-    id: String,
-    labelStr: String,
-    isChecked: Signal[Boolean],
-    isDisabled: Signal[Boolean] = Signal.fromValue(false),
+    id:           String,
+    labelStr:     String,
+    isChecked:    Signal[Boolean],
+    isDisabled:   Signal[Boolean] = Signal.fromValue(false),
     clickHandler: Observer[Boolean],
-    toggle: Boolean = false
+    toggle:       Boolean = false
 ) =
   div(
     cls := "_form-control",
     label(
       forId := id,
-      cls := "label cursor-pointer",
+      cls   := "label cursor-pointer",
       span(cls := "label-text pr-1", labelStr),
       input(
-        idAttr := id,
+        idAttr       := id,
         autocomplete := "off",
-        tpe := "checkbox",
+        tpe          := "checkbox",
         disabled <-- isDisabled,
         cls := (if toggle then "toggle toggle-xs" else "checkbox checkbox-xs"),
         controlled(

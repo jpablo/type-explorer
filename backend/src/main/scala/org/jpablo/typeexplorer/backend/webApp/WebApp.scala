@@ -3,10 +3,7 @@ package org.jpablo.typeexplorer.backend.webApp
 import org.jpablo.typeexplorer.backend.backends.plantuml.toSVGText
 import org.jpablo.typeexplorer.backend.textDocuments.readTextDocumentsWithSource
 import org.jpablo.typeexplorer.protos.TextDocumentsWithSourceSeq
-import org.jpablo.typeexplorer.shared.inheritance.{
-  InheritanceGraph,
-  toPlantUML
-}
+import org.jpablo.typeexplorer.shared.inheritance.{InheritanceGraph, toPlantUML}
 import org.jpablo.typeexplorer.shared.webApp.{InheritanceRequest, Routes}
 import org.json4s.*
 import org.json4s.native.Serialization
@@ -30,10 +27,10 @@ object WebApp extends ZIOAppDefault:
   // static files
   // ----------
 
-  val extension: Regex = """.*\.(css|js)$""".r
+  private val extension: Regex = """.*\.(css|js)$""".r
   // find the path of the current jar file
-  val jarPath = Paths.get(getClass.getProtectionDomain.getCodeSource.getLocation.toURI.getPath)
-  val staticPath = jarPath.getParent.getParent.resolve("static")
+  private val jarPath = Paths.get(getClass.getProtectionDomain.getCodeSource.getLocation.toURI.getPath)
+  private val staticPath = jarPath.getParent.getParent.resolve("static")
 
   given JsonCodec[file.Path] =
     JsonCodec.string.transform(file.Path.of(_), _.toString)
@@ -49,7 +46,7 @@ object WebApp extends ZIOAppDefault:
       path match
         case extension("css") => response.withContentType("text/css")
         case extension("js")  => response.withContentType("application/javascript")
-        case _ => response
+        case _                => response
 
   }
 
@@ -66,8 +63,7 @@ object WebApp extends ZIOAppDefault:
         diagram = InheritanceGraph.from(docs).subdiagram(symbols)
         puml = diagram.toPlantUML(ireq.activeSymbols.toMap, ireq.options, ireq.projectSettings)
         svgText <- puml.toSVGText("laminar")
-      yield
-        Response.text(svgText).withContentType("image/svg+xml")
+      yield Response.text(svgText).withContentType("image/svg+xml")
 
     case req @ Method.GET -> !! / Routes.semanticdb =>
       toTaskOrBadRequest(getPath(req)): paths =>
@@ -126,9 +122,7 @@ object WebApp extends ZIOAppDefault:
 
   private def readSource(path: file.Path): Task[String] = ZIO.scoped:
     ZIO
-      .acquireRelease(ZIO.attemptBlocking(Source.fromFile(path.toFile)))(s =>
-        ZIO.succeedBlocking(s.close())
-      )
+      .acquireRelease(ZIO.attemptBlocking(Source.fromFile(path.toFile)))(s => ZIO.succeedBlocking(s.close()))
       .map(_.getLines().mkString("\n"))
 
   private def getPath(req: Request): Option[List[file.Path]] =

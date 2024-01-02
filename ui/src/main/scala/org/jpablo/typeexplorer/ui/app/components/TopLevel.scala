@@ -8,11 +8,11 @@ import org.jpablo.typeexplorer.ui.daisyui.{Button, small}
 import org.jpablo.typeexplorer.ui.widgets.Icons.closeIcon
 
 def TopLevel(
-    appState: AppState,
-    documents: EventStream[List[TextDocumentsWithSource]],
+    appState:        AppState,
+    documents:       EventStream[List[TextDocumentsWithSource]],
     selectedProject: EventBus[ProjectId],
-    deleteProject: EventBus[ProjectId],
-    errors: EventBus[String]
+    deleteProject:   EventBus[ProjectId],
+    errors:          EventBus[String]
 ) =
   div(
     ErrorToast(errors),

@@ -13,12 +13,12 @@ val laminarVersion    = "16.0.0"
 lazy val projectPath = settingKey[File]("projectPath")
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
-Global / projectPath := (ThisBuild / baseDirectory).value / ".type-explorer/meta"
+Global / projectPath          := (ThisBuild / baseDirectory).value / ".type-explorer/meta"
 //Compile / semanticdbTargetRoot := projectPath.value
 // ThisBuild / semanticdbEnabled := true
 ThisBuild / resolvers += "Sonatype OSS Snapshots" at "https://s01.oss.sonatype.org/content/repositories/snapshots"
-ThisBuild / organization := "net.jpablo"
-ThisBuild / scalaVersion := scala3Version
+ThisBuild / organization      := "net.jpablo"
+ThisBuild / scalaVersion      := scala3Version
 ThisBuild / semanticdbVersion := scalametaVersion
 ThisBuild / scalacOptions ++= // Scala 3.x options
   Seq(
@@ -60,27 +60,25 @@ lazy val protos =
 
 val sharedSettings = Seq(
   libraryDependencies ++= Seq(
-    "dev.zio" %%% "zio-prelude"       % zioPreludeVersion,
-    "dev.zio" %%% "zio-json"          % "0.6.1",
-    "dev.zio" %%% "zio-test"          % zioVersion % "test",
-    "dev.zio" %%% "zio-test-sbt"      % zioVersion % "test",
-    "dev.zio" %%% "zio-test-magnolia" % zioVersion % "test",
-    "com.softwaremill.quicklens" %%% "quicklens" % "1.9.0",
-    "org.scalameta"              %%% "scalameta" % scalametaVersion cross CrossVersion.for3Use2_13
+    "dev.zio"                    %%% "zio-prelude"       % zioPreludeVersion,
+    "dev.zio"                    %%% "zio-json"          % "0.6.1",
+    "dev.zio"                    %%% "zio-test"          % zioVersion % "test",
+    "dev.zio"                    %%% "zio-test-sbt"      % zioVersion % "test",
+    "dev.zio"                    %%% "zio-test-magnolia" % zioVersion % "test",
+    "com.softwaremill.quicklens" %%% "quicklens"         % "1.9.0",
+    "org.scalameta"              %%% "scalameta"         % scalametaVersion cross CrossVersion.for3Use2_13
   ),
   testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework")
 )
 
-/**
-  * The configuration
-  *   {{{ .crossType(CrossType.Pure).in(file("shared")) }}}
+/** The configuration {{{.crossType(CrossType.Pure).in(file("shared"))}}}
   *
-  *   enables three subprojects:
+  * enables three subprojects:
   *   - shared/.js (js stuff)
   *   - shared/.jvm (jvm stuff)
   *   - shared/src (for shared code)
   *
-  *   Check https://github.com/portable-scala/sbt-crossproject for more info
+  * Check https://github.com/portable-scala/sbt-crossproject for more info
   */
 lazy val shared =
   crossProject(JSPlatform, JVMPlatform)
@@ -88,7 +86,7 @@ lazy val shared =
     .in(file("shared"))
     .dependsOn(protos)
     .settings(
-      name := "type-explorer-shared",
+      name    := "type-explorer-shared",
       version := "0.1.0",
       excludeDependencies ++= Seq(
         "org.scala-lang.modules" %% "scala-collection-compat",
@@ -109,24 +107,24 @@ lazy val backend =
     .dependsOn(shared.jvm, protos.jvm)
     .enablePlugins(JavaAppPackaging)
     .settings(
-      name := "type-explorer-backend",
-      version := "0.1.0",
-      reStart / mainClass := Some(mainBackendApp),
-      Compile / mainClass := Some(mainBackendApp),
-      assembly / mainClass := Some(mainBackendApp),
-      assembly/assemblyJarName := "type-explorer-uber-backend.jar",
+      name                            := "type-explorer-backend",
+      version                         := "0.1.0",
+      reStart / mainClass             := Some(mainBackendApp),
+      Compile / mainClass             := Some(mainBackendApp),
+      assembly / mainClass            := Some(mainBackendApp),
+      assembly / assemblyJarName      := "type-explorer-uber-backend.jar",
       Compile / discoveredMainClasses := Seq(),
       libraryDependencies ++= Seq(
-      "io.d11"                   %% "zhttp"             % "2.0.0-RC11",
+        "io.d11" %% "zhttp" % "2.0.0-RC11",
 //      "dev.zio"                  %% "zio-http"          % "3.0.0-RC1",
-      "dev.zio"                  %% "zio-logging"       % "2.1.11",
-      "dev.zio"                  %% "zio-logging-slf4j" % "2.1.11",
-      "dev.zio"                  %% "zio-logging-slf4j-bridge" % "2.1.11",
-      "org.json4s"               %% "json4s-native"     % "4.0.6",
-      "guru.nidi"                %  "graphviz-java"     % "0.18.1",
-      "net.sourceforge.plantuml" %  "plantuml"          % "1.2022.14",
-      "com.lihaoyi"              %% "scalatags"         % "0.11.1" cross CrossVersion.for3Use2_13, // Needed until org.scalameta-common upgrades to 3.x
-       "io.github.arainko"       %% "ducktape"          % "0.1.3"
+        "dev.zio"                 %% "zio-logging"              % "2.1.11",
+        "dev.zio"                 %% "zio-logging-slf4j"        % "2.1.11",
+        "dev.zio"                 %% "zio-logging-slf4j-bridge" % "2.1.11",
+        "org.json4s"              %% "json4s-native"            % "4.0.6",
+        "guru.nidi"                % "graphviz-java"            % "0.18.1",
+        "net.sourceforge.plantuml" % "plantuml"                 % "1.2022.14",
+        "com.lihaoyi" %% "scalatags" % "0.11.1" cross CrossVersion.for3Use2_13, // Needed until org.scalameta-common upgrades to 3.x
+        "io.github.arainko" %% "ducktape" % "0.1.3"
       ),
       excludeDependencies ++= Seq(
         "com.thesamet.scalapb"   %% "scalapb-runtime",
@@ -136,9 +134,8 @@ lazy val backend =
     )
     .settings(sharedSettings)
 
-val publicDev = taskKey[String]("output directory for `npm run dev`")
+val publicDev  = taskKey[String]("output directory for `npm run dev`")
 val publicProd = taskKey[String]("output directory for `npm run build`")
-
 
 lazy val ui =
   project
@@ -148,14 +145,14 @@ lazy val ui =
 //    .enablePlugins(ScalablyTypedConverterExternalNpmPlugin)
     .settings(
       scalaJSUseMainModuleInitializer := true,
-      Compile / mainClass := Some("org.jpablo.typeexplorer.ui.app.MainJS"),
+      Compile / mainClass             := Some("org.jpablo.typeexplorer.ui.app.MainJS"),
       scalaJSLinkerConfig ~= {
         _.withModuleKind(ModuleKind.ESModule)
 //          .withModuleSplitStyle(ModuleSplitStyle.SmallModulesFor(List("org.jpablo.typeexplorer.ui")))
           .withSourceMap(true)
       },
       externalNpm := {
-        //scala.sys.process.Process(List("npm", "install", "--silent", "--no-audit", "--no-fund"), baseDirectory.value).!
+        // scala.sys.process.Process(List("npm", "install", "--silent", "--no-audit", "--no-fund"), baseDirectory.value).!
         baseDirectory.value / ".."
       },
       // Compile / npmDependencies ++= Seq(
@@ -163,40 +160,40 @@ lazy val ui =
       // ),
       libraryDependencies ++= Seq(
         "org.scala-js" %%% "scalajs-dom" % "2.2.0",
-        "com.raquo" %%% "laminar" % laminarVersion,
-        "io.laminext" %%% "fetch" % "0.15.0",
-        "com.raquo" %%% "waypoint" % "7.0.0"
+        "com.raquo"    %%% "laminar"     % laminarVersion,
+        "io.laminext"  %%% "fetch"       % "0.15.0",
+        "com.raquo"    %%% "waypoint"    % "7.0.0"
       ),
       excludeDependencies ++= Seq(
         "org.scala-lang.modules" %% "scala-collection-compat_sjs1"
       ),
-      publicDev := linkerOutputDirectory((Compile / fastLinkJS).value).getAbsolutePath,
-      publicProd := linkerOutputDirectory((Compile / fullLinkJS).value).getAbsolutePath,
+      publicDev                      := linkerOutputDirectory((Compile / fastLinkJS).value).getAbsolutePath,
+      publicProd                     := linkerOutputDirectory((Compile / fullLinkJS).value).getAbsolutePath,
       Compile / semanticdbTargetRoot := projectPath.value
     )
     .settings(sharedSettings)
 
 def linkerOutputDirectory(v: Attributed[org.scalajs.linker.interface.Report]): File =
   v.get(scalaJSLinkerOutputDirectory.key).getOrElse {
-    throw new MessageOnlyException("Linking report was not attributed with output directory. Please report this as a Scala.js bug.")
+    throw new MessageOnlyException(
+      "Linking report was not attributed with output directory. Please report this as a Scala.js bug."
+    )
   }
-
 
 lazy val root =
   project
     .in(file("."))
     .aggregate(protos.js, protos.jvm, backend, ui, shared.js, shared.jvm)
     .settings(
-      name := "type-explorer",
+      name    := "type-explorer",
       version := "0.1.0",
       welcomeMessage
     )
 
-
 def welcomeMessage = onLoadMessage := {
   import scala.Console
-  def header(text: String): String = s"${Console.RED}$text${Console.RESET}"
-  def item(text: String): String = s"${Console.GREEN}> ${Console.CYAN}$text${Console.RESET}"
+  def header(text: String): String  = s"${Console.RED}$text${Console.RESET}"
+  def item(text: String): String    = s"${Console.GREEN}> ${Console.CYAN}$text${Console.RESET}"
   def subItem(text: String): String = s"  ${Console.YELLOW}> ${Console.CYAN}$text${Console.RESET}"
 
   s"""|${header(s"Type Explorer ${version.value}")}

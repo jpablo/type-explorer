@@ -17,9 +17,9 @@ enum DiagramType:
   case CallGraph
 
 def AppHeader(
-    appState: AppState,
+    appState:        AppState,
     selectedProject: EventBus[ProjectId],
-    deleteProject: EventBus[ProjectId]
+    deleteProject:   EventBus[ProjectId]
 ): Div =
   val titleDialogOpen = Var(false)
   val titleDialog = TitleDialog(appState.activeProject.name, titleDialogOpen)
@@ -38,7 +38,7 @@ def AppHeader(
         cls := "divider divider-horizontal mx-1"
       ),
       div(
-        cls := "flex-none tooltip tooltip-bottom",
+        cls     := "flex-none tooltip tooltip-bottom",
         dataTip := "Edit project name",
         button(
           cls := "btn btn-ghost btn-sm",
@@ -55,7 +55,7 @@ def AppHeader(
       div(
         cls := "flex-none",
         div(
-          cls := "tooltip tooltip-bottom",
+          cls     := "tooltip tooltip-bottom",
           dataTip := "Select project",
           a(
             cls := "btn btn-sm",
@@ -68,7 +68,7 @@ def AppHeader(
       div(
         cls := "flex-none",
         div(
-          cls := "tooltip tooltip-bottom",
+          cls     := "tooltip tooltip-bottom",
           dataTip := "New tab",
           a(
             cls := "btn btn-sm",
@@ -81,7 +81,7 @@ def AppHeader(
       div(
         cls := "flex-1",
         div(
-          cls := "tooltip tooltip-bottom",
+          cls     := "tooltip tooltip-bottom",
           dataTip := "Close tab",
           a(
             cls := "btn btn-sm",
@@ -104,13 +104,13 @@ def AppHeader(
         ),
         // -------- config gear button --------
         div(
-          cls := "tooltip tooltip-bottom",
+          cls     := "tooltip tooltip-bottom",
           dataTip := "Configuration",
           a(
             cls := "btn btn-sm",
             label(
               forId := "drawer-1",
-              cls := "drawer-button bi bi-gear"
+              cls   := "drawer-button bi bi-gear"
             )
           )
         )
@@ -128,8 +128,8 @@ def TitleDialog(title: Var[String], open: Var[Boolean]) =
     div(
       cls := "modal-box",
       input(
-        tpe := "text",
-        cls := "input input-bordered w-full",
+        tpe         := "text",
+        cls         := "input input-bordered w-full",
         placeholder := "Project name",
         controlled(
           value <-- title.signal,

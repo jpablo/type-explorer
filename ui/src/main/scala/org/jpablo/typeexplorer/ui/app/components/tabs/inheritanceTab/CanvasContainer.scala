@@ -10,12 +10,12 @@ import org.scalajs.dom.HTMLDivElement
 
 def CanvasContainer(
     inheritanceSvgDiagram: Signal[InheritanceSvgDiagram],
-    canvasSelection: CanvasSelectionOps
+    canvasSelection:       CanvasSelectionOps
 ) =
   div(
-    cls := "h-full w-full overflow-auto relative p-1 z-10",
+    cls             := "h-full w-full overflow-auto relative p-1 z-10",
     backgroundImage := "radial-gradient(oklch(var(--bc)/.2) .5px,oklch(var(--b2)/1) .5px)",
-    backgroundSize := "5px 5px",
+    backgroundSize  := "5px 5px",
     child <-- inheritanceSvgDiagram.map: diagram =>
       val selection = canvasSelection.now()
       diagram.select(selection)
@@ -30,7 +30,7 @@ def CanvasContainer(
   )
 
 private def handleSvgClick(canvasSelection: CanvasSelectionOps)(
-    ev: dom.MouseEvent,
+    ev:      dom.MouseEvent,
     diagram: InheritanceSvgDiagram
 ): Unit =
 

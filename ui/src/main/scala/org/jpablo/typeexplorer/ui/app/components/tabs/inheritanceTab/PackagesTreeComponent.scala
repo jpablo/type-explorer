@@ -1,20 +1,13 @@
 package org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab
 
 import org.jpablo.typeexplorer.ui.app.components.state.InheritanceTabState.ActiveSymbols
-import org.jpablo.typeexplorer.ui.app.components.state.{
-  AppState,
-  InheritanceTabState,
-  Project
-}
+import org.jpablo.typeexplorer.ui.app.components.state.{AppState, InheritanceTabState, Project}
 import com.raquo.laminar.api.L.*
 import io.laminext.syntax.core.*
 import com.softwaremill.quicklens.*
 import org.jpablo.typeexplorer.ui.daisyui.*
 import org.jpablo.typeexplorer.shared.models
-import org.jpablo.typeexplorer.shared.inheritance.{
-  InheritanceGraph,
-  PackagesOptions
-}
+import org.jpablo.typeexplorer.shared.inheritance.{InheritanceGraph, PackagesOptions}
 import org.jpablo.typeexplorer.ui.extensions.*
 
 def PackagesTreeComponent(appState: AppState, tabState: InheritanceTabState) =
@@ -22,11 +15,7 @@ def PackagesTreeComponent(appState: AppState, tabState: InheritanceTabState) =
   val filterBySymbolName = Var("")
   val activeSymbols = tabState.activeSymbols.signal
   val filteredDiagram: EventStream[InheritanceGraph] =
-    filteredDiagramEvent(
-      appState,
-      activeSymbols,
-      filterBySymbolName.signal
-    )
+    filteredDiagramEvent(appState, activeSymbols, filterBySymbolName.signal)
 
   div(
     cls := "bg-base-100 rounded-box overflow-auto p-1 z-10",
@@ -37,7 +26,7 @@ def PackagesTreeComponent(appState: AppState, tabState: InheritanceTabState) =
         "options",
         showOptions.signal,
         clickHandler = Observer(_ => showOptions.update(!_)),
-        toggle = true
+        toggle       = true
       ),
       showOptions.signal.childWhenTrue:
         Options(appState)
@@ -57,8 +46,8 @@ def PackagesTreeComponent(appState: AppState, tabState: InheritanceTabState) =
   )
 
 private def filteredDiagramEvent(
-    appState: AppState,
-    activeSymbols: Signal[ActiveSymbols],
+    appState:           AppState,
+    activeSymbols:      Signal[ActiveSymbols],
     filterBySymbolName: Signal[String]
 ): EventStream[InheritanceGraph] =
   appState.fullGraph
@@ -73,18 +62,15 @@ private def filteredDiagramEvent(
     .debounce(300)
     .map:
       (
-          diagram: InheritanceGraph,
+          diagram:         InheritanceGraph,
           packagesOptions: PackagesOptions,
-          w: String,
-          activeSymbols: ActiveSymbols
+          w:               String,
+          activeSymbols:   ActiveSymbols
       ) =>
         diagram
           .orElse(w.isBlank, _.filterBySymbolName(w))
           .subdiagramByKinds(packagesOptions.nsKind)
-          .orElse(
-            !packagesOptions.onlyActive,
-            _.subdiagram(activeSymbols.keySet)
-          )
+          .orElse(!packagesOptions.onlyActive, _.subdiagram(activeSymbols.keySet))
           .orElse(packagesOptions.onlyTests, _.filterBy(!_.inTest))
 
 private def Options(appState: AppState) =
@@ -93,13 +79,11 @@ private def Options(appState: AppState) =
     div(
       cls := "card-body p-1",
       LabeledCheckbox(
-        s"filter-by-active",
-        "only active",
+        id        = s"filter-by-active",
+        labelStr  = "only active",
         isChecked = appState.packagesOptions.map(_.onlyActive),
         clickHandler = Observer: _ =>
-          appState.updateActiveProject(
-            _.modify(_.packagesOptions.onlyActive).using(!_)
-          ),
+          appState.updateActiveProject(_.modify(_.packagesOptions.onlyActive).using(!_)),
         toggle = true
       ),
       hr(),
@@ -108,9 +92,7 @@ private def Options(appState: AppState) =
         "Tests",
         isChecked = appState.packagesOptions.map(_.onlyTests),
         clickHandler = Observer: _ =>
-          appState.updateActiveProject(
-            _.modify(_.packagesOptions.onlyTests).using(!_)
-          ),
+          appState.updateActiveProject(_.modify(_.packagesOptions.onlyTests).using(!_)),
         toggle = true
       ),
       hr(),
@@ -122,10 +104,7 @@ private def Options(appState: AppState) =
           .map(_.nsKind)
           .map(_.contains(kind)),
         clickHandler = Observer: b =>
-          appState.updateActiveProject(
-            _.modify(_.packagesOptions.nsKind)
-              .using(_.toggleWith(kind, b))
-          )
+          appState.updateActiveProject(_.modify(_.packagesOptions.nsKind).using(_.toggleWith(kind, b)))
       )
     )
   )

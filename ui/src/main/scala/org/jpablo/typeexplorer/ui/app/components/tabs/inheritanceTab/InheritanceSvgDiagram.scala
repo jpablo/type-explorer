@@ -53,8 +53,7 @@ class InheritanceSvgDiagram(svgElement: dom.SVGElement):
     namespaceElements.map(_.symbol).toSet
 
   def select(symbols: Set[models.GraphSymbol]): Unit =
-    for elem <- selectableElements if symbols.contains(elem.symbol) do
-      elem.select()
+    for elem <- selectableElements if symbols.contains(elem.symbol) do elem.select()
 
   def unselectAll(): Unit =
     selectableElements.foreach(_.unselect())

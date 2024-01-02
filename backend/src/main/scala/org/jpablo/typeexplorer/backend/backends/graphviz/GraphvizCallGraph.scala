@@ -12,47 +12,40 @@ import java.io.File
 
 object GraphvizCallGraph:
 
-  def toGraph (name: String, diagram: CallGraph): Graph =
+  def toGraph(name: String, diagram: CallGraph): Graph =
     val (subGraphs, nodes) =
       diagram.namesSpaces
-        .map (toSubgraph)
+        .map(toSubgraph)
         .unzip
 
     val combinedNodes: Map[Method, Node] =
-      nodes.foldLeft (Map.empty) (_ ++ _)
+      nodes.foldLeft(Map.empty)(_ ++ _)
 
     val links =
-      for (source, target) <- diagram.pairs yield
-        combinedNodes (source) `link` to (combinedNodes (target))
+      for (source, target) <- diagram.pairs yield combinedNodes(source) `link` to(combinedNodes(target))
 
-    graph (name)
-      .directed
-      .nodeAttr.`with`(Style.FILLED, Shape.RECT, Color.rgb("#b7c9e3").fill)
+    graph(name).directed.nodeAttr
+      .`with`(Style.FILLED, Shape.RECT, Color.rgb("#b7c9e3").fill)
       .`with`(subGraphs*)
       .`with`(links*)
 
-  def toSubgraph (ns: Namespace): (Graph, Map[Method, Node]) =
+  def toSubgraph(ns: Namespace): (Graph, Map[Method, Node]) =
     val methods =
       ns.methods
-        .map (m => m -> toNode (m))
+        .map(m => m -> toNode(m))
         .toMap
     val g =
-      graph (ns.displayName)
-        .cluster
-        .graphAttr.`with`(Label.of(ns.displayName))
+      graph(ns.displayName).cluster.graphAttr
+        .`with`(Label.of(ns.displayName))
         .`with`(methods.values.toSeq*)
     (g, methods)
 
-
-  private def toNode (box: Method): Node =
-    node (box.displayName)
+  private def toNode(box: Method): Node =
+    node(box.displayName)
 
 end GraphvizCallGraph
-
 
 @main
 def graphVizCallGraphExample: File =
   val g = toGraph("call-graph-example", CallGraphExamples.callGraphExample)
   Graphviz.fromGraph(g).height(500).render(Format.SVG_STANDALONE).toFile(new File("examples/call-graph.svg"))
-
-

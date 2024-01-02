@@ -18,4 +18,3 @@ object ProjectId:
 
   def random =
     ProjectId(js.Dynamic.global.crypto.randomUUID().toString)
-

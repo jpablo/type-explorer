@@ -12,7 +12,7 @@ def Navbar(brand: String, items: ReactiveElement.Base*): Div =
     ),
     div(
       cls := "flex-none gap-3",
-        items
+      items
 //      ul(
 //        cls := "menu menu-horizontal",
 //      )

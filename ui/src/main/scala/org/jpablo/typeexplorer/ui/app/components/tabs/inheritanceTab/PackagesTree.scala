@@ -5,11 +5,7 @@ import com.raquo.laminar.api.L.*
 import com.raquo.laminar.api.features.unitArrows
 import com.raquo.laminar.nodes.ReactiveHtmlElement
 import org.jpablo.typeexplorer.shared.inheritance.InheritanceGraph
-import org.jpablo.typeexplorer.shared.models.{
-  Namespace,
-  NamespaceKind,
-  GraphSymbol
-}
+import org.jpablo.typeexplorer.shared.models.{Namespace, NamespaceKind, GraphSymbol}
 import org.jpablo.typeexplorer.shared.tree.Tree
 import org.jpablo.typeexplorer.ui.app.components.state.InheritanceTabState
 import org.jpablo.typeexplorer.ui.extensions.*
@@ -22,8 +18,7 @@ import org.scalajs.dom.{HTMLAnchorElement, HTMLLIElement, HTMLUListElement}
   * @param diagrams
   *   The diagram
   * @return
-  *   A List of trees, one for each top level package in the diagram: e.g.
-  *   ["com..., ", "java.io..."]
+  *   A List of trees, one for each top level package in the diagram: e.g. ["com..., ", "java.io..."]
   */
 def PackagesTree(
     tabState: InheritanceTabState,
@@ -46,7 +41,7 @@ val leafSymbols: Tree[Namespace] => List[GraphSymbol] =
   case Tree.Leaf(_, ns)            => List(ns.symbol)
 
 class TreeElement(tabState: InheritanceTabState):
-  val openBranches = Var(Set.empty[List[String]])
+  private val openBranches = Var(Set.empty[List[String]])
 
   def render(
       trees: List[Tree[Namespace]]
@@ -56,9 +51,9 @@ class TreeElement(tabState: InheritanceTabState):
         EventStream.fromSeq(List(trees)).split(fullLabel)(TreeRow)
     )
 
-  def TreeRow(
-      id: String,
-      initial: Tree[Namespace],
+  private def TreeRow(
+      id:         String,
+      initial:    Tree[Namespace],
       treeSignal: Signal[Tree[Namespace]]
   ): ReactiveHtmlElement[HTMLLIElement] =
     li(
@@ -68,11 +63,11 @@ class TreeElement(tabState: InheritanceTabState):
           case b: Tree.Branch[?] => Package(b.label, b.path, b.children)
     )
 
-  def PackageMember(ns: Namespace) =
+  private def PackageMember(ns: Namespace) =
     val isActive = tabState.activeSymbols.signal.map(_.contains(ns.symbol))
     a(
       idAttr := ns.symbol.toString,
-      cls := "font-['JetBrains_Mono'] rounded-box p-1 m-px cursor-pointer",
+      cls    := "font-['JetBrains_Mono'] rounded-box p-1 m-px cursor-pointer",
       cls.toggle("active") <-- isActive,
       TreeElement.stereotype(ns),
       div(
@@ -87,8 +82,8 @@ class TreeElement(tabState: InheritanceTabState):
 
   def Package(
       packageLabel: String,
-      packagePath: List[String],
-      children: List[Tree[Namespace]]
+      packagePath:  List[String],
+      children:     List[Tree[Namespace]]
   ) =
     details(
       open <-- openBranches.signal.map(s => s.contains(packagePath)),
@@ -112,15 +107,14 @@ end TreeElement
 
 object TreeElement:
 
-  /** The "stereotype" is an element indicating which kind of namespace we have:
-    * an Object, a Class, etc.
+  /** The "stereotype" is an element indicating which kind of namespace we have: an Object, a Class, etc.
     */
   private def stereotype(ns: Namespace) =
     def circle(s: String, color: String) =
       div(
         cls := "avatar placeholder",
         div(
-          cls := s"text-neutral-content rounded-full w-4",
+          cls             := s"text-neutral-content rounded-full w-4",
           backgroundColor := color,
           span(cls := "text-xs", s)
         )

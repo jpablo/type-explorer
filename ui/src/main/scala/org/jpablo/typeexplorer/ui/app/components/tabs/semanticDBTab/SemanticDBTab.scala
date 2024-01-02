@@ -6,7 +6,7 @@ import org.jpablo.typeexplorer.shared.inheritance.Path
 import org.jpablo.typeexplorer.ui.app.client.fetchSourceCode
 
 def SemanticDBTab(
-    documents: EventStream[List[TextDocumentsWithSource]],
+    documents:    EventStream[List[TextDocumentsWithSource]],
     projectPaths: Signal[List[Path]]
 ) =
   val selectedSemanticDbR = EventBus[Path]()

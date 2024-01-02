@@ -5,7 +5,6 @@ import guru.nidi.graphviz.engine.{Format, Graphviz}
 import guru.nidi.graphviz.model.Graph
 import zio.*
 
-
 type SvgText = String
 
 extension (graph: Graph)
@@ -18,8 +17,6 @@ extension (graph: Graph)
         .height(800)
         .render(Format.SVG_STANDALONE)
     ZIO.attemptBlockingIO(renderer.toString)
-
-
 
 //@main
 //def plantumlExample(): Unit =

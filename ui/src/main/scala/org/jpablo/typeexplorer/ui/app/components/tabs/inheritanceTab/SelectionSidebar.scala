@@ -36,11 +36,7 @@ def SelectionSidebar(
               a(
                 "Remove",
                 disabled <-- selectionEmpty,
-                tabState.activeSymbols.applyOnSelection((all, sel) =>
-                  all -- sel
-                )(
-                  onClick
-                )
+                tabState.activeSymbols.applyOnSelection((all, sel) => all -- sel)(onClick)
               )
             ),
             // ----- remove complement -----
@@ -49,9 +45,7 @@ def SelectionSidebar(
               a(
                 "Keep",
                 disabled <-- selectionEmpty,
-                tabState.activeSymbols.applyOnSelection((all, sel) =>
-                  all.filter((k, _) => sel.contains(k))
-                )(onClick)
+                tabState.activeSymbols.applyOnSelection((all, sel) => all.filter((k, _) => sel.contains(k)))(onClick)
               )
             ),
             // ----- copy as svg -----
@@ -133,7 +127,7 @@ def SelectionSidebar(
             li(
               cls.toggle("disabled") <-- selectionEmpty,
               LabeledCheckbox(
-                id = "fields-checkbox-3",
+                id       = "fields-checkbox-3",
                 labelStr = "Show fields",
                 isChecked = tabState.activeSymbolsV.signal
                   .combineWith(tabState.canvasSelection.signal)
@@ -141,9 +135,7 @@ def SelectionSidebar(
                     val activeSelection =
                       activeSymbols.filter((s, _) => selection.contains(s))
                     // true when activeSelection is nonEmpty AND every option exists and showFields == true
-                    activeSelection.nonEmpty && activeSelection.forall((_, o) =>
-                      o.exists(_.showFields)
-                    )
+                    activeSelection.nonEmpty && activeSelection.forall((_, o) => o.exists(_.showFields))
                 ,
                 isDisabled = selectionEmpty,
                 clickHandler = Observer: b =>

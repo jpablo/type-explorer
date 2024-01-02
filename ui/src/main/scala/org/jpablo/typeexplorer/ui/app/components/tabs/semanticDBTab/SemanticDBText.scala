@@ -7,7 +7,6 @@ import scalajs.js
 import scalajs.js.URIUtils.encodeURIComponent
 import scala.meta.internal.semanticdb.TextDocument
 
-
 object SemanticDBText:
 
   def apply(textDoc: TextDocumentsWithSource) =
@@ -22,15 +21,19 @@ object SemanticDBText:
   private def renderTextDocument(doc: TextDocument) =
     div(
       idAttr := doc.uri,
-      textCard("", "card-uri",  s"uri: ${doc.uri}"),
+      textCard("", "card-uri", s"uri: ${doc.uri}"),
       div(
-        doc.symbols.sortBy(_.symbol).map(si => renderGeneratedMessage(encodeURIComponent(si.symbol), "card-symbol-information", si))
+        doc.symbols
+          .sortBy(_.symbol)
+          .map(si => renderGeneratedMessage(encodeURIComponent(si.symbol), "card-symbol-information", si))
       ),
       div(
-        doc.occurrences.map(oc => renderGeneratedMessage(encodeURIComponent(oc.symbol), "card-occurrence", oc)),
+        doc.occurrences.map(oc => renderGeneratedMessage(encodeURIComponent(oc.symbol), "card-occurrence", oc))
       ),
       div(
-        doc.synthetics.map(syn => renderGeneratedMessage(syn.range.map(_.toProtoString).getOrElse(""), "card-synthetic", syn)),
+        doc.synthetics.map(syn =>
+          renderGeneratedMessage(syn.range.map(_.toProtoString).getOrElse(""), "card-synthetic", syn)
+        )
       )
     )
 
@@ -40,7 +43,7 @@ object SemanticDBText:
   private def textCard(id: String, className: String, text: String) =
     div(
       idAttr := id,
-      cls := ("m-1", className),
+      cls    := ("m-1", className),
       div(
         cls := "p-2",
         pre(

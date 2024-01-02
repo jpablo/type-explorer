@@ -9,9 +9,9 @@ import org.jpablo.typeexplorer.ui.widgets.Dialog
 import org.scalajs.dom.HTMLDivElement
 
 def ProjectSelector(
-    projects: Signal[Map[ProjectId, Project]],
+    projects:        Signal[Map[ProjectId, Project]],
     selectedProject: EventBus[ProjectId],
-    deleteProject: EventBus[ProjectId]
+    deleteProject:   EventBus[ProjectId]
 ) =
   val filter = Var("")
   val selection = Var(Set.empty[ProjectId])
@@ -32,8 +32,8 @@ def ProjectSelector(
       cls := "modal-box",
       // -------- filter ---------
       input(
-        tpe := "text",
-        cls := "input input-bordered w-full",
+        tpe         := "text",
+        cls         := "input input-bordered w-full",
         placeholder := "Filter project",
         controlled(
           value <-- filter,
@@ -75,7 +75,7 @@ def ProjectSelectorItem(
   li(
     cls := "flex flex-row",
     a(
-      cls := "text-gray-700 flex-1",
+      cls  := "text-gray-700 flex-1",
       href := s"/${id.value}",
       if project.name.isBlank then id.value else project.name
     ),

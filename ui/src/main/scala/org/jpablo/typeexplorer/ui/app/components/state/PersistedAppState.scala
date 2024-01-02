@@ -5,7 +5,7 @@ import zio.json.JsonCodec
 /** Structure of the persisted state (in local storage)
   */
 case class PersistedAppState(
-    projects: Map[ProjectId, Project] = Map.empty,
+    projects:            Map[ProjectId, Project] = Map.empty,
     lastActiveProjectId: Option[ProjectId] = None
 ) derives JsonCodec:
 

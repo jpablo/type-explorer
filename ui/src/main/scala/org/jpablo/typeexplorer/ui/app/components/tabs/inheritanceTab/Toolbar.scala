@@ -5,10 +5,7 @@ import com.raquo.laminar.api.features.unitArrows
 import com.raquo.laminar.nodes.ReactiveHtmlElement
 import com.softwaremill.quicklens.*
 import org.jpablo.typeexplorer.shared.inheritance.{InheritanceGraph, toPlantUML}
-import org.jpablo.typeexplorer.ui.app.components.state.{
-  AppState,
-  InheritanceTabState
-}
+import org.jpablo.typeexplorer.ui.app.components.state.InheritanceTabState
 import org.jpablo.typeexplorer.ui.daisyui.*
 import org.jpablo.typeexplorer.ui.domUtils
 import org.jpablo.typeexplorer.ui.domUtils.dataTip
@@ -17,8 +14,8 @@ import org.scalajs.dom
 import org.scalajs.dom.{HTMLDivElement, HTMLElement}
 
 def Toolbar(
-    fullGraph: Signal[InheritanceGraph],
-    tabState: InheritanceTabState,
+    fullGraph:                   Signal[InheritanceGraph],
+    tabState:                    InheritanceTabState,
     containerBoundingClientRect: => dom.DOMRect
 ) =
   val zoomValue = Var(100.0)
@@ -36,7 +33,7 @@ def Toolbar(
     // -------- package selector --------
     Join(
       div(
-        cls := "flex-none tooltip tooltip-bottom",
+        cls     := "flex-none tooltip tooltip-bottom",
         dataTip := "Package Selector",
         button.boxesIcon.amend(
           cls := "btn btn-ghost btn-sm",
@@ -47,8 +44,8 @@ def Toolbar(
     // -------- fields and signatures --------
     Join(
       LabeledCheckbox(
-        id = "fields-checkbox-1",
-        labelStr = "fields",
+        id        = "fields-checkbox-1",
+        labelStr  = "fields",
         isChecked = tabState.diagramOptionsV.signal.map(_.showFields),
         clickHandler = tabState.diagramOptionsV
           .updater(_.modify(_.showFields).setTo(_)),
@@ -65,18 +62,17 @@ def Toolbar(
         cls := "dropdown dropdown-hover",
         label(
           tabIndex := 0,
-          cls := "btn btn-xs join-item whitespace-nowrap",
+          cls      := "btn btn-xs join-item whitespace-nowrap",
           "Copy as"
         ),
         ul(
           tabIndex := 0,
-          cls := "dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52",
+          cls      := "dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52",
           li(
             a(
               "svg",
-              onClick.compose(_.sample(tabState.inheritanceSvgDiagram)) --> {
-                diagram =>
-                  dom.window.navigator.clipboard.writeText(diagram.toSVGText)
+              onClick.compose(_.sample(tabState.inheritanceSvgDiagram)) --> { diagram =>
+                dom.window.navigator.clipboard.writeText(diagram.toSVGText)
               }
             )
           ),
@@ -90,11 +86,10 @@ def Toolbar(
       ),
       Button(
         "fit",
-        onClick.compose(_.sample(tabState.inheritanceSvgDiagram)) --> {
-          diagram =>
-            zoomValue.set(
-              100 * diagram.getFitProportion(containerBoundingClientRect)
-            )
+        onClick.compose(_.sample(tabState.inheritanceSvgDiagram)) --> { diagram =>
+          zoomValue.set(
+            100 * diagram.getFitProportion(containerBoundingClientRect)
+          )
         }
       ).tiny
     ),
@@ -105,11 +100,11 @@ def Toolbar(
         onClick --> zoomValue.update(_ * 0.9)
       ).tiny,
       input(
-        tpe := "range",
-        cls := "bg-base-200",
-        domUtils.min := minZoom,
-        domUtils.max := maxZoom,
-        value := "100",
+        tpe     := "range",
+        cls     := "bg-base-200",
+        minAttr := minZoom.toString,
+        maxAttr := maxZoom.toString,
+        value   := "100",
         controlled(
           value <-- zoomValue.signal.map(_.toString),
           onInput.mapToValue.map(_.toDouble) --> zoomValue
@@ -124,7 +119,7 @@ def Toolbar(
 
 private def onPlantUMLClicked(
     fullGraph: Signal[InheritanceGraph],
-    tabState: InheritanceTabState
+    tabState:  InheritanceTabState
 ) =
   onClick.compose(
     _.sample(

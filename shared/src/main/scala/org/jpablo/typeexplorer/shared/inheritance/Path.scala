@@ -13,6 +13,3 @@ object Path:
   given JsonCodec[Path] = JsonCodec.string
   given JsonFieldEncoder[Path] = JsonFieldEncoder.string
   given JsonFieldDecoder[Path] = JsonFieldDecoder.string
-
-
-

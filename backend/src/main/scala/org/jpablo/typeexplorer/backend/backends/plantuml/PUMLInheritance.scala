@@ -7,21 +7,17 @@ import zio.*
 import java.io.ByteArrayOutputStream
 import java.nio.charset.Charset
 
-
 type SvgText = String
 
 extension (puml: PlantUML)
   def toSVGText(name: String): Task[String] = ZIO.scoped:
     for
-      os <- ZIO.acquireRelease(ZIO.succeed(new ByteArrayOutputStream))(os => ZIO.succeedBlocking(os.close()))
+      os     <- ZIO.acquireRelease(ZIO.succeed(new ByteArrayOutputStream))(os => ZIO.succeedBlocking(os.close()))
       reader <- ZIO.attempt(SourceStringReader(puml.diagram))
       svg <- ZIO.attemptBlockingIO:
         reader.outputImage(os, FileFormatOption(FileFormat.SVG))
         os.toString(Charset.defaultCharset())
-    yield
-      svg
-
-
+    yield svg
 
 //@main
 //def plantumlExample(): Unit =

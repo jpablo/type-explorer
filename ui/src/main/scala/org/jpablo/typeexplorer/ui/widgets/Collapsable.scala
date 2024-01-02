@@ -20,17 +20,13 @@ object Collapsable:
         Observer[Boolean](_ => $openState.update(_.toggle(key, startOpen)))
       )
 
-
   def apply(nodeLabel: HtmlElement, nodeContents: Seq[HtmlElement], control: Control) =
     div(
       cls := "collapsable-wrapper whitespace-nowrap cursor-pointer te-package-name",
-      if nodeContents.isEmpty then
-        span(cls := "bi inline-block w-5")
-      else
-        Icons.chevron(control.$isOpen, onClick.mapToTrue --> control.toggle),
+      if nodeContents.isEmpty then span(cls := "bi inline-block w-5")
+      else Icons.chevron(control.$isOpen, onClick.mapToTrue --> control.toggle),
       nodeLabel,
       control.$isOpen.childWhenTrue(
         ul(cls := "collapsable-children pl-4", nodeContents.map(li(_)))
       )
     )
-

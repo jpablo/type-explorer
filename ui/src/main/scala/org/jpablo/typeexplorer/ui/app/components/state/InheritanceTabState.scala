@@ -4,12 +4,7 @@ import com.raquo.airstream.core.EventStream
 import com.raquo.airstream.core.Signal
 import com.raquo.airstream.state.Var
 import com.raquo.laminar.api.L.*
-import org.jpablo.typeexplorer.shared.inheritance.{
-  DiagramOptions,
-  InheritanceGraph,
-  Path,
-  SymbolOptions
-}
+import org.jpablo.typeexplorer.shared.inheritance.{DiagramOptions, InheritanceGraph, Path, SymbolOptions}
 import org.jpablo.typeexplorer.shared.models.GraphSymbol
 import org.scalajs.dom
 import org.jpablo.typeexplorer.ui.extensions.*
@@ -30,9 +25,7 @@ case class InheritanceTabState(appState: AppState, pageId: String):
   private val pageV = appState.activeProject.pageV(pageId)
 
   val activeSymbolsV: Var[Map[GraphSymbol, Option[SymbolOptions]]] =
-    pageV.zoom(_.activeSymbols.toMap)((p, s) =>
-      p.copy(activeSymbols = s.toList)
-    )
+    pageV.zoom(_.activeSymbols.toMap)((p, s) => p.copy(activeSymbols = s.toList))
 
   val diagramOptionsV: Var[DiagramOptions] =
     pageV.zoom(_.diagramOptions)((p, s) => p.copy(diagramOptions = s))
@@ -78,9 +71,9 @@ class CanvasSelectionOps(
     canvasSelectionV.set(Set.empty)
 
   def selectParents(
-      fullDiagram: InheritanceGraph,
+      fullDiagram:           InheritanceGraph,
       inheritanceSvgDiagram: InheritanceSvgDiagram,
-      activeSymbols: ActiveSymbols
+      activeSymbols:         ActiveSymbols
   ): Unit =
     selectRelated(
       _.parentsOfAll(_),
@@ -90,9 +83,9 @@ class CanvasSelectionOps(
     )
 
   def selectChildren(
-      fullDiagram: InheritanceGraph,
+      fullDiagram:           InheritanceGraph,
       inheritanceSvgDiagram: InheritanceSvgDiagram,
-      activeSymbols: ActiveSymbols
+      activeSymbols:         ActiveSymbols
   ): Unit =
     selectRelated(
       _.childrenOfAll(_),
@@ -102,13 +95,10 @@ class CanvasSelectionOps(
     )
 
   private def selectRelated(
-      selector: (
-          InheritanceGraph,
-          Set[GraphSymbol]
-      ) => InheritanceGraph,
-      fullDiagram: InheritanceGraph,
+      selector:              (InheritanceGraph, Set[GraphSymbol]) => InheritanceGraph,
+      fullDiagram:           InheritanceGraph,
       inheritanceSvgDiagram: InheritanceSvgDiagram,
-      activeSymbols: ActiveSymbols
+      activeSymbols:         ActiveSymbols
   ): Unit =
     val svgDiagram = fullDiagram.subdiagram(activeSymbols.keySet)
     val selection = canvasSelectionV.now()
@@ -123,9 +113,9 @@ class CanvasSelectionOps(
 end CanvasSelectionOps
 
 class ActiveSymbolsOps(
-    val activeSymbolsR: Var[ActiveSymbols],
+    val activeSymbolsR:       Var[ActiveSymbols],
     val fullInheritanceGraph: Signal[InheritanceGraph],
-    val canvasSelectionR: Var[Set[GraphSymbol]]
+    val canvasSelectionR:     Var[Set[GraphSymbol]]
 ):
 
   val signal = activeSymbolsR.signal
@@ -150,8 +140,7 @@ class ActiveSymbolsOps(
     val canvasSelection = canvasSelectionR.now()
     activeSymbolsR.update:
       _.transform: (sym, options) =>
-        if canvasSelection.contains(sym) then
-          Some(f(options.getOrElse(SymbolOptions())))
+        if canvasSelection.contains(sym) then Some(f(options.getOrElse(SymbolOptions())))
         else options
 
   /** Modify `activeSymbols` based on the given function `f`
@@ -173,19 +162,16 @@ class ActiveSymbolsOps(
   def addSelectionParents[E <: dom.Event](ep: EventProp[E]) =
     addSelectionWith(_.parentsOf(_), ep)
 
-  /** Updates activeSymbols with the given function `f` and the current canvas
-    * selection.
+  /** Updates activeSymbols with the given function `f` and the current canvas selection.
     */
   private def addSelectionWith[E <: dom.Event](
-      f: (InheritanceGraph, GraphSymbol) => InheritanceGraph,
+      f:  (InheritanceGraph, GraphSymbol) => InheritanceGraph,
       ep: EventProp[E]
   ): Base =
     val combined = fullInheritanceGraph.combineWith(canvasSelectionR.signal)
     ep.compose(_.sample(combined)) --> { (diagram, selection) =>
       if selection.nonEmpty then
-        val diagram1 = selection.foldLeft(InheritanceGraph.empty)((acc, s) =>
-          f(diagram, s) ++ acc
-        )
+        val diagram1 = selection.foldLeft(InheritanceGraph.empty)((acc, s) => f(diagram, s) ++ acc)
         extend(diagram1.symbols.toSeq)
     }
 end ActiveSymbolsOps

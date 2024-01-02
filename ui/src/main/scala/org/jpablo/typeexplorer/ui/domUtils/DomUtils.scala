@@ -1,11 +1,7 @@
 package org.jpablo.typeexplorer.ui.domUtils
 
 import com.raquo.laminar.api.L.*
-import com.raquo.laminar.codecs.{
-  BooleanAsAttrPresenceCodec,
-  IntAsStringCodec,
-  StringAsIsCodec
-}
+import com.raquo.laminar.codecs.{BooleanAsAttrPresenceCodec, IntAsStringCodec, StringAsIsCodec}
 import org.scalajs.dom.HTMLDialogElement
 
 val details = htmlTag("details")
@@ -19,7 +15,5 @@ val name = htmlAttr("name", StringAsIsCodec)
 val ariaLabel = htmlAttr("aria-label", StringAsIsCodec)
 
 val autocomplete = htmlProp("autocomplete", StringAsIsCodec)
-val min = htmlAttr("min", IntAsStringCodec)
-val max = htmlAttr("max", IntAsStringCodec)
 
 val gridColumn = styleProp("grid-column")

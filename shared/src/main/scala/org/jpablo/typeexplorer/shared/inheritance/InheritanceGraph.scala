@@ -25,12 +25,14 @@ type Arrow = (GraphSymbol, GraphSymbol)
 
 /** A simplified representation of entities and subtype relationships
   *
-  * @param arrows A pair `(a, b)` means that `a` is a subtype of `b`
-  * @param namespaces Classes, Objects, Traits, etc
+  * @param arrows
+  *   A pair `(a, b)` means that `a` is a subtype of `b`
+  * @param namespaces
+  *   Classes, Objects, Traits, etc
   */
 case class InheritanceGraph(
-  arrows    : Set[Arrow],
-  namespaces: Set[Namespace] = Set.empty,
+    arrows:     Set[Arrow],
+    namespaces: Set[Namespace] = Set.empty
 ) derives JsonCodec:
   lazy val symbols =
     namespaces.map(_.symbol)
@@ -101,46 +103,45 @@ case class InheritanceGraph(
     */
   def subdiagram(symbols: Set[GraphSymbol]): InheritanceGraph =
     val foundSymbols = nsBySymbol.keySet.intersect(symbols)
-    val foundNS      = foundSymbols.map(nsBySymbol)
+    val foundNS = foundSymbols.map(nsBySymbol)
     InheritanceGraph(arrowsForSymbols(foundSymbols), foundNS)
 
   def subdiagramByKinds(kinds: Set[NamespaceKind]): InheritanceGraph =
-    val foundKinds  = nsByKind.filter((kind, _) => kinds.contains(kind))
-    val foundNS     = foundKinds.values.flatten.toSet
+    val foundKinds = nsByKind.filter((kind, _) => kinds.contains(kind))
+    val foundNS = foundKinds.values.flatten.toSet
     InheritanceGraph(arrowsForSymbols(foundNS.map(_.symbol)), foundNS)
 
   // Note: doesn't handle loops.
   // How efficient is this compared to the tail rec version above?
   def unfold(symbols: Set[GraphSymbol], related: GraphSymbol => Set[GraphSymbol]): Set[GraphSymbol] =
-    Set.unfold(symbols) { ss =>
-      val ss2 = ss.flatMap(related)
-      if ss2.isEmpty then None else Some((ss2, ss2))
-    }.flatten
-
+    Set
+      .unfold(symbols) { ss =>
+        val ss2 = ss.flatMap(related)
+        if ss2.isEmpty then None else Some((ss2, ss2))
+      }
+      .flatten
 
   private def allRelated(ss: Set[GraphSymbol], r: GraphSymbol => Set[GraphSymbol]): InheritanceGraph =
     subdiagram(unfold(ss, r) ++ ss)
 
-  def parentsOfAll(symbols: Set[GraphSymbol]): InheritanceGraph = allRelated(symbols, directParents)
+  def parentsOfAll(symbols:  Set[GraphSymbol]): InheritanceGraph = allRelated(symbols, directParents)
   def childrenOfAll(symbols: Set[GraphSymbol]): InheritanceGraph = allRelated(symbols, directChildren)
 
-  def parentsOf(symbol: GraphSymbol): InheritanceGraph = allRelated(Set(symbol), directParents)
+  def parentsOf(symbol:  GraphSymbol): InheritanceGraph = allRelated(Set(symbol), directParents)
   def childrenOf(symbol: GraphSymbol): InheritanceGraph = allRelated(Set(symbol), directChildren)
-
 
   lazy val toTrees: Tree[Namespace] =
     val paths =
-      for ns <- namespaces.toList yield
-        (ns.symbol.toString.split("/").init.toList, ns.displayName, ns)
+      for ns <- namespaces.toList yield (ns.symbol.toString.split("/").init.toList, ns.displayName, ns)
     Tree.fromPaths(paths, ".")
 
-  /** Combines the diagram on the left with the diagram on the right.
-    * No new arrows are introduced beyond those present in both diagrams.
+  /** Combines the diagram on the left with the diagram on the right. No new arrows are introduced beyond those present
+    * in both diagrams.
     */
   @targetName("combine")
-  def ++ (other: InheritanceGraph): InheritanceGraph =
+  def ++(other: InheritanceGraph): InheritanceGraph =
     InheritanceGraph(
-      arrows = arrows ++ other.arrows,
+      arrows     = arrows ++ other.arrows,
       namespaces = namespaces ++ other.namespaces
     )
 
@@ -178,30 +179,30 @@ object InheritanceGraph:
     val allSymbols =
       for
         docWithSource <- textDocuments.documentsWithSource
-        doc <- docWithSource.documents
+        doc           <- docWithSource.documents
         occurrences = doc.occurrences.map(so => (so.symbol, so)).toMap
         si <- doc.symbols
         if !excluded.exists(si.symbol.contains)
-      yield
-        GraphSymbol(si.symbol) -> (si, docWithSource.semanticDbUri, doc.uri, docWithSource.basePath, occurrences.get(si.symbol))
+      yield GraphSymbol(si.symbol) -> (si, docWithSource.semanticDbUri, doc.uri, docWithSource.basePath, occurrences
+        .get(si.symbol))
 
     val symbolInfosMap = allSymbols.map((s, t) => s -> t._1).toMap
 
     val namespaces =
       for
         (symbol, (symbolInfo, semanticDbUri, docURI, basePath, symbolOcc: Option[SymbolOccurrence])) <- allSymbols
-        signature    <- symbolInfo.signature.asNonEmpty.toSeq
+        signature <- symbolInfo.signature.asNonEmpty.toSeq
         clsSignature <- signature match
           case cs: ClassSignature => List(cs)
           case _                  => List.empty
         nsKind = translateKind(symbolInfo.kind)
-        declarations = clsSignature
-          .declarations
+        declarations = clsSignature.declarations
           .map:
             _.symlinks
               .filterNot(si => excluded.exists(si.contains))
               .map(GraphSymbol(_))
-          .toSeq.flatten
+          .toSeq
+          .flatten
 
         methods = declarations.map(method(symbolInfosMap))
         namespace =
@@ -215,20 +216,18 @@ object InheritanceGraph:
             basePath      = Some(basePath),
             range         = symbolOcc.map(SymbolRange.from)
           )
-      yield
-        namespace -> clsSignature.parents
+      yield namespace -> clsSignature.parents
 
     val arrows =
       for
         (ns, parents) <- namespaces.toSeq
         parent        <- parents
         parentType    <- parent.asNonEmpty.toSeq
-        parentSymbol  <- parentType match
+        parentSymbol <- parentType match
           case tr: TypeRef => List(GraphSymbol(tr.symbol))
-          case _ => List.empty
+          case _           => List.empty
         if !excluded.contains(parentSymbol.toString)
-      yield
-        ns.symbol -> parentSymbol
+      yield ns.symbol -> parentSymbol
 
     InheritanceGraph(
       arrows     = arrows.toSet,
@@ -238,23 +237,18 @@ object InheritanceGraph:
   end from
 
   private def missingSymbols(parents: List[GraphSymbol], allSymbols: Map[GraphSymbol, SymbolInformation]) =
-    for
-      to <- parents.distinct if ! (allSymbols contains to)
+    for to <- parents.distinct if !(allSymbols contains to)
     yield
       val last = to.toString.split("/").last
       val kind =
-        if last.endsWith("#") then
-          NamespaceKind.Class
-        else if last.endsWith(".") then
-          NamespaceKind.Object
-        else
-          NamespaceKind.Unknown
+        if last.endsWith("#") then NamespaceKind.Class
+        else if last.endsWith(".") then NamespaceKind.Object
+        else NamespaceKind.Unknown
       Namespace(
-        symbol = to,
+        symbol      = to,
         displayName = last.replace(".", "").replace("#", ""),
-        kind = kind
+        kind        = kind
       )
-
 
   private def translateKind(kind: Kind) = kind match
     case Kind.OBJECT         => NamespaceKind.Object
@@ -273,11 +267,8 @@ object InheritanceGraph:
 
   private def missingMethodName(s: GraphSymbol) =
     val str = s.toString
-    if str.endsWith("`<init>`().") then
-      "<init>"
-    else if str.endsWith("#main().") then
-      "main()"
-    else
-      str
+    if str.endsWith("`<init>`().") then "<init>"
+    else if str.endsWith("#main().") then "main()"
+    else str
 
 end InheritanceGraph

@@ -3,25 +3,23 @@ package org.jpablo.typeexplorer.shared.inheritance
 import org.jpablo.typeexplorer.shared.tree.Tree
 import org.jpablo.typeexplorer.shared.models.{Method, Namespace, NamespaceKind, GraphSymbol}
 
-
 case class PlantUML(diagram: String)
-
 
 extension (diagram: InheritanceGraph)
   def toPlantUML(
-    symbols: Map[GraphSymbol, Option[SymbolOptions]],
-    diagramOptions: DiagramOptions = DiagramOptions(),
-    projectSettings: ProjectSettings = ProjectSettings()
+      symbols:         Map[GraphSymbol, Option[SymbolOptions]],
+      diagramOptions:  DiagramOptions = DiagramOptions(),
+      projectSettings: ProjectSettings = ProjectSettings()
   ): PlantUML =
     PlantumlInheritance.toPlantUML(diagram, symbols, diagramOptions, projectSettings)
 
 object PlantumlInheritance:
 
   def toPlantUML(
-    iGraph         : InheritanceGraph,
-    symbols        : Map[GraphSymbol, Option[SymbolOptions]],
-    diagramOptions : DiagramOptions = DiagramOptions(),
-    projectSettings: ProjectSettings
+      iGraph:          InheritanceGraph,
+      symbols:         Map[GraphSymbol, Option[SymbolOptions]],
+      diagramOptions:  DiagramOptions = DiagramOptions(),
+      projectSettings: ProjectSettings
   ): PlantUML =
     val filteredDiagram =
       iGraph.filterBy(ns => !projectSettings.hiddenSymbols.contains(ns.symbol))
@@ -29,8 +27,7 @@ object PlantumlInheritance:
       filteredDiagram.toTrees.children.map(renderTree(diagramOptions, projectSettings, symbols))
 
     val inheritance =
-      for (source, target) <- filteredDiagram.arrows yield
-        s""""${target}" <|-- "${source}""""
+      for (source, target) <- filteredDiagram.arrows yield s""""${target}" <|-- "${source}""""
 
     PlantUML(
       s"""@startuml
@@ -53,7 +50,11 @@ object PlantumlInheritance:
 
   // ----------------------------------------------------
 
-  private def renderTree(diagramOptions: DiagramOptions, projectSettings: ProjectSettings, symbols: Map[GraphSymbol, Option[SymbolOptions]]): Tree[Namespace] => String =
+  private def renderTree(
+      diagramOptions:  DiagramOptions,
+      projectSettings: ProjectSettings,
+      symbols:         Map[GraphSymbol, Option[SymbolOptions]]
+  ): Tree[Namespace] => String =
     case Tree.Branch(label, path, children) =>
       s"""
          |namespace "$label" as ${path.mkString(".")} {
@@ -72,7 +73,12 @@ object PlantumlInheritance:
     replacementTable.foreach((k, v) => s1 = s1.replace(k, v))
     s1
 
-  private def renderNamespace(ns: Namespace, diagramOptions: DiagramOptions, projectSettings: ProjectSettings, symbolOptions: Option[SymbolOptions]): String =
+  private def renderNamespace(
+      ns:              Namespace,
+      diagramOptions:  DiagramOptions,
+      projectSettings: ProjectSettings,
+      symbolOptions:   Option[SymbolOptions]
+  ): String =
     val header = s"""class "${replaceMultiple(ns.displayName)}" as ${ns.symbol}"""
     val stereotype = ns.kind match
       case NamespaceKind.Object        => """ << (O, #44ad7d) >>"""
@@ -88,14 +94,16 @@ object PlantumlInheritance:
       if showFields then
         if showSignatures then
           filteredMethods
-            .map(renderField(0)).mkString(" {\n", "\n", "\n}\n")
+            .map(renderField(0))
+            .mkString(" {\n", "\n", "\n}\n")
         else
           filteredMethods
             .groupBy(_.displayName)
-            .toList.sortBy(_._1)
-            .map((_, ms) => renderField(ms.length)(ms.head)).mkString(" {\n", "\n", "\n}\n")
-      else
-        ""
+            .toList
+            .sortBy(_._1)
+            .map((_, ms) => renderField(ms.length)(ms.head))
+            .mkString(" {\n", "\n", "\n}\n")
+      else ""
     header + stereotype + fields
 
   private def renderField(count: Int)(m: Method): String =
@@ -103,6 +111,3 @@ object PlantumlInheritance:
     val returnType = m.returnType.map(o => " : " + o.displayName).getOrElse("")
     val symbolComment = s"' ${m.symbol}"
     s"""  ${m.displayName}${countStr}${returnType}""" + "\n" + symbolComment
-
-
-

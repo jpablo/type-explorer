@@ -11,7 +11,7 @@ case class Updater[A](signal: Signal[A], update: A => Unit)
 def AppConfigDrawer(project: PersistentVar[Project]) =
 
   def updater[A, B, C](
-      va: Var[A],
+      va:          Var[A],
       modifyField: PathLazyModify[A, B]
   )(to: A => C, from: C => B) =
     Updater(
@@ -21,25 +21,25 @@ def AppConfigDrawer(project: PersistentVar[Project]) =
 
   val basePathUpdater =
     updater(project.v, modifyLens(_.projectSettings.basePaths))(
-      to = _.projectSettings.basePaths.mkString("\n"),
+      to   = _.projectSettings.basePaths.mkString("\n"),
       from = _.split("\n").toList.map(Path.apply)
     )
 
   val hiddenFieldsUpdater =
     updater(project.v, modifyLens(_.projectSettings.hiddenFields))(
-      to = _.projectSettings.hiddenFields.mkString("\n"),
+      to   = _.projectSettings.hiddenFields.mkString("\n"),
       from = _.split("\n").toList
     )
 
   val hiddenSymbolsUpdater =
     updater(project.v, modifyLens(_.projectSettings.hiddenSymbols))(
-      to = _.projectSettings.hiddenSymbols.mkString("\n"),
+      to   = _.projectSettings.hiddenSymbols.mkString("\n"),
       from = _.split("\n").map(models.GraphSymbol.apply).toList
     )
 
   val advancedModeUpdater =
     updater(project.v, modifyLens(_.advancedMode))(
-      to = _.advancedMode,
+      to   = _.advancedMode,
       from = identity
     )
 
@@ -88,12 +88,12 @@ def AppConfigDrawer(project: PersistentVar[Project]) =
         cls := "form-control",
         label(
           forId := "dev-mode-id",
-          cls := "label cursor-pointer",
+          cls   := "label cursor-pointer",
           b(cls := "label-text pr-1", "Show semanticdb tab"),
           input(
             idAttr := "dev-mode-id",
-            tpe := "checkbox",
-            cls := "toggle toggle-xs",
+            tpe    := "checkbox",
+            cls    := "toggle toggle-xs",
             controlled(
               checked <-- advancedModeUpdater.signal,
               onClick.mapToChecked --> advancedModeUpdater.update

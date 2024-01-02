@@ -3,10 +3,7 @@ package org.jpablo.typeexplorer.ui.app.client
 import com.raquo.airstream.core.EventStream
 import com.raquo.laminar.api.L.*
 import io.laminext.fetch.*
-import org.jpablo.typeexplorer.protos.{
-  TextDocumentsWithSource,
-  TextDocumentsWithSourceSeq
-}
+import org.jpablo.typeexplorer.protos.{TextDocumentsWithSource, TextDocumentsWithSourceSeq}
 import org.jpablo.typeexplorer.shared.inheritance.{InheritanceGraph, Path}
 import org.jpablo.typeexplorer.shared.webApp.{InheritanceRequest, Routes}
 import org.jpablo.typeexplorer.ui.app.components.DiagramType
@@ -63,7 +60,7 @@ def fetchFullInheritanceGraph(
 
 def fetchInheritanceSVGDiagram(
     basePaths: List[Path],
-    page: Page
+    page:      Page
 ): EventStream[InheritanceSvgDiagram] =
   for svgElement <-
       if basePaths.isEmpty then EventStream.fromValue(svg.svg().ref)
