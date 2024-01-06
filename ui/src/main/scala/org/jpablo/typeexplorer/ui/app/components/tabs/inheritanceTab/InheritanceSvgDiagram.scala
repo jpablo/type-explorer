@@ -1,41 +1,20 @@
 package org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab
 
+import com.raquo.laminar.DomApi
 import com.raquo.laminar.api.L.*
 import org.jpablo.typeexplorer.shared.models
-import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.svgGroupElement.{
-  ClusterElement,
-  LinkElement,
-  NamespaceElement,
-  removeStyle,
-  updateStyle
-}
+import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.svgGroupElement.{ClusterElement, LinkElement, NamespaceElement}
 import org.scalajs.dom
-import com.raquo.laminar.DomApi
 
-class InheritanceSvgDiagram(svgElement: dom.SVGElement):
+class InheritanceSvgDiagram(svgElement: dom.SVGSVGElement):
   export svgElement.querySelector
 
-  svgElement.removeStyle("background")
-  svgElement.classList.add("absolute")
-  // (more styles are set in style.scss)
+  val origW = svgElement.width.baseVal.value
+  val origH = svgElement.height.baseVal.value
 
-  private def setDimensions(w: Int, h: Int): Unit =
-    svgElement.updateStyle("width" -> s"${w}px", "height" -> s"${h}px")
-
-  private def getPixelsAttributeValue(name: String) =
-    val attribute = svgElement.attributes.getNamedItem(name)
-    if attribute != null then attribute.value.replace("px", "").toDouble
-    else 0
-
-  private def width = getPixelsAttributeValue("width")
-
-  private def height = getPixelsAttributeValue("height")
-
-  def absoluteZoom(r: Double): Unit =
-    setDimensions((width * r / 100).toInt, (height * r / 100).toInt)
-
-  def getFitProportion(rect: dom.DOMRect): Double =
-    scala.math.min(rect.width / width, rect.height / height)
+  svgElement.removeAttribute("style")
+  svgElement.removeAttribute("width")
+  svgElement.removeAttribute("height")
 
   private def selectableElements =
     NamespaceElement.selectAll(svgElement) ++ LinkElement.selectAll(svgElement)
@@ -94,4 +73,4 @@ class InheritanceSvgDiagram(svgElement: dom.SVGElement):
     svgElement.querySelector(s"[id='$id']")
 
 object InheritanceSvgDiagram:
-  val empty = InheritanceSvgDiagram(svg.svg().ref)
+  val empty = InheritanceSvgDiagram(svg.svg(svg.width := "0px", svg.height := "0px").ref)

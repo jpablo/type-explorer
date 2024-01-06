@@ -8,6 +8,7 @@ import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
 import org.jpablo.typeexplorer.ui.app.components.state.{AppState, InheritanceTabState, Page}
 import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.*
 import org.jpablo.typeexplorer.ui.domUtils.*
+import org.scalajs.dom
 import org.scalajs.dom.HTMLDivElement
 
 def TabsArea(
@@ -16,23 +17,18 @@ def TabsArea(
 ): Div =
   div(
     role := "tablist",
-    cls  := "tabs tabs-lifted h-full w-full te-tabs-area",
+    cls  := "te-parent-3 tabs tabs-lifted",
     children <--
       appState.activeProject.pages
         .split(_.id)(renderTab(appState))
         .map(_.flatten)
   )
 
-def renderTab(
-    appState: AppState
-)(pageId: String, p: Page, pageS: Signal[Page]): Seq[Base] =
+def renderTab(appState: AppState)(pageId: String, p: Page, pageS: Signal[Page]): Seq[Base] =
+  val zoomValue: Var[Double] = Var(1.0)
+  val fitDiagram = EventBus[Unit]()
+
   val tabState = InheritanceTabState(appState, pageId)
-
-  val canvasContainer =
-    CanvasContainer(tabState.inheritanceSvgDiagram, tabState.canvasSelection)
-
-  val rect = canvasContainer.ref.getBoundingClientRect()
-
   Seq(
     input(
       role := "tab",
@@ -45,11 +41,11 @@ def renderTab(
     ),
     div(
       role := "tabpanel",
-      cls  := "tab-content bg-base-100 border-base-300 rounded-box h-full",
+      cls  := "te-parent-2 tab-content bg-base-100 border-base-300 rounded-box",
       div(
-        cls := "h-full w-full relative",
-        canvasContainer,
-        Toolbar(appState.fullGraph, tabState, rect),
+        cls := "te-parent-1",
+        CanvasContainer(tabState.inheritanceSvgDiagram, tabState.canvasSelection, zoomValue, fitDiagram.events),
+        Toolbar(appState.fullGraph, tabState, zoomValue, fitDiagram),
         SelectionSidebar(appState, tabState),
         PackagesDialog(appState, tabState).tag
       )

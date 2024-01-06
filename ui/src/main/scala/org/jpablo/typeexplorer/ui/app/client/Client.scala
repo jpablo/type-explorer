@@ -62,23 +62,21 @@ def fetchInheritanceSVGDiagram(
     basePaths: List[Path],
     page:      Page
 ): EventStream[InheritanceSvgDiagram] =
-  for svgElement <-
-      if basePaths.isEmpty then EventStream.fromValue(svg.svg().ref)
-      else
-        val body = InheritanceRequest(
-          basePaths.map(_.toString),
-          page.activeSymbols,
-          page.diagramOptions
-        )
-        val req =
-          Fetch.post(s"$basePath${Routes.inheritanceDiagram}", body.toJson)
-        req.text.map: fetchResponse =>
-          dom
-            .DOMParser()
-            .parseFromString(fetchResponse.data, dom.MIMEType.`image/svg+xml`)
-            .documentElement
-            .asInstanceOf[dom.SVGElement]
-  yield InheritanceSvgDiagram(svgElement)
+  if basePaths.isEmpty then EventStream.fromValue(InheritanceSvgDiagram.empty)
+  else
+    Fetch
+      .post(
+        url  = s"$basePath${Routes.inheritanceDiagram}",
+        body = InheritanceRequest(basePaths.map(_.toString), page.activeSymbols, page.diagramOptions).toJson
+      )
+      .text
+      .map: fetchResponse =>
+        dom
+          .DOMParser()
+          .parseFromString(fetchResponse.data, dom.MIMEType.`image/svg+xml`)
+          .documentElement
+          .asInstanceOf[dom.SVGSVGElement]
+      .map(InheritanceSvgDiagram(_))
 
 def fetchCallGraphSVGDiagram(
     diagram: Signal[(DiagramType, Path)]

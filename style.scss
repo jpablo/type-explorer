@@ -3,13 +3,66 @@ label[for ^= show-ns-kind-] {
   padding: 0 0 2px;
 }
 
+// drawer
+.te-parent-5 {
+  //border: 3px solid palegreen;
+}
+
+// drawer-content
+.te-parent-4 {
+  //  flex flex-col h-screen overflow-hidden
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100vh !important;
+  overflow: hidden !important;
+  //border: 3px solid darkcyan;
+}
+
+// tabs area (tablist)
+// 2nd child of a flex element
+.te-parent-3 {
+
+  flex-grow: 1; // fill the remaining vertical space
+  grid-template-rows: auto 1fr;
+  //border: 3px solid orange !important;
+}
+
+// tabpanel
+// the minimum size is set to its children
+.te-parent-2 {
+  align-self: stretch; // expand to fill the parent's width
+  justify-self: stretch; // expand to fill the parent's height
+  min-width: 0;
+  //border: 5px solid green !important;
+}
+
+.te-parent-1 {
+  // h-full w-full relative
+  height: 100% !important;
+  position: relative !important;
+  //border: 2px dotted blue;
+}
+
+.te-parent {
+  // h-full
+  height: 100% !important;
+  overflow: auto;
+  // flex justify-center items-center
+  display: flex !important;
+  align-items: center !important;
+  //border: 3px solid red;
+}
+
 svg {
+  flex-shrink: 0;
+
   // clusters are packages
   g[id ^= cluster_] {
     &:hover {
       outline: 3px solid rgb(251 191 36);
       cursor: pointer;
     }
+
     path, line {
       fill: #e6e6e6;
       stroke-width: 1.0 !important;
@@ -32,6 +85,7 @@ svg {
     polygon {
       fill: white;
     }
+
     &:hover {
       path, polygon {
         stroke: rgb(251 191 36) !important;

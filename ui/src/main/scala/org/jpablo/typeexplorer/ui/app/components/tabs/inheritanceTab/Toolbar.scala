@@ -14,20 +14,11 @@ import org.scalajs.dom
 import org.scalajs.dom.{HTMLDivElement, HTMLElement}
 
 def Toolbar(
-    fullGraph:                   Signal[InheritanceGraph],
-    tabState:                    InheritanceTabState,
-    containerBoundingClientRect: => dom.DOMRect
+    fullGraph:  Signal[InheritanceGraph],
+    tabState:   InheritanceTabState,
+    zoomValue:  Var[Double],
+    fitDiagram: EventBus[Unit]
 ) =
-  val zoomValue = Var(100.0)
-  val minZoom = 25
-  val maxZoom = 400
-  tabState.inheritanceSvgDiagram
-    .combineWith(zoomValue.signal)
-    .foreach { (diagram, zoom) =>
-      val actualZoom = Math.min(maxZoom, Math.max(minZoom, zoom))
-      diagram.absoluteZoom(actualZoom)
-    }(owner = tabState.owner)
-
   div(
     cls := "shadow bg-base-100 rounded-box flex items-center gap-4 p-0.5 absolute top-1 left-2/4 -translate-x-2/4 z-10",
     // -------- package selector --------
@@ -77,43 +68,29 @@ def Toolbar(
             )
           ),
           li(
-            a(
-              "plantuml",
-              onPlantUMLClicked(fullGraph, tabState)
-            )
+            a("plantuml", onPlantUMLClicked(fullGraph, tabState))
           )
         )
-      ),
-      Button(
-        "fit",
-        onClick.compose(_.sample(tabState.inheritanceSvgDiagram)) --> { diagram =>
-          zoomValue.set(
-            100 * diagram.getFitProportion(containerBoundingClientRect)
-          )
-        }
-      ).tiny
+      )
     ),
     // ----------
     Join(
-      Button(
-        span.dashIcon,
-        onClick --> zoomValue.update(_ * 0.9)
-      ).tiny,
+      Button(span.dashIcon, onClick --> zoomValue.update(_ * 0.9)).tiny,
+      Button("fit", onClick --> fitDiagram.emit(())).tiny,
+      Button(span.plusIcon, onClick --> zoomValue.update(_ * 1.1)).tiny
+    ),
+    Join(
       input(
-        tpe     := "range",
-        cls     := "bg-base-200",
-        minAttr := minZoom.toString,
-        maxAttr := maxZoom.toString,
-        value   := "100",
+        tpe      := "range",
+        cls      := "range range-xs pr-3",
+        minAttr  := 0.1.toString,
+        maxAttr  := 5.0.toString,
+        stepAttr := "0.05",
         controlled(
           value <-- zoomValue.signal.map(_.toString),
           onInput.mapToValue.map(_.toDouble) --> zoomValue
         )
-      ),
-      Button(
-        span.plusIcon,
-        onClick --> zoomValue.update(_ * 1.1)
-      ).tiny
+      )
     )
   )
 

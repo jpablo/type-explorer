@@ -1,7 +1,7 @@
 package org.jpablo.typeexplorer.ui.domUtils
 
 import com.raquo.laminar.api.L.*
-import com.raquo.laminar.codecs.{BooleanAsAttrPresenceCodec, IntAsStringCodec, StringAsIsCodec}
+import com.raquo.laminar.codecs.{BooleanAsAttrPresenceCodec, StringAsIsCodec}
 import org.scalajs.dom.HTMLDialogElement
 
 val details = htmlTag("details")

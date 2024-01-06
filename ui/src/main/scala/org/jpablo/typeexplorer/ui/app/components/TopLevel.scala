@@ -16,10 +16,10 @@ def TopLevel(
 ) =
   div(
     ErrorToast(errors),
-    cls := "drawer drawer-end",
+    cls := "te-parent-5 drawer drawer-end",
     input(idAttr := "drawer-1", tpe := "checkbox", cls := "drawer-toggle"),
     div(
-      cls := "drawer-content flex flex-col h-screen overflow-hidden",
+      cls := "drawer-content te-parent-4",
       AppHeader(appState, selectedProject, deleteProject),
       TabsArea(appState, documents),
       AppFooter

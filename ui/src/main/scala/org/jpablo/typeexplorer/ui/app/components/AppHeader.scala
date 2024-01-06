@@ -42,7 +42,7 @@ def AppHeader(
         dataTip := "Edit project name",
         button(
           cls := "btn btn-ghost btn-sm",
-          onClick.mapTo(true) --> titleDialogOpen.set,
+          onClick --> titleDialogOpen.set(true),
           child.text <--
             appState.activeProject.project.signal.map: p =>
               if p.name.isBlank then "Untitled" else p.name
@@ -131,14 +131,8 @@ def TitleDialog(title: Var[String], open: Var[Boolean]) =
         tpe         := "text",
         cls         := "input input-bordered w-full",
         placeholder := "Project name",
-        controlled(
-          value <-- title.signal,
-          onInput.mapToValue --> title.writer
-        ),
-        onKeyDown
-          .filter: e =>
-            e.key == "Enter" || e.key == "Escape"
-          .mapTo(false) --> open.set
+        controlled(value <-- title, onInput.mapToValue --> title),
+        onKeyDown.filter(e => e.key == "Enter" || e.key == "Escape") --> open.set(false)
       ),
       div(
         cls := "modal-action",
