@@ -6,6 +6,7 @@ import com.raquo.laminar.nodes.ReactiveHtmlElement
 import com.raquo.laminar.nodes.ReactiveHtmlElement.Base
 import org.jpablo.typeexplorer.shared.inheritance.Path
 import org.jpablo.typeexplorer.ui.app.components.state.{AppState, ProjectId}
+import org.jpablo.typeexplorer.ui.daisyui.Join
 import org.jpablo.typeexplorer.ui.domUtils.dataTip
 import org.jpablo.typeexplorer.ui.widgets.Dialog
 import org.jpablo.typeexplorer.ui.widgets.Icons.*
@@ -52,43 +53,39 @@ def AppHeader(
         cls := "divider divider-horizontal mx-1"
       ),
       // -------- project selector --------
-      div(
-        cls := "flex-none",
+      Join(
         div(
           cls     := "tooltip tooltip-bottom",
           dataTip := "Select project",
           a(
-            cls := "btn btn-sm",
+            cls := "btn btn-sm join-item",
             onClick --> projectSelector.showModal(),
             label.listIcon
           )
-        )
-      ),
-      // -------- new tab button --------
-      div(
-        cls := "flex-none",
+        ),
+        // -------- new tab button --------
         div(
           cls     := "tooltip tooltip-bottom",
           dataTip := "New tab",
           a(
-            cls := "btn btn-sm",
+            cls := "btn btn-sm join-item",
             onClick --> appState.newPage(),
             label.folderPlusIcon
           )
-        )
-      ),
-      // -------- close tab button --------
-      div(
-        cls := "flex-1",
+//          )
+        ),
+        // -------- close tab button --------
         div(
           cls     := "tooltip tooltip-bottom",
           dataTip := "Close tab",
           a(
-            cls := "btn btn-sm",
+            cls := "btn btn-sm join-item",
             onClick --> appState.closeActivePage(),
             label.folderMinusIcon
           )
         )
+      ).amend(
+        cls := "flex-1"
       ),
       // -------- base path --------
       div(
@@ -105,13 +102,11 @@ def AppHeader(
         // -------- config gear button --------
         div(
           cls     := "tooltip tooltip-bottom",
-          dataTip := "Configuration",
-          a(
-            cls := "btn btn-sm",
-            label(
-              forId := "drawer-1",
-              cls   := "drawer-button bi bi-gear"
-            )
+          dataTip := "Project settings",
+          input(idAttr := "drawer-1", tpe := "checkbox", cls := "drawer-toggle"),
+          label(
+            forId := "drawer-1",
+            cls   := "btn btn-sm drawer-button bi bi-gear"
           )
         )
       )

@@ -15,9 +15,9 @@ def TopLevel(
     errors:          EventBus[String]
 ) =
   div(
-    ErrorToast(errors),
     cls := "te-parent-5 drawer drawer-end",
     input(idAttr := "drawer-1", tpe := "checkbox", cls := "drawer-toggle"),
+    ErrorToast(errors),
     div(
       cls := "drawer-content te-parent-4",
       AppHeader(appState, selectedProject, deleteProject),
