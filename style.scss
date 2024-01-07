@@ -5,26 +5,27 @@ label[for ^= show-ns-kind-] {
 
 // drawer
 .te-parent-5 {
-  //border: 3px solid palegreen;
+  // border: 3px solid palegreen;
 }
 
 // drawer-content
 .te-parent-4 {
-  //  flex flex-col h-screen overflow-hidden
   display: flex !important;
   flex-direction: column !important;
+  // TODO: why is this needed but not for width?
+  // -------------------------
   height: 100vh !important;
+  // -------------------------
   overflow: hidden !important;
-  //border: 3px solid darkcyan;
+  // border: 3px solid darkcyan;
 }
 
 // tabs area (tablist)
 // 2nd child of a flex element
 .te-parent-3 {
-
   flex-grow: 1; // fill the remaining vertical space
   grid-template-rows: auto 1fr;
-  //border: 3px solid orange !important;
+  // border: 3px solid orange !important;
 }
 
 // tabpanel
@@ -33,24 +34,28 @@ label[for ^= show-ns-kind-] {
   align-self: stretch; // expand to fill the parent's width
   justify-self: stretch; // expand to fill the parent's height
   min-width: 0;
-  //border: 5px solid green !important;
+  min-height: 0;
+  // border: 5px solid green !important;
 }
 
 .te-parent-1 {
-  // h-full w-full relative
+  // TODO: why is this needed but not for width?
+  // -------------------------
   height: 100% !important;
+  // -------------------------
+  // this is needed for the floating toolbars
   position: relative !important;
-  //border: 2px dotted blue;
+  // border: 2px dotted blue;
 }
 
 .te-parent {
-  // h-full
+  // TODO: why is this needed but not for width?
+  // -------------------------
   height: 100% !important;
-  overflow: auto;
-  // flex justify-center items-center
+  // -------------------------
+  overflow: auto !important;
   display: flex !important;
-  align-items: center !important;
-  //border: 3px solid red;
+  // border: 3px solid red;
 }
 
 svg {
