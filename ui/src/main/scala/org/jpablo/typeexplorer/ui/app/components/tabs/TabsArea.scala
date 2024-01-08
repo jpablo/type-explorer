@@ -17,7 +17,7 @@ def TabsArea(
 ): Div =
   div(
     role := "tablist",
-    cls  := "te-parent-3 tabs tabs-lifted",
+    cls  := "te-parent-3 tabs tabs-lifted mt-1",
     children <--
       appState.activeProject.pages
         .split(_.id)(renderTab(appState))
