@@ -1,12 +1,14 @@
 import org.scalajs.linker.interface.ModuleSplitStyle
 
-val scala3Version     = "3.3.1"
-val scala2Version     = "2.13.11"
-val scalametaVersion  = "4.8.2"
-val zioHttpVersion    = "2.0.0-RC11"
+val typeExplorerVersion = "0.2.0"
+
+val scala3Version = "3.3.1"
+val scala2Version = "2.13.11"
+val scalametaVersion = "4.8.2"
+val zioHttpVersion = "2.0.0-RC11"
 val zioPreludeVersion = "1.0.0-RC16"
-val zioVersion        = "2.0.10"
-val laminarVersion    = "16.0.0"
+val zioVersion = "2.0.10"
+val laminarVersion = "16.0.0"
 
 // TODO:
 // - Maybe create a plugin to correctly set semanticdbTargetRoot for each subproject?
@@ -17,8 +19,9 @@ Global / projectPath          := (ThisBuild / baseDirectory).value / ".type-expl
 //Compile / semanticdbTargetRoot := projectPath.value
 // ThisBuild / semanticdbEnabled := true
 ThisBuild / resolvers += "Sonatype OSS Snapshots" at "https://s01.oss.sonatype.org/content/repositories/snapshots"
-ThisBuild / organization      := "net.jpablo"
+ThisBuild / organization      := "org.jpablo"
 ThisBuild / scalaVersion      := scala3Version
+ThisBuild / version           := typeExplorerVersion
 ThisBuild / semanticdbVersion := scalametaVersion
 ThisBuild / scalacOptions ++= // Scala 3.x options
   Seq(
@@ -38,7 +41,6 @@ lazy val protos =
     .in(file("protos"))
     .settings(
       name         := "type-explorer-protos",
-      version      := "0.1.0",
       scalaVersion := scala2Version,
       libraryDependencies ++= Seq(
         "org.scalameta" %%% "common" % scalametaVersion % "protobuf",
@@ -86,8 +88,7 @@ lazy val shared =
     .in(file("shared"))
     .dependsOn(protos)
     .settings(
-      name    := "type-explorer-shared",
-      version := "0.1.0",
+      name := "type-explorer-shared",
       excludeDependencies ++= Seq(
         "org.scala-lang.modules" %% "scala-collection-compat",
         "org.scala-lang.modules" %% "scala-collection-compat_sjs1"
@@ -108,7 +109,6 @@ lazy val backend =
     .enablePlugins(JavaAppPackaging)
     .settings(
       name                            := "type-explorer-backend",
-      version                         := "0.1.0",
       reStart / mainClass             := Some(mainBackendApp),
       Compile / mainClass             := Some(mainBackendApp),
       assembly / mainClass            := Some(mainBackendApp),
@@ -134,7 +134,7 @@ lazy val backend =
     )
     .settings(sharedSettings)
 
-val publicDev  = taskKey[String]("output directory for `npm run dev`")
+val publicDev = taskKey[String]("output directory for `npm run dev`")
 val publicProd = taskKey[String]("output directory for `npm run build`")
 
 lazy val ui =
@@ -185,15 +185,14 @@ lazy val root =
     .in(file("."))
     .aggregate(protos.js, protos.jvm, backend, ui, shared.js, shared.jvm)
     .settings(
-      name    := "type-explorer",
-      version := "0.1.0",
+      name := "type-explorer",
       welcomeMessage
     )
 
 def welcomeMessage = onLoadMessage := {
   import scala.Console
-  def header(text: String): String  = s"${Console.RED}$text${Console.RESET}"
-  def item(text: String): String    = s"${Console.GREEN}> ${Console.CYAN}$text${Console.RESET}"
+  def header(text:  String): String = s"${Console.RED}$text${Console.RESET}"
+  def item(text:    String): String = s"${Console.GREEN}> ${Console.CYAN}$text${Console.RESET}"
   def subItem(text: String): String = s"  ${Console.YELLOW}> ${Console.CYAN}$text${Console.RESET}"
 
   s"""|${header(s"Type Explorer ${version.value}")}
