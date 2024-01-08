@@ -17,9 +17,8 @@ def TopLevel(
   div(
     cls := "te-parent-5 drawer drawer-end",
     input(idAttr := "drawer-1", tpe := "checkbox", cls := "drawer-toggle"),
-    ErrorToast(errors),
     div(
-      cls := "drawer-content te-parent-4",
+      cls := "te-parent-4 drawer-content",
       AppHeader(appState, selectedProject, deleteProject),
       TabsArea(appState, documents),
       AppFooter
@@ -36,7 +35,8 @@ def TopLevel(
 //          )
 //        )
     ),
-    AppConfigDrawer(appState.activeProject.project)
+    AppConfigDrawer(appState.activeProject.project),
+    ErrorToast(errors)
   )
 
 def ErrorToast(messages: EventBus[String]) =

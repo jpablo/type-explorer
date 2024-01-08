@@ -126,6 +126,7 @@ def TitleDialog(title: Var[String], open: Var[Boolean]) =
         tpe         := "text",
         cls         := "input input-bordered w-full",
         placeholder := "Project name",
+        focus <-- open.signal.changes,
         controlled(value <-- title, onInput.mapToValue --> title),
         onKeyDown.filter(e => e.key == "Enter" || e.key == "Escape") --> open.set(false)
       ),

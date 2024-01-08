@@ -9,6 +9,7 @@ import org.jpablo.typeexplorer.ui.daisyui.*
 import org.jpablo.typeexplorer.shared.models
 import org.jpablo.typeexplorer.shared.inheritance.{InheritanceGraph, PackagesOptions}
 import org.jpablo.typeexplorer.ui.extensions.*
+import com.raquo.laminar.api.features.unitArrows
 
 def PackagesTreeComponent(appState: AppState, tabState: InheritanceTabState) =
   val showOptions = Var(false)
@@ -33,10 +34,12 @@ def PackagesTreeComponent(appState: AppState, tabState: InheritanceTabState) =
       ,
       Search(
         placeholder := "filter",
+        focus <-- tabState.packagesDialogOpenV.signal.changes,
         controlled(
           value <-- filterBySymbolName,
           onInput.mapToValue --> filterBySymbolName
-        )
+        ),
+        onKeyDown.filter(e => e.key == "Enter" || e.key == "Escape") --> tabState.packagesDialogOpenV.set(false)
       ).small
     ),
     div(
