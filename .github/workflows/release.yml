@@ -46,5 +46,5 @@ jobs:
     - name: Upload Artifact
       uses: actions/upload-artifact@v2
       with:
-        name: backend-zip
+        name: type-explorer-backend
         path: backend/target/universal/type-explorer-backend-*.zip
