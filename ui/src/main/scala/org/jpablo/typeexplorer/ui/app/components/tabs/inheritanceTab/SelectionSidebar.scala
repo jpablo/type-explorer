@@ -26,7 +26,7 @@ def SelectionSidebar(
     cls := "absolute right-0 top-2 z-10",
     selectionEmpty.childWhenFalse(
       ul(
-        cls := "menu bg-base-100 rounded-box m-2 p-0",
+        cls := "menu shadow bg-base-100 rounded-box m-2 p-0",
         li(
           h2(cls := "menu-title", span("selection")),
           ul(
