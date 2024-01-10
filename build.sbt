@@ -115,16 +115,14 @@ lazy val backend =
       assembly / assemblyJarName      := "type-explorer-uber-backend.jar",
       Compile / discoveredMainClasses := Seq(),
       libraryDependencies ++= Seq(
-        "io.d11" %% "zhttp" % "2.0.0-RC11",
-//      "dev.zio"                  %% "zio-http"          % "3.0.0-RC1",
-        "dev.zio"                 %% "zio-logging"              % "2.1.11",
-        "dev.zio"                 %% "zio-logging-slf4j"        % "2.1.11",
-        "dev.zio"                 %% "zio-logging-slf4j-bridge" % "2.1.11",
+        "dev.zio"                 %% "zio-http"                 % "3.0.0-RC4",
+        "dev.zio"                 %% "zio-logging"              % "2.1.13",
+        "dev.zio"                 %% "zio-logging-slf4j"        % "2.1.13",
+        "dev.zio"                 %% "zio-logging-slf4j-bridge" % "2.1.13",
         "org.json4s"              %% "json4s-native"            % "4.0.6",
         "guru.nidi"                % "graphviz-java"            % "0.18.1",
         "net.sourceforge.plantuml" % "plantuml"                 % "1.2022.14",
-        "com.lihaoyi" %% "scalatags" % "0.11.1" cross CrossVersion.for3Use2_13, // Needed until org.scalameta-common upgrades to 3.x
-        "io.github.arainko" %% "ducktape" % "0.1.3"
+        "com.lihaoyi" %% "scalatags" % "0.11.1" cross CrossVersion.for3Use2_13 // Needed until org.scalameta-common upgrades to 3.x
       ),
       excludeDependencies ++= Seq(
         "com.thesamet.scalapb"   %% "scalapb-runtime",

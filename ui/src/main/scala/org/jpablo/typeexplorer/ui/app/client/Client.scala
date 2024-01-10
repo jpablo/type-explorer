@@ -5,7 +5,7 @@ import com.raquo.laminar.api.L.*
 import io.laminext.fetch.*
 import org.jpablo.typeexplorer.protos.{TextDocumentsWithSource, TextDocumentsWithSourceSeq}
 import org.jpablo.typeexplorer.shared.inheritance.{InheritanceGraph, Path}
-import org.jpablo.typeexplorer.shared.webApp.{InheritanceRequest, Routes}
+import org.jpablo.typeexplorer.shared.webApp.{InheritanceRequest, Endpoints}
 import org.jpablo.typeexplorer.ui.app.components.DiagramType
 import org.jpablo.typeexplorer.ui.app.components.state.Page
 import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.InheritanceSvgDiagram
@@ -47,7 +47,7 @@ def fetchFullInheritanceGraph(
   else
     val qs = basePaths.map("path=" + _).mkString("&")
     for
-      response <- fetchBase(s"${Routes.classes}?$qs").text
+      response <- fetchBase(s"${Endpoints.classes}?$qs").text
       classes <- EventStream.fromTry {
         response.data
           .fromJson[InheritanceGraph]
@@ -66,7 +66,7 @@ def fetchInheritanceSVGDiagram(
   else
     Fetch
       .post(
-        url  = s"$basePath${Routes.inheritanceDiagram}",
+        url  = s"$basePath${Endpoints.inheritanceDiagram}",
         body = InheritanceRequest(basePaths.map(_.toString), page.activeSymbols, page.diagramOptions).toJson
       )
       .text

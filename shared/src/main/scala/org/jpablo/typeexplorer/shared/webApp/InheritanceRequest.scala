@@ -13,7 +13,7 @@ case class InheritanceRequest[A](
     projectSettings: ProjectSettings = ProjectSettings()
 ) derives JsonCodec
 
-object Routes:
+object Endpoints:
   val inheritanceDiagram = "inheritance"
   val semanticdb = "semanticdb"
   val classes = "classes"
