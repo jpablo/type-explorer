@@ -43,61 +43,57 @@ def AppConfigDrawer(project: PersistentVar[Project]) =
       from = identity
     )
 
-  div(
-    cls := "drawer-side z-20 overflow-hidden",
-    label(cls := "drawer-overlay", forId := "drawer-1"),
-    form(
-      cls := "p-4 w-96 bg-base-100 text-base-content flex flex-col space-y-4 h-full",
-      h1(cls := "drawer-title text-xl font-bold", "Settings"),
-      // --- base path ---
-      div(
-        cls := "form-control",
-        label(cls := "label", b(cls := "label-text", "basePath")),
-        textArea(
-          cls := "textarea textarea-bordered h-32 whitespace-nowrap",
-          value <-- basePathUpdater.signal,
-          onBlur.mapToValue --> basePathUpdater.update
+  form(
+    cls := "p-4 w-96 bg-base-100 text-base-content flex flex-col space-y-4 h-full",
+    h1(cls := "drawer-title text-xl font-bold", "Settings"),
+    // --- base path ---
+    div(
+      cls := "form-control",
+      label(cls := "label", b(cls := "label-text", "basePath")),
+      textArea(
+        cls := "textarea textarea-bordered h-32 whitespace-nowrap",
+        value <-- basePathUpdater.signal,
+        onBlur.mapToValue --> basePathUpdater.update
+      )
+    ),
+    // --- Hidden fields ---
+    div(
+      cls := "form-control",
+      label(cls := "label", b(cls := "label-text", "Hidden fields")),
+      textArea(
+        cls := "textarea textarea-bordered h-24 whitespace-nowrap",
+        controlled(
+          value <-- hiddenFieldsUpdater.signal,
+          onInput.mapToValue --> hiddenFieldsUpdater.update
         )
-      ),
-      // --- Hidden fields ---
-      div(
-        cls := "form-control",
-        label(cls := "label", b(cls := "label-text", "Hidden fields")),
-        textArea(
-          cls := "textarea textarea-bordered h-24 whitespace-nowrap",
+      )
+    ),
+    // --- Hidden symbols ---
+    div(
+      cls := "form-control",
+      label(cls := "label", b(cls := "label-text", "Hidden symbols")),
+      textArea(
+        cls := "textarea textarea-bordered h-24 whitespace-nowrap",
+        controlled(
+          value <-- hiddenSymbolsUpdater.signal,
+          onInput.mapToValue --> hiddenSymbolsUpdater.update
+        )
+      )
+    ),
+    // --- semantic db ---
+    div(
+      cls := "form-control",
+      label(
+        forId := "dev-mode-id",
+        cls   := "label cursor-pointer",
+        b(cls := "label-text pr-1", "Show semanticdb tab"),
+        input(
+          idAttr := "dev-mode-id",
+          tpe    := "checkbox",
+          cls    := "toggle toggle-xs",
           controlled(
-            value <-- hiddenFieldsUpdater.signal,
-            onInput.mapToValue --> hiddenFieldsUpdater.update
-          )
-        )
-      ),
-      // --- Hidden symbols ---
-      div(
-        cls := "form-control",
-        label(cls := "label", b(cls := "label-text", "Hidden symbols")),
-        textArea(
-          cls := "textarea textarea-bordered h-24 whitespace-nowrap",
-          controlled(
-            value <-- hiddenSymbolsUpdater.signal,
-            onInput.mapToValue --> hiddenSymbolsUpdater.update
-          )
-        )
-      ),
-      // --- semantic db ---
-      div(
-        cls := "form-control",
-        label(
-          forId := "dev-mode-id",
-          cls   := "label cursor-pointer",
-          b(cls := "label-text pr-1", "Show semanticdb tab"),
-          input(
-            idAttr := "dev-mode-id",
-            tpe    := "checkbox",
-            cls    := "toggle toggle-xs",
-            controlled(
-              checked <-- advancedModeUpdater.signal,
-              onClick.mapToChecked --> advancedModeUpdater.update
-            )
+            checked <-- advancedModeUpdater.signal,
+            onClick.mapToChecked --> advancedModeUpdater.update
           )
         )
       )

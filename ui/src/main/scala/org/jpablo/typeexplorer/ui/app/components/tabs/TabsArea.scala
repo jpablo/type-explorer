@@ -25,9 +25,8 @@ def TabsArea(
   )
 
 def renderTab(appState: AppState)(pageId: String, p: Page, pageS: Signal[Page]): Seq[Base] =
-  val zoomValue: Var[Double] = Var(1.0)
+  val zoomValue = Var(1.0)
   val fitDiagram = EventBus[Unit]()
-
   val tabState = InheritanceTabState(appState, pageId)
   Seq(
     input(
