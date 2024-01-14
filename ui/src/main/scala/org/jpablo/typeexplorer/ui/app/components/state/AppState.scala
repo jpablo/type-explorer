@@ -17,7 +17,6 @@ class AppState(
     basePaths,
     packagesOptions,
     diagramOptions,
-    advancedMode,
     pages,
     newPage,
     setActivePage,

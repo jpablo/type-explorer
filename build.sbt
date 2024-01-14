@@ -119,7 +119,6 @@ lazy val backend =
         "dev.zio"                 %% "zio-logging"              % "2.1.13",
         "dev.zio"                 %% "zio-logging-slf4j"        % "2.1.13",
         "dev.zio"                 %% "zio-logging-slf4j-bridge" % "2.1.13",
-        "org.json4s"              %% "json4s-native"            % "4.0.6",
         "guru.nidi"                % "graphviz-java"            % "0.18.1",
         "net.sourceforge.plantuml" % "plantuml"                 % "1.2022.14",
         "com.lihaoyi" %% "scalatags" % "0.11.1" cross CrossVersion.for3Use2_13 // Needed until org.scalameta-common upgrades to 3.x
@@ -138,7 +137,7 @@ val publicProd = taskKey[String]("output directory for `npm run build`")
 lazy val ui =
   project
     .in(file("ui"))
-    .dependsOn(shared.js, protos.js)
+    .dependsOn(shared.js)
     .enablePlugins(ScalaJSPlugin)
 //    .enablePlugins(ScalablyTypedConverterExternalNpmPlugin)
     .settings(
@@ -181,7 +180,7 @@ def linkerOutputDirectory(v: Attributed[org.scalajs.linker.interface.Report]): F
 lazy val root =
   project
     .in(file("."))
-    .aggregate(protos.js, protos.jvm, backend, ui, shared.js, shared.jvm)
+    .aggregate(protos.jvm, backend, ui, shared.js, shared.jvm)
     .settings(
       name := "type-explorer",
       welcomeMessage

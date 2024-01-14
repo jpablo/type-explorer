@@ -3,14 +3,11 @@ package org.jpablo.typeexplorer.backend.webApp
 import org.jpablo.typeexplorer.backend.backends.plantuml.toSVGText
 import org.jpablo.typeexplorer.backend.textDocuments.readTextDocumentsWithSource
 import org.jpablo.typeexplorer.shared.inheritance.{InheritanceGraph, toPlantUML}
-import org.jpablo.typeexplorer.shared.webApp.{Endpoints, InheritanceRequest}
-import org.json4s.*
-import org.json4s.native.Serialization
-import org.json4s.native.Serialization.write
+import org.jpablo.typeexplorer.shared.webApp.{Endpoints, InheritanceRequest, port}
 import zio.*
+import zio.http.*
 import zio.http.Header.AccessControlAllowOrigin
 import zio.http.Middleware.{CorsConfig, cors}
-import zio.http.*
 import zio.json.*
 import zio.stream.ZStream
 
@@ -68,27 +65,7 @@ object WebApp extends ZIOAppDefault:
           svgText <- puml.toSVGText("laminar")
         yield Response.text(svgText).addHeader(Header.ContentType(MediaType.image.`svg+xml`))
       }.orDie,
-      Method.GET / Endpoints.semanticdb -> handler { (req: Request) =>
-        toTaskOrBadRequest(getPath(req)): paths =>
-          readTextDocumentsWithSource(paths)
-            .map(_.toByteArray)
-            .map(Body.fromChunk compose Chunk.fromArray)
-            .map: ch =>
-              Response(body = ch)
-                .addHeader(Header.ContentType(MediaType.application.`octet-stream`))
-      }.orDie,
-      Method.GET / "semanticdb.json" -> handler { (req: Request) =>
-        toTaskOrBadRequest(getPath(req)): paths =>
-          readTextDocumentsWithSource(paths)
-            .map(write)
-            .map(Response.json)
-      }.orDie,
-      Method.GET / "semanticdb.textproto" -> handler { (req: Request) =>
-        toTaskOrBadRequest(getPath(req)): paths =>
-          readTextDocumentsWithSource(paths)
-            .map(_.toProtoString)
-            .map(Response.text)
-      }.orDie,
+      //
       Method.GET / Endpoints.classes -> handler { (req: Request) =>
         toTaskOrBadRequest(getPath(req)): paths =>
           readTextDocumentsWithSource(paths)
@@ -96,6 +73,7 @@ object WebApp extends ZIOAppDefault:
             .map(_.toJson)
             .map(Response.json)
       }.orDie,
+      //
       Method.GET / Endpoints.source -> handler { (req: Request) =>
         val firstPath = getPath(req).flatMap(_.headOption)
         toTaskOrBadRequest(firstPath): path =>
@@ -103,7 +81,6 @@ object WebApp extends ZIOAppDefault:
       }.orDie
     ).toHttpApp @@ cors(corsConfig)
 
-  private val port = 8090
   welcomeUser()
 
   override def run =
@@ -119,9 +96,6 @@ object WebApp extends ZIOAppDefault:
   // -----------------
   // helper functions
   // -----------------
-
-  given formats: Formats =
-    Serialization.formats(NoTypeHints)
 
   private def readSource(path: file.Path): Task[String] = ZIO.scoped:
     ZIO

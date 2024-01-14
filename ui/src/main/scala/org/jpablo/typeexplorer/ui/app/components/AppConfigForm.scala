@@ -37,12 +37,6 @@ def AppConfigForm(project: PersistentVar[Project]) =
       from = _.split("\n").map(models.GraphSymbol.apply).toList
     )
 
-  val advancedModeUpdater =
-    updater(project.v, modifyLens(_.advancedMode))(
-      to   = _.advancedMode,
-      from = identity
-    )
-
   form(
     cls := "p-4 w-96 bg-base-100 text-base-content flex flex-col v-full",
     h1(cls := "drawer-title text-xl font-bold", "Settings"),
@@ -77,24 +71,6 @@ def AppConfigForm(project: PersistentVar[Project]) =
         controlled(
           value <-- hiddenSymbolsUpdater.signal,
           onInput.mapToValue --> hiddenSymbolsUpdater.update
-        )
-      )
-    ),
-    // --- semantic db ---
-    div(
-      cls := "form-control",
-      label(
-        forId := "dev-mode-id",
-        cls   := "label cursor-pointer",
-        b(cls := "label-text pr-1", "Show semanticdb tab"),
-        input(
-          idAttr := "dev-mode-id",
-          tpe    := "checkbox",
-          cls    := "toggle toggle-xs",
-          controlled(
-            checked <-- advancedModeUpdater.signal,
-            onClick.mapToChecked --> advancedModeUpdater.update
-          )
         )
       )
     )

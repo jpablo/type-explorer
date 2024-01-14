@@ -18,3 +18,6 @@ object Endpoints:
   val semanticdb = "semanticdb"
   val classes = "classes"
   val source = "source"
+
+
+val port = 8090  

@@ -5,7 +5,7 @@ import com.raquo.laminar.api.L.*
 import io.laminext.fetch.*
 import org.jpablo.typeexplorer.protos.{TextDocumentsWithSource, TextDocumentsWithSourceSeq}
 import org.jpablo.typeexplorer.shared.inheritance.{InheritanceGraph, Path}
-import org.jpablo.typeexplorer.shared.webApp.{InheritanceRequest, Endpoints}
+import org.jpablo.typeexplorer.shared.webApp.{Endpoints, InheritanceRequest, port}
 import org.jpablo.typeexplorer.ui.app.components.DiagramType
 import org.jpablo.typeexplorer.ui.app.components.state.Page
 import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.InheritanceSvgDiagram
@@ -16,7 +16,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.scalajs.js.URIUtils.encodeURIComponent
 import scala.scalajs.js.typedarray.Int8Array
 
-val basePath = "http://localhost:8090/"
+val basePath = s"http://localhost:$port}/"
 
 def fetchBase(path: String): FetchEventStreamBuilder =
   Fetch.get(basePath + path)

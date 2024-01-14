@@ -30,9 +30,6 @@ case class ActiveProject(project: PersistentVar[Project])(using o: Owner):
   val diagramOptions: Signal[Vector[DiagramOptions]] =
     project.signal.map(_.pages.map(_.diagramOptions)).distinct
 
-  val advancedMode: Signal[Boolean] =
-    project.signal.map(_.advancedMode).distinct
-
   def pageV(pageId: String): Var[Page] =
     project.zoom { p =>
       p.pages.find(_.id == pageId).getOrElse(p.pages.last)
