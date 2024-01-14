@@ -7,7 +7,7 @@ import com.raquo.laminar.nodes.ReactiveHtmlElement.Base
 import org.jpablo.typeexplorer.shared.inheritance.Path
 import org.jpablo.typeexplorer.ui.app.components.state.{AppState, ProjectId}
 import org.jpablo.typeexplorer.ui.widgets.Icons.*
-import org.jpablo.typeexplorer.ui.widgets.{Dialog, Join, Tooltip}
+import org.jpablo.typeexplorer.ui.widgets.{Join, SimpleDialog, Tooltip}
 import org.scalajs.dom
 import org.scalajs.dom.HTMLDivElement
 
@@ -21,7 +21,6 @@ def AppHeader(
     deleteProject:   EventBus[ProjectId]
 ): Div =
   val titleDialogOpen = Var(false)
-  val titleDialog = TitleDialog(appState.activeProject.name, titleDialogOpen)
   val projectSelector =
     ProjectSelector(appState.projects, selectedProject, deleteProject)
   div(
@@ -55,7 +54,7 @@ def AppHeader(
           text = "Select project",
           a(
             cls := "btn btn-sm join-item",
-            onClick --> projectSelector.showModal(),
+            onClick --> projectSelector.ref.showModal(),
             label.listIcon
           )
         ),
@@ -103,31 +102,20 @@ def AppHeader(
         )
       )
     ),
-    titleDialog.tag,
-    projectSelector.tag
+    TitleDialog(appState.activeProject.name, titleDialogOpen),
+    projectSelector
   )
 end AppHeader
 
 def TitleDialog(title: Var[String], open: Var[Boolean]) =
-  Dialog(
-    cls := "modal",
-    cls.toggle("modal-open") <-- open.signal,
-    div(
-      cls := "modal-box",
-      input(
-        tpe         := "text",
-        cls         := "input input-bordered w-full",
-        placeholder := "Project name",
-        focus <-- open.signal.changes,
-        controlled(value <-- title, onInput.mapToValue --> title),
-        onKeyDown.filter(e => e.key == "Enter" || e.key == "Escape") --> open.set(false)
-      ),
-      div(
-        cls := "modal-action",
-        form(
-          method := "dialog",
-          button(cls := "btn", "close", onClick.mapTo(false) --> open.set)
-        )
-      )
+  SimpleDialog(
+    open,
+    input(
+      tpe         := "text",
+      cls         := "input input-bordered w-full",
+      placeholder := "Project name",
+      focus <-- open.signal.changes,
+      controlled(value <-- title, onInput.mapToValue --> title),
+      onKeyDown.filter(e => e.key == "Enter" || e.key == "Escape") --> open.set(false)
     )
   )

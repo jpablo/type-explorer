@@ -1,12 +1,21 @@
 package org.jpablo.typeexplorer.ui.app.components
 
 import com.raquo.laminar.api.L.*
-import org.jpablo.typeexplorer.ui.app.components.state.{PersistentVar, Project}
+import org.jpablo.typeexplorer.ui.app.components.state.{AppState, PersistentVar, Project}
 import com.softwaremill.quicklens.*
 import org.jpablo.typeexplorer.shared.inheritance.Path
 import org.jpablo.typeexplorer.shared.models
+import org.jpablo.typeexplorer.ui.widgets.SimpleDialog
 
 case class Updater[A](signal: Signal[A], update: A => Unit)
+
+
+def AppConfigDialog(appState: AppState) =
+  SimpleDialog(
+    appState.appConfigDialogOpenV,
+    AppConfigForm(appState.activeProject.project)
+  )
+
 
 def AppConfigForm(project: PersistentVar[Project]) =
 

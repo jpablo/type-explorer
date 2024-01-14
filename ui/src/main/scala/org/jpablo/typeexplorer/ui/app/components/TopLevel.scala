@@ -4,8 +4,7 @@ import com.raquo.laminar.api.L.*
 import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
 import org.jpablo.typeexplorer.ui.app.components.state.{AppState, ProjectId}
 import org.jpablo.typeexplorer.ui.app.components.tabs.TabsArea
-import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.AppConfigDialog
-import org.jpablo.typeexplorer.ui.widgets.{Button, ReactiveElement, small}
+import org.jpablo.typeexplorer.ui.widgets.{Button, small}
 import org.jpablo.typeexplorer.ui.widgets.Icons.closeIcon
 
 def TopLevel(
@@ -20,7 +19,7 @@ def TopLevel(
     AppHeader(appState, selectedProject, deleteProject),
     TabsArea(appState, documents),
     AppFooter,
-    AppConfigDialog(appState).tag,
+    AppConfigDialog(appState),
     ErrorToast(errors)
   )
 

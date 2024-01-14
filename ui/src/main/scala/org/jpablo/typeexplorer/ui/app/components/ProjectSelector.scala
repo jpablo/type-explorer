@@ -26,47 +26,28 @@ def ProjectSelector(
               .contains(filter.toLowerCase) || project.id.value.toLowerCase
               .contains(filter.toLowerCase)
 
-  Dialog(
-    cls := "modal",
-    div(
-      cls := "modal-box",
-      // -------- filter ---------
-      input(
-        tpe         := "text",
-        cls         := "input input-bordered w-full",
-        placeholder := "Filter project",
-        controlled(
-          value <-- filter,
-          onInput.mapToValue --> filter
-        )
-      ),
-      // -------- project list ---------
-      ul(
-        cls := "menu",
-        children <-- filteredProjects.map(
-          _.map(ProjectSelectorItem(selection)).toSeq
-        )
-      ),
-      // -------- actions ---------
-      div(
-        cls := "modal-action",
-        form(
-          method := "dialog",
-          button(
-            cls := "btn",
-            "new",
-            onClick.preventDefault --> selectedProject.emit(ProjectId.random)
-          ),
-          button(
-            cls := "btn",
-            "delete",
-            onClick.preventDefault
-              .compose(_.sample(selection)) --> (_.foreach(deleteProject.emit))
-          ),
-          button(cls := "btn", "close")
-        )
+  Dialog()(
+    // -------- filter ---------
+    input(
+      tpe         := "text",
+      cls         := "input input-bordered w-full",
+      placeholder := "Filter project",
+      controlled(
+        value <-- filter,
+        onInput.mapToValue --> filter
+      )
+    ),
+    // -------- project list ---------
+    ul(
+      cls := "menu",
+      children <-- filteredProjects.map(
+        _.map(ProjectSelectorItem(selection)).toSeq
       )
     )
+  )(
+    button(cls := "btn", "new", onClick.preventDefault --> selectedProject.emit(ProjectId.random)),
+    button(cls := "btn", "delete", onClick.preventDefault.compose(_.sample(selection)) --> (_.foreach(deleteProject.emit))),
+    button(cls := "btn", "close")
   )
 
 def ProjectSelectorItem(
