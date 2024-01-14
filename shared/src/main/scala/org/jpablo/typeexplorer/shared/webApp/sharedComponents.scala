@@ -14,10 +14,10 @@ case class InheritanceRequest[A](
 ) derives JsonCodec
 
 object Endpoints:
-  val inheritanceDiagram = "inheritance"
+  val api = "api"
+  val inheritance = "inheritance"
   val semanticdb = "semanticdb"
   val classes = "classes"
   val source = "source"
 
-
-val port = 8090  
+val port = 8090

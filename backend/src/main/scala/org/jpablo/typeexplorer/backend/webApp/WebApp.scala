@@ -54,7 +54,7 @@ object WebApp extends ZIOAppDefault:
   // ----------
   private val apiRoutes =
     Routes(
-      Method.POST / Endpoints.inheritanceDiagram -> handler { (req: Request) =>
+      Method.POST / Endpoints.api / Endpoints.inheritance -> handler { (req: Request) =>
         for
           body <- req.body.asString
           ireq <- ZIO.from(body.fromJson[InheritanceRequest[file.Path]]).mapError(Throwable(_))
@@ -66,7 +66,7 @@ object WebApp extends ZIOAppDefault:
         yield Response.text(svgText).addHeader(Header.ContentType(MediaType.image.`svg+xml`))
       }.orDie,
       //
-      Method.GET / Endpoints.classes -> handler { (req: Request) =>
+      Method.GET / Endpoints.api / Endpoints.classes -> handler { (req: Request) =>
         toTaskOrBadRequest(getPath(req)): paths =>
           readTextDocumentsWithSource(paths)
             .map(InheritanceGraph.from)
@@ -74,7 +74,7 @@ object WebApp extends ZIOAppDefault:
             .map(Response.json)
       }.orDie,
       //
-      Method.GET / Endpoints.source -> handler { (req: Request) =>
+      Method.GET / Endpoints.api / Endpoints.source -> handler { (req: Request) =>
         val firstPath = getPath(req).flatMap(_.headOption)
         toTaskOrBadRequest(firstPath): path =>
           readSource(path).map(Response.text)

@@ -16,10 +16,12 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.scalajs.js.URIUtils.encodeURIComponent
 import scala.scalajs.js.typedarray.Int8Array
 
-val basePath = s"http://localhost:$port/"
+val basePath = s"http://localhost:$port"
 
-def fetchBase(path: String): FetchEventStreamBuilder =
-  Fetch.get(basePath + path)
+def apiPath(path: String): String = s"$basePath/api/$path"
+
+def fetchApiPath(path: String): FetchEventStreamBuilder =
+  Fetch.get(apiPath(path))
 
 def fetchDocuments(
     paths: Signal[List[Path]]
@@ -30,7 +32,7 @@ def fetchDocuments(
       if path.isEmpty then EventStream.fromValue(List.empty)
       else
         val qs = path.map(p => "path=" + p).mkString("&")
-        for response <- fetchBase("semanticdb?" + qs).arrayBuffer yield
+        for response <- fetchApiPath("semanticdb?" + qs).arrayBuffer yield
           val ia =
             Int8Array(response.data, 0, length = response.data.byteLength)
           TextDocumentsWithSourceSeq
@@ -47,7 +49,7 @@ def fetchFullInheritanceGraph(
   else
     val qs = basePaths.map("path=" + _).mkString("&")
     for
-      response <- fetchBase(s"${Endpoints.classes}?$qs").text
+      response <- fetchApiPath(s"${Endpoints.classes}?$qs").text
       classes <- EventStream.fromTry {
         response.data
           .fromJson[InheritanceGraph]
@@ -66,7 +68,7 @@ def fetchInheritanceSVGDiagram(
   else
     Fetch
       .post(
-        url  = s"$basePath${Endpoints.inheritanceDiagram}",
+        url  = apiPath(Endpoints.inheritance),
         body = InheritanceRequest(basePaths.map(_.toString), page.activeSymbols, page.diagramOptions).toJson
       )
       .text
@@ -89,8 +91,8 @@ def fetchCallGraphSVGDiagram(
       then EventStream.fromValue(div().ref)
       else
         val fetchEventStreamBuilder = diagramType match
-          case DiagramType.Inheritance => fetchBase("inheritance?path=" + path)
-          case DiagramType.CallGraph   => fetchBase("call-graph?path=" + path)
+          case DiagramType.Inheritance => fetchApiPath("inheritance?path=" + path)
+          case DiagramType.CallGraph   => fetchApiPath("call-graph?path=" + path)
 
         fetchEventStreamBuilder.text.map: fetchResponse =>
           parser
@@ -102,7 +104,7 @@ def fetchCallGraphSVGDiagram(
 def fetchSourceCode(paths: Signal[Path])(docPath: Path) =
   for
     path <- paths
-    response <- fetchBase(
-      s"source?path=${encodeURIComponent(path.toString + "/" + docPath)}"
+    response <- fetchApiPath(
+      s"${Endpoints.classes}?path=${encodeURIComponent(path.toString + "/" + docPath)}"
     ).text
   yield response.data
