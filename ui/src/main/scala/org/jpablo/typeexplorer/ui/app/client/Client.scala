@@ -16,7 +16,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.scalajs.js.URIUtils.encodeURIComponent
 import scala.scalajs.js.typedarray.Int8Array
 
-val basePath = s"http://localhost:$port}/"
+val basePath = s"http://localhost:$port/"
 
 def fetchBase(path: String): FetchEventStreamBuilder =
   Fetch.get(basePath + path)
