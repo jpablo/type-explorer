@@ -6,6 +6,7 @@ import org.jpablo.typeexplorer.ui.app.components.state.{AppState, ProjectId}
 import org.jpablo.typeexplorer.ui.app.components.tabs.TabsArea
 import org.jpablo.typeexplorer.ui.widgets.{Button, small}
 import org.jpablo.typeexplorer.ui.widgets.Icons.closeIcon
+import com.raquo.laminar.api.features.unitArrows
 
 def TopLevel(
     appState:        AppState,
@@ -26,15 +27,15 @@ def TopLevel(
 def ErrorToast(messages: EventBus[String]) =
   val hidden = Var(true)
   div(
-    messages.events --> (_ => hidden.set(false)),
+    messages.events --> hidden.set(false),
     cls := "toast toast-center",
     cls.toggle("hidden") <-- hidden.signal,
     div(
       cls := "alert alert-error",
       child.text <-- messages.events,
       Button(
-        cls := "btn float-right btn-circle btn-error",
-        onClick.mapTo(true) --> hidden,
+        cls := "float-right btn-circle btn-error",
+        onClick --> hidden.set(true),
         a.closeIcon
       ).small
     )

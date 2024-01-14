@@ -7,7 +7,7 @@ import com.raquo.laminar.nodes.ReactiveHtmlElement.Base
 import org.jpablo.typeexplorer.shared.inheritance.Path
 import org.jpablo.typeexplorer.ui.app.components.state.{AppState, ProjectId}
 import org.jpablo.typeexplorer.ui.widgets.Icons.*
-import org.jpablo.typeexplorer.ui.widgets.{Join, SimpleDialog, Tooltip}
+import org.jpablo.typeexplorer.ui.widgets.{Join, SimpleDialog, Tooltip, Button, small, ghost}
 import org.scalajs.dom
 import org.scalajs.dom.HTMLDivElement
 
@@ -37,13 +37,12 @@ def AppHeader(
       ),
       Tooltip(
         text = "Edit project name",
-        button(
-          cls := "btn btn-ghost btn-sm",
+        Button(
           onClick --> titleDialogOpen.set(true),
           child.text <--
             appState.activeProject.project.signal.map: p =>
               if p.name.isBlank then "Untitled" else p.name
-        )
+        ).small.ghost
       ).amend(cls := "flex-none"),
       div(
         cls := "divider divider-horizontal mx-1"

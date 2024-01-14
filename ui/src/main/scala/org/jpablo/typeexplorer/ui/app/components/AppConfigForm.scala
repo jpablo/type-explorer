@@ -47,8 +47,8 @@ def AppConfigForm(project: PersistentVar[Project]) =
     )
 
   form(
-    cls := "p-4 w-96 bg-base-100 text-base-content flex flex-col v-full",
-    h1(cls := "drawer-title text-xl font-bold", "Settings"),
+    cls := "p-3 bg-base-100 text-base-content flex flex-col v-full",
+    h1(cls := "text-xl font-bold pb-4", "Settings"),
     // --- base path ---
     div(
       cls := "form-control",
