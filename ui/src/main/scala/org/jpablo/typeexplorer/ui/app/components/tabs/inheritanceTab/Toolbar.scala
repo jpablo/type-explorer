@@ -7,9 +7,8 @@ import com.softwaremill.quicklens.*
 import org.jpablo.typeexplorer.shared.inheritance.{InheritanceGraph, toPlantUML}
 import org.jpablo.typeexplorer.ui.app.components.state.InheritanceTabState
 import org.jpablo.typeexplorer.ui.daisyui.*
-import org.jpablo.typeexplorer.ui.domUtils
-import org.jpablo.typeexplorer.ui.domUtils.dataTip
 import org.jpablo.typeexplorer.ui.widgets.Icons.*
+import org.jpablo.typeexplorer.ui.widgets.Tooltip
 import org.scalajs.dom
 import org.scalajs.dom.{HTMLDivElement, HTMLElement}
 
@@ -19,18 +18,20 @@ def Toolbar(
     zoomValue:  Var[Double],
     fitDiagram: EventBus[Unit]
 ) =
+  val drawerId = s"drawer-tab-${tabState.pageId}"
   div(
     cls := "shadow bg-base-100 rounded-box flex items-center gap-4 p-0.5 absolute top-1 left-2/4 -translate-x-2/4 z-10",
     // -------- package selector --------
     Join(
-      div(
-        cls     := "flex-none tooltip tooltip-bottom",
-        dataTip := "Package Selector",
-        button.boxesIcon.amend(
-          cls := "btn btn-ghost btn-sm",
+      Tooltip(
+        text = "Package Selector",
+        input(idAttr := drawerId, tpe := "checkbox", cls := "drawer-toggle"),
+        label(
+          forId := drawerId,
+          cls   := "btn btn-ghost btn-sm bi bi-boxes",
           onClick --> tabState.packagesDialogOpenV.set(true)
         )
-      )
+      ).amend(cls := "flex-none")
     ),
     // -------- fields and signatures --------
     Join(

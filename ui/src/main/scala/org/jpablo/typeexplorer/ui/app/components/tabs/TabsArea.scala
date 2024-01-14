@@ -8,6 +8,7 @@ import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
 import org.jpablo.typeexplorer.ui.app.components.state.{AppState, InheritanceTabState, Page}
 import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.*
 import org.jpablo.typeexplorer.ui.domUtils.*
+import org.jpablo.typeexplorer.ui.widgets.Drawer
 import org.scalajs.dom
 import org.scalajs.dom.HTMLDivElement
 
@@ -41,12 +42,22 @@ def renderTab(appState: AppState)(pageId: String, p: Page, pageS: Signal[Page]):
     div(
       role := "tabpanel",
       cls  := "te-parent-2 tab-content bg-base-100 border-base-300 rounded-box",
-      div(
-        cls := "te-parent-1",
-        CanvasContainer(tabState.inheritanceSvgDiagram, tabState.canvasSelection, zoomValue, fitDiagram.events),
-        Toolbar(appState.fullGraph, tabState, zoomValue, fitDiagram),
-        SelectionSidebar(appState, tabState),
-        PackagesDialog(appState, tabState).tag
+      Drawer(
+        id        = s"drawer-tab-$pageId",
+        drawerEnd = false,
+        content = _.amend(
+          CanvasContainer(tabState.inheritanceSvgDiagram, tabState.canvasSelection, zoomValue, fitDiagram.events),
+          Toolbar(appState.fullGraph, tabState, zoomValue, fitDiagram),
+          SelectionSidebar(appState, tabState)
+        ),
+        sidebar = _.amend(
+          div(
+            cls := "p-4 w-96 bg-base-100 text-base-content h-full",
+            PackagesTreeComponent(appState, tabState),
+          )
+        )
+      ).amend(
+        cls := "te-parent-1"
       )
     )
   )

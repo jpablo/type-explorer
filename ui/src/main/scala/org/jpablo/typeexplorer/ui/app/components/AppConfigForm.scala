@@ -8,7 +8,7 @@ import org.jpablo.typeexplorer.shared.models
 
 case class Updater[A](signal: Signal[A], update: A => Unit)
 
-def AppConfigDrawer(project: PersistentVar[Project]) =
+def AppConfigForm(project: PersistentVar[Project]) =
 
   def updater[A, B, C](
       va:          Var[A],

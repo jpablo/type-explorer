@@ -13,6 +13,8 @@ import org.jpablo.typeexplorer.ui.widgets.Icons.*
 import org.scalajs.dom
 import org.scalajs.dom.HTMLDivElement
 
+import org.jpablo.typeexplorer.ui.widgets.Tooltip
+
 enum DiagramType:
   case Inheritance
   case CallGraph
@@ -38,9 +40,8 @@ def AppHeader(
       div(
         cls := "divider divider-horizontal mx-1"
       ),
-      div(
-        cls     := "flex-none tooltip tooltip-bottom",
-        dataTip := "Edit project name",
+      Tooltip(
+        text = "Edit project name",
         button(
           cls := "btn btn-ghost btn-sm",
           onClick --> titleDialogOpen.set(true),
@@ -48,15 +49,14 @@ def AppHeader(
             appState.activeProject.project.signal.map: p =>
               if p.name.isBlank then "Untitled" else p.name
         )
-      ),
+      ).amend(cls := "flex-none"),
       div(
         cls := "divider divider-horizontal mx-1"
       ),
       // -------- project selector --------
       Join(
-        div(
-          cls     := "tooltip tooltip-bottom",
-          dataTip := "Select project",
+        Tooltip(
+          text = "Select project",
           a(
             cls := "btn btn-sm join-item",
             onClick --> projectSelector.showModal(),
@@ -64,9 +64,8 @@ def AppHeader(
           )
         ),
         // -------- new tab button --------
-        div(
-          cls     := "tooltip tooltip-bottom",
-          dataTip := "New tab",
+        Tooltip(
+          text = "New tab",
           a(
             cls := "btn btn-sm join-item",
             onClick --> appState.newPage(),
@@ -75,9 +74,8 @@ def AppHeader(
 //          )
         ),
         // -------- close tab button --------
-        div(
-          cls     := "tooltip tooltip-bottom",
-          dataTip := "Close tab",
+        Tooltip(
+          text = "Close tab",
           a(
             cls := "btn btn-sm join-item",
             onClick --> appState.closeActivePage(),
@@ -100,13 +98,12 @@ def AppHeader(
                                       else "")
         ),
         // -------- config gear button --------
-        div(
-          cls     := "tooltip tooltip-bottom",
-          dataTip := "Project settings",
+        Tooltip(
+          text = "Project settings",
           input(idAttr := "drawer-1", tpe := "checkbox", cls := "drawer-toggle"),
           label(
             forId := "drawer-1",
-            cls   := "btn btn-sm drawer-button bi bi-gear"
+            cls   := "btn btn-sm btn-ghost drawer-button bi bi-gear"
           )
         )
       )

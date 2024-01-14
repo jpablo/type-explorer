@@ -8,7 +8,7 @@ import org.jpablo.typeexplorer.ui.widgets.Dialog
 import org.scalajs.dom
 import org.scalajs.dom.HTMLDivElement
 
-def PackagesDialog(
+def AppConfigDialog(
     appState: AppState,
     tabState: InheritanceTabState
 ) =
@@ -17,7 +17,7 @@ def PackagesDialog(
     cls.toggle("modal-open") <-- tabState.packagesDialogOpenV.signal,
     div(
       cls := "modal-box",
-      PackagesTreeComponent(appState, tabState),
+      div("App Config"), // <-- App Config section
       div(
         cls := "modal-action",
         form(

@@ -17,6 +17,7 @@ def TopLevel(
 ) =
   Drawer(
     id = "drawer-1",
+    drawerEnd = false,
     content = _.amend(
       cls := "te-parent-4",
       AppHeader(appState, selectedProject, deleteProject),
@@ -24,7 +25,7 @@ def TopLevel(
       AppFooter
     ),
     sidebar = _.amend(
-      AppConfigDrawer(appState.activeProject.project),
+      AppConfigForm(appState.activeProject.project),
       ErrorToast(errors)
     )
   )
