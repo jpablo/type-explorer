@@ -1,4 +1,4 @@
-package org.jpablo.typeexplorer.ui.daisyui
+package org.jpablo.typeexplorer.ui.widgets
 
 import com.raquo.laminar.api.L.*
 import scala.annotation.targetName

@@ -6,14 +6,10 @@ import com.raquo.laminar.nodes.ReactiveHtmlElement
 import com.raquo.laminar.nodes.ReactiveHtmlElement.Base
 import org.jpablo.typeexplorer.shared.inheritance.Path
 import org.jpablo.typeexplorer.ui.app.components.state.{AppState, ProjectId}
-import org.jpablo.typeexplorer.ui.daisyui.Join
-import org.jpablo.typeexplorer.ui.domUtils.dataTip
-import org.jpablo.typeexplorer.ui.widgets.Dialog
 import org.jpablo.typeexplorer.ui.widgets.Icons.*
+import org.jpablo.typeexplorer.ui.widgets.{Dialog, Join, Tooltip}
 import org.scalajs.dom
 import org.scalajs.dom.HTMLDivElement
-
-import org.jpablo.typeexplorer.ui.widgets.Tooltip
 
 enum DiagramType:
   case Inheritance

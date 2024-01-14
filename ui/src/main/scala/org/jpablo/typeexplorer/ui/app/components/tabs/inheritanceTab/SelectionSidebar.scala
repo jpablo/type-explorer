@@ -9,7 +9,7 @@ import org.jpablo.typeexplorer.shared.inheritance.InheritanceGraph
 import org.jpablo.typeexplorer.ui.app
 import org.jpablo.typeexplorer.ui.app.components.state.*
 import org.jpablo.typeexplorer.ui.app.components.state.InheritanceTabState.ActiveSymbols
-import org.jpablo.typeexplorer.ui.daisyui.*
+import org.jpablo.typeexplorer.ui.widgets.*
 import org.scalajs.dom
 
 def SelectionSidebar(

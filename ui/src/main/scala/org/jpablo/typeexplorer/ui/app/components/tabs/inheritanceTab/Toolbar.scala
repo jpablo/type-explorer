@@ -6,9 +6,9 @@ import com.raquo.laminar.nodes.ReactiveHtmlElement
 import com.softwaremill.quicklens.*
 import org.jpablo.typeexplorer.shared.inheritance.{InheritanceGraph, toPlantUML}
 import org.jpablo.typeexplorer.ui.app.components.state.InheritanceTabState
-import org.jpablo.typeexplorer.ui.daisyui.*
+import org.jpablo.typeexplorer.ui.widgets.*
 import org.jpablo.typeexplorer.ui.widgets.Icons.*
-import org.jpablo.typeexplorer.ui.widgets.Tooltip
+import org.jpablo.typeexplorer.ui.widgets.{Join, Tooltip}
 import org.scalajs.dom
 import org.scalajs.dom.{HTMLDivElement, HTMLElement}
 

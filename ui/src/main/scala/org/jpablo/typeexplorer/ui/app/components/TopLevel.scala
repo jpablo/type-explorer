@@ -5,8 +5,7 @@ import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
 import org.jpablo.typeexplorer.ui.app.components.state.{AppState, ProjectId}
 import org.jpablo.typeexplorer.ui.app.components.tabs.TabsArea
 import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.AppConfigDialog
-import org.jpablo.typeexplorer.ui.daisyui.{Button, ReactiveElement, small}
-import org.jpablo.typeexplorer.ui.widgets.Drawer
+import org.jpablo.typeexplorer.ui.widgets.{Button, ReactiveElement, small}
 import org.jpablo.typeexplorer.ui.widgets.Icons.closeIcon
 
 def TopLevel(
