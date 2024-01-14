@@ -39,7 +39,7 @@ def PackagesTreeComponent(appState: AppState, tabState: InheritanceTabState) =
           onInput.mapToValue --> filterBySymbolName
         ),
 //        onKeyDown.filter(e => e.key == "Enter" || e.key == "Escape") --> appState.appConfigDialogOpenV.set(false)
-      ).small
+      ).smallInput
     ),
     div(
       cls := "overflow-auto mt-1",

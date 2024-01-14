@@ -14,7 +14,7 @@ import scala.annotation.targetName
 
 extension (elem: Input)
   @targetName("InputSmall")
-  def small: Input = elem.amend(cls := "form-control-sm")
+  def smallInput: Input = elem.amend(cls := "form-control-sm")
 
 extension (btn: Button)
   def outline: Button = btn.amend(cls := "btn-outline")
