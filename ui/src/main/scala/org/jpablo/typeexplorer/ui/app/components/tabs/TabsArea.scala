@@ -47,7 +47,7 @@ def renderTab(appState: AppState)(pageId: String, p: Page, pageS: Signal[Page]):
         drawerEnd = false,
         content = _.amend(
           CanvasContainer(tabState.inheritanceSvgDiagram, tabState.canvasSelection, zoomValue, fitDiagram.events),
-          Toolbar(appState.fullGraph, tabState, zoomValue, fitDiagram),
+          Toolbar(appState.fullGraph, tabState, zoomValue, fitDiagram/*, appState.appConfigDialogOpenV*/),
           SelectionSidebar(appState, tabState)
         ),
         sidebar = _.amend(

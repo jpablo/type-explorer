@@ -100,10 +100,9 @@ def AppHeader(
         // -------- config gear button --------
         Tooltip(
           text = "Project settings",
-          input(idAttr := "drawer-1", tpe := "checkbox", cls := "drawer-toggle"),
-          label(
-            forId := "drawer-1",
-            cls   := "btn btn-sm btn-ghost drawer-button bi bi-gear"
+          button(
+            cls := "btn btn-sm btn-ghost drawer-button bi bi-gear",
+            onClick --> appState.appConfigDialogOpenV.set(true)
           )
         )
       )

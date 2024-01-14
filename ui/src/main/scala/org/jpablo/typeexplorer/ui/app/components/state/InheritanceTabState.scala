@@ -36,8 +36,6 @@ case class InheritanceTabState(appState: AppState, pageId: String):
   val activeSymbols =
     ActiveSymbolsOps(activeSymbolsV, appState.fullGraph, canvasSelectionV)
 
-  val packagesDialogOpenV = Var(false)
-
   val inheritanceSvgDiagram: Signal[InheritanceSvgDiagram] =
     appState.basePaths
       .combineWith(pageV.signal.distinct)

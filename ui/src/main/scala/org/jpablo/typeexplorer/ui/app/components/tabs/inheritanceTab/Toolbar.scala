@@ -17,6 +17,7 @@ def Toolbar(
     tabState:   InheritanceTabState,
     zoomValue:  Var[Double],
     fitDiagram: EventBus[Unit]
+//    appConfigDialogOpenV: Var[Boolean]
 ) =
   val drawerId = s"drawer-tab-${tabState.pageId}"
   div(
@@ -28,8 +29,8 @@ def Toolbar(
         input(idAttr := drawerId, tpe := "checkbox", cls := "drawer-toggle"),
         label(
           forId := drawerId,
-          cls   := "btn btn-ghost btn-sm bi bi-boxes",
-          onClick --> tabState.packagesDialogOpenV.set(true)
+          cls   := "btn btn-ghost btn-sm bi bi-boxes"
+//          onClick --> appConfigDialogOpenV.set(true)
         )
       ).amend(cls := "flex-none")
     ),

@@ -4,6 +4,7 @@ import com.raquo.laminar.api.L.*
 import org.jpablo.typeexplorer.protos.TextDocumentsWithSource
 import org.jpablo.typeexplorer.ui.app.components.state.{AppState, ProjectId}
 import org.jpablo.typeexplorer.ui.app.components.tabs.TabsArea
+import org.jpablo.typeexplorer.ui.app.components.tabs.inheritanceTab.AppConfigDialog
 import org.jpablo.typeexplorer.ui.daisyui.{Button, ReactiveElement, small}
 import org.jpablo.typeexplorer.ui.widgets.Drawer
 import org.jpablo.typeexplorer.ui.widgets.Icons.closeIcon
@@ -15,19 +16,13 @@ def TopLevel(
     deleteProject:   EventBus[ProjectId],
     errors:          EventBus[String]
 ) =
-  Drawer(
-    id = "drawer-1",
-    drawerEnd = false,
-    content = _.amend(
-      cls := "te-parent-4",
-      AppHeader(appState, selectedProject, deleteProject),
-      TabsArea(appState, documents),
-      AppFooter
-    ),
-    sidebar = _.amend(
-      AppConfigForm(appState.activeProject.project),
-      ErrorToast(errors)
-    )
+  div(
+    cls := "te-parent-4",
+    AppHeader(appState, selectedProject, deleteProject),
+    TabsArea(appState, documents),
+    AppFooter,
+    AppConfigDialog(appState).tag,
+    ErrorToast(errors)
   )
 
 def ErrorToast(messages: EventBus[String]) =

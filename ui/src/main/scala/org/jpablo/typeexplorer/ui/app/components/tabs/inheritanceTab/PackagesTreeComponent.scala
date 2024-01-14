@@ -34,12 +34,12 @@ def PackagesTreeComponent(appState: AppState, tabState: InheritanceTabState) =
       ,
       Search(
         placeholder := "filter",
-        focus <-- tabState.packagesDialogOpenV.signal.changes,
+//        focus <-- appState.appConfigDialogOpenV.signal.changes,
         controlled(
           value <-- filterBySymbolName,
           onInput.mapToValue --> filterBySymbolName
         ),
-        onKeyDown.filter(e => e.key == "Enter" || e.key == "Escape") --> tabState.packagesDialogOpenV.set(false)
+//        onKeyDown.filter(e => e.key == "Enter" || e.key == "Escape") --> appState.appConfigDialogOpenV.set(false)
       ).small
     ),
     div(

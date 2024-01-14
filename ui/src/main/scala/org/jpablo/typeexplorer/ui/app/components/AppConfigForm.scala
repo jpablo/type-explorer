@@ -44,7 +44,7 @@ def AppConfigForm(project: PersistentVar[Project]) =
     )
 
   form(
-    cls := "p-4 w-96 bg-base-100 text-base-content flex flex-col space-y-4 h-full",
+    cls := "p-4 w-96 bg-base-100 text-base-content flex flex-col v-full",
     h1(cls := "drawer-title text-xl font-bold", "Settings"),
     // --- base path ---
     div(
@@ -61,7 +61,7 @@ def AppConfigForm(project: PersistentVar[Project]) =
       cls := "form-control",
       label(cls := "label", b(cls := "label-text", "Hidden fields")),
       textArea(
-        cls := "textarea textarea-bordered h-24 whitespace-nowrap",
+        cls := "textarea textarea-bordered whitespace-nowrap",
         controlled(
           value <-- hiddenFieldsUpdater.signal,
           onInput.mapToValue --> hiddenFieldsUpdater.update
@@ -73,7 +73,7 @@ def AppConfigForm(project: PersistentVar[Project]) =
       cls := "form-control",
       label(cls := "label", b(cls := "label-text", "Hidden symbols")),
       textArea(
-        cls := "textarea textarea-bordered h-24 whitespace-nowrap",
+        cls := "textarea textarea-bordered whitespace-nowrap",
         controlled(
           value <-- hiddenSymbolsUpdater.signal,
           onInput.mapToValue --> hiddenSymbolsUpdater.update

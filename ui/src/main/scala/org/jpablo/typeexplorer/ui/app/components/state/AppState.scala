@@ -39,6 +39,8 @@ class AppState(
   val projects: Signal[Map[ProjectId, Project]] =
     persistedAppState.signal.map(_.projects)
 
+  val appConfigDialogOpenV = Var(false)
+
 object AppState:
 
   /** Load Projects from local storage and select the active project
