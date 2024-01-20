@@ -87,8 +87,11 @@ lazy val shared =
     .crossType(CrossType.Pure)
     .in(file("shared"))
     .dependsOn(protos)
+    .enablePlugins(BuildInfoPlugin)
     .settings(
-      name := "type-explorer-shared",
+      name             := "type-explorer-shared",
+      buildInfoKeys    := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
+      buildInfoPackage := "org.jpablo.typeexplorer",
       excludeDependencies ++= Seq(
         "org.scala-lang.modules" %% "scala-collection-compat",
         "org.scala-lang.modules" %% "scala-collection-compat_sjs1"

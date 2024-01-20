@@ -89,6 +89,7 @@ object WebApp extends ZIOAppDefault:
   def welcomeUser(): Unit =
     println("--------------------------------------------------")
     println("Welcome to Type Explorer!")
+    println(org.jpablo.typeexplorer.BuildInfo.toString)
     println(s"Open your browser at http://localhost:$port/")
     println(s"Press Ctrl-C to stop the server")
     println("--------------------------------------------------")
