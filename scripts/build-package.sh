@@ -12,5 +12,9 @@ ls -l /home/runner/work/type-explorer/type-explorer/ui/target/scala-3.3.1/ui-opt
 npm run build
 
 # Server
+
 sbt "backend/Universal/packageBin"
-#sbt "backend/stage"
+
+# https://www.scala-sbt.org/sbt-native-packager/gettingstarted.html
+# sbt "backend/stage"
+# backend/target/universal/stage/bin/type-explorer-backend

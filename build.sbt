@@ -16,8 +16,6 @@ lazy val projectPath = settingKey[File]("projectPath")
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
 Global / projectPath          := (ThisBuild / baseDirectory).value / ".type-explorer/meta"
-//Compile / semanticdbTargetRoot := projectPath.value
-// ThisBuild / semanticdbEnabled := true
 ThisBuild / resolvers += "Sonatype OSS Snapshots" at "https://s01.oss.sonatype.org/content/repositories/snapshots"
 ThisBuild / organization      := "org.jpablo"
 ThisBuild / scalaVersion      := scala3Version
@@ -32,8 +30,6 @@ ThisBuild / scalacOptions ++= // Scala 3.x options
     "-deprecation",
     "-Wunused:imports"
   )
-
-ThisBuild / assemblyMergeStrategy := { _ => MergeStrategy.first }
 
 lazy val protos =
   crossProject(JSPlatform, JVMPlatform)
@@ -109,21 +105,24 @@ lazy val backend =
   project
     .in(file("backend"))
     .dependsOn(shared.jvm, protos.jvm)
+    // https://www.scala-sbt.org/sbt-native-packager/gettingstarted.html
     .enablePlugins(JavaAppPackaging)
     .settings(
-      name                            := "type-explorer-backend",
+      name                            := "type-explorer",
       reStart / mainClass             := Some(mainBackendApp),
       Compile / mainClass             := Some(mainBackendApp),
-      assembly / mainClass            := Some(mainBackendApp),
-      assembly / assemblyJarName      := "type-explorer-uber-backend.jar",
       Compile / discoveredMainClasses := Seq(),
+      Universal / name                := "type-explorer",
+      Universal / packageName         := s"${(Universal / name).value}-${version.value}",
+      Universal / mappings +=
+        file("scripts/type-explorer-compile-project.sh") -> "bin/type-explorer-compile-project.sh",
       libraryDependencies ++= Seq(
         "dev.zio"                 %% "zio-http"                 % "3.0.0-RC4",
         "dev.zio"                 %% "zio-logging"              % "2.1.13",
         "dev.zio"                 %% "zio-logging-slf4j"        % "2.1.13",
         "dev.zio"                 %% "zio-logging-slf4j-bridge" % "2.1.13",
         "guru.nidi"                % "graphviz-java"            % "0.18.1",
-        "net.sourceforge.plantuml" % "plantuml"                 % "1.2022.14",
+        "net.sourceforge.plantuml" % "plantuml"                 % "1.2023.9",
         "com.lihaoyi" %% "scalatags" % "0.11.1" cross CrossVersion.for3Use2_13 // Needed until org.scalameta-common upgrades to 3.x
       ),
       excludeDependencies ++= Seq(
