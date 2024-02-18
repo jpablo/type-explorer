@@ -19,14 +19,14 @@ There are two files in the `bin` folder:
 `type-explorer-compile-project.sh` will compile the project in the current directory. 
 
 ```bash
-cd akka-persistence-jdbc
-type-explorer-compile-project.sh
+❯ cd akka-persistence-jdbc
+❯ type-explorer-compile-project.sh
 ```
 
 To compile a single module:
 
 ```bash
-type-explorer-compile-project.sh module-name
+❯ type-explorer-compile-project.sh module-name
 ```
 
 # Run
@@ -46,6 +46,7 @@ Press Ctrl-C to stop the server
 Scala standard library.
 
 ```bash
+❯ git clone https://github.com/scala/scala.git
 ❯ cd scala
 
 ❯ pwd
@@ -59,19 +60,21 @@ Scala standard library.
 
 Initial screen
 
-<img src="/Users/jpablo/proyectos/playground/type-explorer/docs/screenshots/initial-screen.png" alt="initial-screen" style="zoom:50%;" />
+<img src="./docs/screenshots/initial-screen.png" alt="initial-screen" style="zoom:50%;" />
 
-Select folder containing semanticdb files
+Select folder containing semanticdb files and name project
 
-<img src="/Users/jpablo/proyectos/playground/type-explorer/docs/screenshots/base-path.png" alt="base-path" style="zoom:50%;" />
+<img src="./docs/screenshots/base-path.png" alt="base-path" style="zoom:50%;" />
+
+<img src="./docs/screenshots/project-name.png" alt="project-name" style="zoom:50%;" />
 
 Add a type to the diagram
 
-<img src="/Users/jpablo/proyectos/playground/type-explorer/docs/screenshots/select-type.png" alt="select-type" style="zoom:50%;" />
+<img src="./docs/screenshots/select-type.png" alt="select-type" style="zoom:50%;" />
 
 Add all parents
 
-<img src="/Users/jpablo/proyectos/playground/type-explorer/docs/screenshots/inheritance-diagram.png" alt="inheritance-diagram" style="zoom:50%;" />
+<img src="./docs/screenshots/inheritance-diagram.png" alt="inheritance-diagram" style="zoom:50%;" />
 
 # License
 
