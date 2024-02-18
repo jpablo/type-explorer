@@ -1,6 +1,6 @@
 import org.scalajs.linker.interface.ModuleSplitStyle
 
-val typeExplorerVersion = "0.2.0"
+val typeExplorerVersion = "0.3.0"
 
 val scala3Version = "3.3.1"
 val scala2Version = "2.13.11"
