@@ -2,7 +2,7 @@ import org.scalajs.linker.interface.ModuleSplitStyle
 
 val typeExplorerVersion = "0.3.0"
 
-val scala3Version = "3.3.1"
+val scala3Version = "3.4.0"
 val scala2Version = "2.13.11"
 val scalametaVersion = "4.8.2"
 val zioPreludeVersion = "1.0.0-RC16"
