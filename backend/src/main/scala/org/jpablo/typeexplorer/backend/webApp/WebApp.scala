@@ -4,6 +4,9 @@ import org.jpablo.typeexplorer.backend.backends.plantuml.toSVGText
 import org.jpablo.typeexplorer.backend.textDocuments.readTextDocumentsWithSource
 import org.jpablo.typeexplorer.shared.inheritance.{InheritanceGraph, toPlantUML}
 import org.jpablo.typeexplorer.shared.webApp.{Endpoints, InheritanceRequest, port}
+import org.json4s.*
+import org.json4s.native.Serialization
+import org.json4s.native.Serialization.write
 import zio.*
 import zio.http.*
 import zio.http.Header.AccessControlAllowOrigin
@@ -74,6 +77,13 @@ object WebApp extends ZIOAppDefault:
             .map(Response.json)
       }.orDie,
       //
+      Method.GET / "semanticdb.json" -> handler { (req: Request) =>
+        toTaskOrBadRequest(getPath(req)): paths =>
+          readTextDocumentsWithSource(paths)
+            .map(write)
+            .map(Response.json)
+      }.orDie,
+      //
       Method.GET / Endpoints.api / Endpoints.source -> handler { (req: Request) =>
         val firstPath = getPath(req).flatMap(_.headOption)
         toTaskOrBadRequest(firstPath): path =>
@@ -97,6 +107,9 @@ object WebApp extends ZIOAppDefault:
   // -----------------
   // helper functions
   // -----------------
+
+  given formats: Formats =
+    Serialization.formats(NoTypeHints)
 
   private def readSource(path: file.Path): Task[String] = ZIO.scoped:
     ZIO

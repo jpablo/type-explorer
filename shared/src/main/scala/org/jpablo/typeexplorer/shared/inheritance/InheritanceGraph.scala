@@ -175,22 +175,35 @@ object InheritanceGraph:
   // In Scala 3.2 the type annotation is needed.
   val empty: InheritanceGraph = new InheritanceGraph(Set.empty)
 
+  case class SymbolData(
+      symbolInfo:       SymbolInformation,
+      semanticDbUri:    String,
+      documentURI:      String,
+      basePath:         String,
+      symbolOccurrence: Option[SymbolOccurrence]
+  )
+
   def from(textDocuments: TextDocumentsWithSourceSeq): InheritanceGraph =
-    val allSymbols =
+    val allSymbols: Seq[(GraphSymbol, SymbolData)] =
       for
         docWithSource <- textDocuments.documentsWithSource
         doc           <- docWithSource.documents
         occurrences = doc.occurrences.map(so => (so.symbol, so)).toMap
         si <- doc.symbols
         if !excluded.exists(si.symbol.contains)
-      yield GraphSymbol(si.symbol) -> (si, docWithSource.semanticDbUri, doc.uri, docWithSource.basePath, occurrences
-        .get(si.symbol))
+      yield GraphSymbol(si.symbol) -> SymbolData(
+        si,
+        docWithSource.semanticDbUri,
+        doc.uri,
+        docWithSource.basePath,
+        occurrences.get(si.symbol)
+      )
 
-    val symbolInfosMap = allSymbols.map((s, t) => s -> t._1).toMap
+    val symbolInfosMap = allSymbols.map((s, t) => s -> t.symbolInfo).toMap
 
     val namespaces =
       for
-        (symbol, (symbolInfo, semanticDbUri, docURI, basePath, symbolOcc: Option[SymbolOccurrence])) <- allSymbols
+        (symbol, SymbolData(symbolInfo, semanticDbUri, docURI, basePath, symbolOcc)) <- allSymbols
         signature <- symbolInfo.signature.asNonEmpty.toSeq
         clsSignature <- signature match
           case cs: ClassSignature => List(cs)

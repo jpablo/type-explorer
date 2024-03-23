@@ -118,6 +118,7 @@ lazy val backend =
         "dev.zio"                 %% "zio-logging"              % "2.1.13",
         "dev.zio"                 %% "zio-logging-slf4j"        % "2.1.13",
         "dev.zio"                 %% "zio-logging-slf4j-bridge" % "2.1.13",
+        "org.json4s"              %% "json4s-native"            % "4.0.6",
         "guru.nidi"                % "graphviz-java"            % "0.18.1",
         "net.sourceforge.plantuml" % "plantuml"                 % "1.2023.9",
         "com.lihaoyi" %% "scalatags" % "0.11.1" cross CrossVersion.for3Use2_13 // Needed until org.scalameta-common upgrades to 3.x
